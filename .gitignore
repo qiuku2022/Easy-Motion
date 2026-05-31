@@ -1,0 +1,83 @@
+# 系统文件
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# 编辑器配置
+.vscode/
+.idea/
+*.iml
+*.sublime-*
+
+# OpenCode 配置
+.opencode/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# 构建产物
+dist/
+build/
+out/
+*.asar
+
+# Electron
+release/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+
+# 日志
+logs/
+*.log
+
+# 测试覆盖
+.coverage
+htmlcov/
+.nyc_output/
+
+# 环境变量
+.env
+.env.local
+.env.*.local
+
+# 临时文件
+tmp/
+temp/
+*.tmp
+
+# 缓存
+.cache/
+*.tsbuildinfo
+.parcel-cache/
+.eslintcache
+.stylelintcache
+
+# macOS
+.AppleDouble
+.LSOverride
+
+# Windows
+desktop.ini
+$RECYCLE.BIN/
+
+# 其他
+*.bak
+*.orig
+*.rej
