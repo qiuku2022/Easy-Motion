@@ -1,5 +1,61 @@
-# 只推送 docs 文件夹
-*
-!.gitignore
-!docs/
-!docs/**
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+out/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Electron
+release/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Testing
+coverage/
+
+# Misc
+*.tgz
+.cache/
+
+# OpenCode / AI tools
+.omo/
+.opencode/
+
+# External references / tools
+lobehub/
+teleport/
+
+# VS Code (保留推荐配置，忽略本地设置)
+!.vscode/
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/tasks.json

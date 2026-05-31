@@ -1,0 +1,159 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    // ============================================
+    // Electron 主进程调试
+    // 调试 Electron Node.js 主进程（main/index.ts）
+    // ============================================
+    {
+      "name": "🟦 Electron: Main Process",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+      "args": [
+        "${workspaceFolder}/apps/electron/dist/main/main/index.js",
+        "--remote-debugging-port=9223",
+        "--disable-gpu"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "cwd": "${workspaceFolder}/apps/electron",
+      "sourceMaps": true,
+      "outFiles": [
+        "${workspaceFolder}/apps/electron/dist/main/**/*.js"
+      ],
+      "internalConsoleOptions": "openOnSessionStart",
+      "console": "internalConsole",
+      "preLaunchTask": "pnpm: build:main"
+    },
+
+    // ============================================
+    // Electron 渲染进程调试
+    // attach 到 Chromium 调试端口 9223
+    // 需要先启动主进程调试，或手动运行 pnpm dev:electron
+    // ============================================
+    {
+      "name": "🟦 Electron: Renderer Process",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9223,
+      "webRoot": "${workspaceFolder}/apps/electron/src/renderer",
+      "sourceMapPathOverrides": {
+        "webpack:///./*": "${webRoot}/*",
+        "webpack:///src/*": "${webRoot}/src/*",
+        "webpack:///*": "*"
+      },
+      "timeout": 30000,
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**"
+      ]
+    },
+
+    // ============================================
+    // Electron 全量调试（Compound）
+    // 同时启动主进程 + attach 渲染进程
+    // ============================================
+    {
+      "name": "🟦 Electron: Full Debug",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+      "args": [
+        "${workspaceFolder}/apps/electron/dist/main/main/index.js",
+        "--remote-debugging-port=9223",
+        "--disable-gpu"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "cwd": "${workspaceFolder}/apps/electron",
+      "sourceMaps": true,
+      "outFiles": [
+        "${workspaceFolder}/apps/electron/dist/main/**/*.js"
+      ],
+      "internalConsoleOptions": "openOnSessionStart",
+      "console": "internalConsole",
+      "preLaunchTask": "pnpm: build"
+    },
+
+    // ============================================
+    // Electron 渲染进程（独立启动）
+    // 先手动运行 pnpm dev:electron，再启动此配置
+    // ============================================
+    {
+      "name": "🟦 Electron: Renderer Only (Attach)",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9223,
+      "webRoot": "${workspaceFolder}/apps/electron/src/renderer",
+      "sourceMapPathOverrides": {
+        "webpack:///./*": "${webRoot}/*",
+        "webpack:///src/*": "${webRoot}/src/*",
+        "webpack:///*": "*"
+      },
+      "timeout": 30000
+    },
+
+    // ============================================
+    // Python FastAPI 调试
+    // 调试 Python 后端服务（apps/python/）
+    // ============================================
+    {
+      "name": "🐍 Python: FastAPI Server",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "main:app",
+        "--host", "127.0.0.1",
+        "--port", "8000",
+        "--reload"
+      ],
+      "cwd": "${workspaceFolder}/apps/python",
+      "jinja": false,
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/apps/python"
+      },
+      "console": "integratedTerminal"
+    },
+
+    // ============================================
+    // Python 单文件调试
+    // 调试任意 Python 脚本（右键当前文件调试）
+    // ============================================
+    {
+      "name": "🐍 Python: Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/apps/python"
+    }
+  ],
+
+  // ============================================
+  // Compound 组合启动
+  // 一键启动多个调试会话
+  // ============================================
+  "compounds": [
+    {
+      "name": "🚀 Full Stack (Electron + Python)",
+      "configurations": [
+        "🟦 Electron: Main Process",
+        "🐍 Python: FastAPI Server"
+      ],
+      "stopAll": true
+    },
+    {
+      "name": "🚀 Electron All (Main + Renderer)",
+      "configurations": [
+        "🟦 Electron: Full Debug",
+        "🟦 Electron: Renderer Only (Attach)"
+      ],
+      "preLaunchTask": "pnpm: dev:electron",
+      "stopAll": true
+    }
+  ]
+}

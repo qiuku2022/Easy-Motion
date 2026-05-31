@@ -1,0 +1,60 @@
+appId: com.easymotion.app
+productName: EasyMotion
+
+# 构建输出目录
+directories:
+  buildResources: ./resources
+  output: ./release
+
+# 打包包含的文件
+files:
+  - dist/**/*
+  - package.json
+
+# Native 模块需要从 asar 中解压
+asar: true
+asarUnpack:
+  - "node_modules/@remotion/compositor-*"
+  - "node_modules/@remotion/renderer/**/*"
+  - "node_modules/remotion/**/*"
+  - "node_modules/sharp/**/*"
+  - "resources/**/*.node"
+
+# 额外资源（不打包进 asar）
+extraResources:
+  - from: ./resources/
+    to: ./resources/
+    filter:
+      - "**/*"
+
+# macOS 配置
+mac:
+  category: public.app-category.video
+  icon: resources/icons/icon.icns
+  hardenedRuntime: true
+  gatekeeperAssess: false
+
+# Windows 配置
+windows:
+  icon: resources/icons/icon.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - arm64
+
+# Linux 配置
+linux:
+  icon: resources/icons
+  category: AudioVideo
+  target:
+    - AppImage
+    - deb
+
+# NSIS 安装器配置
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
