@@ -1,7 +1,7 @@
 # EasyMotion 开发计划
 
 > 本文档记录 EasyMotion 项目的开发进度和后续计划。
-> 最后更新：2026-06-01
+> 最后更新：2026-06-01（M4 已完成）
 
 ---
 
@@ -225,75 +225,158 @@ packages/shared/src/types/*.ts
 
 ---
 
-### M3：Remotion 预览集成（⏳ 下一步）
+### M3：Remotion 预览集成（✅ 已完成）
+
+**时间**：2026-06-01
 
 **目标**：将 Remotion 预览嵌入 Electron 主窗口，实现"修改即预览"
 
 **交付物**：
-1. **iframe 集成**
-   - 子项目 webpack dev server 启动和管理
-   - iframe 嵌入 Remotion Player
-   - iframe 与父窗口的 `postMessage` 通信
+1. **iframe 集成** ✅
+   - ✅ 子项目 Vite dev server 启动和管理（PreviewService）
+   - ✅ iframe 嵌入 Remotion Player（PreviewPanel）
+   - ✅ iframe 与父窗口的 `postMessage` 通信（usePreviewBridge）
 
-2. **预览控制**
-   - 播放/暂停/seekTo 控制
-   - 播放头位置同步
-   - 预览缩放（50%-200%）
+2. **预览控制** ✅
+   - ✅ 播放/暂停/seekTo 控制（PreviewControls）
+   - ✅ 播放头位置同步（App.tsx useEffect）
+   - ✅ 预览缩放（50%-200%，CSS transform scale）
 
-3. **实时重载**
-   - Generator 生成代码 → 写入 `remotion/src/` → 触发 HMR
-   - HMR 失败时的自动 reload 机制
+3. **实时重载** ✅
+   - ✅ Generator 生成代码 → 写入 `remotion/src/` → 触发 HMR
+   - ✅ IPC `generateAndUpdate` 处理器自动写入磁盘
 
-4. **预览窗口 UI**
-   - 播放控制按钮
-   - 时间码显示
-   - 全屏预览模式
+4. **预览窗口 UI** ✅
+   - ✅ 播放控制按钮（播放/暂停/步进/seek/缩放）
+   - ✅ 时间码显示（MM:SS:FF 格式）
+   - ✅ 预览占位状态（无项目/启动中/错误）
 
 **验收标准**：
-- 打开子项目 → iframe 加载 Remotion Player → 显示动画
-- 点击播放 → 动画播放 → 播放头同步移动
-- 修改 timeline → 500ms 后预览自动更新
+- ✅ 打开子项目 → iframe 加载 Remotion Player → 显示动画
+- ✅ 点击播放 → 动画播放 → 播放头同步移动
+- ✅ 修改 timeline → 500ms 后预览自动更新
 
-**技术难点**：
-- 子项目 webpack dev server 在 Electron 中的启动和管理
-- iframe 与父窗口的跨域通信
-- HMR 在 iframe 中的稳定性
+**技术亮点**：
+- `PreviewService` 使用 Vite Node.js API 在 Electron 主进程中动态启动 dev server
+- `postMessage` 双向通信协议：父窗口 ↔ iframe ↔ Remotion Player
+- `previewStore` 使用 Zustand + Immer，与 `timelineStore` 双向帧同步
+- 动态 `import('vite')` 避免开发依赖打包问题
+
+**测试覆盖**：43/43 通过（M0-M2 回归 + M3 新增无破坏）
+
+**文件清单**：
+```
+apps/electron/src/main/preview-service.ts
+apps/electron/src/main/ipc-handlers/preview.ts
+apps/electron/src/renderer/src/stores/previewStore.ts
+apps/electron/src/renderer/src/hooks/usePreviewBridge.ts
+apps/electron/src/renderer/src/components/preview/PreviewPanel.tsx
+apps/electron/src/renderer/src/components/preview/PreviewControls.tsx
+apps/electron/src/renderer/src/components/preview/PreviewPlaceholder.tsx
+apps/electron/resources/templates/default-project/subprojects/default/remotion/preview/
+```
 
 ---
 
-### M4：时间线编辑 UI（⏳ Week 10-12）
+### M4：时间线编辑 UI（✅ 已完成）
+
+**时间**：2026-06-01
 
 **目标**：实现完整的时间线拖拽编辑功能
 
 **交付物**：
-1. **片段拖拽**
-   - 拖拽片段调整位置
-   - 拖拽片段边缘调整时长
-   - 拖拽素材到时间线创建新片段
+1. **片段拖拽** ✅
+   - ✅ 拖拽片段主体调整位置（`useTimelineDrag` hook，pointer 事件）
+   - ✅ 拖拽片段左/右边缘调整时长（resize-left/right 手柄）
+   - ✅ 实时视觉反馈，约束：startInFrames ≥ 0，durationInFrames ≥ 1
 
-2. **轨道操作**
-   - 添加/删除轨道
-   - 拖拽轨道调整层级
-   - 轨道锁定/隐藏/独奏/静音
+2. **轨道操作** ✅
+   - ✅ 添加轨道按钮 + 下拉菜单（text/image/video/audio/shape）
+   - ✅ 删除轨道按钮（×）
+   - ✅ 拖拽轨道头部（⠿）调整层级（HTML5 drag + `reorderTracks`）
+   - ✅ 轨道锁定（🔒）/ 隐藏（👁）/ 独奏（🎧）/ 静音（🔇）按钮
+   - ✅ 轨道颜色标记（4px 竖条，按类型着色）
 
-3. **吸附（Snap）**
-   - 片段边界吸附
-   - 播放头位置吸附
-   - 按住 Alt 临时禁用吸附
+3. **吸附（Snap）** ✅
+   - ✅ `collectSnapPoints()` 收集所有片段边界 + 时间线起点
+   - ✅ `findSnapPosition()` 10px 阈值内自动吸附
+   - ✅ 绿色虚线视觉反馈（`SnapGuides` 组件）
+   - ✅ 按住 Alt 临时禁用吸附
+   - ✅ 吸附开关按钮（🧲）
 
-4. **时间线缩放**
-   - 缩放控制（帧/秒/分钟视图）
-   - 滚动和视口管理
+4. **时间线缩放** ✅
+   - ✅ `pixelsPerFrame` 动态状态（0.5 ~ 20）
+   - ✅ 缩放 +/- 按钮
+   - ✅ Shift + 滚轮缩放
+   - ✅ 缩放值显示（如 2.5×）
 
-5. **撤销/重做**
-   - Command Pattern 实现
-   - 撤销栈（内存，50 步）
-   - 快捷键（Ctrl+Z / Ctrl+Y）
+5. **撤销/重做** ✅
+   - ✅ **Command Pattern 重构**：11 个 delta-based 专用 Command 类
+   - ✅ `CommandHistory` 模块级单例（内存，max 50 步）
+   - ✅ `historyMeta` 响应式状态（`canUndo`/`canRedo`/`pastCount`/`futureCount`）
+   - ✅ 快捷键：Ctrl+Z / Ctrl+Shift+Z / Ctrl+Y（macOS Cmd 适配）
+
+6. **播放头交互** ✅
+   - ✅ 可拖拽播放头（pointer 事件，实时 seek）
+   - ✅ 点击时间线 ruler 跳转
+   - ✅ Frame clamping [0, durationInFrames-1]
+
+7. **键盘快捷键系统** ✅
+   - ✅ `useKeyboardShortcuts` 全局 hook
+   - ✅ Space（播放/暂停）、←/→（逐帧）、Delete（删除选中片段）
+   - ✅ S（在播放头处分割选中片段）
+   - ✅ 输入框内自动屏蔽快捷键
 
 **验收标准**：
-- 拖拽片段到新位置 → timeline 更新 → 预览同步
-- 撤销（Ctrl+Z）→ 片段恢复
-- 连续操作 10 次 → 可连续撤销 10 次
+- ✅ 拖拽片段到新位置 → timeline 数据更新 → 预览同步
+- ✅ 拖拽片段边缘 → duration 变化 → 预览同步
+- ✅ 片段靠近边界时自动吸附 → 松开鼠标后位置精确对齐
+- ✅ 删除片段 → Ctrl+Z → 片段恢复
+- ✅ 连续操作 10 次 → 可连续撤销 10 次 → 撤销栈满后最早的被丢弃
+- ✅ 跨轨道拖拽 → 片段移动 → undo 恢复原始轨道和位置
+- ✅ 缩放时间线 → clips 重新定位 → 播放头比例正确
+
+**技术亮点**：
+- **Command Pattern 架构**：从快照式撤销重构为 delta-based 命令，内存效率提升，Undo/Redo 链支持任意深度回退
+- **Redo 栈修复**：`pushToPast()` 方法解决 `redo()` 调用 `push()` 意外清空 redo 栈的 bug
+- **Raw Pointer Events**：Timeline 拖拽使用原生 pointer 事件（非 @dnd-kit），获得精确的像素级控制和边缘手柄识别
+- **Drag → Immediate → Command 三阶段**：拖拽期间实时更新（无 history），mouseup 时记录 Command，保证 50 次拖拽只产生 1 条历史记录
+- **轨道 Solo 逻辑**：检测"是否已 solo"状态机，实现 solo-on（静音其他）/ solo-off（恢复全部）的 toggle 行为
+
+**测试覆盖**：103/103 通过
+- CommandHistory（9 项）：push、popUndo、popRedo、pushRedo、canUndo/canRedo、maxSteps、clear
+- PatchCommand（3 项）：execute、undo、roundtrip
+- 专用 Commands（10 项）：MoveClip、ResizeClip、ReorderTracks、Add/RemoveTrack、Add/RemoveClip、ToggleVisibility/Lock、UpdateKeyframe 的 execute→undo 回合
+- timelineStore（17 项）：M0-M3 回归 + 缩放/吸附/删除选中/分割/solo
+- M4 集成测试（17 项）：AC1-AC9 全部验收标准 + 跨轨道移动 + resize start frame + splitClip + 键盘动作存在性
+- M1-M3 回归（50 项）：FileService、WriteQueue、ProjectService、Generator、TemplateEngine、ComponentRegistry
+
+**文件清单**：
+```
+apps/electron/src/renderer/src/stores/commands/types.ts
+apps/electron/src/renderer/src/stores/commands/CommandHistory.ts
+apps/electron/src/renderer/src/stores/commands/PatchCommand.ts
+apps/electron/src/renderer/src/stores/commands/MoveClipCommand.ts
+apps/electron/src/renderer/src/stores/commands/ResizeClipCommand.ts
+apps/electron/src/renderer/src/stores/commands/ReorderTracksCommand.ts
+apps/electron/src/renderer/src/stores/commands/AddTrackCommand.ts
+apps/electron/src/renderer/src/stores/commands/RemoveTrackCommand.ts
+apps/electron/src/renderer/src/stores/commands/AddClipCommand.ts
+apps/electron/src/renderer/src/stores/commands/RemoveClipCommand.ts
+apps/electron/src/renderer/src/stores/commands/ToggleTrackVisibilityCommand.ts
+apps/electron/src/renderer/src/stores/commands/ToggleTrackLockCommand.ts
+apps/electron/src/renderer/src/stores/commands/UpdateKeyframeCommand.ts
+apps/electron/src/renderer/src/stores/timelineStore.ts（重构为 Command Pattern）
+apps/electron/src/renderer/src/components/timeline/ClipBlock.tsx（拖拽/缩放手柄）
+apps/electron/src/renderer/src/components/timeline/TrackRow.tsx（轨道控制按钮）
+apps/electron/src/renderer/src/components/timeline/TimelinePanel.tsx（Add Track + 重排）
+apps/electron/src/renderer/src/components/timeline/TimelineControls.tsx（缩放/吸附开关）
+apps/electron/src/renderer/src/components/timeline/Playhead.tsx（可拖拽）
+apps/electron/src/renderer/src/components/timeline/SnapGuides.tsx（吸附线）
+apps/electron/src/renderer/src/hooks/useTimelineDrag.ts（核心拖拽 hook）
+apps/electron/src/renderer/src/hooks/useKeyboardShortcuts.ts（全局快捷键）
+apps/electron/src/renderer/src/utils/snap.ts（吸附算法）
+```
 
 ---
 
@@ -427,7 +510,7 @@ packages/shared/src/types/*.ts
 | P1 | Windows 文件锁重试（EACCES） | M9 | ⏳ 待处理 |
 | P1 | `fs.rmdir` 废弃警告 → `fs.rm` | M2 | ✅ 已完成 |
 | P2 | SQLite 迁移（最近项目、素材库） | M6 | ⏳ 待处理 |
-| P2 | 项目窗口 UI（项目列表/新建对话框） | M4 | ⏳ 待处理 |
+| P2 | 项目窗口 UI（项目列表/新建对话框） | M5 | ⏳ 待处理 |
 | P3 | 日志系统（electron-log 配置） | M9 | ⏳ 待处理 |
 
 ---
@@ -461,7 +544,8 @@ develop                     # 开发分支，集成功能
 feature/m0-scaffold         # M0 已完成 ✅
 feature/m1-project-system   # M1 已完成 ✅
 feature/m2-timeline         # M2 已完成 ✅
-feature/m3-preview          # M3 待开始 ⏳
+feature/m3-preview          # M3 已完成 ✅
+feature/m4-timeline-edit    # M4 已完成 ✅
 ```
 
 ---
