@@ -1,9 +1,0 @@
-dist/
-out/
-node_modules/
-coverage/
-lobehub/
-teleport/
-*.min.js
-package-lock.json
-pnpm-lock.yaml
