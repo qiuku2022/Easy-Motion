@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EasyMotion</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: #0f0f23;
+        color: #f8fafc;
+        display: grid;
+        place-items: center;
+      }
+      .card {
+        border: 1px solid #2d2d4a;
+        border-radius: 12px;
+        padding: 24px;
+        background: #1a1a2e;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <h1>Hello EasyMotion</h1>
+      <p>Electron 骨架已启动。</p>
+      <p id="version"></p>
+    </main>
+    <script>
+      const el = document.getElementById("version");
+      el.textContent = `Preload version: ${window.easyMotion?.version ?? "unknown"}`;
+    </script>
+  </body>
+</html>
