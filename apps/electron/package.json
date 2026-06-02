@@ -1,0 +1,12 @@
+{
+  "name": "@easymotion/electron",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/main/index.js",
+  "scripts": {
+    "dev": "electron ."
+  },
+  "dependencies": {
+    "electron": "^42.3.1"
+  }
+}

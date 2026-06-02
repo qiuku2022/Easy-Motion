@@ -1,17 +1,23 @@
-# 只跟踪 docs/ 目录，其他全部忽略
-# 场景：当前仓库仅作为需求文档归档，源码/构建产物不纳入版本控制
+node_modules/
+dist/
+build/
+.turbo/
+.cache/
+coverage/
+*.log
 
-# 第一步：忽略所有文件
-*
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
 
-# 第二步：恢复 .gitignore 自身（否则规则会把自身也忽略，导致无法提交）
-!.gitignore
+# IDE / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
 
-# 第三步：恢复 docs/ 目录本身
-!docs/
-
-# 第四步：恢复 docs/ 下所有子目录（git 默认不跟踪被忽略的目录）
-!docs/**/
-
-# 第五步：恢复 docs/ 下所有文件
-!docs/**
+# Runtime
+tmp/
+*.pid

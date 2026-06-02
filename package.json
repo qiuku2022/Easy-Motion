@@ -1,0 +1,15 @@
+{
+  "name": "easymotion",
+  "version": "0.1.0",
+  "private": true,
+  "description": "EasyMotion monorepo workspace",
+  "packageManager": "pnpm@10.13.1",
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter @easymotion/electron dev\" \"pnpm --filter @easymotion/python dev\"",
+    "dev:electron": "pnpm --filter @easymotion/electron dev",
+    "dev:python": "pnpm --filter @easymotion/python dev"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  }
+}
