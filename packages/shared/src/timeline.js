@@ -36,20 +36,38 @@ function validateTimeline(timeline) {
     if (!Array.isArray(track.clips)) {
       throw new Error(`track ${track.id} clips must be an array`);
     }
-    for (const clip of track.clips) {
-      if (
-        typeof clip.startInFrames !== "number" ||
-        typeof clip.durationInFrames !== "number"
-      ) {
-        throw new Error(`clip ${clip.id} frame range invalid`);
+    validateTrackClips(track, timeline.durationInFrames);
+    if (track.type === "group") {
+      if (!Array.isArray(track.children)) {
+        throw new Error(`group ${track.id} must have children array`);
       }
-      if (clip.startInFrames + clip.durationInFrames > timeline.durationInFrames) {
-        throw new Error(`clip ${clip.id} exceeds timeline duration`);
+      if (track.clips.length > 0) {
+        throw new Error(`group ${track.id} must not contain clips`);
+      }
+      for (const child of track.children) {
+        if (!TRACK_TYPES.includes(child.type) || child.type === "group") {
+          throw new Error(`invalid child track type in group ${track.id}`);
+        }
+        validateTrackClips(child, timeline.durationInFrames);
       }
     }
   }
 
   return true;
+}
+
+function validateTrackClips(track, durationInFrames) {
+  for (const clip of track.clips) {
+    if (
+      typeof clip.startInFrames !== "number" ||
+      typeof clip.durationInFrames !== "number"
+    ) {
+      throw new Error(`clip ${clip.id} frame range invalid`);
+    }
+    if (clip.startInFrames + clip.durationInFrames > durationInFrames) {
+      throw new Error(`clip ${clip.id} exceeds timeline duration`);
+    }
+  }
 }
 
 module.exports = {

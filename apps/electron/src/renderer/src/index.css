@@ -33,6 +33,48 @@
     @apply border-em-border;
   }
 
+  /* 时间线等区域：可滚动但不显示滚动条（Premiere 风格） */
+  .scrollbar-hidden {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  @keyframes clip-floating-toolbar-in-above {
+    from {
+      opacity: 0;
+      transform: translate(-50%, calc(-100% + 8px));
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -100%);
+    }
+  }
+
+  @keyframes clip-floating-toolbar-in-below {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%);
+    }
+  }
+
+  .clip-floating-toolbar-above {
+    animation: clip-floating-toolbar-in-above 200ms ease-out forwards;
+  }
+
+  .clip-floating-toolbar-below {
+    animation: clip-floating-toolbar-in-below 200ms ease-out forwards;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

@@ -1,18 +1,30 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, screen } = require("electron");
 const path = require("node:path");
 const { registerProjectHandlers } = require("./ipc-handlers/project");
 const { registerTimelineHandlers } = require("./ipc-handlers/timeline");
 const { registerPreviewHandlers } = require("./ipc-handlers/preview");
+const { registerAssetHandlers } = require("./ipc-handlers/asset");
 const previewService = require("./services/preview-service");
 const { ensureDir } = require("./services/file-service");
 const { getConfigDir } = require("./utils/paths");
 
 const RENDERER_DEV_URL = process.env.ELECTRON_RENDERER_URL || "http://127.0.0.1:5173";
 
+function getInitialWindowBounds() {
+  const { workArea } = screen.getPrimaryDisplay();
+  const width = Math.round(workArea.width * 0.75);
+  const height = Math.round(workArea.height * 0.75);
+  return {
+    width,
+    height,
+    x: Math.round(workArea.x + (workArea.width - width) / 2),
+    y: Math.round(workArea.y + (workArea.height - height) / 2),
+  };
+}
+
 const createWindow = () => {
   const win = new BrowserWindow({
-    width: 1400,
-    height: 900,
+    ...getInitialWindowBounds(),
     minWidth: 1200,
     minHeight: 700,
     webPreferences: {
@@ -43,6 +55,7 @@ app.whenReady().then(() => {
   registerProjectHandlers();
   registerTimelineHandlers();
   registerPreviewHandlers();
+  registerAssetHandlers();
   createWindow();
 
   app.on("activate", () => {
@@ -54,6 +67,9 @@ app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();
 });
 
-app.on("before-quit", async () => {
-  await previewService.stopPreview();
+/** 退出时尽力停预览，不阻塞进程退出（F5 停止调试需立即结束） */
+app.on("before-quit", () => {
+  void previewService.stopPreview().catch((err) => {
+    console.error("[app] preview cleanup failed:", err);
+  });
 });

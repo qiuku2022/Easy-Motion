@@ -57,12 +57,14 @@ docs/design-system/# 设计 Token（权威）
 
 | 配置 | 用途 |
 |------|------|
-| **EasyMotion: Dev (Electron 窗口)** | 推荐：自动确保 Vite → 打开 Electron（主进程断点） |
-| **EasyMotion: Dev + Renderer 断点** | 同上，并等待 CDP `9222` 后附加 React |
-| **EasyMotion: Legacy UI (M3)** | 旧 HTML UI |
-| **Python: FastAPI (8001)** | 后端（默认 8001，因 Windows 常占用 8000） |
+| **EasyMotion: Dev** | 推荐：自动确保 Vite → 启动 Electron（主进程断点） |
+| **EasyMotion: Dev + React 断点** | 同上，并附加 React 渲染进程断点 |
+| **EasyMotion: Full Stack** | Python FastAPI + Electron |
+| **React: Vite (Chrome)** | 仅调试渲染层，不启动 Electron |
+| **Remotion Preview (attach)** | 附加到 Remotion Vite（先 F5 打开项目并等预览启动；F5 时输入日志里的端口与项目 `remotion` 目录） |
+| **Python: FastAPI** | 单独调试后端（端口 8001） |
 
-任务面板亦可运行 **`pnpm: dev`** / **`pnpm: dev:all`**。
+任务面板：**`pnpm: dev`** / **`pnpm: dev:all`** / **`pnpm: test`**。旧版 HTML UI 用 `pnpm dev:legacy`（在 `apps/electron`）。
 
 ### 常见问题
 
@@ -75,7 +77,10 @@ docs/design-system/# 设计 Token（权威）
 3. **Electron 安装失败**  
    执行 `pnpm approve-builds` 批准 `electron` 构建脚本后，再 `pnpm install`。
 
-4. **终端中文乱码**  
+4. **Remotion 预览断点不命中**  
+   预览端口可能是 5174–5193（非固定 5174）。用 **Remotion Preview (attach)** 时按启动日志填写端口；`webRoot` 填当前打开项目下的 `subprojects/default/remotion`（不是仓库里的模板路径）。
+
+5. **终端中文乱码**  
    工作区已配置 UTF-8 相关环境变量；避免在 UTF-8 终端里对 `concurrently -k` 连按 Ctrl+C（易触发 GBK 批处理提示乱码）。
 
 ## Windows：Electron 首次安装

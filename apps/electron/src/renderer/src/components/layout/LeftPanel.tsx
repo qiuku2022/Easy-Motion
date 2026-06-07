@@ -1,7 +1,8 @@
 import { PanelTabs } from "@/components/common/PanelTabs";
+import { AssetsPanel } from "@/components/assets/AssetsPanel";
 import { ProjectPanel } from "@/components/project/ProjectPanel";
 import { useUiStore } from "@/stores/uiStore";
-import { Image, LayoutTemplate } from "lucide-react";
+import { LayoutTemplate } from "lucide-react";
 
 const TABS = [
   { id: "project" as const, label: "项目" },
@@ -17,13 +18,7 @@ export function LeftPanel() {
       <PanelTabs tabs={TABS} active={leftTab} onChange={setLeftTab} />
       <div className="flex flex-1 flex-col overflow-auto p-3 text-sm text-em-muted">
         {leftTab === "project" && <ProjectPanel />}
-        {leftTab === "assets" && (
-          <EmptyHint
-            icon={<Image className="h-10 w-10 text-em-border" />}
-            title="素材库"
-            hint="拖拽文件到此处导入"
-          />
-        )}
+        {leftTab === "assets" && <AssetsPanel />}
         {leftTab === "presets" && (
           <EmptyHint
             icon={<LayoutTemplate className="h-10 w-10 text-em-border" />}

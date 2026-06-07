@@ -1,11 +1,15 @@
 /**
  * VS Code F5：若 5173 未就绪则后台启动 Vite，并等待可访问
+ * 启动的进程 pid 写入临时文件，供 stop 调试时 cleanup-debug-processes 回收
  */
 const { spawn } = require("node:child_process");
+const fs = require("node:fs");
+const os = require("node:os");
 const path = require("node:path");
 const waitOn = require("wait-on");
 
 const repoRoot = path.resolve(__dirname, "../../..");
+const VITE_PID_FILE = path.join(os.tmpdir(), "easymotion-debug-vite.pid");
 const target = "http-get://127.0.0.1:5173";
 const waitOpts = {
   interval: 500,
@@ -28,13 +32,19 @@ async function main() {
   }
 
   console.log("[ensure-vite] starting pnpm dev:renderer …");
-  const child = spawn("pnpm", ["dev:renderer"], {
+  const child = spawn("pnpm dev:renderer", {
     cwd: repoRoot,
     shell: true,
     detached: true,
     stdio: "ignore",
+    windowsHide: true,
   });
   child.unref();
+
+  if (child.pid) {
+    fs.writeFileSync(VITE_PID_FILE, String(child.pid), "utf8");
+    console.log("[ensure-vite] recorded debug vite pid", child.pid);
+  }
 
   await waitOn({ resources: [target], timeout: 120000, ...waitOpts });
   console.log("[ensure-vite] ready:", target);

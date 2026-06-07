@@ -41,12 +41,79 @@ export interface EasyMotionApi {
     generate: (payload?: {
       subprojectPath?: string;
     }) => Promise<IpcResult<{ files: string[]; previewReload?: boolean }>>;
+    checkRemotionDrift: (payload?: {
+      subprojectPath?: string;
+    }) => Promise<
+      IpcResult<{
+        drifted: boolean;
+        suggestSync: boolean;
+        tracksEmpty: boolean;
+        fingerprint?: string;
+        storedFingerprint?: string | null;
+        hasCustomRemotionCode?: boolean;
+        customRemotionReason?: string | null;
+      }>
+    >;
+    syncPreviewManifest: (payload: {
+      timeline: Timeline;
+      subprojectPath?: string;
+    }) => Promise<
+      IpcResult<{
+        manifestWritten?: boolean;
+        timeline?: Timeline;
+        previewReload?: boolean;
+        timelinePush?: boolean;
+      }>
+    >;
+    syncFromRemotion: (payload?: {
+      subprojectPath?: string;
+      preserveTracks?: boolean;
+    }) => Promise<
+      IpcResult<{
+        timeline: Timeline;
+        stats: {
+          trackCount: number;
+          clipCount: number;
+          fingerprint: string;
+          syncSource: string;
+          compositionResolved: boolean;
+          compositionError?: string | null;
+          manifestUsed?: boolean;
+        };
+      }>
+    >;
   };
   preview: {
-    start: (payload?: unknown) => Promise<IpcResult<{ url: string }>>;
+    start: (payload?: unknown) => Promise<
+      IpcResult<{ url: string; remotionFingerprint?: string | null }>
+    >;
     stop: () => Promise<IpcResult<unknown>>;
     getState: () => Promise<IpcResult<{ status: string; url?: string }>>;
-    onLog: (callback: (data: { line?: string }) => void) => void;
+    onLog: (callback: (data: { line?: string; phase?: string }) => void) => void;
+  };
+  asset: {
+    list: () => Promise<IpcResult<import("./asset").ProjectAsset[]>>;
+    importFiles: (payload: {
+      filePaths: string[];
+      subprojectPath?: string;
+      fps?: number;
+    }) => Promise<
+      IpcResult<{
+        imported: import("./asset").ProjectAsset[];
+        errors: { path?: string; message: string }[];
+        assets: import("./asset").ProjectAsset[];
+      }>
+    >;
+    pickAndImport: (payload?: {
+      subprojectPath?: string;
+      fps?: number;
+    }) => Promise<
+      IpcResult<{
+        imported: import("./asset").ProjectAsset[];
+        errors: { path?: string; message: string }[];
+        assets: import("./asset").ProjectAsset[];
+      }>
+    >;
   };
 }
 

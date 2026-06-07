@@ -56,8 +56,8 @@ export function AppLayout() {
   return (
     <div className="flex h-screen flex-col overflow-hidden">
       <TopToolbar />
-      <div className="flex min-h-0 flex-1 flex-col">
-        <div className="flex min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        <div className="flex min-h-0 flex-1 overflow-hidden">
           {!leftCollapsed && (
             <>
               <div
@@ -69,7 +69,7 @@ export function AppLayout() {
               <PanelResizer axis="horizontal" onResize={onResizeLeft} />
             </>
           )}
-          <main className="flex min-w-0 flex-1 flex-col">
+          <main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
             <PreviewWindow />
           </main>
           {!rightCollapsed && (

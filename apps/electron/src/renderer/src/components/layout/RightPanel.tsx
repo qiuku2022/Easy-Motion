@@ -1,7 +1,6 @@
-import { useMemo } from "react";
 import { PanelTabs } from "@/components/common/PanelTabs";
+import { PropertiesPanel } from "@/components/properties/PropertiesPanel";
 import { useUiStore } from "@/stores/uiStore";
-import { useTimelineStore } from "@/stores/timelineStore";
 import { Bot, Sparkles } from "lucide-react";
 
 const TABS = [
@@ -13,38 +12,12 @@ const TABS = [
 
 export function RightPanel() {
   const { rightTab, setRightTab } = useUiStore();
-  const timeline = useTimelineStore((s) => s.timeline);
-  const selectedClipId = useTimelineStore((s) => s.selectedClipId);
-
-  const selected = useMemo(() => {
-    if (!timeline || !selectedClipId) return null;
-    for (const track of timeline.tracks) {
-      const clip = track.clips.find((c) => c.id === selectedClipId);
-      if (clip) return { track, clip };
-    }
-    return null;
-  }, [timeline, selectedClipId]);
 
   return (
     <aside className="flex h-full min-w-0 flex-col border-l border-em-border bg-em-bg">
       <PanelTabs tabs={TABS} active={rightTab} onChange={setRightTab} />
       <div className="flex flex-1 flex-col overflow-auto p-3 text-sm">
-        {rightTab === "properties" &&
-          (selected ? (
-            <div className="space-y-2 text-em-text">
-              <p className="font-medium">{selected.clip.name}</p>
-              <p className="text-xs text-em-muted">
-                轨道：{selected.track.name} · {selected.clip.type}
-              </p>
-              <p className="font-mono text-xs text-em-muted">
-                {selected.clip.startInFrames} →{" "}
-                {selected.clip.startInFrames + selected.clip.durationInFrames} 帧 （
-                {selected.clip.durationInFrames} 帧）
-              </p>
-            </div>
-          ) : (
-            <p className="text-em-muted">选中时间线片段后显示属性</p>
-          ))}
+        {rightTab === "properties" && <PropertiesPanel />}
         {rightTab === "assets" && <p className="text-em-muted">快捷素材区</p>}
         {rightTab === "presets" && <p className="text-em-muted">预设浏览</p>}
         {rightTab === "ai" && (

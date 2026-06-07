@@ -33,13 +33,18 @@
   "debug.openDebug": "openOnDebugBreak",
   "debug.allowBreakpointsEverywhere": true,
   "debug.onTaskErrors": "showErrors",
-  "terminal.integrated.defaultProfile.windows": "PowerShell (UTF-8)",
+  "terminal.integrated.defaultProfile.windows": "PowerShell 7",
   "terminal.integrated.automationProfile.windows": {
-    "path": "powershell.exe",
+    "path": "${env:ProgramFiles}\\PowerShell\\7\\pwsh.exe",
     "args": ["-NoProfile", "-ExecutionPolicy", "Bypass"]
   },
   "terminal.integrated.profiles.windows": {
-    "PowerShell (UTF-8)": {
+    "PowerShell 7": {
+      "path": "${env:ProgramFiles}\\PowerShell\\7\\pwsh.exe",
+      "icon": "terminal-powershell",
+      "args": ["-NoExit"]
+    },
+    "Windows PowerShell": {
       "source": "PowerShell",
       "icon": "terminal-powershell",
       "args": ["-NoExit"]

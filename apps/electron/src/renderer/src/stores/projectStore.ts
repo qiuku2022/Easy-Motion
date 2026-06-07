@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { getEasyMotion } from "@/types/easyMotion";
 import { useTimelineStore } from "@/stores/timelineStore";
+import { useAssetStore } from "@/stores/assetStore";
 
 export interface CurrentProject {
   name: string;
@@ -68,7 +69,10 @@ export const useProjectStore = create<ProjectState>((set) => ({
     }
 
     await useProjectStore.getState().refreshCurrent();
-    await useTimelineStore.getState().loadTimeline();
+    await Promise.all([
+      useTimelineStore.getState().loadTimeline(),
+      useAssetStore.getState().loadAssets(),
+    ]);
     return true;
   },
 
@@ -94,7 +98,10 @@ export const useProjectStore = create<ProjectState>((set) => ({
     }
 
     await useProjectStore.getState().refreshCurrent();
-    await useTimelineStore.getState().loadTimeline();
+    await Promise.all([
+      useTimelineStore.getState().loadTimeline(),
+      useAssetStore.getState().loadAssets(),
+    ]);
     return true;
   },
 

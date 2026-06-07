@@ -8,8 +8,10 @@ import {
   Sparkles,
   Undo2,
 } from "lucide-react";
+import { PR_SHORTCUTS } from "@/lib/premiereShortcuts";
 import { cn } from "@/lib/utils";
 import { useProjectStore } from "@/stores/projectStore";
+import { useTimelineStore } from "@/stores/timelineStore";
 import { useUiStore } from "@/stores/uiStore";
 
 function ToolbarButton({
@@ -48,6 +50,10 @@ export function TopToolbar() {
   const saveProject = useProjectStore((s) => s.saveProject);
   const isLoading = useProjectStore((s) => s.isLoading);
   const setRightTab = useUiStore((s) => s.setRightTab);
+  const undo = useTimelineStore((s) => s.undo);
+  const redo = useTimelineStore((s) => s.redo);
+  const canUndo = useTimelineStore((s) => s.history.past.length > 0);
+  const canRedo = useTimelineStore((s) => s.history.future.length > 0);
 
   return (
     <header className="z-40 flex h-11 shrink-0 items-center justify-between border-b border-em-border bg-em-bg px-2">
@@ -55,14 +61,22 @@ export function TopToolbar() {
         <ToolbarButton label="菜单">
           <Menu className="h-4 w-4" />
         </ToolbarButton>
-        <ToolbarButton label="撤销">
+        <ToolbarButton
+          label={`撤销 (${PR_SHORTCUTS.undo})`}
+          disabled={!canUndo}
+          onClick={undo}
+        >
           <Undo2 className="h-4 w-4" />
         </ToolbarButton>
-        <ToolbarButton label="重做">
+        <ToolbarButton
+          label={`重做 (${PR_SHORTCUTS.redo})`}
+          disabled={!canRedo}
+          onClick={redo}
+        >
           <Redo2 className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
-          label="保存"
+          label={`保存 (${PR_SHORTCUTS.save})`}
           disabled={isLoading}
           onClick={() => void saveProject()}
         >

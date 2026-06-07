@@ -1,24 +1,33 @@
 {
   "version": "0.2.0",
+  "inputs": [
+    {
+      "id": "remotionDebugPort",
+      "type": "promptString",
+      "description": "Remotion 预览端口（见启动日志 previewUrl，默认 5174）",
+      "default": "5174"
+    },
+    {
+      "id": "remotionWebRoot",
+      "type": "promptString",
+      "description": "当前项目的 remotion 目录（含 preview.html、src/）",
+      "default": "${workspaceFolder}/apps/electron/resources/templates/default-project/subprojects/default/remotion"
+    }
+  ],
   "configurations": [
     {
-      "name": "EasyMotion: Dev (Electron 窗口)",
+      "name": "▸ Electron Main",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}/apps/electron",
-      "preLaunchTask": "debug: prepare (vite + wait)",
-      "runtimeExecutable": "${workspaceFolder}/apps/electron/node_modules/electron/dist/electron.exe",
+      "preLaunchTask": "debug: prepare",
+      "postDebugTask": "debug: cleanup",
+      "runtimeExecutable": "${workspaceFolder}/apps/electron/node_modules/.bin/electron",
       "windows": {
-        "runtimeExecutable": "${workspaceFolder}/apps/electron/node_modules/electron/dist/electron.exe"
-      },
-      "linux": {
-        "runtimeExecutable": "${workspaceFolder}/apps/electron/node_modules/electron/dist/electron"
-      },
-      "osx": {
-        "runtimeExecutable": "${workspaceFolder}/apps/electron/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron"
+        "runtimeExecutable": "${workspaceFolder}/apps/electron/node_modules/.bin/electron.cmd"
       },
       "program": "${workspaceFolder}/apps/electron/src/main/index.js",
-      "args": ["--remote-debugging-port=9222"],
+      "args": ["--remote-debugging-port=9333"],
       "outputCapture": "std",
       "console": "integratedTerminal",
       "sourceMaps": true,
@@ -30,27 +39,31 @@
       "env": {
         "ELECTRON_ENABLE_LOGGING": "1",
         "NODE_ENV": "development",
-        "ELECTRON_RENDERER_URL": "http://127.0.0.1:5173"
-      }
+        "ELECTRON_RENDERER_URL": "http://127.0.0.1:5173",
+        "ELECTRON_CDP_PORT": "9333"
+      },
+      "presentation": { "hidden": true }
     },
     {
-      "name": "Electron: Attach Renderer (React)",
+      "name": "▸ Attach React Renderer",
       "type": "chrome",
       "request": "attach",
-      "preLaunchTask": "wait: electron cdp 9222",
-      "port": 9222,
+      "preLaunchTask": "wait: electron cdp",
+      "port": 9333,
+      "urlFilter": "http://127.0.0.1:5173/*",
       "webRoot": "${workspaceFolder}/apps/electron/src/renderer/src",
-      "timeout": 60000,
+      "timeout": 120000,
       "sourceMaps": true,
       "sourceMapPathOverrides": {
         "webpack:///*": "${webRoot}/*",
         "/src/*": "${webRoot}/*",
         "/@fs/*": "/*",
         "/@/*": "${webRoot}/*"
-      }
+      },
+      "presentation": { "hidden": true }
     },
     {
-      "name": "Python: FastAPI (8001)",
+      "name": "Python: FastAPI",
       "type": "debugpy",
       "request": "launch",
       "module": "uvicorn",
@@ -63,144 +76,58 @@
         "PYTHONIOENCODING": "utf-8",
         "PYTHONUTF8": "1"
       },
-      "console": "integratedTerminal"
-    },
-    {
-      "name": "Electron: Legacy UI (M3)",
-      "type": "node",
-      "request": "launch",
-      "cwd": "${workspaceFolder}/apps/electron",
-      "runtimeExecutable": "${workspaceFolder}/apps/electron/node_modules/electron/dist/electron.exe",
-      "windows": {
-        "runtimeExecutable": "${workspaceFolder}/apps/electron/node_modules/electron/dist/electron.exe"
-      },
-      "linux": {
-        "runtimeExecutable": "${workspaceFolder}/apps/electron/node_modules/electron/dist/electron"
-      },
-      "osx": {
-        "runtimeExecutable": "${workspaceFolder}/apps/electron/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron"
-      },
-      "program": "${workspaceFolder}/apps/electron/src/main/index.js",
-      "args": ["--legacy-ui", "--remote-debugging-port=9222"],
-      "outputCapture": "std",
       "console": "integratedTerminal",
-      "sourceMaps": true,
-      "skipFiles": [
-        "<node_internals>/**",
-        "${workspaceFolder}/apps/electron/node_modules/**"
-      ],
-      "env": {
-        "ELECTRON_ENABLE_LOGGING": "1",
-        "NODE_ENV": "development",
-        "EASY_MOTION_LEGACY_UI": "1"
-      }
+      "postDebugTask": "debug: cleanup (full stack)",
+      "presentation": { "group": "components", "order": 1 }
     },
     {
-      "name": "Renderer: Vite only (Chrome)",
+      "name": "React: Vite (Chrome)",
       "type": "chrome",
       "request": "launch",
       "url": "http://127.0.0.1:5173",
       "webRoot": "${workspaceFolder}/apps/electron/src/renderer/src",
-      "preLaunchTask": "debug: prepare (vite + wait)",
+      "preLaunchTask": "debug: prepare",
+      "postDebugTask": "debug: cleanup",
       "sourceMaps": true,
       "sourceMapPathOverrides": {
         "/src/*": "${webRoot}/*",
         "/@/*": "${webRoot}/*"
-      }
+      },
+      "presentation": { "group": "components", "order": 2 }
     },
     {
-      "name": "Remotion Preview: Vite (attach)",
+      "name": "Remotion Preview (attach)",
       "type": "chrome",
       "request": "attach",
-      "port": 5174,
-      "webRoot": "${workspaceFolder}/apps/electron/resources/templates/default-project/subprojects/default/remotion",
-      "urlFilter": "http://127.0.0.1:5174/*",
+      "port": "${input:remotionDebugPort}",
+      "webRoot": "${input:remotionWebRoot}",
       "timeout": 120000,
       "sourceMaps": true,
-      "presentation": {
-        "group": "Preview",
-        "order": 1
-      }
-    },
-    {
-      "name": "Test: file-service",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceFolder}/apps/electron/scripts/test-file-service.js",
-      "cwd": "${workspaceFolder}/apps/electron",
-      "console": "integratedTerminal",
-      "skipFiles": ["<node_internals>/**"]
-    },
-    {
-      "name": "Test: project-service (M1)",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceFolder}/apps/electron/scripts/test-project-service.js",
-      "cwd": "${workspaceFolder}/apps/electron",
-      "console": "integratedTerminal",
-      "skipFiles": ["<node_internals>/**"]
-    },
-    {
-      "name": "Test: timeline-schema",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceFolder}/apps/electron/scripts/test-timeline-schema.js",
-      "cwd": "${workspaceFolder}/apps/electron",
-      "console": "integratedTerminal",
-      "skipFiles": ["<node_internals>/**"]
-    },
-    {
-      "name": "Test: generator (M2/M3)",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceFolder}/apps/electron/scripts/test-generator.js",
-      "cwd": "${workspaceFolder}/apps/electron",
-      "console": "integratedTerminal",
-      "skipFiles": ["<node_internals>/**"]
-    },
-    {
-      "name": "Test: timeline-service (M2)",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceFolder}/apps/electron/scripts/test-timeline-service.js",
-      "cwd": "${workspaceFolder}/apps/electron",
-      "console": "integratedTerminal",
-      "skipFiles": ["<node_internals>/**"]
+      "sourceMapPathOverrides": {
+        "/src/*": "${input:remotionWebRoot}/src/*",
+        "/@fs/*": "/*"
+      },
+      "presentation": { "group": "components", "order": 3 }
     }
   ],
   "compounds": [
     {
-      "name": "EasyMotion: Dev + Renderer 断点",
-      "configurations": [
-        "EasyMotion: Dev (Electron 窗口)",
-        "Electron: Attach Renderer (React)"
-      ],
+      "name": "EasyMotion: Dev",
+      "configurations": ["▸ Electron Main"],
       "stopAll": true,
-      "presentation": {
-        "group": "EasyMotion",
-        "order": 2
-      }
+      "presentation": { "group": "main", "order": 1 }
     },
     {
-      "name": "EasyMotion: Legacy UI (M3)",
-      "configurations": ["Electron: Legacy UI (M3)"],
+      "name": "EasyMotion: Dev + React 断点",
+      "configurations": ["▸ Electron Main", "▸ Attach React Renderer"],
       "stopAll": true,
-      "presentation": {
-        "group": "EasyMotion",
-        "order": 3
-      }
+      "presentation": { "group": "main", "order": 2 }
     },
     {
-      "name": "EasyMotion: Full Stack (Python + Electron)",
-      "configurations": [
-        "Python: FastAPI (8001)",
-        "EasyMotion: Dev (Electron 窗口)"
-      ],
+      "name": "EasyMotion: Full Stack",
+      "configurations": ["Python: FastAPI", "▸ Electron Main"],
       "stopAll": true,
-      "presentation": {
-        "group": "EasyMotion",
-        "order": 4
-      }
+      "presentation": { "group": "main", "order": 3 }
     }
   ]
 }

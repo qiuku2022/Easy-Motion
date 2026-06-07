@@ -8,82 +8,79 @@
   },
   "tasks": [
     {
-      "label": "vite: dev server",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["dev:renderer"],
+      "label": "free: electron cdp",
+      "type": "process",
+      "command": "node",
+      "args": ["${workspaceFolder}/apps/electron/scripts/free-cdp-port.cjs"],
       "options": {
-        "cwd": "${workspaceFolder}"
+        "cwd": "${workspaceFolder}/apps/electron",
+        "env": { "ELECTRON_CDP_PORT": "9333" }
       },
-      "isBackground": true,
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "group": "dev"
-      },
-      "problemMatcher": {
-        "owner": "vite",
-        "pattern": {
-          "regexp": "."
-        },
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": ".",
-          "endsPattern": "(Local:|5173|ready in \\d+ ms)"
-        }
-      }
+      "presentation": { "reveal": "never", "panel": "dedicated", "close": true },
+      "problemMatcher": []
     },
     {
-      "label": "wait: electron cdp 9222",
-      "type": "shell",
+      "label": "wait: electron cdp",
+      "type": "process",
       "command": "node",
       "args": ["${workspaceFolder}/apps/electron/scripts/wait-cdp.cjs"],
       "options": {
-        "cwd": "${workspaceFolder}/apps/electron"
+        "cwd": "${workspaceFolder}/apps/electron",
+        "env": { "ELECTRON_CDP_PORT": "9333" }
       },
-      "presentation": {
-        "reveal": "silent",
-        "panel": "dedicated",
-        "group": "dev"
-      },
+      "presentation": { "reveal": "never", "panel": "dedicated", "close": true },
       "problemMatcher": []
     },
     {
-      "label": "wait: vite 5173",
-      "type": "shell",
+      "label": "ensure: vite",
+      "type": "process",
       "command": "node",
-      "args": ["${workspaceFolder}/apps/electron/scripts/wait-vite.cjs"],
+      "args": ["${workspaceFolder}/apps/electron/scripts/ensure-vite-for-debug.cjs"],
+      "options": { "cwd": "${workspaceFolder}/apps/electron" },
+      "presentation": { "reveal": "never", "panel": "dedicated", "close": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "debug: prepare",
+      "type": "process",
+      "command": "node",
+      "args": ["${workspaceFolder}/apps/electron/scripts/debug-prepare.cjs"],
+      "options": {
+        "cwd": "${workspaceFolder}/apps/electron",
+        "env": { "ELECTRON_CDP_PORT": "9333" }
+      },
+      "presentation": { "reveal": "never", "panel": "dedicated", "close": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "debug: cleanup",
+      "type": "process",
+      "command": "node",
+      "args": ["${workspaceFolder}/apps/electron/scripts/cleanup-debug-processes.cjs"],
       "options": {
         "cwd": "${workspaceFolder}/apps/electron",
         "env": {
-          "VITE_DEV_URL": "http-get://127.0.0.1:5173"
+          "ELECTRON_CDP_PORT": "9333",
+          "EASY_MOTION_PYTHON_PORT": "8001"
         }
       },
-      "presentation": {
-        "reveal": "silent",
-        "panel": "dedicated",
-        "group": "dev"
-      },
+      "presentation": { "reveal": "never", "panel": "dedicated", "close": true },
       "problemMatcher": []
     },
     {
-      "label": "ensure: vite for debug",
-      "type": "shell",
+      "label": "debug: cleanup (full stack)",
+      "type": "process",
       "command": "node",
-      "args": ["${workspaceFolder}/apps/electron/scripts/ensure-vite-for-debug.cjs"],
+      "args": ["${workspaceFolder}/apps/electron/scripts/cleanup-debug-processes.cjs"],
       "options": {
-        "cwd": "${workspaceFolder}/apps/electron"
+        "cwd": "${workspaceFolder}/apps/electron",
+        "env": {
+          "ELECTRON_CDP_PORT": "9333",
+          "EASY_MOTION_PYTHON_PORT": "8001",
+          "EASY_MOTION_CLEANUP_PYTHON": "1"
+        }
       },
-      "presentation": {
-        "reveal": "silent",
-        "panel": "dedicated",
-        "group": "dev"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "debug: prepare (vite + wait)",
-      "dependsOn": ["ensure: vite for debug"],
+      "presentation": { "reveal": "never", "panel": "dedicated", "close": true },
       "problemMatcher": []
     },
     {
@@ -91,18 +88,9 @@
       "type": "shell",
       "command": "pnpm",
       "args": ["dev"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "group": "dev"
-      },
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": { "kind": "build", "isDefault": true },
+      "presentation": { "reveal": "always", "panel": "dedicated", "group": "dev" },
       "problemMatcher": []
     },
     {
@@ -110,29 +98,8 @@
       "type": "shell",
       "command": "pnpm",
       "args": ["dev:all"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "group": "dev"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "pnpm: dev:renderer",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["dev:renderer"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "group": "dev"
-      },
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "dedicated", "group": "dev" },
       "problemMatcher": []
     },
     {
@@ -140,98 +107,10 @@
       "type": "shell",
       "command": "pnpm",
       "args": ["dev:electron"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "dependsOn": ["debug: prepare (vite + wait)"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": ["debug: prepare"],
       "dependsOrder": "sequence",
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "group": "dev"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "pnpm: dev:python",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["dev:python"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "isBackground": true,
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "group": "dev"
-      },
-      "problemMatcher": {
-        "owner": "python",
-        "pattern": {
-          "regexp": "."
-        },
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": "Uvicorn running",
-          "endsPattern": "Application startup complete"
-        }
-      }
-    },
-    {
-      "label": "pnpm: lint",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["lint"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared"
-      },
-      "problemMatcher": ["$eslint-stylish"]
-    },
-    {
-      "label": "pnpm: test:m1",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["test:m1"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "pnpm: test:m2",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["test:m2"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "pnpm: test:m3",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["test:m3"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated"
-      },
+      "presentation": { "reveal": "always", "panel": "dedicated", "group": "dev" },
       "problemMatcher": []
     },
     {
@@ -239,14 +118,18 @@
       "type": "shell",
       "command": "pnpm",
       "args": ["test"],
-      "options": {
-        "cwd": "${workspaceFolder}"
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated"
-      },
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "dedicated" },
       "problemMatcher": []
+    },
+    {
+      "label": "pnpm: lint",
+      "type": "shell",
+      "command": "pnpm",
+      "args": ["lint"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": ["$eslint-stylish"]
     },
     {
       "label": "uv: install python deps",
@@ -254,27 +137,19 @@
       "windows": {
         "command": "${workspaceFolder}\\apps\\python\\.venv\\Scripts\\pip.exe",
         "args": ["install", "-r", "requirements.txt"],
-        "options": {
-          "cwd": "${workspaceFolder}\\apps\\python"
-        }
+        "options": { "cwd": "${workspaceFolder}\\apps\\python" }
       },
       "linux": {
         "command": "${workspaceFolder}/apps/python/.venv/bin/pip",
         "args": ["install", "-r", "requirements.txt"],
-        "options": {
-          "cwd": "${workspaceFolder}/apps/python"
-        }
+        "options": { "cwd": "${workspaceFolder}/apps/python" }
       },
       "osx": {
         "command": "${workspaceFolder}/apps/python/.venv/bin/pip",
         "args": ["install", "-r", "requirements.txt"],
-        "options": {
-          "cwd": "${workspaceFolder}/apps/python"
-        }
+        "options": { "cwd": "${workspaceFolder}/apps/python" }
       },
-      "presentation": {
-        "reveal": "always"
-      },
+      "presentation": { "reveal": "always" },
       "problemMatcher": []
     }
   ]

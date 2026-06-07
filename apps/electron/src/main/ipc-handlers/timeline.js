@@ -56,13 +56,61 @@ function registerTimelineHandlers() {
   );
 
   ipcMain.handle(
+    "main:timeline:checkRemotionDrift",
+    wrap((payload) => {
+      const projectPath = getProjectRoot(payload);
+      return timelineService.checkRemotionDrift(projectPath, payload?.subprojectPath);
+    }),
+  );
+
+  ipcMain.handle(
+    "main:timeline:syncFromRemotion",
+    wrap(async (payload) => {
+      const projectPath = getProjectRoot(payload);
+      return timelineService.syncTimelineFromRemotion(
+        projectPath,
+        payload?.subprojectPath,
+        { preserveTracks: payload?.preserveTracks },
+      );
+    }),
+  );
+
+  ipcMain.handle(
+    "main:timeline:syncPreviewManifest",
+    wrap(async (payload) => {
+      const projectPath = getProjectRoot(payload);
+      const subprojectPath = payload?.subprojectPath;
+      const remotionDir = previewService.getRemotionDir(projectPath, subprojectPath);
+      const soloSupportPatched = previewService.ensurePreviewSoloSupport(remotionDir);
+      const result = timelineService.syncPreviewManifest(
+        projectPath,
+        payload.timeline,
+        subprojectPath,
+      );
+      const state = previewService.getPreviewState();
+      if (state.status === "running") {
+        return {
+          ...result,
+          previewReload: soloSupportPatched,
+          timelinePush: !soloSupportPatched,
+        };
+      }
+      return result;
+    }),
+  );
+
+  ipcMain.handle(
     "main:timeline:generate",
     wrap(async (payload) => {
       const projectPath = getProjectRoot(payload);
+      const subprojectPath = payload?.subprojectPath;
       const result = timelineService.generateForSubproject(
         projectPath,
-        payload?.subprojectPath
+        subprojectPath,
       );
+      const remotionDir = previewService.getRemotionDir(projectPath, subprojectPath);
+      previewService.ensurePreviewEntry(remotionDir);
+      previewService.ensurePreviewSoloSupport(remotionDir);
       const state = previewService.getPreviewState();
       if (state.status === "running") {
         return { ...result, previewReload: true, previewUrl: state.url };

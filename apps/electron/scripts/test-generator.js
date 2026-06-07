@@ -30,8 +30,11 @@ async function run() {
     "utf8"
   );
 
-  if (!rootCode.includes("durationInFrames={90}")) {
-    throw new Error("Root.tsx duration mismatch");
+  if (!rootCode.includes("easymotion-timeline.manifest.json")) {
+    throw new Error("Root.tsx missing manifest import");
+  }
+  if (!rootCode.includes("calculateMetadata")) {
+    throw new Error("Root.tsx missing calculateMetadata");
   }
   if (!mainCode.includes("TextLayer")) {
     throw new Error("MainSequence missing TextLayer");
@@ -49,7 +52,16 @@ async function run() {
   if (config.durationInFrames !== 90) {
     throw new Error("preview-config duration mismatch");
   }
-  if (result.files.length !== 3) {
+  const manifest = JSON.parse(
+    fs.readFileSync(
+      path.join(remotionSrcDir, "easymotion-timeline.manifest.json"),
+      "utf8",
+    ),
+  );
+  if (manifest.timeline.durationInFrames !== 90) {
+    throw new Error("manifest duration mismatch");
+  }
+  if (result.files.length !== 4) {
     throw new Error("generator output file count mismatch");
   }
 

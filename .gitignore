@@ -72,8 +72,8 @@ temp/
 *.pid
 .omo/
 
-# Design tokens: commit MASTER; ignore generated page overrides from ui-ux-pro-max
-design-system/**/pages/
+# ui-ux-pro-max --persist 在仓库根目录生成的设计快照（权威：docs/design-system/）
+/design-system/
 
 # Remotion / preview artifacts inside template projects
 **/remotion/.cache/

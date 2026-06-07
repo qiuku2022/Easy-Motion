@@ -5,8 +5,8 @@
   "modifiedAt": 0,
   "settings": {
     "defaultResolution": { "width": 1920, "height": 1080 },
-    "defaultFps": 30,
-    "defaultDurationInFrames": 300
+    "defaultFps": 25,
+    "defaultDurationInFrames": 125
   },
   "subprojects": [
     {

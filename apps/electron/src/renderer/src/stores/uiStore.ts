@@ -1,4 +1,8 @@
 import { create } from "zustand";
+import {
+  DEFAULT_PX_PER_FRAME,
+  clampPxPerFrame,
+} from "@/lib/timeline/framePixels";
 
 export type LeftTab = "project" | "assets" | "presets";
 export type RightTab = "properties" | "assets" | "presets" | "ai";
@@ -12,6 +16,20 @@ interface UiState {
   timelineCollapsed: boolean;
   leftTab: LeftTab;
   rightTab: RightTab;
+
+  /** 时间线缩放：像素/帧 */
+  pxPerFrame: number;
+  /** 时间线内容区水平滚动（像素） */
+  timelineScrollX: number;
+  /** 吸附开关（工具栏 🧲） */
+  snapEnabled: boolean;
+  /** Alt 按住时临时禁用吸附 */
+  altKeyHeld: boolean;
+  /** 递增时触发时间线「适配窗口」 */
+  fitTimelineNonce: number;
+  /** 用户手动缩放后，避免 ResizeObserver 自动「适配」抢回缩放 */
+  timelineZoomManual: boolean;
+
   setLeftPanelWidth: (w: number) => void;
   setRightPanelWidth: (w: number) => void;
   setTimelineHeight: (h: number) => void;
@@ -20,17 +38,31 @@ interface UiState {
   toggleTimelineCollapsed: () => void;
   setLeftTab: (tab: LeftTab) => void;
   setRightTab: (tab: RightTab) => void;
+  setPxPerFrame: (px: number) => void;
+  setTimelineScrollX: (px: number) => void;
+  toggleSnapEnabled: () => void;
+  setAltKeyHeld: (held: boolean) => void;
+  zoomTimelineBy: (delta: number) => void;
+  requestTimelineFit: () => void;
 }
 
 export const useUiStore = create<UiState>((set) => ({
   leftPanelWidth: 220,
   rightPanelWidth: 280,
-  timelineHeight: 220,
+  timelineHeight: 260,
   leftCollapsed: false,
   rightCollapsed: false,
   timelineCollapsed: false,
   leftTab: "project",
   rightTab: "properties",
+
+  pxPerFrame: DEFAULT_PX_PER_FRAME,
+  timelineScrollX: 0,
+  snapEnabled: true,
+  altKeyHeld: false,
+  fitTimelineNonce: 0,
+  timelineZoomManual: false,
+
   setLeftPanelWidth: (leftPanelWidth) => set({ leftPanelWidth }),
   setRightPanelWidth: (rightPanelWidth) => set({ rightPanelWidth }),
   setTimelineHeight: (timelineHeight) => set({ timelineHeight }),
@@ -40,4 +72,21 @@ export const useUiStore = create<UiState>((set) => ({
     set((s) => ({ timelineCollapsed: !s.timelineCollapsed })),
   setLeftTab: (leftTab) => set({ leftTab }),
   setRightTab: (rightTab) => set({ rightTab }),
+  setPxPerFrame: (px) => set({ pxPerFrame: clampPxPerFrame(px) }),
+  setTimelineScrollX: (timelineScrollX) =>
+    set({ timelineScrollX: Math.max(0, timelineScrollX) }),
+  toggleSnapEnabled: () => set((s) => ({ snapEnabled: !s.snapEnabled })),
+  setAltKeyHeld: (altKeyHeld) => set({ altKeyHeld }),
+
+  zoomTimelineBy: (delta) =>
+    set((s) => ({
+      pxPerFrame: clampPxPerFrame(s.pxPerFrame + delta),
+      timelineZoomManual: true,
+    })),
+
+  requestTimelineFit: () =>
+    set((s) => ({
+      fitTimelineNonce: s.fitTimelineNonce + 1,
+      timelineZoomManual: false,
+    })),
 }));

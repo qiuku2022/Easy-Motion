@@ -21,6 +21,12 @@ contextBridge.exposeInMainWorld("easyMotion", {
     save: (payload) => invoke("main:timeline:save", payload),
     applySample: (payload) => invoke("main:timeline:applySample", payload),
     generate: (payload) => invoke("main:timeline:generate", payload),
+    checkRemotionDrift: (payload) =>
+      invoke("main:timeline:checkRemotionDrift", payload),
+    syncFromRemotion: (payload) =>
+      invoke("main:timeline:syncFromRemotion", payload),
+    syncPreviewManifest: (payload) =>
+      invoke("main:timeline:syncPreviewManifest", payload),
   },
   preview: {
     start: (payload) => invoke("main:preview:start", payload),
@@ -29,5 +35,10 @@ contextBridge.exposeInMainWorld("easyMotion", {
     onLog: (callback) => {
       ipcRenderer.on("renderer:preview:log", (_event, data) => callback(data));
     },
+  },
+  asset: {
+    list: () => invoke("main:asset:list"),
+    importFiles: (payload) => invoke("main:asset:import", payload),
+    pickAndImport: (payload) => invoke("main:asset:pickAndImport", payload),
   },
 });

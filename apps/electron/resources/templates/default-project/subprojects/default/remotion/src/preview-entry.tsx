@@ -1,25 +1,48 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { Player, type PlayerRef } from "@remotion/player";
+import {
+  Player,
+  type CallbackListener,
+  type PlayerRef,
+} from "@remotion/player";
 import { MainSequence } from "./components/MainSequence";
 import previewConfig from "./preview-config.json";
 
 const CHANNEL = "easymotion-preview";
 
+type EasymotionPreviewProps = {
+  timeline?: Record<string, unknown>;
+};
+
 const PreviewApp: React.FC = () => {
   const playerRef = useRef<PlayerRef>(null);
+  const [player, setPlayer] = useState<PlayerRef | null>(null);
+  const [compositionKey, setCompositionKey] = useState(0);
+  const [inputProps, setInputProps] = useState<EasymotionPreviewProps>({});
 
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
       const data = event.data;
       if (!data || data.channel !== CHANNEL) return;
-      const player = playerRef.current;
-      if (!player) return;
+      const target = playerRef.current;
 
-      if (data.type === "PLAY") player.play();
-      if (data.type === "PAUSE") player.pause();
+      if (data.type === "RELOAD") {
+        setCompositionKey((k) => k + 1);
+        return;
+      }
+
+      if (data.type === "TIMELINE_UPDATE" && data.timeline) {
+        setInputProps({ timeline: data.timeline });
+        setCompositionKey((k) => k + 1);
+        return;
+      }
+
+      if (!target) return;
+
+      if (data.type === "PLAY") target.play();
+      if (data.type === "PAUSE") target.pause();
       if (data.type === "SEEK" && typeof data.frame === "number") {
-        player.seekTo(data.frame);
+        target.seekTo(data.frame);
       }
     };
 
@@ -28,6 +51,31 @@ const PreviewApp: React.FC = () => {
     return () => window.removeEventListener("message", onMessage);
   }, []);
 
+  useEffect(() => {
+    if (!player) return;
+
+    const onFrameUpdate: CallbackListener<"frameupdate"> = (e) => {
+      window.parent.postMessage(
+        { channel: CHANNEL, type: "FRAME_CHANGE", frame: e.detail.frame },
+        "*",
+      );
+    };
+
+    const onPause: CallbackListener<"pause"> = () => {
+      window.parent.postMessage(
+        { channel: CHANNEL, type: "PLAYBACK_STATE", playing: false },
+        "*",
+      );
+    };
+
+    player.addEventListener("frameupdate", onFrameUpdate);
+    player.addEventListener("pause", onPause);
+    return () => {
+      player.removeEventListener("frameupdate", onFrameUpdate);
+      player.removeEventListener("pause", onPause);
+    };
+  }, [player]);
+
   return (
     <div
       style={{
@@ -35,11 +83,15 @@ const PreviewApp: React.FC = () => {
         height: "100%",
         display: "flex",
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
       }}
     >
       <Player
-        ref={playerRef}
+        key={compositionKey}
+        ref={(instance) => {
+          playerRef.current = instance;
+          setPlayer(instance);
+        }}
         component={MainSequence}
         durationInFrames={previewConfig.durationInFrames}
         fps={previewConfig.fps}
@@ -49,13 +101,7 @@ const PreviewApp: React.FC = () => {
         controls={false}
         loop
         acknowledgeRemotionLicense
-        inputProps={{}}
-        onFrameUpdate={(frame) => {
-          window.parent.postMessage(
-            { channel: CHANNEL, type: "FRAME_CHANGE", frame },
-            "*"
-          );
-        }}
+        inputProps={inputProps}
       />
     </div>
   );

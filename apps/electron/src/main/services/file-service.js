@@ -55,6 +55,11 @@ function removeDirRecursive(targetPath) {
   fs.rmSync(targetPath, { recursive: true, force: true });
 }
 
+async function copyFile(src, dest) {
+  ensureDir(path.dirname(dest));
+  await fs.promises.copyFile(src, dest);
+}
+
 module.exports = {
   enqueueWrite,
   ensureDir,
@@ -62,4 +67,5 @@ module.exports = {
   atomicWriteJson,
   copyDirRecursive,
   removeDirRecursive,
+  copyFile,
 };

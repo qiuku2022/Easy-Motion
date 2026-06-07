@@ -2,7 +2,16 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { readJsonFile, atomicWriteJson } = require("./file-service");
 const { validateTimeline } = require("@easymotion/shared");
+const { writeTimelineManifest } = require("../importer/timeline-manifest");
 const { generateRemotionCode } = require("../generator");
+const { fingerprintRemotionSrc } = require("../importer/remotion-fingerprint");
+const { syncTimelineFromRemotion } = require("../importer/sync-from-remotion");
+const {
+  getRemotionDir,
+  getRemotionSrcDir,
+  prepareRemotionForNativeSync,
+  detectCustomRemotionCode,
+} = require("./remotion-project");
 
 function getSubprojectDir(projectRoot, subprojectRelativePath = "subprojects/default") {
   return path.join(projectRoot, subprojectRelativePath);
@@ -11,16 +20,15 @@ function getSubprojectDir(projectRoot, subprojectRelativePath = "subprojects/def
 function getSubprojectJsonPath(projectRoot, subprojectRelativePath) {
   return path.join(
     getSubprojectDir(projectRoot, subprojectRelativePath),
-    "subproject.json"
+    "subproject.json",
   );
 }
 
-function getRemotionSrcDir(projectRoot, subprojectRelativePath) {
-  return path.join(
-    getSubprojectDir(projectRoot, subprojectRelativePath),
-    "remotion",
-    "src"
-  );
+function getRemotionSrcDirForProject(
+  projectRoot,
+  subprojectRelativePath = "subprojects/default",
+) {
+  return getRemotionSrcDir(getRemotionDir(projectRoot, subprojectRelativePath));
 }
 
 function loadTimeline(projectRoot, subprojectRelativePath = "subprojects/default") {
@@ -33,7 +41,7 @@ function loadTimeline(projectRoot, subprojectRelativePath = "subprojects/default
 async function saveTimeline(
   projectRoot,
   timeline,
-  subprojectRelativePath = "subprojects/default"
+  subprojectRelativePath = "subprojects/default",
 ) {
   validateTimeline(timeline);
   const subprojectPath = getSubprojectJsonPath(projectRoot, subprojectRelativePath);
@@ -45,11 +53,11 @@ async function saveTimeline(
 
 function applySampleTimeline(
   projectRoot,
-  subprojectRelativePath = "subprojects/default"
+  subprojectRelativePath = "subprojects/default",
 ) {
   const samplePath = path.join(
     __dirname,
-    "../../../../../packages/shared/fixtures/sample-timeline.json"
+    "../../../../../packages/shared/fixtures/sample-timeline.json",
   );
   const timeline = readJsonFile(samplePath);
   const subprojectPath = getSubprojectJsonPath(projectRoot, subprojectRelativePath);
@@ -59,22 +67,147 @@ function applySampleTimeline(
   return timeline;
 }
 
-function generateForSubproject(
+function syncPreviewManifest(
   projectRoot,
-  subprojectRelativePath = "subprojects/default"
+  timeline,
+  subprojectRelativePath = "subprojects/default",
 ) {
-  const timeline = loadTimeline(projectRoot, subprojectRelativePath);
-  const remotionSrcDir = getRemotionSrcDir(projectRoot, subprojectRelativePath);
+  const remotionSrcDir = getRemotionSrcDirForProject(projectRoot, subprojectRelativePath);
   if (!fs.existsSync(remotionSrcDir)) {
     throw new Error("E2201: remotion/src directory not found");
   }
-  return generateRemotionCode({ remotionSrcDir, timeline });
+
+  const { fingerprint } = fingerprintRemotionSrc(remotionSrcDir);
+  const nextTimeline = {
+    ...timeline,
+    remotionFingerprint: fingerprint,
+    remotionSyncedAt: Date.now(),
+  };
+  validateTimeline(nextTimeline);
+
+  const subprojectPath = getSubprojectJsonPath(projectRoot, subprojectRelativePath);
+  const subproject = readJsonFile(subprojectPath);
+  subproject.timeline = nextTimeline;
+  fs.writeFileSync(subprojectPath, `${JSON.stringify(subproject, null, 2)}\n`, "utf8");
+  writeTimelineManifest(remotionSrcDir, nextTimeline, "preview");
+
+  return { manifestWritten: true, timeline: nextTimeline };
+}
+
+/** 仅刷新指纹（预览工具链自动修补 Remotion 源码后，避免误报漂移） */
+function refreshRemotionFingerprint(
+  projectRoot,
+  subprojectRelativePath = "subprojects/default",
+) {
+  const remotionSrcDir = getRemotionSrcDirForProject(projectRoot, subprojectRelativePath);
+  if (!fs.existsSync(remotionSrcDir)) {
+    return null;
+  }
+
+  const { fingerprint } = fingerprintRemotionSrc(remotionSrcDir);
+  const subprojectPath = getSubprojectJsonPath(projectRoot, subprojectRelativePath);
+  const subproject = readJsonFile(subprojectPath);
+  subproject.timeline = {
+    ...subproject.timeline,
+    remotionFingerprint: fingerprint,
+    remotionSyncedAt: Date.now(),
+  };
+  fs.writeFileSync(subprojectPath, `${JSON.stringify(subproject, null, 2)}\n`, "utf8");
+
+  return { fingerprint, timeline: subproject.timeline };
+}
+
+function generateForSubproject(
+  projectRoot,
+  subprojectRelativePath = "subprojects/default",
+) {
+  const timeline = loadTimeline(projectRoot, subprojectRelativePath);
+  const remotionSrcDir = getRemotionSrcDirForProject(projectRoot, subprojectRelativePath);
+  if (!fs.existsSync(remotionSrcDir)) {
+    throw new Error("E2201: remotion/src directory not found");
+  }
+  const result = generateRemotionCode({ remotionSrcDir, timeline });
+  const { fingerprint } = fingerprintRemotionSrc(remotionSrcDir);
+  timeline.remotionFingerprint = fingerprint;
+  timeline.remotionSyncedAt = Date.now();
+  timeline.remotionSyncSource = "generate";
+  const subprojectPath = getSubprojectJsonPath(projectRoot, subprojectRelativePath);
+  const subproject = readJsonFile(subprojectPath);
+  subproject.timeline = timeline;
+  fs.writeFileSync(subprojectPath, `${JSON.stringify(subproject, null, 2)}\n`, "utf8");
+  return result;
+}
+
+function checkRemotionDrift(
+  projectRoot,
+  subprojectRelativePath = "subprojects/default",
+) {
+  const remotionSrcDir = getRemotionSrcDirForProject(projectRoot, subprojectRelativePath);
+  if (!fs.existsSync(remotionSrcDir)) {
+    return { drifted: false, reason: "missing-remotion-src" };
+  }
+
+  const timeline = loadTimeline(projectRoot, subprojectRelativePath);
+  const { fingerprint, fileCount } = fingerprintRemotionSrc(remotionSrcDir);
+  const stored = timeline.remotionFingerprint ?? null;
+  const drifted = Boolean(stored && stored !== fingerprint);
+  const customRemotion = detectCustomRemotionCode(remotionSrcDir);
+
+  return {
+    drifted,
+    fingerprint,
+    storedFingerprint: stored,
+    fileCount,
+    tracksEmpty: timeline.tracks.length === 0,
+    suggestSync: drifted || (timeline.tracks.length === 0 && fileCount > 0),
+    hasCustomRemotionCode: customRemotion.custom,
+    customRemotionReason: customRemotion.reason,
+  };
+}
+
+async function syncTimelineFromRemotionProject(
+  projectRoot,
+  subprojectRelativePath = "subprojects/default",
+  options = {},
+) {
+  const remotionDir = getRemotionDir(projectRoot, subprojectRelativePath);
+  const remotionSrcDir = getRemotionSrcDir(remotionDir);
+  if (!fs.existsSync(remotionSrcDir)) {
+    throw new Error("E2201: remotion/src directory not found");
+  }
+
+  await prepareRemotionForNativeSync(remotionDir);
+
+  const subprojectPath = getSubprojectJsonPath(projectRoot, subprojectRelativePath);
+  const subproject = readJsonFile(subprojectPath);
+  const imported = await syncTimelineFromRemotion({
+    remotionDir,
+    remotionSrcDir,
+    existingTimeline: subproject.timeline,
+  });
+
+  if (options.preserveTracks && subproject.timeline.tracks?.length > 0) {
+    imported.timeline.tracks = subproject.timeline.tracks;
+  }
+
+  validateTimeline(imported.timeline);
+  subproject.timeline = imported.timeline;
+  await atomicWriteJson(subprojectPath, subproject);
+
+  return {
+    timeline: imported.timeline,
+    stats: imported.stats,
+  };
 }
 
 module.exports = {
   loadTimeline,
   saveTimeline,
   applySampleTimeline,
+  syncPreviewManifest,
+  refreshRemotionFingerprint,
   generateForSubproject,
-  getRemotionSrcDir,
+  checkRemotionDrift,
+  syncTimelineFromRemotion: syncTimelineFromRemotionProject,
+  getRemotionSrcDir: getRemotionSrcDirForProject,
 };

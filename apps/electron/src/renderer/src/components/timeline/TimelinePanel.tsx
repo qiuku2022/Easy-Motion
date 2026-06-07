@@ -1,9 +1,10 @@
-import { Code2, Magnet, Repeat, RefreshCw, Wand2 } from "lucide-react";
-import { useUiStore } from "@/stores/uiStore";
 import { useTimelineStore } from "@/stores/timelineStore";
-import { formatFrameRange } from "@/lib/timecode";
-import { TimelineTrackList } from "@/components/timeline/TimelineTrackList";
-import { cn } from "@/lib/utils";
+import { formatRemotionSyncSummary } from "@/lib/remotion-sync";
+import { TimelineBody } from "@/components/timeline/TimelineBody";
+import { TimelineDevMenu } from "@/components/timeline/TimelineDevMenu";
+import { TimelineTransport } from "@/components/timeline/TimelineTransport";
+import { TimelineZoomControls } from "@/components/timeline/TimelineZoomControls";
+import { useUiStore } from "@/stores/uiStore";
 
 export function TimelinePanel() {
   const collapsed = useUiStore((s) => s.timelineCollapsed);
@@ -14,12 +15,16 @@ export function TimelinePanel() {
   const error = useTimelineStore((s) => s.error);
   const currentFrame = useTimelineStore((s) => s.currentFrame);
   const selectedClipId = useTimelineStore((s) => s.selectedClipId);
-  const loadTimeline = useTimelineStore((s) => s.loadTimeline);
-  const applySampleTimeline = useTimelineStore((s) => s.applySampleTimeline);
-  const runGenerate = useTimelineStore((s) => s.runGenerate);
+  const selectedMarkerId = useTimelineStore((s) => s.selectedMarkerId);
   const selectClip = useTimelineStore((s) => s.selectClip);
   const clearError = useTimelineStore((s) => s.clearError);
+  const remotionDrift = useTimelineStore((s) => s.remotionDrift);
+  const isSyncingRemotion = useTimelineStore((s) => s.isSyncingRemotion);
+  const lastRemotionSync = useTimelineStore((s) => s.lastRemotionSync);
+  const syncFromRemotion = useTimelineStore((s) => s.syncFromRemotion);
   const busy = isLoading || isGenerating || isSaving;
+  const showRemotionSyncBanner =
+    Boolean(remotionDrift?.suggestSync) && !isSyncingRemotion;
 
   if (collapsed) {
     return (
@@ -33,62 +38,13 @@ export function TimelinePanel() {
   const duration = timeline?.durationInFrames ?? 0;
 
   return (
-    <footer className="z-10 flex min-h-0 shrink-0 flex-col border-t border-em-border bg-em-bg">
-      <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-em-border px-2 py-1">
-        <button
-          type="button"
-          title="吸附（开启）"
-          className="cursor-pointer rounded-sm p-1.5 text-em-teal transition-colors duration-150 ease-out hover:bg-em-elevated"
-        >
-          <Magnet className="h-4 w-4" />
-        </button>
-        <button
-          type="button"
-          title="循环"
-          className="cursor-pointer rounded-sm p-1.5 text-em-muted transition-colors duration-150 ease-out hover:bg-em-elevated hover:text-em-text"
-        >
-          <Repeat className="h-4 w-4" />
-        </button>
-        <div className="h-4 w-px bg-em-border" />
-        <button
-          type="button"
-          disabled={busy}
-          onClick={() => {
-            clearError();
-            void loadTimeline();
-          }}
-          className="inline-flex cursor-pointer items-center gap-1 rounded-sm px-2 py-1 text-xs text-em-text transition-colors duration-150 ease-out hover:bg-em-elevated disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <RefreshCw className={cn("h-3.5 w-3.5", busy && "animate-spin")} />
-          加载时间线
-        </button>
-        <button
-          type="button"
-          disabled={busy}
-          onClick={() => {
-            clearError();
-            void applySampleTimeline();
-          }}
-          className="inline-flex cursor-pointer items-center gap-1 rounded-sm bg-em-accent px-2 py-1 text-xs text-white transition-colors duration-150 ease-out hover:bg-em-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <Wand2 className="h-3.5 w-3.5" />
-          写入示例
-        </button>
-        <button
-          type="button"
-          disabled={busy || !timeline}
-          onClick={() => {
-            clearError();
-            void runGenerate();
-          }}
-          className="inline-flex cursor-pointer items-center gap-1 rounded-sm border border-em-border bg-em-elevated px-2 py-1 text-xs text-em-text transition-colors duration-150 ease-out hover:bg-em-surface disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <Code2 className="h-3.5 w-3.5" />
-          {isGenerating ? "生成中…" : "生成预览"}
-        </button>
-        <span className="ml-auto font-mono text-xs text-em-muted">
-          {timeline ? formatFrameRange(currentFrame, duration, fps) : "未加载时间线"}
-        </span>
+    <footer className="relative z-20 flex h-full min-h-0 flex-col overflow-hidden border-t border-em-border bg-em-bg">
+      <div className="flex shrink-0 items-center gap-3 border-b border-em-border px-2 py-1">
+        <TimelineTransport />
+        <div className="ml-auto flex items-center gap-2">
+          <TimelineZoomControls />
+          <TimelineDevMenu disabled={busy} />
+        </div>
       </div>
 
       {error && (
@@ -97,19 +53,62 @@ export function TimelinePanel() {
         </p>
       )}
 
+      {isSyncingRemotion && (
+        <p
+          className="shrink-0 border-b border-em-teal/20 bg-em-teal/5 px-3 py-1.5 text-xs text-em-teal"
+          role="status"
+        >
+          正在从 Remotion 自动同步时间线…
+        </p>
+      )}
+
+      {lastRemotionSync && !error && !isSyncingRemotion && (
+        <p
+          className="shrink-0 border-b border-em-teal/20 bg-em-teal/5 px-3 py-1.5 text-xs text-em-teal"
+          role="status"
+        >
+          已从 Remotion 映射到时间线：{formatRemotionSyncSummary(lastRemotionSync)}
+        </p>
+      )}
+
+      {showRemotionSyncBanner && (
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-100">
+          <p>
+            {remotionDrift?.tracksEmpty
+              ? "时间线轨道为空，但 Remotion 项目有内容。"
+              : "Remotion 源码已变更，自动同步失败。"}
+            {" "}
+            可手动重试「从 Remotion 读取」。
+          </p>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => {
+              clearError();
+              void syncFromRemotion();
+            }}
+            className="shrink-0 rounded-sm bg-amber-500/20 px-2 py-1 text-amber-50 hover:bg-amber-500/30 disabled:opacity-50"
+          >
+            重试读取
+          </button>
+        </div>
+      )}
+
       {timeline && timeline.tracks.length > 0 ? (
-        <TimelineTrackList
+        <TimelineBody
           tracks={timeline.tracks}
           durationInFrames={duration}
+          fps={fps}
           currentFrame={currentFrame}
           selectedClipId={selectedClipId}
+          selectedMarkerId={selectedMarkerId}
           onSelectClip={selectClip}
         />
       ) : (
-        <div className="flex flex-1 flex-col items-center justify-center gap-2 p-4 text-center text-sm text-em-muted">
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 p-4 text-center text-sm text-em-muted">
           <p className="text-em-text">开始你的动画创作</p>
-          <p className="text-xs">
-            先打开或创建项目，再点击「加载时间线」或「写入示例」
+          <p className="max-w-md text-xs">
+            点击上方「+ 轨道」添加文字或分组；若 Remotion 源码已有内容，可用「⋯」→「从 Remotion 读取」同步。
           </p>
         </div>
       )}

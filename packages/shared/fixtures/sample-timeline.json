@@ -40,42 +40,55 @@
       ]
     },
     {
-      "id": "track-title",
-      "name": "标题文字",
-      "type": "text",
+      "id": "track-title-group",
+      "name": "标题组",
+      "type": "group",
       "order": 1,
       "visible": true,
       "locked": false,
       "muted": false,
-      "clips": [
+      "clips": [],
+      "children": [
         {
-          "id": "clip-title",
+          "id": "track-title",
+          "name": "主标题文字",
           "type": "text",
-          "name": "主标题",
-          "startInFrames": 15,
-          "durationInFrames": 60,
-          "source": {
-            "kind": "inline",
-            "content": "Hello EasyMotion"
-          },
-          "transform": {
-            "position": { "x": 640, "y": 360 },
-            "scale": 1,
-            "rotation": 0,
-            "opacity": 1
-          },
-          "style": {
-            "fontFamily": "Inter, sans-serif",
-            "fontSize": 56,
-            "color": "#f8fafc",
-            "textAlign": "center"
-          },
-          "keyframes": [],
-          "animations": {
-            "in": { "type": "fade", "durationInFrames": 15 }
-          }
+          "order": 0,
+          "visible": true,
+          "locked": false,
+          "muted": false,
+          "clips": [
+            {
+              "id": "clip-title",
+              "type": "text",
+              "name": "主标题",
+              "startInFrames": 15,
+              "durationInFrames": 60,
+              "source": {
+                "kind": "inline",
+                "content": "Hello EasyMotion"
+              },
+              "transform": {
+                "position": { "x": 640, "y": 360 },
+                "scale": 1,
+                "rotation": 0,
+                "opacity": 1
+              },
+              "style": {
+                "fontFamily": "Inter, sans-serif",
+                "fontSize": 56,
+                "color": "#f8fafc",
+                "textAlign": "center"
+              },
+              "keyframes": [],
+              "animations": {
+                "in": { "type": "fade", "durationInFrames": 15 }
+              }
+            }
+          ]
         }
-      ]
+      ],
+      "collapsed": false
     }
   ]
 }

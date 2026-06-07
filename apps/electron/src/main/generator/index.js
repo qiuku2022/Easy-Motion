@@ -3,6 +3,7 @@ const path = require("node:path");
 const { validateTimeline } = require("@easymotion/shared");
 const { generateRoot } = require("./generate-root");
 const { generateMainSequence } = require("./generate-main-sequence");
+const { writeTimelineManifest } = require("../importer/timeline-manifest");
 const { ensureDir } = require("../services/file-service");
 
 function writeFile(filePath, content) {
@@ -22,6 +23,7 @@ function generateRemotionCode({ remotionSrcDir, timeline }) {
   const mainSequenceCode = generateMainSequence(timeline);
 
   const previewConfigPath = path.join(remotionSrcDir, "preview-config.json");
+  const manifestPath = path.join(remotionSrcDir, "easymotion-timeline.manifest.json");
   const previewConfig = {
     durationInFrames: timeline.durationInFrames,
     fps: timeline.fps,
@@ -29,12 +31,13 @@ function generateRemotionCode({ remotionSrcDir, timeline }) {
     height: timeline.height,
   };
 
+  writeTimelineManifest(remotionSrcDir, timeline, "generator");
   writeFile(rootPath, rootCode);
   writeFile(mainSequencePath, mainSequenceCode);
   writeFile(previewConfigPath, previewConfig);
 
   return {
-    files: [rootPath, mainSequencePath, previewConfigPath],
+    files: [rootPath, mainSequencePath, previewConfigPath, manifestPath],
   };
 }
 
