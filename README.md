@@ -1,17 +1,19 @@
 # EasyMotion
 
-> 日期：2026-06-03  
+> 日期：2026-06-07  
 > 用自然语言制作 Remotion 动画的桌面应用（Electron + React + Python）
 
 Monorepo（`apps/*` + `packages/*`），当前可运行范围：
 
 | 模块 | 状态 | 说明 |
 |------|------|------|
-| Electron 主进程 | M1–M3 | 项目 / 时间线 / 预览 / Generator、IPC |
-| 渲染进程 | M4 进行中 | React 18 + Vite + Tailwind + Zustand 布局壳（见 UI 需求文档） |
+| Electron 主进程 | M1–M4 | 项目 / 时间线 / 预览 / Generator、Remotion 导入与漂移同步、素材 IPC |
+| 渲染进程 | M4 | 时间线拖拽编辑、属性面板、素材库、自动预览；下一步 M5 AI 面板 |
 | Legacy UI | 保留 | `apps/electron/src/renderer/legacy/`，`--legacy-ui` 或 `pnpm dev:legacy` |
-| Python API | M0+ | FastAPI，`pnpm dev:all` 时一并启动 |
+| Python API | M0+ | FastAPI，`pnpm dev:all` 时一并启动（M5 Agent 将接入） |
 | 设计规范 | 文档 | [`docs/design-system/easymotion/MASTER.md`](docs/design-system/easymotion/MASTER.md) |
+
+打开项目后会自动启动 Remotion 预览；手写 Remotion 项目支持「从 Remotion 读取」与时间线双向同步。
 
 详细需求与里程碑见 [`docs/requirements/`](docs/requirements/)（含 [`UI布局与交互设计-优化版.md`](docs/requirements/UI布局与交互设计-优化版.md)、[`开发里程碑与路线图.md`](docs/requirements/开发里程碑与路线图.md)）。
 
