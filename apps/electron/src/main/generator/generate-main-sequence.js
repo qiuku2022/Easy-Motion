@@ -97,7 +97,7 @@ ${imports}
 
 export const MainSequence: React.FC = () => {
   return (
-    <AbsoluteFill style={{ backgroundColor: "#0f0f23" }}>
+    <AbsoluteFill style={{ backgroundColor: "#121212" }}>
 ${clipBlocks || "      {/* empty timeline */}"}
     </AbsoluteFill>
   );

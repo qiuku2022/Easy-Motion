@@ -11,7 +11,7 @@ export type MainSequenceProps = {
 export const MainSequence: React.FC<MainSequenceProps> = ({ timeline }) => {
 
   return (
-    <AbsoluteFill>
+    <AbsoluteFill style={{ backgroundColor: "#121212" }}>
       {isClipVisibleInPreview("clip-newsletter-bg", timeline) && (
         <NewsletterBackground />
       )}

@@ -43,7 +43,7 @@ export function PanelResizer({ axis, onResize, className }: PanelResizerProps) {
       role="separator"
       aria-orientation={axis === "horizontal" ? "vertical" : "horizontal"}
       className={cn(
-        "shrink-0 bg-em-border transition-colors duration-150 ease-out hover:bg-em-teal/50",
+        "shrink-0 bg-border transition-colors duration-150 ease-out hover:bg-ring/50",
         axis === "horizontal" ? "w-1 cursor-col-resize" : "h-1 cursor-row-resize",
         className
       )}

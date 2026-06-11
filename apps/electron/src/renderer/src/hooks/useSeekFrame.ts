@@ -9,7 +9,7 @@ export function useSeekFrame() {
   const seekTo = usePlaybackStore((s) => s.seekTo);
 
   return useCallback(
-    (rawFrame: number, options?: { snap?: boolean }) => {
+    (rawFrame: number, options?: { snap?: boolean; altKeyHeld?: boolean }) => {
       const timeline = useTimelineStore.getState().timeline;
       if (!timeline) return;
 
@@ -20,7 +20,7 @@ export function useSeekFrame() {
         pxPerFrame,
         currentFrame: useTimelineStore.getState().currentFrame,
         snapEnabled: options?.snap !== false && snapEnabled,
-        altKeyHeld,
+        altKeyHeld: options?.altKeyHeld ?? altKeyHeld,
       });
 
       seekTo(frame);

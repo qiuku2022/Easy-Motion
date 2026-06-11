@@ -22,9 +22,9 @@ export function SnapGuides({ guides, pxPerFrame, height }: SnapGuidesProps) {
           className="absolute bottom-0 top-0"
           style={{ left: frameToPx(guide.frame, pxPerFrame) }}
         >
-          <div className="h-full w-0 border-l border-dashed border-em-teal" />
+          <div className="h-full w-0 border-l border-dashed border-primary" />
           {guide.label && (
-            <span className="absolute left-1 top-0 whitespace-nowrap rounded-sm bg-em-teal/20 px-1 py-0.5 font-mono text-[10px] text-em-teal">
+            <span className="absolute left-1 top-0 whitespace-nowrap rounded-sm bg-primary/15 px-1 py-0.5 font-mono text-[10px] text-primary">
               {guide.label}
             </span>
           )}

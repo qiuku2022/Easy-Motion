@@ -132,7 +132,7 @@ export function TimelineBody({
 
       const move = (ev: PointerEvent) => {
         const frame = frameFromPointer(ev.clientX, container, pxPerFrame, 0);
-        handleSeek(frame);
+        seekFrame(frame, { altKeyHeld: ev.altKey });
       };
 
       const up = () => {
@@ -142,9 +142,11 @@ export function TimelineBody({
 
       window.addEventListener("pointermove", move);
       window.addEventListener("pointerup", up);
-      handleSeek(frameFromPointer(e.clientX, container, pxPerFrame, 0));
+      seekFrame(frameFromPointer(e.clientX, container, pxPerFrame, 0), {
+        altKeyHeld: e.altKey,
+      });
     },
-    [handleSeek, pxPerFrame],
+    [seekFrame, pxPerFrame],
   );
 
   useEffect(() => {
@@ -247,11 +249,11 @@ export function TimelineBody({
   return (
     <div ref={wheelRootRef} className="flex min-h-0 flex-1 overflow-hidden">
       <div
-        className="flex h-full min-h-0 shrink-0 flex-col overflow-hidden border-r border-em-border bg-em-bg"
+        className="flex h-full min-h-0 shrink-0 flex-col overflow-hidden border-r border-border bg-background"
         style={{ width: TRACK_HEADER_WIDTH }}
       >
         <div
-          className="shrink-0 border-b border-r border-em-border bg-em-surface/50"
+          className="shrink-0 border-b border-r border-border bg-muted/30"
           style={{ height: RULER_HEIGHT }}
         />
         <div
@@ -270,7 +272,7 @@ export function TimelineBody({
               depth={row.depth}
               parentGroup={row.parentGroup}
               isGroupHeader={row.isGroupHeader}
-              className="border-b border-em-border"
+              className="border-b border-border"
               selected={selectedTrackId === row.track.id || selectedTrackId === row.parentGroup?.id}
               isDragging={trackReorderPreview?.trackId === row.track.id}
               showDropLineAbove={

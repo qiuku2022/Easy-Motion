@@ -19,6 +19,7 @@ const PreviewApp: React.FC = () => {
   const [player, setPlayer] = useState<PlayerRef | null>(null);
   const [compositionKey, setCompositionKey] = useState(0);
   const [inputProps, setInputProps] = useState<EasymotionPreviewProps>({});
+  const [loop, setLoop] = useState(true);
 
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
@@ -34,6 +35,11 @@ const PreviewApp: React.FC = () => {
       if (data.type === "TIMELINE_UPDATE" && data.timeline) {
         setInputProps({ timeline: data.timeline });
         setCompositionKey((k) => k + 1);
+        return;
+      }
+
+      if (data.type === "SET_LOOP" && typeof data.loop === "boolean") {
+        setLoop(data.loop);
         return;
       }
 
@@ -79,6 +85,7 @@ const PreviewApp: React.FC = () => {
   return (
     <div
       style={{
+        backgroundColor: "#121212",
         width: "100%",
         height: "100%",
         display: "flex",
@@ -99,7 +106,7 @@ const PreviewApp: React.FC = () => {
         compositionHeight={previewConfig.height}
         style={{ width: "100%", maxHeight: "100%" }}
         controls={false}
-        loop
+        loop={loop}
         acknowledgeRemotionLicense
         inputProps={inputProps}
       />

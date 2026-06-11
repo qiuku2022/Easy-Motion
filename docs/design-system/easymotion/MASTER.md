@@ -5,32 +5,38 @@
 
 ---
 
-## Color System — Cinema Dark + Action Red
+## Color System — shadcn Neutral Dark（v1.1+）
 
-| Role                 | Hex       | Tailwind / CSS var              |
-| -------------------- | --------- | ------------------------------- |
-| Background primary   | `#0F0F23` | `bg-[#0F0F23]` / `--background` |
-| Background secondary | `#1A1A2E` | `bg-[#1A1A2E]`                  |
-| Background tertiary  | `#252542` | hover, list alternate           |
-| Border / divider     | `#2D2D4A` | `border-[#2D2D4A]`              |
-| Text primary         | `#F8FAFC` | `text-[#F8FAFC]`                |
-| Text secondary       | `#94A3B8` | `text-[#94A3B8]`                |
-| Accent primary       | `#E11D48` | playhead, selection, CTA        |
-| Accent secondary     | `#0D9488` | success, focus ring             |
-| Warning              | `#F97316` |                                 |
-| Error                | `#DC2626` | destructive                     |
+> 2026-06 起壳层 UI 采用 [shadcn neutral `.dark`](https://ui.shadcn.com/docs/theming)。旧 Cinema Dark + Action Red 已弃用（见 `.local/theme-refresh/`）。
 
-**Theme**: shadcn `.dark` on `<html>`. v1.0 ships dark only; light in v1.1.
+| Role | 感知 | Tailwind / CSS var |
+| ---- | ---- | ------------------ |
+| Background | 近 `#0a0a0a` 纯灰黑 | `bg-background` / `--background` |
+| Card / Popover | 略抬升 `#171717` | `bg-card` / `bg-popover` |
+| Border | 白 10% alpha | `border-border` |
+| Text | 近白 | `text-foreground` |
+| Muted text | 中灰 | `text-muted-foreground` |
+| Primary button | 浅灰白实心 | `bg-primary`（**非**红色 CTA） |
+| Focus ring | 中性灰 | `ring-ring` |
+| Destructive | 红（仅删除/错误） | `text-destructive` / `bg-destructive/10` |
+| Warning | 琥珀 | `text-warning` |
 
-```css
-.dark {
-  --background: 240 10% 3.9%;
-  --foreground: 210 40% 98%;
-  --primary: 347 77% 50%;
-  --border: 240 15% 25%;
-  --ring: 173 80% 40%;
-}
-```
+**Theme**: shadcn `.dark` on `<html>`. v1.0 ships dark only.
+
+Token 源文件：`apps/electron/src/renderer/src/index.css`（oklch）。`em-*` 别名仍映射同一变量（过渡期）。
+
+| 语义类 | `em-*` 别名 |
+| ------ | ----------- |
+| `bg-background` | `bg-em-bg` |
+| `bg-muted` / `bg-accent` | `bg-em-surface` / `bg-em-elevated` |
+| `border-border` | `border-em-border` |
+| `text-foreground` / `text-muted-foreground` | `text-em-text` / `text-em-muted` |
+| `bg-primary` | `bg-em-accent` |
+| `ring-ring` | `text-em-teal`（色相已中性化） |
+
+时间线画布可保留局部 accent 色；壳层按钮以 `ghost` / `outline` 为主，`default` 仅极少数 CTA。
+
+**预览舞台** `--preview-canvas`：`oklch(0.085 0 0)`（≈ `#121212`），比 `--background` 更深、无紫调，用于 `PreviewWindow` 与 Remotion `preview.html` 衬底。
 
 ---
 
@@ -58,10 +64,11 @@ Scale: `text-xs` 12px → `text-2xl` 24px.
 
 ## Components (tokens)
 
-- **Primary button**: `bg-[#E11D48] hover:bg-[#BE123C] text-white rounded-sm px-4 py-2`
-- **Secondary button**: `bg-[#252542] border border-[#2D2D4A] rounded-sm`
-- **Input**: `bg-[#1A1A2E] border-[#2D2D4A] focus:border-[#0D9488] ring-[#0D9488]`
-- **Panel**: `bg-[#0F0F23] border border-[#2D2D4A] rounded-lg`
+- **Primary button**: shadcn `Button variant="default"` → `bg-primary text-primary-foreground`（浅灰白）
+- **Secondary / outline**: `variant="secondary"` / `variant="outline"`
+- **Toolbar icons**: `variant="ghost" size="icon"`
+- **Input**: shadcn `Input`；聚焦 `ring-ring`
+- **Panel**: `bg-background border-border rounded-lg`
 
 ---
 
@@ -69,12 +76,16 @@ Scale: `text-xs` 12px → `text-2xl` 24px.
 
 | Scene                     | Duration | Easing                       |
 | ------------------------- | -------- | ---------------------------- |
-| Button hover (color only) | 150ms    | ease-out                     |
+| Button hover              | 150ms    | ease-out（背景/字色）        |
+| Button active (press)     | 75ms     | ease-out；`translate-y-px` 仅 default/outline |
+| Button focus-visible      | —        | `ring-3 ring-ring/50`（仅键盘） |
+| Panel tab indicator       | 200ms    | ease-out（`left`/`width`）   |
+| Panel tab content         | 150ms    | fade-in                      |
 | Panel expand/collapse     | 200ms    | cubic-bezier(0.4, 0, 0.2, 1) |
 | Dialog                    | 150ms    | ease-out, scale 0.95→1       |
 | Playhead                  | none     | frame-accurate               |
 
-Use `transform` + `opacity` only. Respect `prefers-reduced-motion`.
+Use `transform` + `opacity` only. Respect `prefers-reduced-motion`（`motion-reduce:*` 关闭 tab 滑动与 fade）。
 
 ---
 

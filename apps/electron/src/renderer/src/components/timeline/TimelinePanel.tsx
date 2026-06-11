@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { useTimelineStore } from "@/stores/timelineStore";
 import { formatRemotionSyncSummary } from "@/lib/remotion-sync";
 import { TimelineBody } from "@/components/timeline/TimelineBody";
@@ -28,7 +29,7 @@ export function TimelinePanel() {
 
   if (collapsed) {
     return (
-      <footer className="z-10 flex h-10 shrink-0 items-center border-t border-em-border bg-em-bg px-3 text-xs text-em-muted">
+      <footer className="z-10 flex h-10 shrink-0 items-center border-t border-border bg-background px-3 text-xs text-muted-foreground">
         时间线（已收起）
       </footer>
     );
@@ -38,8 +39,8 @@ export function TimelinePanel() {
   const duration = timeline?.durationInFrames ?? 0;
 
   return (
-    <footer className="relative z-20 flex h-full min-h-0 flex-col overflow-hidden border-t border-em-border bg-em-bg">
-      <div className="flex shrink-0 items-center gap-3 border-b border-em-border px-2 py-1">
+    <footer className="relative z-20 flex h-full min-h-0 flex-col overflow-hidden border-t border-border bg-background">
+      <div className="flex shrink-0 items-center gap-3 border-b border-border px-2 py-1">
         <TimelineTransport />
         <div className="ml-auto flex items-center gap-2">
           <TimelineZoomControls />
@@ -48,14 +49,14 @@ export function TimelinePanel() {
       </div>
 
       {error && (
-        <p className="shrink-0 px-3 py-1.5 text-xs text-em-error" role="alert">
+        <p className="shrink-0 px-3 py-1.5 text-xs text-destructive" role="alert">
           {error}
         </p>
       )}
 
       {isSyncingRemotion && (
         <p
-          className="shrink-0 border-b border-em-teal/20 bg-em-teal/5 px-3 py-1.5 text-xs text-em-teal"
+          className="shrink-0 border-b border-ring/20 bg-ring/5 px-3 py-1.5 text-xs text-ring"
           role="status"
         >
           正在从 Remotion 自动同步时间线…
@@ -64,7 +65,7 @@ export function TimelinePanel() {
 
       {lastRemotionSync && !error && !isSyncingRemotion && (
         <p
-          className="shrink-0 border-b border-em-teal/20 bg-em-teal/5 px-3 py-1.5 text-xs text-em-teal"
+          className="shrink-0 border-b border-ring/20 bg-ring/5 px-3 py-1.5 text-xs text-ring"
           role="status"
         >
           已从 Remotion 映射到时间线：{formatRemotionSyncSummary(lastRemotionSync)}
@@ -80,17 +81,19 @@ export function TimelinePanel() {
             {" "}
             可手动重试「从 Remotion 读取」。
           </p>
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             disabled={busy}
+            className="h-7 shrink-0 rounded-sm border-amber-500/30 bg-amber-500/20 text-xs text-amber-50 hover:bg-amber-500/30"
             onClick={() => {
               clearError();
               void syncFromRemotion();
             }}
-            className="shrink-0 rounded-sm bg-amber-500/20 px-2 py-1 text-amber-50 hover:bg-amber-500/30 disabled:opacity-50"
           >
             重试读取
-          </button>
+          </Button>
         </div>
       )}
 
@@ -105,8 +108,8 @@ export function TimelinePanel() {
           onSelectClip={selectClip}
         />
       ) : (
-        <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 p-4 text-center text-sm text-em-muted">
-          <p className="text-em-text">开始你的动画创作</p>
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 p-4 text-center text-sm text-muted-foreground">
+          <p className="text-foreground">开始你的动画创作</p>
           <p className="max-w-md text-xs">
             点击上方「+ 轨道」添加文字或分组；若 Remotion 源码已有内容，可用「⋯」→「从 Remotion 读取」同步。
           </p>

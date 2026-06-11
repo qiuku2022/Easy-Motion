@@ -1,5 +1,23 @@
 import { useMemo } from "react";
 import { AlignCenterHorizontal, Scissors, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { TRACK_ROW_HEIGHT } from "@/lib/timeline/constants";
 import { frameToPx } from "@/lib/timeline/framePixels";
@@ -86,7 +104,7 @@ export function ClipFloatingToolbar({
   return (
     <div
       className={cn(
-        "clip-floating-toolbar pointer-events-auto absolute z-[60] flex items-center gap-0.5 rounded-md border border-em-border bg-em-elevated px-1 py-0.5 shadow-lg shadow-black/30",
+        "clip-floating-toolbar pointer-events-auto absolute z-[60] flex items-center gap-0.5 rounded-md border border-border bg-popover px-1 py-0.5 shadow-lg shadow-black/30",
         placeBelow ? "clip-floating-toolbar-below" : "clip-floating-toolbar-above",
       )}
       style={
@@ -112,12 +130,9 @@ export function ClipFloatingToolbar({
         onClick={() => run(splitSelectedClipAtPlayhead)}
       />
       <ToolbarDivider />
-      <ToolbarButton
-        label="删除"
+      <DeleteClipToolbarButton
         shortcut={PR_SHORTCUTS.delete}
-        icon={<Trash2 className="h-3.5 w-3.5" />}
-        danger
-        onClick={() => run(deleteSelectedClip)}
+        onConfirm={() => run(deleteSelectedClip)}
       />
       <ToolbarDivider />
       <ToolbarButton
@@ -130,7 +145,54 @@ export function ClipFloatingToolbar({
 }
 
 function ToolbarDivider() {
-  return <div className="mx-0.5 h-4 w-px bg-em-border" aria-hidden />;
+  return <Separator orientation="vertical" className="mx-0.5 h-4" />;
+}
+
+function DeleteClipToolbarButton({
+  shortcut,
+  onConfirm,
+}: {
+  shortcut: string;
+  onConfirm: () => void;
+}) {
+  const label = "删除";
+  const tip = `${label} (${shortcut})`;
+
+  return (
+    <AlertDialog>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <AlertDialogTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-7 gap-1 rounded-sm px-2 text-[11px] text-red-400 hover:bg-red-500/15 hover:text-red-400"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              <span>{label}</span>
+              <span className="sr-only">{tip}</span>
+            </Button>
+          </AlertDialogTrigger>
+        </TooltipTrigger>
+        <TooltipContent side="top">{tip}</TooltipContent>
+      </Tooltip>
+      <AlertDialogContent className="z-[100]">
+        <AlertDialogHeader>
+          <AlertDialogTitle>删除片段？</AlertDialogTitle>
+          <AlertDialogDescription>
+            将从时间线移除当前选中的片段。此操作不可撤销。
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>取消</AlertDialogCancel>
+          <AlertDialogAction variant="destructive" onClick={onConfirm}>
+            删除
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
 }
 
 function ToolbarButton({
@@ -148,24 +210,30 @@ function ToolbarButton({
   danger?: boolean;
   onClick: () => void;
 }) {
-  const title = shortcut ? `${label} (${shortcut})` : label;
+  const tip = shortcut ? `${label} (${shortcut})` : label;
 
   return (
-    <button
-      type="button"
-      title={title}
-      aria-label={title}
-      disabled={disabled}
-      onClick={onClick}
-      className={cn(
-        "inline-flex cursor-pointer items-center gap-1 rounded-sm px-2 py-1 text-[11px] transition-colors duration-150 ease-out disabled:cursor-not-allowed disabled:opacity-40",
-        danger
-          ? "text-red-400 hover:bg-red-500/15"
-          : "text-em-text hover:bg-em-surface",
-      )}
-    >
-      {icon}
-      <span>{label}</span>
-    </button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          disabled={disabled}
+          onClick={onClick}
+          className={cn(
+            "h-7 gap-1 rounded-sm px-2 text-[11px]",
+            danger
+              ? "text-red-400 hover:bg-red-500/15 hover:text-red-400"
+              : "text-foreground",
+          )}
+        >
+          {icon}
+          <span>{label}</span>
+          <span className="sr-only">{tip}</span>
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="top">{tip}</TooltipContent>
+    </Tooltip>
   );
 }

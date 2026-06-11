@@ -1,10 +1,26 @@
+import { useState } from "react";
 import { Magnet, Maximize2, Repeat } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import {
   MAX_PX_PER_FRAME,
   MIN_PX_PER_FRAME,
 } from "@/lib/timeline/framePixels";
 import { PR_SHORTCUTS } from "@/lib/premiereShortcuts";
+import { usePlaybackStore } from "@/stores/playbackStore";
 import { useUiStore } from "@/stores/uiStore";
 import { useTimelineStore } from "@/stores/timelineStore";
 
@@ -15,17 +31,57 @@ const RULER_SCALES = [
   { id: "10s", label: "10s" },
 ] as const;
 
+type RulerScaleId = (typeof RULER_SCALES)[number]["id"];
+
+function ZoomIconButton({
+  label,
+  children,
+  active,
+  onClick,
+}: {
+  label: string;
+  children: React.ReactNode;
+  active?: boolean;
+  onClick?: () => void;
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          type="button"
+          variant={active ? "secondary" : "ghost"}
+          size="icon"
+          className={cn(
+            "h-8 w-8",
+            active ? "text-foreground" : "text-muted-foreground",
+          )}
+          aria-pressed={active}
+          onClick={onClick}
+        >
+          {children}
+          <span className="sr-only">{label}</span>
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="top">{label}</TooltipContent>
+    </Tooltip>
+  );
+}
+
 export function TimelineZoomControls() {
   const snapEnabled = useUiStore((s) => s.snapEnabled);
   const toggleSnapEnabled = useUiStore((s) => s.toggleSnapEnabled);
+  const loopEnabled = usePlaybackStore((s) => s.loopEnabled);
+  const toggleLoopEnabled = usePlaybackStore((s) => s.toggleLoopEnabled);
   const pxPerFrame = useUiStore((s) => s.pxPerFrame);
   const setPxPerFrame = useUiStore((s) => s.setPxPerFrame);
   const requestTimelineFit = useUiStore((s) => s.requestTimelineFit);
   const timeline = useTimelineStore((s) => s.timeline);
+  const [rulerScale, setRulerScale] = useState<RulerScaleId>("fit");
 
   const fps = timeline?.fps ?? 30;
 
-  const onScaleChange = (value: string) => {
+  const onScaleChange = (value: RulerScaleId) => {
+    setRulerScale(value);
     if (value === "fit") {
       requestTimelineFit();
       return;
@@ -41,66 +97,71 @@ export function TimelineZoomControls() {
 
   return (
     <div className="flex items-center gap-1.5">
-      <button
-        type="button"
-        title={
+      <ZoomIconButton
+        label={
           snapEnabled
             ? `吸附（开启）· ${PR_SHORTCUTS.snapToggle}`
             : `吸附（关闭）· ${PR_SHORTCUTS.snapToggle}`
         }
+        active={snapEnabled}
         onClick={toggleSnapEnabled}
-        className={cn(
-          "cursor-pointer rounded-sm p-1.5 transition-colors duration-150 ease-out hover:bg-em-elevated",
-          snapEnabled ? "text-em-teal" : "text-em-muted",
-        )}
       >
         <Magnet className="h-4 w-4" />
-      </button>
-      <button
-        type="button"
-        title="循环播放"
-        className="cursor-pointer rounded-sm p-1.5 text-em-muted transition-colors duration-150 ease-out hover:bg-em-elevated hover:text-em-text"
+      </ZoomIconButton>
+      <ZoomIconButton
+        label={loopEnabled ? "循环播放（开启）" : "循环播放（关闭）"}
+        active={loopEnabled}
+        onClick={toggleLoopEnabled}
       >
         <Repeat className="h-4 w-4" />
-      </button>
+      </ZoomIconButton>
 
       <div className="mx-1 flex items-center gap-1.5">
-        <button
-          type="button"
-          title={`适配窗口 · ${PR_SHORTCUTS.fitTimeline}`}
+        <ZoomIconButton
+          label={`适配窗口 · ${PR_SHORTCUTS.fitTimeline}`}
           onClick={requestTimelineFit}
-          className="cursor-pointer rounded-sm p-1 text-em-muted transition-colors duration-150 ease-out hover:bg-em-elevated hover:text-em-text"
         >
           <Maximize2 className="h-3.5 w-3.5" />
-        </button>
-        <input
-          type="range"
+        </ZoomIconButton>
+        <Slider
+          className="w-20"
           min={0}
           max={100}
-          value={sliderValue}
+          step={1}
+          value={[sliderValue]}
           aria-label="时间线缩放"
-          onChange={(e) => {
-            const t = Number(e.target.value) / 100;
+          onValueChange={([t]) => {
             setPxPerFrame(
               MIN_PX_PER_FRAME + t * (MAX_PX_PER_FRAME - MIN_PX_PER_FRAME),
             );
           }}
-          className="h-1 w-20 cursor-pointer accent-em-teal"
         />
       </div>
 
-      <select
-        className="cursor-pointer rounded-sm border border-em-border bg-em-surface px-1.5 py-0.5 font-mono text-xs text-em-text"
-        defaultValue="1s"
-        aria-label="时间标尺刻度"
-        onChange={(e) => onScaleChange(e.target.value)}
-      >
-        {RULER_SCALES.map((s) => (
-          <option key={s.id} value={s.id}>
-            {s.label}
-          </option>
-        ))}
-      </select>
+      <Select value={rulerScale} onValueChange={(v) => onScaleChange(v as RulerScaleId)}>
+        <SelectTrigger
+          size="sm"
+          className="h-7 w-[4.5rem] font-mono text-xs"
+          aria-label="时间标尺刻度"
+        >
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent
+          position="popper"
+          align="start"
+          className="z-[90] min-w-0 w-[4.5rem] p-0.5"
+        >
+          {RULER_SCALES.map((s) => (
+            <SelectItem
+              key={s.id}
+              value={s.id}
+              className="py-0.5 pl-2 pr-6 text-xs"
+            >
+              {s.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

@@ -36,8 +36,18 @@ import {
 
 } from "lucide-react";
 
-import { ContextMenu, type ContextMenuItem } from "@/components/common/ContextMenu";
+import {
+  ContextMenuWrapper,
+  type ContextMenuItem,
+} from "@/components/common/ContextMenu";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 import { TRACK_HEADER_WIDTH, TRACK_ROW_HEIGHT } from "@/lib/timeline/constants";
@@ -75,7 +85,40 @@ const TRACK_ICONS: Record<TrackType, typeof Type> = {
 
 };
 
-
+function TrackHeaderIconButton({
+  label,
+  className,
+  children,
+  onClick,
+  onPointerDown,
+}: {
+  label: string;
+  className?: string;
+  children: React.ReactNode;
+  onClick?: (e: React.MouseEvent) => void;
+  onPointerDown?: (e: React.PointerEvent) => void;
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-xs"
+          className={cn("shrink-0", className)}
+          aria-label={label}
+          onClick={onClick}
+          onPointerDown={onPointerDown}
+        >
+          {children}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="right" className="text-xs">
+        {label}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
 
 interface TrackHeaderProps {
 
@@ -142,8 +185,6 @@ export function TrackHeader({
   const [renaming, setRenaming] = useState(false);
 
   const [draft, setDraft] = useState(track.name);
-
-  const [menu, setMenu] = useState<{ x: number; y: number } | null>(null);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -336,54 +377,46 @@ export function TrackHeader({
 
 
   return (
-
-    <>
-
+    <ContextMenuWrapper items={contextItems} onOpen={() => onSelect?.()}>
       <div
         data-track-header-id={track.id}
         data-track-row-index={rowIndex}
         data-top-level={depth === 0 ? "true" : "false"}
         className={cn(
-          "relative box-border flex shrink-0 items-center gap-1 bg-em-bg px-1",
+          "group/track relative box-border flex min-w-0 shrink-0 items-center gap-0.5 overflow-hidden bg-background pr-1",
+          "before:pointer-events-none before:absolute before:inset-y-0 before:left-0 before:z-10 before:w-0.5 before:scale-y-0 before:bg-foreground before:transition-transform before:duration-150 before:content-['']",
+          selected && "bg-muted/45 before:scale-y-100",
           isDragging && "z-20 opacity-60",
           !effectiveVisible && "opacity-50",
-          effectiveLocked && "bg-em-surface/40",
-          isGroupHeader && "bg-em-surface/20",
-          selected && "ring-1 ring-inset ring-em-teal/40",
+          effectiveLocked && !selected && "bg-muted/25",
+          isGroupHeader && !selected && "bg-muted/15",
           className,
         )}
         style={{
           width: TRACK_HEADER_WIDTH,
           height: TRACK_ROW_HEIGHT,
-          paddingLeft: 4 + depth * 14,
+          paddingLeft: 6 + depth * 12,
           ...style,
-        }}
-        onContextMenu={(e) => {
-          e.preventDefault();
-          onSelect?.();
-          setMenu({ x: e.clientX, y: e.clientY });
         }}
         onClick={() => onSelect?.()}
       >
         {showDropLineAbove && (
           <div
-            className="pointer-events-none absolute inset-x-0 top-0 z-30 h-0.5 bg-em-teal shadow-[0_0_6px_rgba(45,212,191,0.6)]"
+            className="pointer-events-none absolute inset-x-0 top-0 z-30 h-px bg-foreground/70"
             aria-hidden
           />
         )}
         {showDropLineBelow && (
           <div
-            className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-0.5 bg-em-teal shadow-[0_0_6px_rgba(45,212,191,0.6)]"
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-px bg-foreground/70"
             aria-hidden
           />
         )}
 
         {isGroupHeader ? (
-          <button
-            type="button"
-            title={track.collapsed ? "展开分组" : "折叠分组"}
-            aria-label={track.collapsed ? "展开分组" : "折叠分组"}
-            className="cursor-pointer rounded-sm p-0.5 text-em-muted transition-colors duration-150 ease-out hover:bg-em-elevated hover:text-em-text"
+          <TrackHeaderIconButton
+            label={track.collapsed ? "展开分组" : "折叠分组"}
+            className="text-muted-foreground hover:text-foreground"
             onClick={(e) => {
               e.stopPropagation();
               toggleGroupCollapsed(track.id);
@@ -394,99 +427,57 @@ export function TrackHeader({
             ) : (
               <ChevronDown className="h-3.5 w-3.5" />
             )}
-          </button>
+          </TrackHeaderIconButton>
         ) : null}
 
         {onReorderStart ? (
-        <button
-
-            type="button"
-
-            title="拖拽调整轨道顺序"
-
-            aria-label="拖拽调整轨道顺序"
-
-            className="cursor-grab rounded-sm p-0.5 text-em-muted transition-colors duration-150 ease-out hover:bg-em-elevated hover:text-em-text active:cursor-grabbing"
-
+          <TrackHeaderIconButton
+            label="拖拽调整轨道顺序"
+            className="cursor-grab text-muted-foreground active:cursor-grabbing hover:text-foreground"
             onPointerDown={(e) => onReorderStart(e)}
-
             onClick={(e) => e.stopPropagation()}
-
           >
-
             <GripVertical className="h-3.5 w-3.5" />
-
-          </button>
+          </TrackHeaderIconButton>
         ) : (
           <span className="w-4 shrink-0" aria-hidden />
         )}
 
 
 
-          <button
-
-            type="button"
-
-            title={track.visible ? "隐藏轨道" : "显示轨道"}
-
-            aria-label={track.visible ? "隐藏轨道" : "显示轨道"}
-
+          <TrackHeaderIconButton
+            label={track.visible ? "隐藏轨道" : "显示轨道"}
+            className="text-muted-foreground hover:text-foreground"
             onClick={(e) => {
-
               e.stopPropagation();
-
               toggleVisibility(track.id);
-
             }}
-
-            className="cursor-pointer rounded-sm p-0.5 text-em-muted transition-colors duration-150 ease-out hover:bg-em-elevated hover:text-em-text"
-
           >
-
             {track.visible ? (
-
-              <Icon className="h-3.5 w-3.5 text-em-teal" />
-
+              <Icon className="h-3.5 w-3.5 text-foreground/80" />
             ) : (
-
               <EyeOff className="h-3.5 w-3.5" />
-
             )}
-
-          </button>
+          </TrackHeaderIconButton>
 
 
 
           {renaming ? (
 
-            <input
-
+            <Input
               ref={inputRef}
-
               value={draft}
-
               onChange={(e) => setDraft(e.target.value)}
-
               onBlur={commitRename}
-
               onClick={(e) => e.stopPropagation()}
-
               onKeyDown={(e) => {
-
                 if (e.key === "Enter") commitRename();
-
                 if (e.key === "Escape") {
-
                   setDraft(track.name);
-
                   setRenaming(false);
-
                 }
-
               }}
-
-              className="min-w-0 flex-1 rounded-sm border border-em-teal bg-em-surface px-1 py-0.5 text-xs text-em-text focus:outline-none focus:ring-1 focus:ring-em-teal"
-
+              className="h-6 min-w-0 flex-1 rounded-sm px-1 py-0.5 text-xs"
             />
 
           ) : (
@@ -505,7 +496,10 @@ export function TrackHeader({
 
               }}
 
-              className="flex h-6 min-w-0 flex-1 cursor-pointer items-center truncate text-left text-xs leading-none text-em-text"
+              className={cn(
+                "min-w-0 flex-1 cursor-pointer truncate rounded-md px-1 py-0.5 text-left text-xs leading-tight",
+                selected ? "font-medium text-foreground" : "text-muted-foreground hover:text-foreground",
+              )}
 
             >
 
@@ -517,126 +511,72 @@ export function TrackHeader({
 
 
 
-          {!isGroupHeader && (
-            <button
-              type="button"
-              title={
-                track.solo
-                  ? "取消独奏"
-                  : "独奏（Alt+点击：仅独奏此轨道）"
-              }
-              aria-label={track.solo ? "取消独奏" : "独奏"}
-              onClick={(e) => {
-                e.stopPropagation();
-                clearError();
-                toggleSolo(track.id, e.altKey);
-              }}
-              className={cn(
-                "cursor-pointer rounded-sm p-0.5 transition-colors duration-150 ease-out hover:bg-em-elevated",
-                track.solo
-                  ? "text-amber-400"
-                  : "text-transparent hover:text-em-text",
-              )}
-            >
-              <Headphones className="h-3 w-3" />
-            </button>
-          )}
-
-
-
-          {track.type === "audio" && (
-
-            <button
-
-              type="button"
-
-              title={track.muted ? "取消静音" : "静音"}
-
-              aria-label={track.muted ? "取消静音" : "静音"}
-
-              onClick={(e) => {
-
-                e.stopPropagation();
-
-                toggleMuted(track.id);
-
-              }}
-
-              className={cn(
-
-                "cursor-pointer rounded-sm p-0.5 transition-colors duration-150 ease-out hover:bg-em-elevated",
-
-                track.muted ? "text-em-warning" : "text-em-muted hover:text-em-text",
-
-              )}
-
-            >
-
-              <VolumeX className="h-3.5 w-3.5" />
-
-            </button>
-
-          )}
-
-
-
-          <button
-
-            type="button"
-
-            title={track.locked ? "解锁轨道" : "锁定轨道"}
-
-            aria-label={track.locked ? "解锁轨道" : "锁定轨道"}
-
-            onClick={(e) => {
-
-              e.stopPropagation();
-
-              toggleLock(track.id);
-
-            }}
-
+          <div
             className={cn(
-
-              "cursor-pointer rounded-sm p-0.5 transition-colors duration-150 ease-out hover:bg-em-elevated",
-
-              track.locked ? "text-em-muted" : "text-transparent hover:text-em-text",
-
+              "flex shrink-0 items-center gap-0 transition-opacity duration-150",
+              !track.solo &&
+                !track.muted &&
+                !track.locked &&
+                !selected &&
+                "opacity-0 group-hover/track:opacity-100 group-focus-within/track:opacity-100",
+            )}
+          >
+            {!isGroupHeader && (
+              <TrackHeaderIconButton
+                label={
+                  track.solo
+                    ? "取消独奏"
+                    : "独奏（Alt+点击：仅独奏此轨道）"
+                }
+                className={cn(
+                  track.solo ? "text-amber-400" : "text-muted-foreground",
+                )}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  clearError();
+                  toggleSolo(track.id, e.altKey);
+                }}
+              >
+                <Headphones className="h-3 w-3" />
+              </TrackHeaderIconButton>
             )}
 
-          >
+            {track.type === "audio" && (
+              <TrackHeaderIconButton
+                label={track.muted ? "取消静音" : "静音"}
+                className={cn(
+                  track.muted ? "text-warning" : "text-muted-foreground",
+                )}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleMuted(track.id);
+                }}
+              >
+                <VolumeX className="h-3.5 w-3.5" />
+              </TrackHeaderIconButton>
+            )}
 
-            <Lock className="h-3 w-3" />
-
-          </button>
+            <TrackHeaderIconButton
+              label={track.locked ? "解锁轨道" : "锁定轨道"}
+              className={cn(
+                track.locked ? "text-muted-foreground" : "text-muted-foreground",
+              )}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleLock(track.id);
+              }}
+            >
+              <Lock className="h-3 w-3" />
+            </TrackHeaderIconButton>
+          </div>
 
 
 
           {!track.visible && (
-            <Eye className="h-3 w-3 shrink-0 text-em-muted" aria-hidden />
+            <Eye className="h-3 w-3 shrink-0 text-muted-foreground" aria-hidden />
           )}
       </div>
-
-
-
-      {menu && (
-
-        <ContextMenu
-
-          x={menu.x}
-
-          y={menu.y}
-
-          items={contextItems}
-
-          onClose={() => setMenu(null)}
-
-        />
-
-      )}
-
-    </>
-
+    </ContextMenuWrapper>
   );
 
 }

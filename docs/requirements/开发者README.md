@@ -173,6 +173,16 @@ pnpm build:local      # 本地打包测试
 
 详细开发指南：[开发环境搭建指南.md](docs/requirements/开发环境搭建指南.md)
 
+### 渲染进程 UI（shadcn/ui）
+
+- 路径：`apps/electron/src/renderer/src/components/ui/`
+- 配置：`apps/electron/components.json`（style: nova，base: radix）
+- 新增：`cd apps/electron && npx shadcn@latest add <name>`
+- 主题：`src/renderer/src/index.css` + [`MASTER.md`](../design-system/easymotion/MASTER.md)
+- 清单：[`组件库清单.md`](组件库清单.md)
+
+业务组件优先使用语义类（`bg-background`、`text-primary`）；`em-*` 为过渡期别名，与时间线画布内旧类名兼容。
+
 ---
 
 ## 项目结构

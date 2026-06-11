@@ -9,16 +9,20 @@ export interface PlaybackHandlers {
 
 interface PlaybackState {
   isPlaying: boolean;
+  /** 预览播放到结尾后是否循环 */
+  loopEnabled: boolean;
   handlers: PlaybackHandlers | null;
   registerHandlers: (handlers: PlaybackHandlers) => void;
   unregisterHandlers: () => void;
   seekTo: (frame: number) => void;
   togglePlay: () => void;
+  toggleLoopEnabled: () => void;
   setPlaying: (playing: boolean) => void;
 }
 
 export const usePlaybackStore = create<PlaybackState>((set, get) => ({
   isPlaying: false,
+  loopEnabled: true,
   handlers: null,
 
   registerHandlers: (handlers) => set({ handlers }),
@@ -39,6 +43,8 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
       get().handlers?.pause();
     }
   },
+
+  toggleLoopEnabled: () => set((s) => ({ loopEnabled: !s.loopEnabled })),
 
   setPlaying: (isPlaying) => set({ isPlaying }),
 }));

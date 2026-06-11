@@ -1,6 +1,29 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { Trash2, X } from "lucide-react";
+import { z } from "zod";
 import { ClipPropertyFields } from "@/components/properties/ClipPropertyFields";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
 import { debounce } from "@/lib/debounce";
 import { resolveEditableClipType } from "@/lib/timeline/clipPropertySchema";
 import type { ClipPatch } from "@/lib/timeline/mutations";
@@ -11,12 +34,12 @@ import {
   findTrackById,
   pickDefaultContentElement,
 } from "@/lib/timeline/trackTree";
-import { cn } from "@/lib/utils";
 import { useTimelineStore } from "@/stores/timelineStore";
-import type { Clip, Timeline, Track, TrackType } from "@/types/timeline";
+import type { Clip, Track, TrackType } from "@/types/timeline";
 
-const inputClass =
-  "w-full rounded-md border border-em-border bg-em-surface px-2.5 py-1.5 text-sm text-em-text placeholder:text-em-muted focus:border-em-teal focus:outline-none focus:ring-1 focus:ring-em-teal disabled:cursor-not-allowed disabled:opacity-50";
+const textContentSchema = z.object({
+  content: z.string(),
+});
 
 function usePropertyTarget() {
   const timeline = useTimelineStore((s) => s.timeline);
@@ -113,7 +136,7 @@ export function PropertiesPanel() {
 
   if (!resolved) {
     return (
-      <p className="text-sm text-em-muted">
+      <p className="text-sm text-muted-foreground">
         点击时间线上的文字片段即可直接编辑。按 Esc 取消选择。
       </p>
     );
@@ -125,6 +148,7 @@ export function PropertiesPanel() {
   if (contentClip && contentType === "text" && contentTrack) {
     return (
       <TextEditorPanel
+        key={contentClip.id}
         layerName={layerTrack.name}
         clip={contentClip}
         disabled={disabled}
@@ -141,17 +165,20 @@ export function PropertiesPanel() {
     return (
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-sm font-medium text-em-text">
+          <p className="text-sm font-medium text-foreground">
             {layerTrack.name} · {TRACK_TYPE_LABELS[contentType as TrackType]}
           </p>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
             title="取消选择 (Esc)"
-            className="cursor-pointer rounded-md p-1.5 text-em-muted hover:bg-em-surface hover:text-em-text"
             onClick={() => clearSelection()}
           >
             <X className="h-4 w-4" />
-          </button>
+            <span className="sr-only">取消选择</span>
+          </Button>
         </div>
         <ClipPropertyFields
           clipType={contentType}
@@ -167,17 +194,20 @@ export function PropertiesPanel() {
   return (
     <div className="flex flex-col gap-2 text-sm">
       <div className="flex items-center justify-between">
-        <p className="font-medium text-em-text">{layerTrack.name}</p>
-        <button
+        <p className="font-medium text-foreground">{layerTrack.name}</p>
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8"
           title="取消选择 (Esc)"
-          className="cursor-pointer rounded-md p-1.5 text-em-muted hover:bg-em-surface hover:text-em-text"
           onClick={() => clearSelection()}
         >
           <X className="h-4 w-4" />
-        </button>
+          <span className="sr-only">取消选择</span>
+        </Button>
       </div>
-      <p className="text-xs text-em-muted">
+      <p className="text-xs text-muted-foreground">
         {layerTrack.type === "group"
           ? "此图层没有可编辑的文字。展开分组，点击「主标题」文字条，或新建文字轨道。"
           : "此图层暂无可编辑内容。请添加文字片段，或从素材库拖入。"}
@@ -206,44 +236,71 @@ function TextEditorPanel({
   onDelete: () => void;
 }) {
   const saved = String(clip.source?.content ?? "");
-  const [draft, setDraft] = useState(saved);
+
+  const form = useForm<z.infer<typeof textContentSchema>>({
+    resolver: zodResolver(textContentSchema),
+    defaultValues: { content: saved },
+  });
 
   useEffect(() => {
-    setDraft(saved);
-  }, [clip.id, saved]);
+    form.reset({ content: String(clip.source?.content ?? "") });
+  }, [clip.id, clip.source?.content, form]);
 
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between gap-2">
         <div className="min-w-0">
-          <p className="truncate text-sm font-medium text-em-text">{layerName}</p>
-          <p className="text-xs text-em-muted">直接改字，自动写入时间线</p>
+          <p className="truncate text-sm font-medium text-foreground">{layerName}</p>
+          <p className="text-xs text-muted-foreground">直接改字，自动写入时间线</p>
         </div>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 shrink-0"
           title="取消选择 (Esc)"
-          className="shrink-0 cursor-pointer rounded-md p-1.5 text-em-muted transition-colors hover:bg-em-surface hover:text-em-text"
           onClick={onClear}
         >
           <X className="h-4 w-4" />
-        </button>
+          <span className="sr-only">取消选择</span>
+        </Button>
       </div>
 
-      <textarea
-        ref={textRef}
-        className={cn(inputClass, "min-h-[120px] resize-y leading-relaxed")}
-        value={draft}
-        disabled={disabled}
-        placeholder="输入文字…"
-        onChange={(e) => {
-          setDraft(e.target.value);
-          onPatch({ source: { kind: "inline", content: e.target.value } });
-        }}
-      />
+      <Form {...form}>
+        <form onSubmit={(e) => e.preventDefault()}>
+          <FormField
+            control={form.control}
+            name="content"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Textarea
+                    {...field}
+                    ref={(el) => {
+                      field.ref(el);
+                      (
+                        textRef as React.MutableRefObject<HTMLTextAreaElement | null>
+                      ).current = el;
+                    }}
+                    className="min-h-[120px] resize-y text-sm leading-relaxed"
+                    disabled={disabled}
+                    placeholder="输入文字…"
+                    onChange={(e) => {
+                      field.onChange(e);
+                      onPatch({ source: { kind: "inline", content: e.target.value } });
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </form>
+      </Form>
 
-      <details className="text-xs text-em-muted">
-        <summary className="cursor-pointer select-none text-em-text">更多样式</summary>
-        <div className="mt-2 space-y-2 border-t border-em-border pt-2">
+      <details className="text-xs text-muted-foreground">
+        <summary className="cursor-pointer select-none text-foreground">更多样式</summary>
+        <div className="mt-2 space-y-2 border-t border-border pt-2">
           <ClipPropertyFields
             clipType="text"
             clip={clip}
@@ -255,21 +312,39 @@ function TextEditorPanel({
         </div>
       </details>
 
-      <p className="text-[11px] text-em-muted">
+      <p className="text-[11px] text-muted-foreground">
         改字后约 1 秒自动更新预览（需已启动预览）。Esc 或 × 可退出。
       </p>
 
-      {error ? <p className="text-xs text-red-400">{error}</p> : null}
+      {error ? <p className="text-xs text-destructive">{error}</p> : null}
 
-      <button
-        type="button"
-        disabled={disabled}
-        className="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-md border border-red-500/40 bg-red-500/10 px-3 py-2 text-xs text-red-300 transition-colors hover:bg-red-500/20 disabled:cursor-not-allowed disabled:opacity-50"
-        onClick={onDelete}
-      >
-        <Trash2 className="h-3.5 w-3.5" />
-        删除片段
-      </button>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button
+            type="button"
+            variant="destructive"
+            disabled={disabled}
+            className="w-full gap-2 text-xs"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+            删除片段
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>删除片段？</AlertDialogTitle>
+            <AlertDialogDescription>
+              将从时间线移除「{clip.name || "未命名片段"}」。此操作不可撤销。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>取消</AlertDialogCancel>
+            <AlertDialogAction variant="destructive" onClick={onDelete}>
+              删除
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

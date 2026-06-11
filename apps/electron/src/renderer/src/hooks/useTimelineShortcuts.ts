@@ -92,10 +92,12 @@ function handleTimelineZoom(e: KeyboardEvent): boolean {
  */
 export function useTimelineShortcuts() {
   useEffect(() => {
+    const syncAltKeyHeld = (e: KeyboardEvent | PointerEvent) => {
+      useUiStore.getState().setAltKeyHeld(e.altKey);
+    };
+
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Alt") {
-        useUiStore.getState().setAltKeyHeld(true);
-      }
+      syncAltKeyHeld(e);
 
       if (isEditableTarget(e.target)) return;
 
@@ -239,9 +241,7 @@ export function useTimelineShortcuts() {
     };
 
     const onKeyUp = (e: KeyboardEvent) => {
-      if (e.key === "Alt") {
-        useUiStore.getState().setAltKeyHeld(false);
-      }
+      syncAltKeyHeld(e);
     };
 
     const onBlur = () => {
@@ -250,10 +250,12 @@ export function useTimelineShortcuts() {
 
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("keyup", onKeyUp);
+    window.addEventListener("pointerdown", syncAltKeyHeld, true);
     window.addEventListener("blur", onBlur);
     return () => {
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
+      window.removeEventListener("pointerdown", syncAltKeyHeld, true);
       window.removeEventListener("blur", onBlur);
     };
   }, []);

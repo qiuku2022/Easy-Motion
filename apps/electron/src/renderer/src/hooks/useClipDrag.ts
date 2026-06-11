@@ -94,7 +94,7 @@ export function useClipDrag({ scrollRef, tracks, pxPerFrame }: UseClipDragOption
           moved = true;
         }
 
-        const opts = snapOptions(clipId, pxPerFrame);
+        const opts = { ...snapOptions(clipId, pxPerFrame), altKeyHeld: ev.altKey };
         const pointerAt = frameFromPointer(ev.clientX, container, pxPerFrame, 0);
 
         if (mode === "move") {

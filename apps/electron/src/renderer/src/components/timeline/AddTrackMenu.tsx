@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   ADD_TRACK_TYPES,
@@ -35,52 +36,54 @@ export function AddTrackMenu({ disabled }: AddTrackMenuProps) {
     };
   }, [open]);
 
+  const handleAdd = (type: Parameters<typeof addTrack>[0]) => {
+    clearError();
+    addTrack(type, defaultTrackName(type));
+    setOpen(false);
+  };
+
   return (
     <div ref={rootRef} className="relative">
-      <button
+      <Button
         type="button"
-        title="添加轨道"
+        variant="outline"
+        size="sm"
         disabled={disabled}
+        className="h-7 gap-1 text-xs"
+        title="添加轨道"
+        aria-expanded={open}
+        aria-haspopup="menu"
         onClick={() => setOpen((v) => !v)}
-        className={cn(
-          "inline-flex cursor-pointer items-center gap-1 rounded-sm border border-em-border bg-em-elevated px-2 py-1 text-xs text-em-text transition-colors duration-150 ease-out hover:bg-em-surface disabled:cursor-not-allowed disabled:opacity-50",
-          open && "border-em-teal/50 bg-em-teal/10",
-        )}
       >
         <Plus className="h-3.5 w-3.5" />
         轨道
-        <ChevronDown className={cn("h-3 w-3 text-em-muted", open && "rotate-180")} />
-      </button>
+        <ChevronDown
+          className={cn("h-3 w-3 opacity-60 transition-transform", open && "rotate-180")}
+        />
+      </Button>
 
       {open && (
         <div
           role="menu"
-          className="absolute left-0 top-full z-50 mt-1 min-w-[9rem] rounded-md border border-em-border bg-em-elevated py-1 shadow-lg"
+          className="absolute left-0 top-full z-[90] mt-1 w-max min-w-full rounded-lg border border-border bg-popover p-0.5 text-popover-foreground shadow-md ring-1 ring-foreground/10"
         >
           {ADD_TRACK_TYPES.map((type) => (
             <button
               key={type}
               type="button"
               role="menuitem"
-              className="flex w-full cursor-pointer px-3 py-1.5 text-left text-xs text-em-text transition-colors duration-100 ease-out hover:bg-em-surface"
-              onClick={() => {
-                clearError();
-                addTrack(type, defaultTrackName(type));
-                setOpen(false);
-              }}
+              className="flex w-full cursor-default whitespace-nowrap rounded-md px-2 py-0.5 text-left text-xs outline-none hover:bg-accent hover:text-accent-foreground"
+              onClick={() => handleAdd(type)}
             >
               {TRACK_TYPE_LABELS[type]}
             </button>
           ))}
+          <div className="my-0.5 h-px bg-border" />
           <button
             type="button"
             role="menuitem"
-            className="flex w-full cursor-pointer border-t border-em-border px-3 py-1.5 text-left text-xs text-em-text transition-colors duration-100 ease-out hover:bg-em-surface"
-            onClick={() => {
-              clearError();
-              addTrack("group", defaultTrackName("group"));
-              setOpen(false);
-            }}
+            className="flex w-full cursor-default whitespace-nowrap rounded-md px-2 py-0.5 text-left text-xs outline-none hover:bg-accent hover:text-accent-foreground"
+            onClick={() => handleAdd("group")}
           >
             {TRACK_TYPE_LABELS.group}
           </button>

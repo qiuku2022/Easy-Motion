@@ -13,25 +13,23 @@
 
 ### 0.1 颜色系统
 
-采用 **Cinema Dark + Action Red** 配色方案，确保长时间编辑的视觉舒适度。
+采用 **shadcn Neutral Dark**（2026-06 更新，替代原 Cinema Dark + Action Red）。壳层为中性灰黑 + 浅灰白主按钮；删除/错误仍用 destructive 红。
 
-| 角色 | 颜色值 | 用途 |
-|------|--------|------|
-| **背景主色** | `#0F0F23` | 主窗口背景、面板底色 |
-| **背景次色** | `#1A1A2E` | 次级面板、输入框背景 |
-| **背景三级** | `#252542` | 悬停状态、列表项交替 |
-| **边框/分隔线** | `#2D2D4A` | 面板边框、分割线 |
-| **文字主色** | `#F8FAFC` | 标题、主要文字 |
-| **文字次色** | `#94A3B8` | 描述、次要文字、placeholder |
-| **强调色（主）** | `#E11D48` | 播放头、关键帧、选中状态、CTA 按钮 |
-| **强调色（次）** | `#0D9488` | 成功状态、进度条、激活指示 |
-| **警告色** | `#F97316` | 警告提示、需要关注的状态 |
-| **错误色** | `#DC2626` | 错误提示、删除操作 |
+| 角色 | 实现 | 用途 |
+|------|------|------|
+| **背景主色** | `--background` oklch(0.145 0 0) | 主窗口、面板 |
+| **抬升面** | `--card` / `--popover` | 卡片、浮层 |
+| **边框** | `--border` white 10% | 分隔线 |
+| **文字主/次** | `--foreground` / `--muted-foreground` | 标题与说明 |
+| **主按钮** | `--primary` 浅灰白 | 极少数 CTA（非满屏红） |
+| **聚焦环** | `--ring` 中性灰 | 输入框、键盘焦点 |
+| **警告/错误** | `--warning` / `--destructive` | 静音、删除等 |
+
+权威 token：`apps/electron/src/renderer/src/index.css`；设计说明见 `docs/design-system/easymotion/MASTER.md` 与 `.local/theme-refresh/`。
 
 **暗色主题实现**：
-- 使用 shadcn/ui 的 `.dark` 类方案
-- CSS 变量定义：`--background: 240 10% 3.9%`
-- 所有自定义组件必须同时支持 `:root` 和 `.dark` 两套色值（v1.0 默认仅实现 dark 主题；light 主题在 v1.1 规划）
+- shadcn `.dark` on `<html>`（v1.0 仅 dark）
+- `:root` 与 `.dark` 同步同一套 oklch 变量
 
 ### 0.2 字体系统
 
@@ -49,13 +47,13 @@
 
 ### 0.4 组件规范
 
-- **按钮**：
-  - 主按钮：`bg-[#E11D48] text-white hover:bg-[#BE123C] rounded-sm px-4 py-2`
-  - 次按钮：`bg-[#252542] text-[#F8FAFC] hover:bg-[#2D2D4A] rounded-sm px-4 py-2 border border-[#2D2D4A]`
-  - 图标按钮：`p-2 rounded-sm hover:bg-[#252542]`
-  - 危险操作：`bg-[#DC2626] hover:bg-[#B91C1C]`
-- **输入框**：`bg-[#1A1A2E] border border-[#2D2D4A] rounded-md text-[#F8FAFC]`；聚焦 `border-[#0D9488] ring-1 ring-[#0D9488]`
-- **面板/卡片**：`bg-[#0F0F23] border border-[#2D2D4A] rounded-lg`；悬浮阴影 `shadow-lg shadow-black/20`
+- **按钮**（shadcn `Button`，radix-nova）：
+  - 工具栏图标：`variant="ghost" size="icon"`
+  - 常规操作：`variant="outline"` 或 `secondary`
+  - 高强调（稀少）：`variant="default"`（浅灰白实心）
+  - 危险：`variant="destructive"` + 必要时 `AlertDialog`
+- **输入框**：shadcn `Input` / `Textarea`；聚焦 `ring-ring`
+- **面板/卡片**：`bg-background border-border rounded-lg`
 
 ### 0.5 动画规范
 

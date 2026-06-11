@@ -42,14 +42,14 @@ export function ClipBlock({
             role="separator"
             aria-orientation="vertical"
             aria-label="裁剪开头"
-            className="absolute bottom-0 left-0 top-0 z-10 w-1.5 cursor-ew-resize rounded-l-sm bg-em-accent/40 hover:bg-em-accent/70"
+            className="absolute bottom-0 left-0 top-0 z-10 w-1.5 cursor-ew-resize rounded-l-sm bg-foreground/30 hover:bg-foreground/50"
             onPointerDown={(e) => onDragStart(e, "resize-left")}
           />
           <div
             role="separator"
             aria-orientation="vertical"
             aria-label="裁剪结尾"
-            className="absolute bottom-0 right-0 top-0 z-10 w-1.5 cursor-ew-resize rounded-r-sm bg-em-accent/40 hover:bg-em-accent/70"
+            className="absolute bottom-0 right-0 top-0 z-10 w-1.5 cursor-ew-resize rounded-r-sm bg-foreground/30 hover:bg-foreground/50"
             onPointerDown={(e) => onDragStart(e, "resize-right")}
           />
         </>
@@ -72,9 +72,9 @@ export function ClipBlock({
           "h-full w-full truncate rounded-sm border px-1.5 text-left text-[11px] transition-colors duration-100 ease-out",
           disabled ? "cursor-not-allowed" : "cursor-grab active:cursor-grabbing",
           selected
-            ? "border-em-accent bg-em-accent/25 text-em-text shadow-sm shadow-black/20"
-            : "border-em-border bg-em-elevated text-em-muted hover:border-em-teal/50 hover:text-em-text",
-          dragging && "ring-1 ring-em-teal",
+            ? "border-foreground/60 bg-foreground/10 text-foreground shadow-sm shadow-black/15"
+            : "border-border bg-muted/60 text-muted-foreground hover:border-foreground/25 hover:bg-muted hover:text-foreground",
+          dragging && "ring-1 ring-foreground/30",
         )}
         title={`${clip.name} (${clip.startInFrames}–${end})`}
       >

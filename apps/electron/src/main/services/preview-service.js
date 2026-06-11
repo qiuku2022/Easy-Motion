@@ -212,6 +212,112 @@ function ensurePreviewSoloSupport(remotionDir) {
   return updated;
 }
 
+const PREVIEW_CANVAS_BG = "#121212";
+const LEGACY_PREVIEW_BG_PATTERN = /#0[fF]0[fF]23|#05050a/gi;
+
+/** 将旧版紫调预览衬底同步为中性灰（preview.html / MainSequence / preview-entry） */
+function ensurePreviewCanvasTheme(remotionDir) {
+  let updated = false;
+
+  const templateRemotion = path.join(
+    getTemplatesDir(),
+    "default-project",
+    "subprojects",
+    "default",
+    "remotion",
+  );
+
+  const previewHtml = path.join(remotionDir, "preview.html");
+  if (fs.existsSync(previewHtml)) {
+    let content = fs.readFileSync(previewHtml, "utf8");
+    const before = content;
+    if (LEGACY_PREVIEW_BG_PATTERN.test(content)) {
+      content = content.replace(LEGACY_PREVIEW_BG_PATTERN, PREVIEW_CANVAS_BG);
+    }
+    const hasNeutralCanvas =
+      content.includes(PREVIEW_CANVAS_BG) || content.includes("oklch(0.085");
+    if (!hasNeutralCanvas) {
+      const templateHtml = path.join(templateRemotion, "preview.html");
+      if (fs.existsSync(templateHtml)) {
+        fs.copyFileSync(templateHtml, previewHtml);
+        broadcastLog("已同步 preview.html（预览舞台背景）", "preview");
+        updated = true;
+      }
+    } else if (content !== before) {
+      fs.writeFileSync(previewHtml, content, "utf8");
+      broadcastLog("已更新 preview.html（预览舞台背景）", "preview");
+      updated = true;
+    }
+  }
+
+  const mainSeq = path.join(remotionDir, "src", "components", "MainSequence.tsx");
+  if (fs.existsSync(mainSeq)) {
+    let content = fs.readFileSync(mainSeq, "utf8");
+    const before = content;
+    content = content.replace(
+      /backgroundColor:\s*["']#0[fF]0[fF]23["']/g,
+      `backgroundColor: "${PREVIEW_CANVAS_BG}"`,
+    );
+    if (content.includes("<AbsoluteFill>") && !content.includes("backgroundColor")) {
+      content = content.replace(
+        /<AbsoluteFill>/g,
+        `<AbsoluteFill style={{ backgroundColor: "${PREVIEW_CANVAS_BG}" }}>`,
+      );
+    }
+    if (content !== before) {
+      fs.writeFileSync(mainSeq, content, "utf8");
+      broadcastLog("已更新 MainSequence（预览舞台背景）", "preview");
+      updated = true;
+    }
+  }
+
+  const previewEntry = path.join(remotionDir, "src", "preview-entry.tsx");
+  if (fs.existsSync(previewEntry)) {
+    let content = fs.readFileSync(previewEntry, "utf8");
+    const before = content;
+    if (
+      !content.includes(`backgroundColor: "${PREVIEW_CANVAS_BG}"`) &&
+      !content.includes(`backgroundColor: '${PREVIEW_CANVAS_BG}'`)
+    ) {
+      content = content.replace(
+        /style=\{\{\s*\n(\s*)width: "100%",/,
+        `style={{\n$1backgroundColor: "${PREVIEW_CANVAS_BG}",\n$1width: "100%",`,
+      );
+    }
+    if (content !== before) {
+      fs.writeFileSync(previewEntry, content, "utf8");
+      broadcastLog("已更新 preview-entry（预览舞台背景）", "preview");
+      updated = true;
+    }
+  }
+
+  return updated;
+}
+
+/** 同步预览循环播放开关（SET_LOOP 消息） */
+function ensurePreviewLoopControl(remotionDir) {
+  const destEntry = path.join(remotionDir, "src", "preview-entry.tsx");
+  if (!fs.existsSync(destEntry)) return false;
+
+  const content = fs.readFileSync(destEntry, "utf8");
+  if (content.includes("SET_LOOP")) return false;
+
+  const templateEntry = path.join(
+    getTemplatesDir(),
+    "default-project",
+    "subprojects",
+    "default",
+    "remotion",
+    "src",
+    "preview-entry.tsx",
+  );
+  if (!fs.existsSync(templateEntry)) return false;
+
+  fs.copyFileSync(templateEntry, destEntry);
+  broadcastLog("已更新 preview-entry（循环播放开关）", "preview");
+  return true;
+}
+
 async function startPreview(projectRoot, subprojectPath = "subprojects/default") {
   await stopPreview();
 
@@ -223,8 +329,10 @@ async function startPreview(projectRoot, subprojectPath = "subprojects/default")
   broadcastLog("正在准备 Remotion 预览环境…", "preview");
   ensurePreviewEntry(remotionDir);
   const soloSupportPatched = ensurePreviewSoloSupport(remotionDir);
+  const canvasThemePatched = ensurePreviewCanvasTheme(remotionDir);
+  const loopControlPatched = ensurePreviewLoopControl(remotionDir);
   let remotionFingerprint = null;
-  if (soloSupportPatched) {
+  if (soloSupportPatched || canvasThemePatched || loopControlPatched) {
     const refreshed = timelineService.refreshRemotionFingerprint(
       projectRoot,
       subprojectPath,

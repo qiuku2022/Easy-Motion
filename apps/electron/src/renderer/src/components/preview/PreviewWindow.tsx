@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef } from "react";
 
 import { Loader2 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 import {
@@ -60,6 +62,7 @@ export function PreviewWindow() {
   const timeline = useTimelineStore((s) => s.timeline);
 
   const setPlaying = usePlaybackStore((s) => s.setPlaying);
+  const loopEnabled = usePlaybackStore((s) => s.loopEnabled);
 
   const registerHandlers = usePlaybackStore((s) => s.registerHandlers);
 
@@ -167,6 +170,21 @@ export function PreviewWindow() {
     pushTimelineToPreview();
   }, [previewTimelineNonce, pushTimelineToPreview]);
 
+  const pushLoopToPreview = useCallback(() => {
+    const win = iframeRef.current?.contentWindow;
+    if (!win) return;
+    postPreview(win, {
+      channel: PREVIEW_CHANNEL,
+      type: "SET_LOOP",
+      loop: usePlaybackStore.getState().loopEnabled,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!previewUrl) return;
+    pushLoopToPreview();
+  }, [loopEnabled, previewUrl, pushLoopToPreview]);
+
   const postToPreview = useCallback(
 
     (type: "PLAY" | "PAUSE" | "SEEK", frame?: number) => {
@@ -241,9 +259,9 @@ export function PreviewWindow() {
 
   return (
 
-    <section className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-black">
+    <section className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-preview-canvas">
 
-      <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden p-3">
+      <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-preview-canvas p-3">
 
         {showOverlay && (
 
@@ -251,7 +269,7 @@ export function PreviewWindow() {
 
             {isLoading && (
 
-              <Loader2 className="h-8 w-8 animate-spin text-em-teal" aria-hidden />
+              <Loader2 className="h-8 w-8 animate-spin text-ring" aria-hidden />
 
             )}
 
@@ -261,7 +279,7 @@ export function PreviewWindow() {
 
               {!hasProject && (
 
-                <p className="text-sm text-em-muted">打开或创建项目后将自动启动 Remotion 预览</p>
+                <p className="text-sm text-muted-foreground">打开或创建项目后将自动启动 Remotion 预览</p>
 
               )}
 
@@ -271,13 +289,13 @@ export function PreviewWindow() {
 
                 <>
 
-                  <p className="text-sm text-em-text">
+                  <p className="text-sm text-foreground">
 
                     {isGenerating ? "正在根据时间线生成 Remotion 代码…" : hint}
 
                   </p>
 
-                  <p className="text-xs text-em-muted">
+                  <p className="text-xs text-muted-foreground">
 
                     {isGenerating
 
@@ -299,19 +317,12 @@ export function PreviewWindow() {
 
                   <p className="text-sm text-red-400">{error}</p>
 
-                  <button
-
+                  <Button
                     type="button"
-
                     onClick={retry}
-
-                    className="cursor-pointer rounded-sm bg-em-accent px-4 py-2 text-sm text-white transition-colors duration-150 ease-out hover:bg-em-accent-hover"
-
                   >
-
                     重试启动预览
-
-                  </button>
+                  </Button>
 
                 </>
 
@@ -323,27 +334,23 @@ export function PreviewWindow() {
 
             {hasProject && isLoading && logs.length > 0 && (
 
-              <div className="w-full max-w-lg rounded-sm border border-em-border bg-em-bg/90 px-3 py-2 text-left">
+              <div className="w-full max-w-lg rounded-sm border border-border bg-background/90 px-3 py-2 text-left">
 
-                <p className="mb-1 text-[10px] uppercase tracking-wide text-em-muted">
+                <p className="mb-1 text-[10px] uppercase tracking-wide text-muted-foreground">
 
                   启动日志
 
                 </p>
 
-                <ul className="max-h-28 space-y-0.5 overflow-y-auto font-mono text-[11px] leading-relaxed text-em-muted">
-
-                  {logs.map((line, i) => (
-
-                    <li key={`${i}-${line.slice(0, 24)}`} className="truncate">
-
-                      {line}
-
-                    </li>
-
-                  ))}
-
-                </ul>
+                <ScrollArea className="max-h-28">
+                  <ul className="space-y-0.5 pr-2 font-mono text-[11px] leading-relaxed text-muted-foreground">
+                    {logs.map((line, i) => (
+                      <li key={`${i}-${line.slice(0, 24)}`} className="truncate">
+                        {line}
+                      </li>
+                    ))}
+                  </ul>
+                </ScrollArea>
 
               </div>
 
@@ -365,7 +372,7 @@ export function PreviewWindow() {
 
           className={cn(
 
-            "max-h-full max-w-full rounded-lg border border-em-border",
+            "max-h-full max-w-full rounded-lg border border-border",
 
             !previewUrl && "hidden",
 
@@ -386,6 +393,7 @@ export function PreviewWindow() {
             const win = iframeRef.current?.contentWindow;
             if (!win) return;
             pushTimelineToPreview();
+            pushLoopToPreview();
             postPreview(win, { channel: PREVIEW_CHANNEL, type: "SEEK", frame });
           }}
 

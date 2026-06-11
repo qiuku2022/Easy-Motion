@@ -1,164 +1,254 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Textarea } from "@/components/ui/textarea";
 import type { Clip } from "@/types/timeline";
 import type { ClipPatch } from "@/lib/timeline/mutations";
 import {
   buildPatchFromPropertyPath,
   getClipPropertyValue,
-  getFieldsForClipType,
-  TRANSFORM_FIELDS,
   type ClipPropertyField,
 } from "@/lib/timeline/clipPropertySchema";
+import {
+  buildClipPropertyFormSchema,
+  clipToFormValues,
+  parseFieldValue,
+  resolveClipPropertyFields,
+  type ClipFormValues,
+} from "@/lib/timeline/clipFormValues";
 import type { TrackType } from "@/types/timeline";
 import { cn } from "@/lib/utils";
 
-const inputClass =
-  "w-full rounded-md border border-em-border bg-em-surface px-2.5 py-1.5 font-mono text-xs text-em-text placeholder:text-em-muted focus:border-em-teal focus:outline-none focus:ring-1 focus:ring-em-teal disabled:cursor-not-allowed disabled:opacity-50";
-
-function PropertyRow({
-  label,
-  children,
-  className,
-}: {
-  label: string;
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <div className={cn("grid grid-cols-[88px_1fr] items-center gap-2", className)}>
-      <span className="text-xs text-em-muted">{label}</span>
-      {children}
-    </div>
-  );
-}
-
-function SchemaField({
-  field,
-  clip,
-  disabled,
-  onPatch,
-}: {
-  field: ClipPropertyField;
-  clip: Clip;
-  disabled?: boolean;
-  onPatch: (patch: ClipPatch) => void;
-}) {
-  const raw = getClipPropertyValue(clip, field.path);
-  const displayValue =
-    raw === undefined || raw === null ? (field.type === "number" ? "0" : "") : String(raw);
-
-  const [draft, setDraft] = useState(displayValue);
-
-  useEffect(() => {
-    setDraft(displayValue);
-  }, [displayValue, clip.id, field.path]);
-
-  const commit = useCallback(() => {
-    if (field.type === "number") {
-      const parsed = Number(draft);
-      if (!Number.isFinite(parsed)) {
-        setDraft(displayValue);
-        return;
-      }
-      let next = parsed;
-      if (field.min !== undefined) next = Math.max(field.min, next);
-      if (field.max !== undefined) next = Math.min(field.max, next);
-      if (next !== Number(raw)) {
-        onPatch(buildPatchFromPropertyPath(field.path, next));
-      }
-      return;
-    }
-    if (draft !== displayValue) {
-      onPatch(buildPatchFromPropertyPath(field.path, draft));
-    }
-  }, [draft, displayValue, field, onPatch, raw]);
-
-  if (field.type === "multiline") {
-    return (
-      <PropertyRow label={field.label} className="items-start">
-        <textarea
-          className={cn(inputClass, "min-h-[72px] resize-y font-sans")}
-          value={draft}
-          disabled={disabled}
-          onChange={(e) => setDraft(e.target.value)}
-          onBlur={commit}
-        />
-      </PropertyRow>
-    );
+function toColorInputHex(value: string): string {
+  const v = value.trim();
+  if (/^#[0-9a-fA-F]{6}$/.test(v)) return v;
+  if (/^#[0-9a-fA-F]{3}$/.test(v)) {
+    return `#${v[1]}${v[1]}${v[2]}${v[2]}${v[3]}${v[3]}`;
   }
-
-  return (
-    <PropertyRow label={field.label}>
-      <div className="flex items-center gap-1.5">
-        <input
-          type={field.type === "number" ? "number" : "text"}
-          className={cn(inputClass, field.type !== "number" && "font-sans")}
-          value={draft}
-          disabled={disabled}
-          min={field.min}
-          max={field.max}
-          step={field.step}
-          onChange={(e) => setDraft(e.target.value)}
-          onBlur={commit}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && field.type !== "multiline") {
-              e.preventDefault();
-              commit();
-            }
-          }}
-        />
-        {field.suffix ? (
-          <span className="shrink-0 text-xs text-em-muted">{field.suffix}</span>
-        ) : null}
-      </div>
-    </PropertyRow>
-  );
+  return "#000000";
 }
 
-export function ClipPropertyFields({
-  clipType,
-  clip,
-  disabled,
-  onPatch,
-  mode = "quick",
-  excludePaths = [],
-}: {
+function swatchStyle(value: string) {
+  const hex = value.trim();
+  if (/^#[0-9a-fA-F]{3,6}$/.test(hex)) {
+    return { backgroundColor: hex };
+  }
+  return { backgroundColor: "#000000" };
+}
+
+interface ClipPropertyFieldsProps {
   clipType: TrackType;
   clip: Clip;
   disabled?: boolean;
   onPatch: (patch: ClipPatch) => void;
   mode?: "quick" | "transform" | "all";
   excludePaths?: string[];
-}) {
-  const excluded = new Set(excludePaths);
-  const contentFields = getFieldsForClipType(clipType).filter(
-    (f) => !excluded.has(f.path),
+}
+
+export function ClipPropertyFields(props: ClipPropertyFieldsProps) {
+  const fields = useMemo(
+    () =>
+      resolveClipPropertyFields(
+        props.clipType,
+        props.mode ?? "quick",
+        props.excludePaths ?? [],
+      ),
+    [props.clipType, props.mode, props.excludePaths],
   );
-  const fields =
-    mode === "quick"
-      ? contentFields.filter((f) => f.quick)
-      : mode === "transform"
-        ? TRANSFORM_FIELDS
-        : [...contentFields, ...TRANSFORM_FIELDS.filter((t) => !contentFields.some((c) => c.path === t.path))];
 
   if (fields.length === 0) {
     return (
-      <p className="text-xs text-em-muted">
+      <p className="text-xs text-muted-foreground">
         该类型暂无可编辑属性（参见代码生成规范 Layer Props）。
       </p>
     );
   }
 
   return (
-    <>
-      {fields.map((field) => (
-        <SchemaField
-          key={field.path}
-          field={field}
-          clip={clip}
-          disabled={disabled}
-          onPatch={onPatch}
-        />
-      ))}
-    </>
+    <ClipPropertyForm key={props.clip.id} {...props} fields={fields} />
+  );
+}
+
+function ClipPropertyForm({
+  clip,
+  fields,
+  disabled,
+  onPatch,
+}: ClipPropertyFieldsProps & { fields: ClipPropertyField[] }) {
+  const schema = useMemo(
+    () => buildClipPropertyFormSchema(fields),
+    [fields],
+  );
+
+  const form = useForm<ClipFormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: clipToFormValues(clip, fields),
+    mode: "onBlur",
+  });
+
+  useEffect(() => {
+    form.reset(clipToFormValues(clip, fields));
+  }, [clip, fields, form]);
+
+  const commitField = useCallback(
+    async (field: ClipPropertyField) => {
+      const valid = await form.trigger(field.path);
+      if (!valid) return;
+
+      const value = form.getValues(field.path);
+      const parsed = parseFieldValue(field, value);
+      if (parsed === null) return;
+
+      const raw = getClipPropertyValue(clip, field.path);
+      const normalized =
+        field.type === "number" ? Number(raw) : String(raw ?? "");
+      const next =
+        field.type === "number" ? parsed : String(parsed);
+
+      if (next !== normalized) {
+        onPatch(buildPatchFromPropertyPath(field.path, parsed));
+      }
+    },
+    [clip, form, onPatch],
+  );
+
+  return (
+    <Form {...form}>
+      <form
+        className="space-y-2"
+        onSubmit={(e) => e.preventDefault()}
+      >
+        {fields.map((field) => (
+          <FormField
+            key={field.path}
+            control={form.control}
+            name={field.path}
+            render={({ field: rf }) => (
+              <FormItem
+                className={cn(
+                  "grid grid-cols-[88px_1fr] items-center gap-2 space-y-0",
+                  field.type === "multiline" && "items-start",
+                )}
+              >
+                <FormLabel className="text-xs font-normal text-muted-foreground">
+                  {field.label}
+                </FormLabel>
+                <div className="space-y-1">
+                  <FormControl>
+                    {field.type === "multiline" ? (
+                      <Textarea
+                        className="min-h-[72px] resize-y text-xs"
+                        disabled={disabled}
+                        {...rf}
+                        onBlur={() => {
+                          void rf.onBlur();
+                          void commitField(field);
+                        }}
+                      />
+                    ) : field.type === "color" ? (
+                      <div className="flex items-center gap-1.5">
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="icon"
+                              disabled={disabled}
+                              className="h-8 w-8 shrink-0 rounded-sm p-0"
+                              aria-label={`选择${field.label}`}
+                            >
+                              <span
+                                className="block h-5 w-5 rounded-sm border border-border"
+                                style={swatchStyle(rf.value)}
+                              />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-56 p-3" align="start">
+                            <input
+                              type="color"
+                              value={toColorInputHex(rf.value)}
+                              disabled={disabled}
+                              className="h-10 w-full cursor-pointer rounded-sm border border-border bg-transparent"
+                              onChange={(e) => {
+                                const next = e.target.value;
+                                rf.onChange(next);
+                                onPatch(buildPatchFromPropertyPath(field.path, next));
+                              }}
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        <Input
+                          type="text"
+                          className="h-8 flex-1 font-mono text-xs"
+                          disabled={disabled}
+                          placeholder="#RRGGBB"
+                          {...rf}
+                          onBlur={() => {
+                            void rf.onBlur();
+                            void commitField(field);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              void commitField(field);
+                            }
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1.5">
+                        <Input
+                          type={field.type === "number" ? "number" : "text"}
+                          className={cn(
+                            "h-8 text-xs",
+                            field.type === "number" ? "font-mono" : "font-sans",
+                          )}
+                          disabled={disabled}
+                          min={field.min}
+                          max={field.max}
+                          step={field.step}
+                          {...rf}
+                          onBlur={() => {
+                            void rf.onBlur();
+                            void commitField(field);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              void commitField(field);
+                            }
+                          }}
+                        />
+                        {field.suffix ? (
+                          <span className="shrink-0 text-xs text-muted-foreground">
+                            {field.suffix}
+                          </span>
+                        ) : null}
+                      </div>
+                    )}
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </div>
+              </FormItem>
+            )}
+          />
+        ))}
+      </form>
+    </Form>
   );
 }

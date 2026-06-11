@@ -1,36 +1,63 @@
 @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap");
+@import "tw-animate-css";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 240 10% 3.9%;
-    --foreground: 210 40% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 210 40% 98%;
-    --primary: 347 77% 50%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 240 20% 15%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 240 20% 15%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 240 20% 15%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 84% 60%;
-    --border: 240 15% 25%;
-    --input: 240 15% 25%;
-    --ring: 173 80% 40%;
-    --radius: 0.5rem;
+  /*
+   * shadcn Neutral Dark（方案 A，见 .local/theme-refresh/）
+   * v1.0 仅 dark；:root 与 .dark 同步，html 恒为 class="dark"
+   */
+  :root,
+  .dark {
+    --radius: 0.625rem;
+
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.922 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --destructive-foreground: oklch(0.985 0 0);
+    --warning: oklch(0.75 0.15 55);
+    --warning-foreground: oklch(0.2 0.05 55);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+    --chart-1: oklch(0.488 0.243 264.376);
+    --chart-2: oklch(0.696 0.17 162.48);
+    --chart-3: oklch(0.769 0.188 70.08);
+    --chart-4: oklch(0.627 0.265 303.9);
+    --chart-5: oklch(0.645 0.246 16.439);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.488 0.243 264.376);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.556 0 0);
+    /* 预览区「舞台」：比壳层更深的中性灰，无紫调（≈ #121212） */
+    --preview-canvas: oklch(0.085 0 0);
   }
 
   body {
-    @apply m-0 min-h-screen bg-em-bg font-sans text-em-text antialiased;
+    @apply m-0 min-h-screen bg-background font-sans text-foreground antialiased;
   }
 
   * {
-    @apply border-em-border;
+    @apply border-border;
   }
 
   /* 时间线等区域：可滚动但不显示滚动条（Premiere 风格） */
@@ -43,6 +70,18 @@
     display: none;
     width: 0;
     height: 0;
+  }
+
+  /* 数字输入：隐藏原生步进按钮（Windows/Chromium 白底箭头与暗色主题不协调） */
+  [data-slot="input"][type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  [data-slot="input"][type="number"]::-webkit-inner-spin-button,
+  [data-slot="input"][type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 
   @keyframes clip-floating-toolbar-in-above {

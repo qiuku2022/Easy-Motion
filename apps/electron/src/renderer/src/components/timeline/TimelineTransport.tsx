@@ -7,11 +7,17 @@ import {
   SkipBack,
   SkipForward,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { formatTimecode } from "@/lib/timecode";
 import { PR_SHORTCUTS } from "@/lib/premiereShortcuts";
 import { usePlaybackStore } from "@/stores/playbackStore";
 import { useTimelineStore } from "@/stores/timelineStore";
-import { cn } from "@/lib/utils";
 
 function TransportButton({
   label,
@@ -25,18 +31,22 @@ function TransportButton({
   disabled?: boolean;
 }) {
   return (
-    <button
-      type="button"
-      aria-label={label}
-      title={label}
-      disabled={disabled}
-      onClick={onClick}
-      className={cn(
-        "cursor-pointer rounded-sm p-1.5 text-em-text transition-colors duration-150 ease-out hover:bg-em-elevated disabled:cursor-not-allowed disabled:opacity-40",
-      )}
-    >
-      {children}
-    </button>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8"
+          disabled={disabled}
+          onClick={onClick}
+        >
+          {children}
+          <span className="sr-only">{label}</span>
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="top">{label}</TooltipContent>
+    </Tooltip>
   );
 }
 
@@ -96,7 +106,7 @@ export function TimelineTransport() {
         <ChevronLast className="h-4 w-4" />
       </TransportButton>
 
-      <div className="mx-1 h-4 w-px bg-em-border" aria-hidden />
+      <Separator orientation="vertical" className="mx-1 h-4" />
 
       <TransportButton
         label={`添加/删除标记 (${PR_SHORTCUTS.addMarker})`}
@@ -109,15 +119,15 @@ export function TimelineTransport() {
         <Flag className="h-4 w-4 text-amber-400" />
       </TransportButton>
 
-      <span className="ml-2 font-mono text-xs tabular-nums text-em-text">
+      <span className="ml-2 font-mono text-xs tabular-nums text-foreground">
         {hasTimeline ? (
           <>
             {formatTimecode(currentFrame, fps)}
-            <span className="mx-1 text-em-muted">/</span>
+            <span className="mx-1 text-muted-foreground">/</span>
             {formatTimecode(totalFrames, fps)}
           </>
         ) : (
-          <span className="text-em-muted">--:-- / --:--</span>
+          <span className="text-muted-foreground">--:-- / --:--</span>
         )}
       </span>
     </div>

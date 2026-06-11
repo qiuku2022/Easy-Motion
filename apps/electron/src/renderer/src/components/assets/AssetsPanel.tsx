@@ -1,5 +1,7 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { FileUp, Film, Image, Loader2, Music } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { setAssetDragData } from "@/lib/timeline/assetDrag";
 import { useAssetStore } from "@/stores/assetStore";
@@ -20,6 +22,12 @@ export function AssetsPanel() {
   const importFilePaths = useAssetStore((s) => s.importFilePaths);
   const clearError = useAssetStore((s) => s.clearError);
   const dropRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (error) {
+      toast.error("素材导入失败", { description: error });
+    }
+  }, [error]);
 
   const importFromFileList = useCallback(
     async (files: FileList | File[]) => {
@@ -54,17 +62,19 @@ export function AssetsPanel() {
           e.dataTransfer.dropEffect = "copy";
         }}
         onDrop={onDrop}
-        className="rounded-md border border-dashed border-em-border bg-em-surface/50 p-4 text-center"
+        className="rounded-md border border-dashed border-border bg-card/50 p-4 text-center"
       >
-        <p className="text-xs text-em-muted">拖拽文件到此处导入</p>
-        <button
+        <p className="text-xs text-muted-foreground">拖拽文件到此处导入</p>
+        <Button
           type="button"
+          variant="outline"
+          size="sm"
           disabled={isImporting}
+          className="mt-2 gap-1.5 text-xs"
           onClick={() => {
             clearError();
             void pickAndImport();
           }}
-          className="mt-2 inline-flex cursor-pointer items-center gap-1.5 rounded-sm border border-em-border bg-em-elevated px-3 py-1.5 text-xs text-em-text transition-colors duration-150 ease-out hover:bg-em-surface disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isImporting ? (
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -72,21 +82,21 @@ export function AssetsPanel() {
             <FileUp className="h-3.5 w-3.5" />
           )}
           选择文件…
-        </button>
+        </Button>
       </div>
 
       {error && (
-        <p className="text-xs text-em-error" role="alert">
+        <p className="text-xs text-destructive" role="alert">
           {error}
         </p>
       )}
 
       {isLoading ? (
-        <p className="text-xs text-em-muted">加载素材…</p>
+        <p className="text-xs text-muted-foreground">加载素材…</p>
       ) : assets.length === 0 ? (
-        <p className="text-xs text-em-muted">暂无素材。导入后可拖到时间线。</p>
+        <p className="text-xs text-muted-foreground">暂无素材。导入后可拖到时间线。</p>
       ) : (
-        <ul className="flex min-h-0 flex-1 flex-col gap-1 overflow-auto">
+        <ul className="flex flex-col gap-1">
           {assets.map((asset) => (
             <AssetRow key={asset.id} asset={asset} />
           ))}
@@ -104,14 +114,14 @@ function AssetRow({ asset }: { asset: ProjectAsset }) {
         setAssetDragData(e.dataTransfer, asset);
       }}
       className={cn(
-        "flex cursor-grab items-center gap-2 rounded-md border border-em-border bg-em-surface px-2 py-2 text-xs text-em-text",
-        "transition-colors duration-150 ease-out hover:border-em-teal/40 hover:bg-em-elevated active:cursor-grabbing",
+        "flex cursor-grab items-center gap-2 rounded-md border border-border bg-card px-2 py-2 text-xs text-foreground",
+        "transition-colors duration-150 ease-out hover:border-em-teal/40 hover:bg-accent active:cursor-grabbing",
       )}
       title="拖到时间线创建片段"
     >
       <span className="text-em-teal">{TYPE_ICONS[asset.type]}</span>
       <span className="min-w-0 flex-1 truncate">{asset.name}</span>
-      <span className="shrink-0 font-mono text-[10px] uppercase text-em-muted">
+      <span className="shrink-0 font-mono text-[10px] uppercase text-muted-foreground">
         {asset.type}
       </span>
     </li>
