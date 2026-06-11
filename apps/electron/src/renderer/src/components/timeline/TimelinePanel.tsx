@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { blurEditableFocusUnlessTarget } from "@/lib/keyboard";
 import { useTimelineStore } from "@/stores/timelineStore";
 import { formatRemotionSyncSummary } from "@/lib/remotion-sync";
 import { TimelineBody } from "@/components/timeline/TimelineBody";
@@ -39,7 +40,10 @@ export function TimelinePanel() {
   const duration = timeline?.durationInFrames ?? 0;
 
   return (
-    <footer className="relative z-20 flex h-full min-h-0 flex-col overflow-hidden border-t border-border bg-background">
+    <footer
+      className="relative z-20 flex h-full min-h-0 flex-col overflow-hidden border-t border-border bg-background"
+      onPointerDownCapture={(e) => blurEditableFocusUnlessTarget(e.target)}
+    >
       <div className="flex shrink-0 items-center gap-3 border-b border-border px-2 py-1">
         <TimelineTransport />
         <div className="ml-auto flex items-center gap-2">

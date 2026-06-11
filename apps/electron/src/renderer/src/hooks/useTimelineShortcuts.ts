@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { isModKey } from "@/lib/keyboard";
+import { isEditableElement, isModKey } from "@/lib/keyboard";
 import {
   collectEditPoints,
   seekNextEditPoint,
@@ -13,14 +13,15 @@ import { useUiStore } from "@/stores/uiStore";
 const PR_STEP_MANY_FRAMES = 5;
 
 function isEditableTarget(target: EventTarget | null): boolean {
-  if (!(target instanceof HTMLElement)) return false;
-  const tag = target.tagName;
   return (
-    tag === "INPUT" ||
-    tag === "TEXTAREA" ||
-    tag === "SELECT" ||
-    target.isContentEditable
+    isEditableElement(target as Element) ||
+    isEditableElement(document.activeElement)
   );
+}
+
+function consumeShortcut(e: KeyboardEvent) {
+  e.preventDefault();
+  e.stopPropagation();
 }
 
 function seekByDelta(delta: number) {
@@ -49,17 +50,17 @@ function handleTimelineZoom(e: KeyboardEvent): boolean {
 
   if (isModKey(e) && !e.altKey && !e.shiftKey) {
     if (zoomIn) {
-      e.preventDefault();
+      consumeShortcut(e);
       ui.zoomTimelineBy(0.5);
       return true;
     }
     if (zoomOut) {
-      e.preventDefault();
+      consumeShortcut(e);
       ui.zoomTimelineBy(-0.5);
       return true;
     }
     if (e.key === "0") {
-      e.preventDefault();
+      consumeShortcut(e);
       ui.requestTimelineFit();
       return true;
     }
@@ -67,17 +68,17 @@ function handleTimelineZoom(e: KeyboardEvent): boolean {
 
   if (!isModKey(e) && !e.altKey && !e.shiftKey) {
     if (zoomIn) {
-      e.preventDefault();
+      consumeShortcut(e);
       ui.zoomTimelineBy(0.5);
       return true;
     }
     if (zoomOut) {
-      e.preventDefault();
+      consumeShortcut(e);
       ui.zoomTimelineBy(-0.5);
       return true;
     }
     if (fit) {
-      e.preventDefault();
+      consumeShortcut(e);
       ui.requestTimelineFit();
       return true;
     }
@@ -106,30 +107,30 @@ export function useTimelineShortcuts() {
       const playback = usePlaybackStore.getState();
 
       if (isModKey(e) && e.key.toLowerCase() === "s" && !e.shiftKey && !e.altKey) {
-        e.preventDefault();
+        consumeShortcut(e);
         void useProjectStore.getState().saveProject();
         return;
       }
 
       if (e.code === "Space") {
-        e.preventDefault();
+        consumeShortcut(e);
         playback.togglePlay();
         return;
       }
 
       if (!isModKey(e) && !e.altKey && !e.shiftKey && timeline) {
         if (e.key.toLowerCase() === "k") {
-          e.preventDefault();
+          consumeShortcut(e);
           if (playback.isPlaying) playback.togglePlay();
           return;
         }
         if (e.key.toLowerCase() === "l") {
-          e.preventDefault();
+          consumeShortcut(e);
           if (!playback.isPlaying) playback.togglePlay();
           return;
         }
         if (e.key.toLowerCase() === "j") {
-          e.preventDefault();
+          consumeShortcut(e);
           if (playback.isPlaying) {
             playback.togglePlay();
           } else {
@@ -140,7 +141,7 @@ export function useTimelineShortcuts() {
       }
 
       if (isModKey(e) && e.key.toLowerCase() === "z" && !e.altKey) {
-        e.preventDefault();
+        consumeShortcut(e);
         if (e.shiftKey) {
           store.redo();
         } else {
@@ -149,53 +150,53 @@ export function useTimelineShortcuts() {
         return;
       }
       if (isModKey(e) && e.key.toLowerCase() === "y" && !e.shiftKey && !e.altKey) {
-        e.preventDefault();
+        consumeShortcut(e);
         store.redo();
         return;
       }
 
       if (isModKey(e) && e.key.toLowerCase() === "k" && !e.shiftKey && !e.altKey) {
-        e.preventDefault();
+        consumeShortcut(e);
         store.clearError();
         store.splitSelectedClipAtPlayhead();
         return;
       }
 
       if (!isModKey(e) && !e.altKey && !e.shiftKey && e.key.toLowerCase() === "s") {
-        e.preventDefault();
+        consumeShortcut(e);
         useUiStore.getState().toggleSnapEnabled();
         return;
       }
 
       if (e.key === "Delete" || e.key === "Backspace") {
         if (store.selectedMarkerId) {
-          e.preventDefault();
+          consumeShortcut(e);
           store.clearError();
           store.removeSelectedMarker();
           return;
         }
         if (!store.selectedClipId) return;
-        e.preventDefault();
+        consumeShortcut(e);
         store.clearError();
         store.deleteSelectedClip();
         return;
       }
 
       if (!isModKey(e) && !e.altKey && !e.shiftKey && e.key.toLowerCase() === "m") {
-        e.preventDefault();
+        consumeShortcut(e);
         store.clearError();
         store.toggleMarkerAtPlayhead();
         return;
       }
 
       if (e.key === "Escape") {
-        e.preventDefault();
+        consumeShortcut(e);
         store.clearSelection();
         return;
       }
 
       if (isModKey(e) && e.shiftKey && e.key.toLowerCase() === "a" && !e.altKey) {
-        e.preventDefault();
+        consumeShortcut(e);
         store.clearSelection();
         return;
       }
@@ -208,34 +209,34 @@ export function useTimelineShortcuts() {
       const editPoints = collectEditPoints(timeline);
 
       if (e.key === "ArrowLeft") {
-        e.preventDefault();
+        consumeShortcut(e);
         seekByDelta(e.shiftKey ? -PR_STEP_MANY_FRAMES : -1);
         return;
       }
       if (e.key === "ArrowRight") {
-        e.preventDefault();
+        consumeShortcut(e);
         seekByDelta(e.shiftKey ? PR_STEP_MANY_FRAMES : 1);
         return;
       }
 
       if (e.key === "ArrowUp" && !isModKey(e)) {
-        e.preventDefault();
+        consumeShortcut(e);
         seekToFrame(seekPrevEditPoint(currentFrame, editPoints));
         return;
       }
       if (e.key === "ArrowDown" && !isModKey(e)) {
-        e.preventDefault();
+        consumeShortcut(e);
         seekToFrame(seekNextEditPoint(currentFrame, editPoints));
         return;
       }
 
       if (e.key === "Home") {
-        e.preventDefault();
+        consumeShortcut(e);
         seekToFrame(0);
         return;
       }
       if (e.key === "End") {
-        e.preventDefault();
+        consumeShortcut(e);
         seekToFrame(timeline.durationInFrames - 1);
       }
     };
@@ -248,12 +249,13 @@ export function useTimelineShortcuts() {
       useUiStore.getState().setAltKeyHeld(false);
     };
 
-    window.addEventListener("keydown", onKeyDown);
+    // capture：先于 Radix Tabs 等组件处理方向键/空格，避免 shadcn 迁移后焦点在标签/按钮上时快捷键失效
+    window.addEventListener("keydown", onKeyDown, true);
     window.addEventListener("keyup", onKeyUp);
     window.addEventListener("pointerdown", syncAltKeyHeld, true);
     window.addEventListener("blur", onBlur);
     return () => {
-      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("keydown", onKeyDown, true);
       window.removeEventListener("keyup", onKeyUp);
       window.removeEventListener("pointerdown", syncAltKeyHeld, true);
       window.removeEventListener("blur", onBlur);
