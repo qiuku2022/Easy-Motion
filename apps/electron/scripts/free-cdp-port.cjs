@@ -15,6 +15,7 @@ function findPidsOnPort() {
       encoding: "utf8",
       stdio: ["pipe", "pipe", "ignore"],
       timeout: 8000,
+      windowsHide: true,
     });
   } catch {
     return [];
@@ -32,7 +33,10 @@ function findPidsOnPort() {
 
 function killPid(pid) {
   try {
-    execSync(`taskkill /PID ${pid} /T /F`, { stdio: "ignore" });
+    execSync(`taskkill /PID ${pid} /T /F`, {
+      stdio: "ignore",
+      windowsHide: true,
+    });
     console.log(`[free-cdp-port] killed pid ${pid}`);
     return true;
   } catch {

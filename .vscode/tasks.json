@@ -16,7 +16,14 @@
         "cwd": "${workspaceFolder}/apps/electron",
         "env": { "ELECTRON_CDP_PORT": "9333" }
       },
-      "presentation": { "reveal": "never", "panel": "dedicated", "close": true },
+      "presentation": {
+        "reveal": "never",
+        "echo": false,
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "close": true
+      },
       "problemMatcher": []
     },
     {
@@ -28,7 +35,14 @@
         "cwd": "${workspaceFolder}/apps/electron",
         "env": { "ELECTRON_CDP_PORT": "9333" }
       },
-      "presentation": { "reveal": "never", "panel": "dedicated", "close": true },
+      "presentation": {
+        "reveal": "never",
+        "echo": false,
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "close": true
+      },
       "problemMatcher": []
     },
     {
@@ -37,7 +51,14 @@
       "command": "node",
       "args": ["${workspaceFolder}/apps/electron/scripts/ensure-vite-for-debug.cjs"],
       "options": { "cwd": "${workspaceFolder}/apps/electron" },
-      "presentation": { "reveal": "never", "panel": "dedicated", "close": true },
+      "presentation": {
+        "reveal": "never",
+        "echo": false,
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "close": true
+      },
       "problemMatcher": []
     },
     {
@@ -49,7 +70,14 @@
         "cwd": "${workspaceFolder}/apps/electron",
         "env": { "ELECTRON_CDP_PORT": "9333" }
       },
-      "presentation": { "reveal": "never", "panel": "dedicated", "close": true },
+      "presentation": {
+        "reveal": "never",
+        "echo": false,
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "close": true
+      },
       "problemMatcher": []
     },
     {
@@ -64,7 +92,14 @@
           "EASY_MOTION_PYTHON_PORT": "8001"
         }
       },
-      "presentation": { "reveal": "never", "panel": "dedicated", "close": true },
+      "presentation": {
+        "reveal": "never",
+        "echo": false,
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "close": true
+      },
       "problemMatcher": []
     },
     {
@@ -80,7 +115,14 @@
           "EASY_MOTION_CLEANUP_PYTHON": "1"
         }
       },
-      "presentation": { "reveal": "never", "panel": "dedicated", "close": true },
+      "presentation": {
+        "reveal": "never",
+        "echo": false,
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "close": true
+      },
       "problemMatcher": []
     },
     {
