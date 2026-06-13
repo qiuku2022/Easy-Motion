@@ -497,7 +497,7 @@ export function TrackHeader({
               }}
 
               className={cn(
-                "min-w-0 flex-1 cursor-pointer truncate rounded-md px-1 py-0.5 text-left text-xs leading-tight",
+                "min-w-0 flex-1 cursor-pointer truncate rounded-md px-1 py-0.5 text-left text-xs leading-tight hover:bg-muted",
                 selected ? "font-medium text-foreground" : "text-muted-foreground hover:text-foreground",
               )}
 

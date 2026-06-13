@@ -115,6 +115,8 @@ interface TimelineState {
   toggleTrackMuted: (trackId: string) => void;
   toggleTrackSolo: (trackId: string, exclusive?: boolean) => void;
   syncPreviewForTrackFilters: () => Promise<void>;
+  /** 手写 Remotion：将时间线片段头尾等变更推送到预览 iframe */
+  syncPreviewAfterTimelineEdit: () => Promise<boolean>;
   renameTrack: (trackId: string, name: string) => void;
 
   addClip: (trackId: string, clip: Clip) => void;
@@ -448,8 +450,9 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
       const drift = get().remotionDrift;
       if (drift?.hasCustomRemotionCode) {
         if (!manual) {
-          // 拖拽/修剪等编辑：不弹窗、不覆盖手写 Remotion；时间线 JSON 仍保留
-          return false;
+          const saved = await get().saveTimeline();
+          if (!saved) return false;
+          return get().syncPreviewAfterTimelineEdit();
         }
         const reason = drift.customRemotionReason ?? "手写 Remotion 代码";
         const proceed = window.confirm(
@@ -541,18 +544,16 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
         customRemotionReason: res.data.customRemotionReason ?? null,
       };
 
+      set({ remotionDrift: driftInfo });
+
       if (!driftInfo.suggestSync) {
-        set({ remotionDrift: null });
         return;
       }
 
       if (autoSync && !get().isSyncingRemotion) {
-        set({ remotionDrift: driftInfo });
         await get().syncFromRemotion();
         return;
       }
-
-      set({ remotionDrift: driftInfo });
     },
 
     syncFromRemotion: async () => {
@@ -710,25 +711,33 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
       void get().syncPreviewForTrackFilters();
     },
 
-    syncPreviewForTrackFilters: async () => {
+    syncPreviewAfterTimelineEdit: async () => {
       const { timeline, remotionDrift } = get();
       const api = getEasyMotion();
-      if (!timeline || !api?.timeline) return;
+      if (!timeline || !api?.timeline?.syncPreviewManifest) return false;
+      if (!remotionDrift?.hasCustomRemotionCode) return false;
 
-      if (remotionDrift?.hasCustomRemotionCode && api.timeline.syncPreviewManifest) {
-        const res = await api.timeline.syncPreviewManifest({ timeline });
-        if (!res.success) return;
-        if (res.data?.timeline) {
-          set({
-            timeline: res.data.timeline,
-            remotionDrift: null,
-          });
-        }
-        if (res.data?.previewReload) {
-          set((s) => ({ previewReloadNonce: s.previewReloadNonce + 1 }));
-        } else if (res.data?.timelinePush !== false) {
-          set((s) => ({ previewTimelineNonce: s.previewTimelineNonce + 1 }));
-        }
+      const res = await api.timeline.syncPreviewManifest({ timeline });
+      if (!res.success) return false;
+
+      if (res.data?.timeline) {
+        set({
+          timeline: res.data.timeline,
+          hasUnsavedChanges: false,
+        });
+      }
+      if (res.data?.previewReload) {
+        set((s) => ({ previewReloadNonce: s.previewReloadNonce + 1 }));
+      } else if (res.data?.timelinePush !== false) {
+        set((s) => ({ previewTimelineNonce: s.previewTimelineNonce + 1 }));
+      }
+      return true;
+    },
+
+    syncPreviewForTrackFilters: async () => {
+      const { remotionDrift } = get();
+      if (remotionDrift?.hasCustomRemotionCode) {
+        await get().syncPreviewAfterTimelineEdit();
         return;
       }
 

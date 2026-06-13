@@ -43,6 +43,7 @@ interface TimelineBodyProps {
   selectedClipId: string | null;
   selectedMarkerId: string | null;
   onSelectClip: (clipId: string) => void;
+  onPointerDownCapture?: React.PointerEventHandler<HTMLDivElement>;
 }
 
 export function TimelineBody({
@@ -53,6 +54,7 @@ export function TimelineBody({
   selectedClipId,
   selectedMarkerId,
   onSelectClip,
+  onPointerDownCapture,
 }: TimelineBodyProps) {
   const wheelRootRef = useRef<HTMLDivElement>(null);
   const rulerScrollRef = useRef<HTMLDivElement>(null);
@@ -247,7 +249,11 @@ export function TimelineBody({
   );
 
   return (
-    <div ref={wheelRootRef} className="flex min-h-0 flex-1 overflow-hidden">
+    <div
+      ref={wheelRootRef}
+      className="flex min-h-0 flex-1 overflow-hidden"
+      onPointerDownCapture={onPointerDownCapture}
+    >
       <div
         className="flex h-full min-h-0 shrink-0 flex-col overflow-hidden border-r border-border bg-background"
         style={{ width: TRACK_HEADER_WIDTH }}

@@ -12,7 +12,10 @@
    */
   :root,
   .dark {
-    --radius: 0.625rem;
+    /* Win 11：控件 4px（ControlCornerRadius）、浮层/窗口 8px（OverlayCornerRadius） */
+    --radius-control: 4px;
+    --radius-overlay: 8px;
+    --radius: var(--radius-overlay);
 
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);

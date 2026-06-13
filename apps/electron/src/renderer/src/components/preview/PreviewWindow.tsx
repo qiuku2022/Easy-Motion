@@ -334,7 +334,7 @@ export function PreviewWindow() {
 
             {hasProject && isLoading && logs.length > 0 && (
 
-              <div className="w-full max-w-lg rounded-sm border border-border bg-background/90 px-3 py-2 text-left">
+              <div className="w-full max-w-lg overflow-hidden rounded-sm border border-border bg-background/90 px-3 py-2 text-left">
 
                 <p className="mb-1 text-[10px] uppercase tracking-wide text-muted-foreground">
 
@@ -342,10 +342,10 @@ export function PreviewWindow() {
 
                 </p>
 
-                <ScrollArea className="max-h-28">
-                  <ul className="space-y-0.5 pr-2 font-mono text-[11px] leading-relaxed text-muted-foreground">
+                <ScrollArea className="h-28 w-full">
+                  <ul className="space-y-0.5 pr-3 font-mono text-[11px] leading-relaxed text-muted-foreground">
                     {logs.map((line, i) => (
-                      <li key={`${i}-${line.slice(0, 24)}`} className="truncate">
+                      <li key={`${i}-${line.slice(0, 24)}`} className="break-all">
                         {line}
                       </li>
                     ))}

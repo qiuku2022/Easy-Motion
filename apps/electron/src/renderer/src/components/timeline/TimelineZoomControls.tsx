@@ -1,13 +1,6 @@
 import { useState } from "react";
-import { Magnet, Maximize2, Repeat } from "lucide-react";
+import { Check, ChevronDown, Magnet, Maximize2, Repeat } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import {
   Tooltip,
@@ -20,6 +13,12 @@ import {
   MIN_PX_PER_FRAME,
 } from "@/lib/timeline/framePixels";
 import { PR_SHORTCUTS } from "@/lib/premiereShortcuts";
+import {
+  TimelineMenuItem,
+  TimelineMenuPanel,
+  TIMELINE_MENU_TRIGGER_OPEN_CLASS,
+  useTimelineToolbarMenu,
+} from "@/lib/timeline/toolbar-menu";
 import { usePlaybackStore } from "@/stores/playbackStore";
 import { useUiStore } from "@/stores/uiStore";
 import { useTimelineStore } from "@/stores/timelineStore";
@@ -77,6 +76,8 @@ export function TimelineZoomControls() {
   const requestTimelineFit = useUiStore((s) => s.requestTimelineFit);
   const timeline = useTimelineStore((s) => s.timeline);
   const [rulerScale, setRulerScale] = useState<RulerScaleId>("fit");
+  const { open: scaleMenuOpen, toggle: toggleScaleMenu, close: closeScaleMenu, rootRef: scaleMenuRef } =
+    useTimelineToolbarMenu();
 
   const fps = timeline?.fps ?? 30;
 
@@ -138,30 +139,51 @@ export function TimelineZoomControls() {
         />
       </div>
 
-      <Select value={rulerScale} onValueChange={(v) => onScaleChange(v as RulerScaleId)}>
-        <SelectTrigger
+      <div ref={scaleMenuRef} className="relative">
+        <Button
+          type="button"
+          variant="outline"
           size="sm"
-          className="h-7 w-[4.5rem] font-mono text-xs"
+          className={cn(
+            "h-7 w-[4.5rem] gap-1 font-mono text-xs",
+            scaleMenuOpen && TIMELINE_MENU_TRIGGER_OPEN_CLASS,
+          )}
           aria-label="时间标尺刻度"
+          aria-expanded={scaleMenuOpen}
+          aria-haspopup="menu"
+          onClick={toggleScaleMenu}
         >
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent
-          position="popper"
-          align="start"
-          className="z-[90] min-w-0 w-[4.5rem] p-0.5"
-        >
-          {RULER_SCALES.map((s) => (
-            <SelectItem
-              key={s.id}
-              value={s.id}
-              className="py-0.5 pl-2 pr-6 text-xs"
-            >
-              {s.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+          {RULER_SCALES.find((s) => s.id === rulerScale)?.label}
+          <ChevronDown
+            className={cn(
+              "h-3 w-3 opacity-60 transition-transform",
+              scaleMenuOpen && "rotate-180",
+            )}
+          />
+        </Button>
+
+        {scaleMenuOpen && (
+          <TimelineMenuPanel className="min-w-[4.5rem] w-[4.5rem]">
+            {RULER_SCALES.map((s) => (
+              <TimelineMenuItem
+                key={s.id}
+                className="justify-between"
+                onClick={() => {
+                  onScaleChange(s.id);
+                  closeScaleMenu();
+                }}
+              >
+                {s.label}
+                {rulerScale === s.id ? (
+                  <Check className="h-3.5 w-3.5 text-muted-foreground" />
+                ) : (
+                  <span className="size-3.5" aria-hidden />
+                )}
+              </TimelineMenuItem>
+            ))}
+          </TimelineMenuPanel>
+        )}
+      </div>
     </div>
   );
 }

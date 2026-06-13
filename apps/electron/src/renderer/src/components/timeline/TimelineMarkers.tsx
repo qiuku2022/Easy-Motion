@@ -32,7 +32,7 @@ export function RulerMarkers({
             title={marker.name ?? `标记 ${marker.frame}`}
             aria-label={marker.name ?? `标记 帧 ${marker.frame}`}
             className={cn(
-              "absolute top-0 z-20 -translate-x-1/2 cursor-pointer rounded-sm p-0.5 transition-colors duration-150 ease-out hover:bg-em-elevated",
+              "absolute top-0 z-20 -translate-x-1/2 cursor-pointer rounded-md p-0.5 transition-colors duration-150 ease-out hover:bg-muted",
               selected && "bg-em-accent/20",
             )}
             style={{ left: frameToPx(marker.frame, pxPerFrame) }}

@@ -40,13 +40,10 @@ export function TimelinePanel() {
   const duration = timeline?.durationInFrames ?? 0;
 
   return (
-    <footer
-      className="relative z-20 flex h-full min-h-0 flex-col overflow-hidden border-t border-border bg-background"
-      onPointerDownCapture={(e) => blurEditableFocusUnlessTarget(e.target)}
-    >
+    <footer className="relative z-20 flex h-full min-h-0 flex-col overflow-hidden border-t border-border bg-background">
       <div className="flex shrink-0 items-center gap-3 border-b border-border px-2 py-1">
         <TimelineTransport />
-        <div className="ml-auto flex items-center gap-2">
+        <div className="relative z-[30] ml-auto flex items-center gap-2">
           <TimelineZoomControls />
           <TimelineDevMenu disabled={busy} />
         </div>
@@ -90,7 +87,7 @@ export function TimelinePanel() {
             variant="outline"
             size="sm"
             disabled={busy}
-            className="h-7 shrink-0 rounded-sm border-amber-500/30 bg-amber-500/20 text-xs text-amber-50 hover:bg-amber-500/30"
+            className="h-7 shrink-0 rounded-md border-amber-500/30 bg-amber-500/20 text-xs text-amber-50 hover:bg-amber-500/30"
             onClick={() => {
               clearError();
               void syncFromRemotion();
@@ -110,9 +107,13 @@ export function TimelinePanel() {
           selectedClipId={selectedClipId}
           selectedMarkerId={selectedMarkerId}
           onSelectClip={selectClip}
+          onPointerDownCapture={(e) => blurEditableFocusUnlessTarget(e.target)}
         />
       ) : (
-        <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 p-4 text-center text-sm text-muted-foreground">
+        <div
+          className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 p-4 text-center text-sm text-muted-foreground"
+          onPointerDownCapture={(e) => blurEditableFocusUnlessTarget(e.target)}
+        >
           <p className="text-foreground">开始你的动画创作</p>
           <p className="max-w-md text-xs">
             点击上方「+ 轨道」添加文字或分组；若 Remotion 源码已有内容，可用「⋯」→「从 Remotion 读取」同步。

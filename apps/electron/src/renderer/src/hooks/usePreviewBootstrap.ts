@@ -14,6 +14,10 @@ export const PREVIEW_LOADING_HINTS = [
 
 const MAX_LOG_LINES = 8;
 
+function stripAnsi(line: string): string {
+  return line.replace(/\x1b\[[0-9;]*m/g, "");
+}
+
 export function usePreviewBootstrap() {
   const currentProject = useProjectStore((s) => s.current);
   const timelineLoading = useTimelineStore((s) => s.isLoading);
@@ -40,7 +44,10 @@ export function usePreviewBootstrap() {
 
     const onLog = ({ line }: { line?: string }) => {
       if (!line?.trim()) return;
-      setLogs((prev) => [...prev.slice(-(MAX_LOG_LINES - 1)), line.trim()]);
+      setLogs((prev) => [
+        ...prev.slice(-(MAX_LOG_LINES - 1)),
+        stripAnsi(line.trim()),
+      ]);
     };
 
     api.preview.onLog(onLog);

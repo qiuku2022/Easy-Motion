@@ -82,9 +82,11 @@ module.exports = {
         mono: ['"JetBrains Mono"', "Consolas", "monospace"],
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        lg: "var(--radius-overlay)",
+        md: "var(--radius-control)",
+        sm: "calc(var(--radius-control) - 1px)",
+        control: "var(--radius-control)",
+        overlay: "var(--radius-overlay)",
       },
       ringWidth: {
         3: "3px",

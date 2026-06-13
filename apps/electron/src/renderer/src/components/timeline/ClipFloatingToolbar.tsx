@@ -167,7 +167,7 @@ function DeleteClipToolbarButton({
               type="button"
               variant="ghost"
               size="sm"
-              className="h-7 gap-1 rounded-sm px-2 text-[11px] text-red-400 hover:bg-red-500/15 hover:text-red-400"
+              className="h-7 gap-1 rounded-md px-2 text-[11px] text-red-400 hover:bg-red-500/15 hover:text-red-400"
             >
               <Trash2 className="h-3.5 w-3.5" />
               <span>{label}</span>
@@ -222,7 +222,7 @@ function ToolbarButton({
           disabled={disabled}
           onClick={onClick}
           className={cn(
-            "h-7 gap-1 rounded-sm px-2 text-[11px]",
+            "h-7 gap-1 rounded-md px-2 text-[11px]",
             danger
               ? "text-red-400 hover:bg-red-500/15 hover:text-red-400"
               : "text-foreground",

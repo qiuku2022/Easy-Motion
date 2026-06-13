@@ -180,10 +180,25 @@ function ensurePreviewSoloSupport(remotionDir) {
   const libDir = path.join(remotionDir, "src", "lib");
   const destLib = path.join(libDir, "preview-visibility.ts");
   const templateLib = path.join(templateSrc, "lib", "preview-visibility.ts");
-  if (fs.existsSync(templateLib) && !fs.existsSync(destLib)) {
-    fs.mkdirSync(libDir, { recursive: true });
-    fs.copyFileSync(templateLib, destLib);
-    broadcastLog("已添加 preview-visibility（独奏预览）", "preview");
+  if (fs.existsSync(templateLib)) {
+    const needsTimingHelper =
+      !fs.existsSync(destLib) ||
+      !fs.readFileSync(destLib, "utf8").includes("getClipTimingForPreview");
+    if (needsTimingHelper) {
+      fs.mkdirSync(libDir, { recursive: true });
+      fs.copyFileSync(templateLib, destLib);
+      broadcastLog("已更新 preview-visibility（片段时长预览）", "preview");
+      updated = true;
+    }
+  }
+
+  const componentsDir = path.join(remotionDir, "src", "components");
+  const destClipSeq = path.join(componentsDir, "PreviewClipSequence.tsx");
+  const templateClipSeq = path.join(templateSrc, "components", "PreviewClipSequence.tsx");
+  if (fs.existsSync(templateClipSeq) && !fs.existsSync(destClipSeq)) {
+    fs.mkdirSync(componentsDir, { recursive: true });
+    fs.copyFileSync(templateClipSeq, destClipSeq);
+    broadcastLog("已添加 PreviewClipSequence（片段时长预览）", "preview");
     updated = true;
   }
 
@@ -197,12 +212,17 @@ function ensurePreviewSoloSupport(remotionDir) {
     const needsPlayerPropsFix =
       content.includes("isClipVisibleInPreview") &&
       content.includes("getInputProps");
-    if (needsSoloVisibility || needsPlayerPropsFix) {
+    const needsClipTiming =
+      content.includes("isClipVisibleInPreview") &&
+      !content.includes("PreviewClipSequence");
+    if (needsSoloVisibility || needsPlayerPropsFix || needsClipTiming) {
       fs.copyFileSync(templateMain, mainSeq);
       broadcastLog(
-        needsPlayerPropsFix
-          ? "已修复 MainSequence（Player 预览 props）"
-          : "已更新 MainSequence（独奏/可见性过滤）",
+        needsClipTiming
+          ? "已更新 MainSequence（片段时长预览）"
+          : needsPlayerPropsFix
+            ? "已修复 MainSequence（Player 预览 props）"
+            : "已更新 MainSequence（独奏/可见性过滤）",
         "preview",
       );
       updated = true;

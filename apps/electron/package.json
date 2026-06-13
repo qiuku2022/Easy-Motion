@@ -10,7 +10,7 @@
     "dev:legacy": "electron . --legacy-ui",
     "build:renderer": "vite build",
     "test:m1": "node scripts/test-file-service.js && node scripts/test-project-service.js",
-    "test:m2": "node scripts/test-timeline-schema.js && node scripts/test-generator.js && node scripts/test-timeline-service.js && node scripts/test-remotion-project.js",
+    "test:m2": "node scripts/test-timeline-schema.js && node scripts/test-generator.js && node scripts/test-timeline-service.js && node scripts/test-remotion-project.js && node scripts/test-preview-visibility.js",
     "test:m3": "node scripts/test-generator.js",
     "test": "pnpm test:m1 && pnpm test:m2 && pnpm test:m3"
   },
