@@ -1,14 +1,14 @@
 # EasyMotion
 
-> 更新：2026-06-11  
+> 更新：2026-06-13  
 > 用自然语言制作 Remotion 动画的桌面应用（Electron + React + Python）
 
 Monorepo（`apps/*` + `packages/*`），当前可运行范围：
 
 | 模块 | 状态 | 说明 |
 |------|------|------|
-| Electron 主进程 | M1–M4 | 项目 / 时间线 / 预览 / Generator、Remotion 导入与漂移同步、素材 IPC |
-| 渲染进程 | M4 | 时间线拖拽编辑、属性面板、素材库、自动预览；UI 已接入 **shadcn/ui**（`apps/electron/src/renderer/src/components/ui/`）；下一步 M5 AI 面板 |
+| Electron 主进程 | M1–M4 / **M5 进行中** | 项目 / 时间线 / 预览 / Generator、Remotion 导入与漂移同步、素材 IPC；**LLM 流式代理**（`main:llm:*`） |
+| 渲染进程 | M4 / **M5 进行中** | 时间线拖拽编辑、属性面板、素材库、自动预览；右侧 **AI 助手** Tab 支持 LLM 流式对话（Agent 改时间线见 [M5 计划](.local/m5-ai-agent/README.md)） |
 | Legacy UI | 保留 | `apps/electron/src/renderer/legacy/`，`--legacy-ui` 或 `pnpm dev:legacy` |
 | Python API | M0+ | FastAPI，`pnpm dev:all` 时一并启动（M5 Agent 将接入） |
 | 设计规范 | 文档 | [`docs/design-system/easymotion/MASTER.md`](docs/design-system/easymotion/MASTER.md) |
@@ -33,6 +33,8 @@ pnpm dev          # Vite (127.0.0.1:5173) + Electron — 日常 UI 开发
 pnpm dev:all      # 上述 + Python（8000 被占用时自动试 8001–8019）
 ```
 
+**AI 助手（M5 Phase 0）**：复制 `apps/electron/.env.example` 为 `apps/electron/.env`，填写 `ANTHROPIC_API_KEY`。未配置时 AI Tab 会提示 `E2804`。
+
 | 命令 | 作用 |
 |------|------|
 | `pnpm dev:renderer` | 仅 Vite |
@@ -52,7 +54,7 @@ apps/python/       # FastAPI
 packages/shared/   # 共享类型与 timeline 工具
 docs/requirements/ # 产品与技术需求
 docs/design-system/# 设计 Token（权威）
-.local/            # UI 迁移与主题焕新笔记（已提交，见 .local/README.md）
+.local/            # UI 迁移、主题焕新、M5 开发计划（见 .local/README.md）
 .vscode/           # 团队共享的 F5 调试配置（见 .gitignore 白名单）
 ```
 

@@ -53,19 +53,19 @@ export function PanelTabs<T extends string>({
     <Tabs
       value={active}
       onValueChange={(value) => onChange(value as T)}
-      className={cn("w-full shrink-0 gap-0", className)}
+      className={cn("shrink-0 gap-0", className)}
     >
-      <div ref={listRef} className="relative w-full">
+      <div ref={listRef} className="relative">
         <TabsList
           variant="line"
-          className="flex h-9 w-full rounded-none border-b border-border bg-transparent px-0 pt-1"
+          className="h-9 w-full justify-start rounded-none border-b border-border bg-transparent px-2 pt-1"
         >
           {tabs.map((tab) => (
             <TabsTrigger
               key={tab.id}
               value={tab.id}
               className={cn(
-                "min-w-0 flex-1 rounded-none px-2 py-1.5 text-center text-sm font-normal text-muted-foreground",
+                "rounded-none px-3 py-1.5 text-sm font-normal text-muted-foreground",
                 "transition-colors duration-150 ease-out",
                 "hover:text-foreground",
                 "data-active:bg-transparent data-active:font-medium data-active:text-foreground",

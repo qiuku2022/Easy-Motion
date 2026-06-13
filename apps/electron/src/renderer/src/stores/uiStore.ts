@@ -47,8 +47,8 @@ interface UiState {
 }
 
 export const useUiStore = create<UiState>((set) => ({
-  leftPanelWidth: 280,
-  rightPanelWidth: 360,
+  leftPanelWidth: 220,
+  rightPanelWidth: 280,
   timelineHeight: 260,
   leftCollapsed: false,
   rightCollapsed: false,

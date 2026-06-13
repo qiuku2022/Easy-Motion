@@ -10,14 +10,14 @@
 
 ## 任务清单
 
-- [ ] 创建分支 `feat/m5`（或 `feat/m5-llm-chat-foundation`）
-- [ ] 提交现有改动：
+- [x] 创建分支 `feat/m5`（或 `feat/m5-llm-chat-foundation`）
+- [x] 提交现有改动：
   - `llm-service.js`、`ipc-handlers/llm.js`、`load-env.js`
   - `index.js`、`preload/index.js`
   - `AIAssistantPanel.tsx`、`RightPanel.tsx`、`easyMotion.ts`
-- [ ] 确保 `apps/electron/.env` 在 `.gitignore` 中
-- [ ] 新增 `apps/electron/.env.example`（无真实 Key，含 LLM 变量说明）
-- [ ] README 暂不标 M5 完成，可加一行「M5 进行中」
+- [x] 确保 `apps/electron/.env` 在 `.gitignore` 中
+- [x] 新增 `apps/electron/.env.example`（无真实 Key，含 LLM 变量说明）
+- [x] README 暂不标 M5 完成，可加一行「M5 进行中」
 
 ## 不包含
 

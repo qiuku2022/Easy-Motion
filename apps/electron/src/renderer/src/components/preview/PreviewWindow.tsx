@@ -1,23 +1,33 @@
 import { useCallback, useEffect, useRef } from "react";
+
 import { Loader2 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+
 import {
+
   parsePreviewMessage,
+
   postPreview,
+
   PREVIEW_CHANNEL,
+
 } from "@/lib/preview-messages";
-import { usePreviewAspectFit } from "@/hooks/usePreviewAspectFit";
+
 import { usePreviewBootstrap } from "@/hooks/usePreviewBootstrap";
+
 import { usePlaybackStore } from "@/stores/playbackStore";
+
 import { useTimelineStore } from "@/stores/timelineStore";
+
 import { getEasyMotion } from "@/types/easyMotion";
 
-const DEFAULT_ASPECT_RATIO = 16 / 9;
+
 
 export function PreviewWindow() {
-  const viewportRef = useRef<HTMLDivElement>(null);
+
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const {
@@ -47,16 +57,9 @@ export function PreviewWindow() {
   const previewReloadNonce = useTimelineStore((s) => s.previewReloadNonce);
   const previewTimelineNonce = useTimelineStore((s) => s.previewTimelineNonce);
 
-  const timeline = useTimelineStore((s) => s.timeline);
-
-  const aspectRatio =
-    timeline?.width && timeline?.height
-      ? timeline.width / timeline.height
-      : DEFAULT_ASPECT_RATIO;
-
-  const previewSize = usePreviewAspectFit(viewportRef, aspectRatio);
-
   const setCurrentFrame = useTimelineStore((s) => s.setCurrentFrame);
+
+  const timeline = useTimelineStore((s) => s.timeline);
 
   const setPlaying = usePlaybackStore((s) => s.setPlaying);
   const loopEnabled = usePlaybackStore((s) => s.loopEnabled);
@@ -255,52 +258,90 @@ export function PreviewWindow() {
 
 
   return (
+
     <section className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-preview-canvas">
-      <div
-        ref={viewportRef}
-        className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-preview-canvas p-3"
-      >
+
+      <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-preview-canvas p-3">
+
         {showOverlay && (
+
           <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 px-6 text-center">
+
             {isLoading && (
+
               <Loader2 className="h-8 w-8 animate-spin text-ring" aria-hidden />
+
             )}
 
+
+
             <div className="max-w-md space-y-2">
+
               {!hasProject && (
-                <p className="text-sm text-muted-foreground">
-                  打开或创建项目后将自动启动 Remotion 预览
-                </p>
+
+                <p className="text-sm text-muted-foreground">打开或创建项目后将自动启动 Remotion 预览</p>
+
               )}
+
+
 
               {hasProject && isLoading && (
+
                 <>
+
                   <p className="text-sm text-foreground">
+
                     {isGenerating ? "正在根据时间线生成 Remotion 代码…" : hint}
+
                   </p>
+
                   <p className="text-xs text-muted-foreground">
+
                     {isGenerating
+
                       ? "生成完成后将自动连接预览服务"
+
                       : "预览启动中，无需手动点击"}
+
                   </p>
+
                 </>
+
               )}
+
+
 
               {hasProject && !isLoading && error && (
+
                 <>
+
                   <p className="text-sm text-red-400">{error}</p>
-                  <Button type="button" onClick={retry}>
+
+                  <Button
+                    type="button"
+                    onClick={retry}
+                  >
                     重试启动预览
                   </Button>
+
                 </>
+
               )}
+
             </div>
 
+
+
             {hasProject && isLoading && logs.length > 0 && (
+
               <div className="w-full max-w-lg overflow-hidden rounded-sm border border-border bg-background/90 px-3 py-2 text-left">
+
                 <p className="mb-1 text-[10px] uppercase tracking-wide text-muted-foreground">
+
                   启动日志
+
                 </p>
+
                 <ScrollArea className="h-28 w-full">
                   <ul className="space-y-0.5 pr-3 font-mono text-[11px] leading-relaxed text-muted-foreground">
                     {logs.map((line, i) => (
@@ -310,39 +351,59 @@ export function PreviewWindow() {
                     ))}
                   </ul>
                 </ScrollArea>
+
               </div>
+
             )}
+
           </div>
+
         )}
 
-        <div
+
+
+        <iframe
+
+          ref={iframeRef}
+
+          src={previewUrl ?? undefined}
+
+          title="Remotion Preview"
+
           className={cn(
-            "relative shrink-0 overflow-hidden rounded-lg border border-border bg-black shadow-sm",
+
+            "max-h-full max-w-full rounded-lg border border-border",
+
             !previewUrl && "hidden",
+
           )}
+
           style={
-            previewSize.width > 0
-              ? { width: previewSize.width, height: previewSize.height }
-              : { width: "100%", aspectRatio: `${aspectRatio}` }
+
+            previewUrl
+
+              ? { height: "100%", width: "100%", maxHeight: "100%", maxWidth: "100%" }
+
+              : undefined
+
           }
-        >
-          <iframe
-            ref={iframeRef}
-            src={previewUrl ?? undefined}
-            title="Remotion Preview"
-            className="h-full w-full"
-            onLoad={() => {
-              const frame = useTimelineStore.getState().currentFrame;
-              const win = iframeRef.current?.contentWindow;
-              if (!win) return;
-              pushTimelineToPreview();
-              pushLoopToPreview();
-              postPreview(win, { channel: PREVIEW_CHANNEL, type: "SEEK", frame });
-            }}
-          />
-        </div>
+
+          onLoad={() => {
+            const frame = useTimelineStore.getState().currentFrame;
+            const win = iframeRef.current?.contentWindow;
+            if (!win) return;
+            pushTimelineToPreview();
+            pushLoopToPreview();
+            postPreview(win, { channel: PREVIEW_CHANNEL, type: "SEEK", frame });
+          }}
+
+        />
+
       </div>
+
     </section>
+
   );
+
 }
 
