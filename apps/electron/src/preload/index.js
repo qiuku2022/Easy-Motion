@@ -41,4 +41,13 @@ contextBridge.exposeInMainWorld("easyMotion", {
     importFiles: (payload) => invoke("main:asset:import", payload),
     pickAndImport: (payload) => invoke("main:asset:pickAndImport", payload),
   },
+  llm: {
+    stream: (payload) => invoke("main:llm:stream", payload),
+    cancel: (payload) => invoke("main:llm:cancel", payload),
+    onChunk: (callback) => {
+      const listener = (_event, data) => callback(data);
+      ipcRenderer.on("renderer:llm:chunk", listener);
+      return () => ipcRenderer.removeListener("renderer:llm:chunk", listener);
+    },
+  },
 });

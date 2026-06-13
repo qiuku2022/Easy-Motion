@@ -10,6 +10,17 @@ export interface IpcResult<T> {
   error?: IpcError;
 }
 
+export interface LlmMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export interface LlmChunkPayload {
+  requestId: string;
+  chunk: string;
+  isDone: boolean;
+}
+
 export interface EasyMotionApi {
   version: string;
   project: {
@@ -114,6 +125,16 @@ export interface EasyMotionApi {
         assets: import("./asset").ProjectAsset[];
       }>
     >;
+  };
+  llm: {
+    stream: (payload: {
+      requestId?: string;
+      messages: LlmMessage[];
+    }) => Promise<IpcResult<{ requestId: string }>>;
+    cancel: (payload: {
+      requestId: string;
+    }) => Promise<IpcResult<{ cancelled: boolean }>>;
+    onChunk: (callback: (data: LlmChunkPayload) => void) => () => void;
   };
 }
 

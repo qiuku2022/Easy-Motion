@@ -1,12 +1,16 @@
 const { app, BrowserWindow, screen } = require("electron");
 const path = require("node:path");
+const { loadEnv } = require("./utils/load-env");
 const { registerProjectHandlers } = require("./ipc-handlers/project");
 const { registerTimelineHandlers } = require("./ipc-handlers/timeline");
 const { registerPreviewHandlers } = require("./ipc-handlers/preview");
 const { registerAssetHandlers } = require("./ipc-handlers/asset");
+const { registerLlmHandlers } = require("./ipc-handlers/llm");
 const previewService = require("./services/preview-service");
 const { ensureDir } = require("./services/file-service");
 const { getConfigDir } = require("./utils/paths");
+
+loadEnv();
 
 const RENDERER_DEV_URL = process.env.ELECTRON_RENDERER_URL || "http://127.0.0.1:5173";
 
@@ -56,6 +60,7 @@ app.whenReady().then(() => {
   registerTimelineHandlers();
   registerPreviewHandlers();
   registerAssetHandlers();
+  registerLlmHandlers();
   createWindow();
 
   app.on("activate", () => {
