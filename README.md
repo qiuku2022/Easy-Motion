@@ -1,7 +1,9 @@
 # EasyMotion
 
-> 更新：2026-06-13  
+> 更新：2026-06-14  
 > 用自然语言制作 Remotion 动画的桌面应用（Electron + React + Python）
+
+![EasyMotion 主界面：预览、时间线、属性面板与 AI 助手](docs/images/app-screenshot.png)
 
 Monorepo（`apps/*` + `packages/*`），当前可运行范围：
 
