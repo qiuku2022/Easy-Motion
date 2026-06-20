@@ -1,5 +1,6 @@
 import { Bot } from "lucide-react";
 import { MessageItem } from "@/components/conversation/MessageItem";
+import { Button } from "@/components/ui/button";
 import type { AgentStatus, Message } from "@/types/conversation";
 
 const EXAMPLE_PROMPTS = [
@@ -39,14 +40,16 @@ export function MessageList({
         </p>
         <div className="mt-1 flex flex-col gap-1.5">
           {EXAMPLE_PROMPTS.map((example) => (
-            <button
+            <Button
               key={example}
               type="button"
-              className="rounded-md border border-border/60 bg-muted/30 px-3 py-1.5 text-xs text-foreground/80 transition-colors hover:bg-muted/60"
+              variant="outline"
+              size="sm"
+              className="h-auto border-border/60 bg-muted/30 px-3 py-1.5 text-xs font-normal text-foreground/80 hover:bg-muted/60"
               onClick={() => onExampleSelect(example)}
             >
               {example}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

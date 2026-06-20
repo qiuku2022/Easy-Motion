@@ -1,0 +1,326 @@
+{
+  "RveChartAnimation": {
+    "importPath": "./presets/rve/chart-animation",
+    "exportName": "RveChartAnimation"
+  },
+  "RveLineChart": {
+    "importPath": "./presets/rve/line-chart",
+    "exportName": "RveLineChart"
+  },
+  "RvePieChart": {
+    "importPath": "./presets/rve/pie-chart",
+    "exportName": "RvePieChart"
+  },
+  "RveDonutChart": {
+    "importPath": "./presets/rve/donut-chart",
+    "exportName": "RveDonutChart"
+  },
+  "RveAreaChart": {
+    "importPath": "./presets/rve/area-chart",
+    "exportName": "RveAreaChart"
+  },
+  "RveProgressBars": {
+    "importPath": "./presets/rve/progress-bars",
+    "exportName": "RveProgressBars"
+  },
+  "RveStatCounter": {
+    "importPath": "./presets/rve/stat-counter",
+    "exportName": "RveStatCounter"
+  },
+  "RveComparisonChart": {
+    "importPath": "./presets/rve/comparison-chart",
+    "exportName": "RveComparisonChart"
+  },
+  "RveCircularProgress": {
+    "importPath": "./presets/rve/circular-progress",
+    "exportName": "RveCircularProgress"
+  },
+  "RveAnimatedText": {
+    "importPath": "./presets/rve/animated-text",
+    "exportName": "RveAnimatedText"
+  },
+  "RveBounceText": {
+    "importPath": "./presets/rve/bounce-text",
+    "exportName": "RveBounceText"
+  },
+  "RveBubblePopText": {
+    "importPath": "./presets/rve/bubble-pop-text",
+    "exportName": "RveBubblePopText"
+  },
+  "RveFloatingBubbleText": {
+    "importPath": "./presets/rve/floating-bubble-text",
+    "exportName": "RveFloatingBubbleText"
+  },
+  "RveGlitchText": {
+    "importPath": "./presets/rve/glitch-text",
+    "exportName": "RveGlitchText"
+  },
+  "RvePoppingText": {
+    "importPath": "./presets/rve/popping-text",
+    "exportName": "RvePoppingText"
+  },
+  "RvePulsingText": {
+    "importPath": "./presets/rve/pulsing-text",
+    "exportName": "RvePulsingText"
+  },
+  "RveSlideText": {
+    "importPath": "./presets/rve/slide-text",
+    "exportName": "RveSlideText"
+  },
+  "RveTypewriterSubtitle": {
+    "importPath": "./presets/rve/typewriter-subtitle",
+    "exportName": "RveTypewriterSubtitle"
+  },
+  "RveAnimatedList": {
+    "importPath": "./presets/rve/animated-list",
+    "exportName": "RveAnimatedList"
+  },
+  "RveCardFlip": {
+    "importPath": "./presets/rve/card-flip",
+    "exportName": "RveCardFlip"
+  },
+  "RveCountdownTimer": {
+    "importPath": "./presets/rve/countdown-timer",
+    "exportName": "RveCountdownTimer"
+  },
+  "RveNotificationPop": {
+    "importPath": "./presets/rve/notification-pop",
+    "exportName": "RveNotificationPop"
+  },
+  "RveParticleExplosion": {
+    "importPath": "./presets/rve/particle-explosion",
+    "exportName": "RveParticleExplosion"
+  },
+  "RveProgressSteps": {
+    "importPath": "./presets/rve/progress-steps",
+    "exportName": "RveProgressSteps"
+  },
+  "RveRotatingCarousel": {
+    "importPath": "./presets/rve/rotating-carousel",
+    "exportName": "RveRotatingCarousel"
+  },
+  "RveSoundWave": {
+    "importPath": "./presets/rve/sound-wave",
+    "exportName": "RveSoundWave"
+  },
+  "RveTextHighlight": {
+    "importPath": "./presets/rve/text-highlight",
+    "exportName": "RveTextHighlight"
+  },
+  "RveBokehCircles": {
+    "importPath": "./presets/rve/bokeh-circles",
+    "exportName": "RveBokehCircles"
+  },
+  "RveGeometricPatterns": {
+    "importPath": "./presets/rve/geometric-patterns",
+    "exportName": "RveGeometricPatterns"
+  },
+  "RveGradientShift": {
+    "importPath": "./presets/rve/gradient-shift",
+    "exportName": "RveGradientShift"
+  },
+  "RveGridPulse": {
+    "importPath": "./presets/rve/grid-pulse",
+    "exportName": "RveGridPulse"
+  },
+  "RveLiquidWave": {
+    "importPath": "./presets/rve/liquid-wave",
+    "exportName": "RveLiquidWave"
+  },
+  "RveMatrixRain": {
+    "importPath": "./presets/rve/matrix-rain",
+    "exportName": "RveMatrixRain"
+  },
+  "RveNoiseGrain": {
+    "importPath": "./presets/rve/noise-grain",
+    "exportName": "RveNoiseGrain"
+  },
+  "RvePixelTransition": {
+    "importPath": "./presets/rve/pixel-transition",
+    "exportName": "RvePixelTransition"
+  },
+  "RveStarfield": {
+    "importPath": "./presets/rve/starfield",
+    "exportName": "RveStarfield"
+  },
+  "RveCameraShake": {
+    "importPath": "./presets/rve/camera-shake",
+    "exportName": "RveCameraShake"
+  },
+  "RveFilmBurn": {
+    "importPath": "./presets/rve/film-burn",
+    "exportName": "RveFilmBurn"
+  },
+  "RveKenBurns": {
+    "importPath": "./presets/rve/ken-burns",
+    "exportName": "RveKenBurns"
+  },
+  "RveLetterboxReveal": {
+    "importPath": "./presets/rve/letterbox-reveal",
+    "exportName": "RveLetterboxReveal"
+  },
+  "RveParallaxPan": {
+    "importPath": "./presets/rve/parallax-pan",
+    "exportName": "RveParallaxPan"
+  },
+  "RveSpotlightReveal": {
+    "importPath": "./presets/rve/spotlight-reveal",
+    "exportName": "RveSpotlightReveal"
+  },
+  "RveVignettePulse": {
+    "importPath": "./presets/rve/vignette-pulse",
+    "exportName": "RveVignettePulse"
+  },
+  "RveWhipPan": {
+    "importPath": "./presets/rve/whip-pan",
+    "exportName": "RveWhipPan"
+  },
+  "RveZoomPulse": {
+    "importPath": "./presets/rve/zoom-pulse",
+    "exportName": "RveZoomPulse"
+  },
+  "RveBlindsTransition": {
+    "importPath": "./presets/rve/blinds-transition",
+    "exportName": "RveBlindsTransition"
+  },
+  "RveClockWipe": {
+    "importPath": "./presets/rve/clock-wipe",
+    "exportName": "RveClockWipe"
+  },
+  "RveCrossDissolve": {
+    "importPath": "./presets/rve/cross-dissolve",
+    "exportName": "RveCrossDissolve"
+  },
+  "RveFadeThroughBlack": {
+    "importPath": "./presets/rve/fade-through-black",
+    "exportName": "RveFadeThroughBlack"
+  },
+  "RveIrisTransition": {
+    "importPath": "./presets/rve/iris-transition",
+    "exportName": "RveIrisTransition"
+  },
+  "RveMorphTransition": {
+    "importPath": "./presets/rve/morph-transition",
+    "exportName": "RveMorphTransition"
+  },
+  "RvePushTransition": {
+    "importPath": "./presets/rve/push-transition",
+    "exportName": "RvePushTransition"
+  },
+  "RveSlideWipe": {
+    "importPath": "./presets/rve/slide-wipe",
+    "exportName": "RveSlideWipe"
+  },
+  "RveZoomThrough": {
+    "importPath": "./presets/rve/zoom-through",
+    "exportName": "RveZoomThrough"
+  },
+  "RveLogoBlurReveal": {
+    "importPath": "./presets/rve/logo-blur-reveal",
+    "exportName": "RveLogoBlurReveal"
+  },
+  "RveLogoBounceDrop": {
+    "importPath": "./presets/rve/logo-bounce-drop",
+    "exportName": "RveLogoBounceDrop"
+  },
+  "RveLogoFadeReveal": {
+    "importPath": "./presets/rve/logo-fade-reveal",
+    "exportName": "RveLogoFadeReveal"
+  },
+  "RveLogoGlitchReveal": {
+    "importPath": "./presets/rve/logo-glitch-reveal",
+    "exportName": "RveLogoGlitchReveal"
+  },
+  "RveLogoScaleRotate": {
+    "importPath": "./presets/rve/logo-scale-rotate",
+    "exportName": "RveLogoScaleRotate"
+  },
+  "RveLogoSpinReveal": {
+    "importPath": "./presets/rve/logo-spin-reveal",
+    "exportName": "RveLogoSpinReveal"
+  },
+  "RveLogoSplitReveal": {
+    "importPath": "./presets/rve/logo-split-reveal",
+    "exportName": "RveLogoSplitReveal"
+  },
+  "RveLogoStrokeDraw": {
+    "importPath": "./presets/rve/logo-stroke-draw",
+    "exportName": "RveLogoStrokeDraw"
+  },
+  "RveLogoTypewriter": {
+    "importPath": "./presets/rve/logo-typewriter",
+    "exportName": "RveLogoTypewriter"
+  },
+  "RveChapterTitle": {
+    "importPath": "./presets/rve/chapter-title",
+    "exportName": "RveChapterTitle"
+  },
+  "RveCinematicTitleIntro": {
+    "importPath": "./presets/rve/cinematic-title-intro",
+    "exportName": "RveCinematicTitleIntro"
+  },
+  "RveCountdownIntro": {
+    "importPath": "./presets/rve/countdown-intro",
+    "exportName": "RveCountdownIntro"
+  },
+  "RveCreditsRoll": {
+    "importPath": "./presets/rve/credits-roll",
+    "exportName": "RveCreditsRoll"
+  },
+  "RveEndCard": {
+    "importPath": "./presets/rve/end-card",
+    "exportName": "RveEndCard"
+  },
+  "RveLowerThird": {
+    "importPath": "./presets/rve/lower-third",
+    "exportName": "RveLowerThird"
+  },
+  "RveQuoteCard": {
+    "importPath": "./presets/rve/quote-card",
+    "exportName": "RveQuoteCard"
+  },
+  "RveSubscribeReminder": {
+    "importPath": "./presets/rve/subscribe-reminder",
+    "exportName": "RveSubscribeReminder"
+  },
+  "RveTitleSplit": {
+    "importPath": "./presets/rve/title-split",
+    "exportName": "RveTitleSplit"
+  },
+  "RveGalleryGrid": {
+    "importPath": "./presets/rve/gallery-grid",
+    "exportName": "RveGalleryGrid"
+  },
+  "RveImageCarousel": {
+    "importPath": "./presets/rve/image-carousel",
+    "exportName": "RveImageCarousel"
+  },
+  "RveImageComparisonSlider": {
+    "importPath": "./presets/rve/image-comparison-slider",
+    "exportName": "RveImageComparisonSlider"
+  },
+  "RveImageZoomReveal": {
+    "importPath": "./presets/rve/image-zoom-reveal",
+    "exportName": "RveImageZoomReveal"
+  },
+  "RveMasonryGallery": {
+    "importPath": "./presets/rve/masonry-gallery",
+    "exportName": "RveMasonryGallery"
+  },
+  "RvePhotoStack": {
+    "importPath": "./presets/rve/photo-stack",
+    "exportName": "RvePhotoStack"
+  },
+  "RvePictureInPicture": {
+    "importPath": "./presets/rve/picture-in-picture",
+    "exportName": "RvePictureInPicture"
+  },
+  "RvePolaroidFrame": {
+    "importPath": "./presets/rve/polaroid-frame",
+    "exportName": "RvePolaroidFrame"
+  },
+  "RveSplitScreen": {
+    "importPath": "./presets/rve/split-screen",
+    "exportName": "RveSplitScreen"
+  }
+}

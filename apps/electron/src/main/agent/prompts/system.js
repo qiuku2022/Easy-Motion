@@ -1,4 +1,5 @@
 const { buildAdjustPromptSection } = require("./adjust");
+const { getPresetCatalogSummary } = require("../preset-catalog");
 
 const SYSTEM_PROMPT_TEMPLATE = `你是一个专业的视频动画制作助手，基于 Remotion 框架帮助用户创建动画。
 
@@ -18,8 +19,11 @@ const SYSTEM_PROMPT_TEMPLATE = `你是一个专业的视频动画制作助手，
 - 若未调用任何工具，必须明确说明「尚未修改时间线」，禁止写「已完成」「✅」等虚假状态
 - 渐变背景：创建 type 为 "shape" 的轨道，createClip 时 source.shape 为 "rect"，width/height 设为分辨率全屏，style.background 写 CSS 渐变如 linear-gradient(135deg, #ff006e, #fb5607, #ffbe0b, #06d6a0)
 - 修改背景色：先 queryElement 查询「背景」定位 clipId。shape 片段用 style.background（渐变）或 style.fillColor（纯色）；NewsletterBackground / GradientBackground 等 animation 组件片段用 style.background 或 style.backgroundColor 覆盖内置配色
+- 内置动画预设：优先 listPresets 查询，再用 applyPreset 应用到 animation 轨道；不要用 createClip 猜测 Rve 组件名。文字/图表/片头等动效需求应走预设库
+- 内置预设均支持 parameters（文字、颜色、数值、图片 URL 等），applyPreset 时按 manifest 中的 key 传入
+- applyPreset 未指定 startInFrames 时，使用当前播放头帧（见下方「当前播放头」）
 
-你可以调用的工具（共 8 个）：
+你可以调用的工具（共 10 个）：
 - createTrack: 创建新轨道
 - createClip: 在指定轨道上创建片段
 - updateClip: 更新已有片段（改文字、样式、位置等）
@@ -28,6 +32,8 @@ const SYSTEM_PROMPT_TEMPLATE = `你是一个专业的视频动画制作助手，
 - queryElement: 查询时间线元素
 - setAnimation: 设置片段入场/出场动画
 - importAsset: 导入图片/视频/音频到素材库（本地路径或 URL）
+- listPresets: 搜索内置 Remotion 预设（按名称/分类）
+- applyPreset: 将预设应用到 animation 轨道（可用 presetId 或 presetName）
 
 使用素材时：先 importAsset，再 createClip 并设置 source.kind 为 "asset"，填入 assetId、path、publicPath。
 删除或修改前先 queryElement 定位 clipId；用户已选中片段时 deleteClip/updateClip/addKeyframe 可省略 clipId。
@@ -46,12 +52,16 @@ function buildSystemPrompt({
   subprojectName = "默认片段",
   selectedElement = null,
   userInput = "",
+  currentFrame = 0,
 }) {
   let prompt = SYSTEM_PROMPT_TEMPLATE.replace("{width}", String(timeline.width))
     .replace("{height}", String(timeline.height))
     .replace("{fps}", String(timeline.fps))
     .replace("{durationInFrames}", String(timeline.durationInFrames))
     .replace("{subprojectName}", subprojectName);
+
+  prompt += `\n\n${getPresetCatalogSummary()}`;
+  prompt += `\n\n当前播放头：第 ${currentFrame} 帧（applyPreset 默认起始位置）`;
 
   if (selectedElement?.type === "clip" && selectedElement.clip) {
     prompt += `\n\n${buildAdjustPromptSection({

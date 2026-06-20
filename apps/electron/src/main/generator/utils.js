@@ -15,6 +15,8 @@ function renderJsxProps(props) {
     .join("\n");
 }
 
+const path = require("node:path");
+
 const LAYER_COMPONENT_MAP = {
   text: "TextLayer",
   image: "ImageLayer",
@@ -29,6 +31,15 @@ const COMPONENT_MODULE_MAP = {
   GradientBackground: "./newsletter-design/GradientBackground",
 };
 
+let PRESET_COMPONENT_REGISTRY = {};
+try {
+  PRESET_COMPONENT_REGISTRY = require(
+    path.join(__dirname, "../../../resources/presets/component-registry.json"),
+  );
+} catch {
+  /* preset bundle optional during partial checkout */
+}
+
 function isComponentAnimationClip(track, clip) {
   return (
     track.type === "animation" &&
@@ -42,6 +53,12 @@ function resolveComponentModule(componentRef) {
   const baseName = componentRef.includes("/")
     ? componentRef.split("/").pop()
     : componentRef;
+  if (PRESET_COMPONENT_REGISTRY[baseName]) {
+    return {
+      componentName: baseName,
+      importPath: PRESET_COMPONENT_REGISTRY[baseName].importPath,
+    };
+  }
   if (COMPONENT_MODULE_MAP[baseName]) {
     return { componentName: baseName, importPath: COMPONENT_MODULE_MAP[baseName] };
   }

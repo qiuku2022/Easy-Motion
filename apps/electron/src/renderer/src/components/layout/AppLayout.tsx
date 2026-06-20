@@ -5,9 +5,8 @@ import { LeftPanel } from "@/components/layout/LeftPanel";
 import { RightPanel } from "@/components/layout/RightPanel";
 import { PreviewWindow } from "@/components/preview/PreviewWindow";
 import { TimelinePanel } from "@/components/timeline/TimelinePanel";
-import { usePreviewColumnWidth } from "@/hooks/usePreviewAspectFit";
+import { usePreviewColumnWidth, PREVIEW_DISPLAY_ASPECT } from "@/hooks/usePreviewAspectFit";
 import { useRemotionAutoSync } from "@/hooks/useRemotionAutoSync";
-import { useTimelineStore } from "@/stores/timelineStore";
 import { useUiStore } from "@/stores/uiStore";
 import { cn } from "@/lib/utils";
 
@@ -17,17 +16,14 @@ const RIGHT_MIN = 240;
 const RIGHT_MAX = 520;
 const TIMELINE_MIN = 150;
 const TIMELINE_MAX = 350;
-const DEFAULT_ASPECT_RATIO = 16 / 9;
 
 export function AppLayout() {
   useRemotionAutoSync();
   const rowRef = useRef<HTMLDivElement>(null);
-  const timeline = useTimelineStore((s) => s.timeline);
-  const aspectRatio =
-    timeline?.width && timeline?.height
-      ? timeline.width / timeline.height
-      : DEFAULT_ASPECT_RATIO;
-  const previewColumnWidth = usePreviewColumnWidth(rowRef, aspectRatio);
+  const previewColumnWidth = usePreviewColumnWidth(
+    rowRef,
+    PREVIEW_DISPLAY_ASPECT
+  );
 
   const {
     leftPanelWidth,
@@ -79,7 +75,6 @@ export function AppLayout() {
                 style={{
                   flex: `1 1 ${leftPanelWidth}px`,
                   minWidth: LEFT_MIN,
-                  maxWidth: LEFT_MAX,
                 }}
                 className="min-w-0 overflow-hidden"
               >
@@ -92,7 +87,10 @@ export function AppLayout() {
             style={
               bothSidesCollapsed
                 ? undefined
-                : { width: previewColumnWidth, flexShrink: 0 }
+                : {
+                    width: previewColumnWidth,
+                    flex: "0 0 auto",
+                  }
             }
             className={cn(
               "flex min-h-0 min-w-0 flex-col overflow-hidden",
@@ -106,11 +104,11 @@ export function AppLayout() {
               <PanelResizer axis="horizontal" onResize={onResizeRight} />
               <div
                 style={{
-                  flex: `1 1 ${rightPanelWidth}px`,
+                  flex: `0 0 ${rightPanelWidth}px`,
                   minWidth: RIGHT_MIN,
                   maxWidth: RIGHT_MAX,
                 }}
-                className="min-w-0 overflow-hidden"
+                className="min-w-0 shrink-0 overflow-hidden"
               >
                 <RightPanel />
               </div>

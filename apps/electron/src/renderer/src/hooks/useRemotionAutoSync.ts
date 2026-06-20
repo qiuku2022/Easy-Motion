@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useProjectStore } from "@/stores/projectStore";
-import { useTimelineStore } from "@/stores/timelineStore";
+import { isInPreviewSyncCooldown, useTimelineStore } from "@/stores/timelineStore";
 
 const DRIFT_POLL_MS = 4000;
 
@@ -13,9 +13,17 @@ export function useRemotionAutoSync() {
     if (!projectPath) return;
 
     const tick = () => {
-      const { isSyncingRemotion, isLoading, isGenerating } =
+      const { isSyncingRemotion, isLoading, isGenerating, isSaving } =
         useTimelineStore.getState();
-      if (isSyncingRemotion || isLoading || isGenerating) return;
+      if (
+        isSyncingRemotion ||
+        isLoading ||
+        isGenerating ||
+        isSaving ||
+        isInPreviewSyncCooldown()
+      ) {
+        return;
+      }
       void checkRemotionDrift({ autoSync: true });
     };
 

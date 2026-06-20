@@ -155,6 +155,8 @@ function startConversationSend(webContents, payload) {
         history,
         selectedElement,
         confirmOverwrite: Boolean(payload?.confirmOverwrite),
+        currentFrame:
+          typeof payload?.currentFrame === "number" ? payload.currentFrame : 0,
         imagePaths: resolveAttachedImagePaths(payload?.attachedImages),
         signal: controller.signal,
         onStatus: (status) => sendStatus(webContents, requestId, status),

@@ -46,6 +46,8 @@ import type {
 } from "@/types/timeline";
 import type { RemotionSyncStats } from "@/lib/remotion-sync";
 import { placeAssetOnTimeline } from "@/lib/timeline/placeAssetClip";
+import { placePresetOnTimeline } from "@/lib/timeline/placePresetClip";
+import { isPresetPropsOnlyPatch } from "@/lib/presetProps";
 import { findMarkerAtFrame, normalizeMarkers } from "@/lib/timeline/markers";
 import { repairTimelineForEditing } from "@/lib/timeline/repair";
 import {
@@ -55,6 +57,7 @@ import {
   pickDefaultContentElement,
 } from "@/lib/timeline/trackTree";
 import { useAssetStore } from "@/stores/assetStore";
+import { usePresetStore } from "@/stores/presetStore";
 import { useUiStore } from "@/stores/uiStore";
 
 export interface RunGenerateOptions {
@@ -85,6 +88,7 @@ interface TimelineState {
     tracksEmpty: boolean;
     hasCustomRemotionCode: boolean;
     customRemotionReason: string | null;
+    timelineDrivenPreview: boolean;
   } | null;
   isSyncingRemotion: boolean;
   lastRemotionSync: RemotionSyncStats | null;
@@ -131,6 +135,8 @@ interface TimelineState {
     force?: boolean;
     subprojectPath?: string;
   }) => Promise<boolean>;
+  /** 预设参数变更：保存并推送 timeline 到预览，不重新生成代码 */
+  syncPreviewAfterPropsEdit: () => Promise<boolean>;
   renameTrack: (trackId: string, name: string) => void;
 
   addClip: (trackId: string, clip: Clip) => void;
@@ -155,6 +161,12 @@ interface TimelineState {
     startInFrames: number,
     trackId?: string | null,
   ) => void;
+  placePresetAtFrame: (
+    presetId: string,
+    startInFrames: number,
+    trackId?: string | null,
+  ) => boolean;
+  placePresetAtPlayhead: (presetId: string, trackId?: string | null) => boolean;
 
   undo: () => void;
   redo: () => void;
@@ -167,6 +179,20 @@ const HISTORY_MERGE_MS = 500;
 const debouncedGenerate = debounce(() => {
   void useTimelineStore.getState().runGenerate({ manual: false });
 }, 500);
+
+const debouncedPreviewPropsSync = debounce(() => {
+  void useTimelineStore.getState().syncPreviewAfterPropsEdit();
+}, 400);
+
+let previewSyncCooldownUntil = 0;
+
+function markPreviewSyncCooldown(ms = 8000) {
+  previewSyncCooldownUntil = Date.now() + ms;
+}
+
+export function isInPreviewSyncCooldown() {
+  return Date.now() < previewSyncCooldownUntil;
+}
 
 let historyMergeTimer: ReturnType<typeof setTimeout> | null = null;
 let historyMerging = false;
@@ -461,11 +487,13 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
 
       await get().checkRemotionDrift({ autoSync: false });
       const drift = get().remotionDrift;
-      if (drift?.hasCustomRemotionCode) {
+      const usesPreviewPush =
+        drift?.hasCustomRemotionCode || drift?.timelineDrivenPreview;
+      if (usesPreviewPush) {
         if (!manual) {
           const saved = await get().saveTimeline();
           if (!saved) return false;
-          return get().syncPreviewAfterTimelineEdit();
+          return get().syncPreviewAfterTimelineEdit({ force: true });
         }
         const reason = drift.customRemotionReason ?? "手写 Remotion 代码";
         const proceed = window.confirm(
@@ -485,6 +513,21 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
         set({ error: res.error?.message ?? "生成 Remotion 代码失败" });
         return false;
       }
+
+      if (res.data?.timeline?.remotionFingerprint && get().timeline) {
+        const fp = res.data.timeline;
+        set((s) => ({
+          timeline: s.timeline
+            ? {
+                ...s.timeline,
+                remotionFingerprint: fp.remotionFingerprint,
+                remotionSyncedAt: fp.remotionSyncedAt,
+              }
+            : s.timeline,
+        }));
+      }
+
+      markPreviewSyncCooldown();
 
       if (res.data?.previewReload) {
         set((s) => ({ previewFullReloadNonce: s.previewFullReloadNonce + 1 }));
@@ -649,11 +692,16 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
         tracksEmpty: res.data.tracksEmpty,
         hasCustomRemotionCode: Boolean(res.data.hasCustomRemotionCode),
         customRemotionReason: res.data.customRemotionReason ?? null,
+        timelineDrivenPreview: Boolean(res.data.timelineDrivenPreview),
       };
 
       set({ remotionDrift: driftInfo });
 
       if (!driftInfo.suggestSync) {
+        return;
+      }
+
+      if (driftInfo.timelineDrivenPreview) {
         return;
       }
 
@@ -682,11 +730,20 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
       clearHistoryMerge();
       useUiStore.getState().setTimelineScrollX(0);
       useUiStore.getState().requestTimelineFit();
+
+      const prev = get();
+      const selection = syncSelectionAfterTimelineChange(
+        res.data.timeline,
+        prev.selectedClipId,
+        prev.selectedTrackId,
+        prev.selectedMarkerId,
+      );
+      const maxFrame = Math.max(0, res.data.timeline.durationInFrames - 1);
+
       set({
         timeline: res.data.timeline,
-        currentFrame: 0,
-        selectedClipId: null,
-        selectedTrackId: null,
+        currentFrame: Math.min(prev.currentFrame, maxFrame),
+        ...selection,
         hasUnsavedChanges: false,
         history: createHistory(),
         remotionDrift: null,
@@ -822,7 +879,9 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
       const { timeline, remotionDrift } = get();
       const api = getEasyMotion();
       if (!timeline || !api?.timeline?.syncPreviewManifest) return false;
-      if (!options.force && !remotionDrift?.hasCustomRemotionCode) return false;
+      const usesPreviewPush =
+        remotionDrift?.hasCustomRemotionCode || remotionDrift?.timelineDrivenPreview;
+      if (!options.force && !usesPreviewPush) return false;
 
       const res = await api.timeline.syncPreviewManifest({
         timeline,
@@ -831,17 +890,32 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
       if (!res.success) return false;
 
       if (res.data?.timeline) {
+        const prev = get();
+        const selection = syncSelectionAfterTimelineChange(
+          res.data.timeline,
+          prev.selectedClipId,
+          prev.selectedTrackId,
+          prev.selectedMarkerId,
+        );
         set({
           timeline: res.data.timeline,
           hasUnsavedChanges: false,
+          ...selection,
         });
       }
+      markPreviewSyncCooldown();
       if (res.data?.previewReload) {
         set((s) => ({ previewFullReloadNonce: s.previewFullReloadNonce + 1 }));
       } else if (res.data?.timelinePush !== false) {
         set((s) => ({ previewTimelineNonce: s.previewTimelineNonce + 1 }));
       }
       return true;
+    },
+
+    syncPreviewAfterPropsEdit: async () => {
+      const saved = await get().saveTimeline();
+      if (!saved) return false;
+      return get().syncPreviewAfterTimelineEdit({ force: true });
     },
 
     syncPreviewForTrackFilters: async () => {
@@ -902,6 +976,54 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
       }
     },
 
+    placePresetAtFrame: (presetId, startInFrames, trackId) => {
+      const preset = usePresetStore.getState().getPresetById(presetId);
+      if (!preset) {
+        set({ error: "预设不存在" });
+        return false;
+      }
+
+      const { timeline, currentFrame } = get();
+      if (!timeline) {
+        set({ error: "没有可编辑的时间线" });
+        return false;
+      }
+
+      const ui = useUiStore.getState();
+      try {
+        const result = placePresetOnTimeline(timeline, preset, {
+          startInFrames,
+          trackId,
+          snap: {
+            timeline,
+            pxPerFrame: ui.pxPerFrame,
+            currentFrame,
+            snapEnabled: ui.snapEnabled,
+            altKeyHeld: ui.altKeyHeld,
+          },
+        });
+        commitTimeline(result.timeline, { generate: "immediate" });
+        set({
+          selectedClipId: result.clipId,
+          selectedTrackId: result.trackId,
+        });
+        return true;
+      } catch (err) {
+        const message =
+          err instanceof TimelineValidationError || err instanceof Error
+            ? err.message
+            : "无法应用预设";
+        set({ error: message });
+        toast.error("预设应用失败", { description: message });
+        return false;
+      }
+    },
+
+    placePresetAtPlayhead: (presetId, trackId) => {
+      const { currentFrame } = get();
+      return get().placePresetAtFrame(presetId, currentFrame, trackId);
+    },
+
     removeClip: (trackId, clipId) => {
       runMutation((t) => removeClip(t, trackId, clipId), {
         generate: "immediate",
@@ -928,6 +1050,11 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
     },
 
     updateClip: (clipId, patch) => {
+      if (isPresetPropsOnlyPatch(patch)) {
+        runMutation((t) => updateClip(t, clipId, patch), { generate: "none" });
+        debouncedPreviewPropsSync();
+        return;
+      }
       runMutation((t) => updateClip(t, clipId, patch), {
         generate: "debounced",
       });

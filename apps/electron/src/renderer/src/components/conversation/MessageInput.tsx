@@ -70,7 +70,7 @@ export function MessageInput({
           type="button"
           variant="ghost"
           size="icon"
-          className="size-9 shrink-0 rounded-md text-muted-foreground hover:text-foreground"
+          className="size-9 shrink-0 text-muted-foreground hover:text-foreground"
           aria-label="添加参考图"
           title={canAttach ? `添加参考图（最多 ${maxImages} 张）` : "已达参考图上限"}
           disabled={inputDisabled || !canAttach}
@@ -92,7 +92,7 @@ export function MessageInput({
         <Button
           type="button"
           size="icon"
-          className="size-9 shrink-0 rounded-md"
+          className="size-9 shrink-0"
           aria-label={isStreaming ? "取消" : "发送"}
           disabled={!isStreaming && !value.trim()}
           onClick={() => void (isStreaming ? onCancel() : onSend())}

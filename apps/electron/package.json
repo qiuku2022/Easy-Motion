@@ -9,10 +9,12 @@
     "dev:electron": "wait-on http://127.0.0.1:5173 && cross-env ELECTRON_RENDERER_URL=http://127.0.0.1:5173 electron .",
     "dev:legacy": "electron . --legacy-ui",
     "build:renderer": "vite build",
-    "test:m1": "node scripts/test-file-service.js && node scripts/test-project-service.js",
+    "test:m1": "node scripts/test-file-service.js && node scripts/test-project-service.js && node scripts/test-ui-state-service.js",
     "test:m2": "node scripts/test-timeline-schema.js && node scripts/test-generator.js && node scripts/test-timeline-service.js && node scripts/test-remotion-project.js && node scripts/test-preview-visibility.js",
     "test:m3": "node scripts/test-generator.js",
     "test:m5": "node scripts/test-conversation-service.js && node scripts/test-conversation-errors.js && node scripts/test-llm-factory.js && node scripts/test-timeline-ops.js && node scripts/test-clip-updates.js && node scripts/test-agent-resilience.js && node scripts/test-vision-layout.js && node scripts/test-asset-import.js && node scripts/test-agent-mock-ipc.js && node scripts/test-agent-prompt-regression.js",
+    "vendor:rve-presets": "node scripts/vendor-rve-presets.cjs",
+    "generate:preset-thumbnails": "node scripts/generate-preset-thumbnails.cjs",
     "test": "pnpm test:m1 && pnpm test:m2 && pnpm test:m3 && pnpm test:m5"
   },
   "dependencies": {

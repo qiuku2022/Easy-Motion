@@ -9,12 +9,16 @@ const { registerLlmHandlers } = require("./ipc-handlers/llm");
 const { registerSettingsHandlers } = require("./ipc-handlers/settings");
 const { registerConversationHandlers } = require("./ipc-handlers/conversation");
 const previewService = require("./services/preview-service");
+const uiStateService = require("./services/ui-state-service");
 const { ensureDir } = require("./services/file-service");
 const { getConfigDir } = require("./utils/paths");
 
 loadEnv();
 
 const RENDERER_DEV_URL = process.env.ELECTRON_RENDERER_URL || "http://127.0.0.1:5173";
+
+/** @type {import("electron").BrowserWindow | null} */
+let mainWindow = null;
 
 function getInitialWindowBounds() {
   const { workArea } = screen.getPrimaryDisplay();
@@ -29,15 +33,41 @@ function getInitialWindowBounds() {
 }
 
 const createWindow = () => {
+  const saved = uiStateService.getMainWindowState();
+  const { bounds, maximized, fullscreen } = uiStateService.resolveMainWindowPlacement(
+    saved,
+    getInitialWindowBounds(),
+  );
+
   const win = new BrowserWindow({
-    ...getInitialWindowBounds(),
-    minWidth: 1200,
-    minHeight: 700,
+    ...bounds,
+    minWidth: uiStateService.MAIN_WINDOW_MIN_WIDTH,
+    minHeight: uiStateService.MAIN_WINDOW_MIN_HEIGHT,
+    show: false,
     webPreferences: {
       preload: path.join(__dirname, "../preload/index.js"),
       contextIsolation: true,
       nodeIntegration: false,
     },
+  });
+
+  mainWindow = win;
+
+  if (fullscreen) {
+    win.setFullScreen(true);
+  } else if (maximized) {
+    win.maximize();
+  }
+
+  win.once("ready-to-show", () => {
+    win.show();
+  });
+
+  win.on("close", () => {
+    uiStateService.saveMainWindowStateSync(win);
+    if (mainWindow === win) {
+      mainWindow = null;
+    }
   });
 
   const useLegacy =
@@ -78,6 +108,10 @@ app.on("window-all-closed", () => {
 
 /** 退出时尽力停预览，不阻塞进程退出（F5 停止调试需立即结束） */
 app.on("before-quit", () => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    uiStateService.saveMainWindowStateSync(mainWindow);
+  }
+
   void previewService.stopPreview().catch((err) => {
     console.error("[app] preview cleanup failed:", err);
   });

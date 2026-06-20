@@ -1,21 +1,22 @@
 # EasyMotion
 
-> 更新：2026-06-14  
+> 更新：2026-06-20  
 > 用自然语言制作 Remotion 动画的桌面应用（Electron + React + Python）
 
-![EasyMotion 主界面：预览、时间线、属性面板与 AI 助手](docs/images/app-screenshot.png)
+![EasyMotion 主界面：折线图预设、属性参数编辑、取色器与时间线](docs/images/app-screenshot.png)
 
 Monorepo（`apps/*` + `packages/*`），当前可运行范围：
 
 | 模块 | 状态 | 说明 |
 |------|------|------|
 | Electron 主进程 | M1–M5 ✅ | 项目 / 时间线 / 预览 / Generator、Remotion 导入与漂移同步、素材 IPC；**LangChain Agent**（`conversation:send`） |
-| 渲染进程 | M4–M5 ✅ | 时间线拖拽编辑、属性面板、素材库、自动预览；右侧 **AI 助手** Tab（Agent 改时间线，见 [M5 计划](.local/m5-ai-agent/README.md)） |
+| 渲染进程 | M4–M5 ✅ | 时间线拖拽编辑、**属性面板**（含预设参数与取色器）、**81 个 RVE 预设**、素材库、自动预览；右侧 **AI 助手** Tab |
+| 预设系统 | ✅ | 单击查看 / 双击应用 / 拖到时间线；**全参数可编辑**（颜色、文案、数值等）；Agent `apply_preset` |
 | Legacy UI | 保留 | `apps/electron/src/renderer/legacy/`，`--legacy-ui` 或 `pnpm dev:legacy` |
-| Python API | M0+ | FastAPI，`pnpm dev:all` 时一并启动（M5 Agent 将接入） |
+| Python API | M0+ | FastAPI，`pnpm dev:all` 时一并启动 |
 | 设计规范 | 文档 | [`docs/design-system/easymotion/MASTER.md`](docs/design-system/easymotion/MASTER.md) |
 
-打开项目后会自动启动 Remotion 预览；手写 Remotion 项目支持「从 Remotion 读取」与时间线双向同步。
+打开项目后会自动启动 Remotion 预览；时间线 JSON 驱动 `MainSequence` 动态渲染（含预设 `props`）。手写 Remotion 项目支持「从 Remotion 读取」与时间线双向同步。
 
 详细需求与里程碑见 [`docs/requirements/`](docs/requirements/)（含 [`UI布局与交互设计-优化版.md`](docs/requirements/UI布局与交互设计-优化版.md)、[`开发里程碑与路线图.md`](docs/requirements/开发里程碑与路线图.md)）。
 
@@ -44,9 +45,17 @@ pnpm dev:all      # 上述 + Python（8000 被占用时自动试 8001–8019）
 | `pnpm dev:legacy` | 旧版 HTML 调试页（在 `apps/electron` 包内） |
 | `pnpm lint` / `lint:fix` | ESLint |
 | `pnpm format` / `format:check` | Prettier（`apps` / `packages` / `.vscode` 等，不含 `docs/`） |
-| `pnpm test` | 主进程脚本测试（m1 / m2 / m3） |
+| `pnpm test` | 主进程脚本测试（m1 / m2 / m3 / m5） |
 
 开发模式下 Electron 加载 **`http://127.0.0.1:5173`**（Vite 固定 IPv4，避免 Windows 上 `localhost` 仅 IPv6 导致连不上）。
+
+### 预设相关脚本（`apps/electron`）
+
+| 命令 | 作用 |
+|------|------|
+| `pnpm vendor:rve-presets` | 从 RVE 模板 vendoring 81 个预设组件 |
+| `pnpm generate:preset-thumbnails` | 生成预设缩略图 |
+| `node scripts/test-preset-parameters.js` | 校验预设参数注册表 |
 
 ## 仓库结构（简）
 
@@ -56,6 +65,7 @@ apps/python/       # FastAPI
 packages/shared/   # 共享类型与 timeline 工具
 docs/requirements/ # 产品与技术需求
 docs/design-system/# 设计 Token（权威）
+docs/images/       # README 等文档用截图
 .local/            # UI 迁移、主题焕新、M5 开发计划（见 .local/README.md）
 .vscode/           # 团队共享的 F5 调试配置（见 .gitignore 白名单）
 ```

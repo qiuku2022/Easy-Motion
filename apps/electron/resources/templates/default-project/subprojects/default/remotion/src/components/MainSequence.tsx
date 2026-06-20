@@ -2,6 +2,8 @@ import { AbsoluteFill, staticFile } from "remotion";
 import { flattenClipsForPreview } from "../lib/flatten-clips-for-preview";
 import { isClipVisibleInPreview } from "../lib/preview-visibility";
 import { resolveClipMediaSrc } from "../lib/resolve-clip-media-src";
+import { resolvePresetComponent } from "../presets/registry";
+import { GradientBackground } from "./newsletter-design/GradientBackground";
 import { NewsletterBackground } from "./newsletter-design/NewsletterBackground";
 import { PreviewClipSequence } from "./PreviewClipSequence";
 import { ImageLayer } from "./layers/ImageLayer";
@@ -128,6 +130,21 @@ function renderClipContent(
     clip.source.component === "GradientBackground"
   ) {
     return <GradientBackground style={clip.style} />;
+  }
+
+  if (
+    track.type === "animation" &&
+    clip.source?.kind === "component" &&
+    typeof clip.source.component === "string"
+  ) {
+    const PresetComponent = resolvePresetComponent(clip.source.component);
+    if (PresetComponent) {
+      const props =
+        clip.source.props && typeof clip.source.props === "object"
+          ? (clip.source.props as Record<string, unknown>)
+          : {};
+      return <PresetComponent {...props} />;
+    }
   }
 
   return null;

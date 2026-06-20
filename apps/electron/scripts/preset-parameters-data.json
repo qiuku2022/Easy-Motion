@@ -1,0 +1,3401 @@
+[
+  {
+    "id": "rve-chart-animation",
+    "component": "RveChartAnimation",
+    "strings": {
+      "title": "Monthly Performance",
+      "subtitle": "Data visualization for 2023",
+      "labels": [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct"
+      ]
+    },
+    "numbers": {
+      "values": [
+        50,
+        80,
+        30,
+        70,
+        45,
+        90,
+        60,
+        75,
+        40,
+        85
+      ]
+    },
+    "colors": [
+      "#111827",
+      "#1f2937",
+      "#4361ee",
+      "#3a0ca3",
+      "#7209b7",
+      "#f72585",
+      "#4cc9f0"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "图表标题",
+        "type": "text",
+        "defaultValue": "Monthly Performance"
+      },
+      {
+        "key": "subtitle",
+        "label": "副标题",
+        "type": "text",
+        "defaultValue": "Data visualization for 2023"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-line-chart",
+    "component": "RveLineChart",
+    "strings": {
+      "title": "Revenue Growth",
+      "labels": [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct"
+      ]
+    },
+    "numbers": {
+      "values": [
+        25,
+        40,
+        35,
+        55,
+        50,
+        70,
+        65,
+        80,
+        75,
+        90
+      ]
+    },
+    "colors": [
+      "#111827",
+      "#1f2937",
+      "#4361ee",
+      "#f72585"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "图表标题",
+        "type": "text",
+        "defaultValue": "Revenue Growth"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#f72585"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-pie-chart",
+    "component": "RvePieChart",
+    "strings": {
+      "title": "Market Share",
+      "labels": [
+        "Product A",
+        "Product B",
+        "Product C",
+        "Product D",
+        "Product E"
+      ]
+    },
+    "numbers": {
+      "values": [
+        35,
+        25,
+        20,
+        12,
+        8
+      ]
+    },
+    "colors": [
+      "#111827",
+      "#1f2937",
+      "#4361ee",
+      "#7209b7",
+      "#f72585",
+      "#4cc9f0",
+      "#a855f7"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "图表标题",
+        "type": "text",
+        "defaultValue": "Market Share"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-donut-chart",
+    "component": "RveDonutChart",
+    "strings": {
+      "title": "Completion Rate",
+      "centerLabel": "Completion Rate",
+      "labels": [
+        "Completed",
+        "In Progress",
+        "Pending",
+        "Remaining"
+      ]
+    },
+    "numbers": {
+      "values": [
+        40,
+        25,
+        20,
+        15
+      ],
+      "progress": 78
+    },
+    "colors": [
+      "#111827",
+      "#1f2937",
+      "#4361ee",
+      "#7209b7",
+      "#f72585",
+      "#4cc9f0"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "图表标题",
+        "type": "text",
+        "defaultValue": "Completion Rate"
+      },
+      {
+        "key": "progress",
+        "label": "中心进度(%)",
+        "type": "number",
+        "defaultValue": 78
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-area-chart",
+    "component": "RveAreaChart",
+    "strings": {
+      "title": "Performance Metrics",
+      "labels": [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ]
+    },
+    "numbers": {
+      "values": [
+        20,
+        45,
+        35,
+        60,
+        55,
+        75,
+        70,
+        85,
+        80,
+        95
+      ]
+    },
+    "colors": [
+      "#111827",
+      "#1f2937",
+      "#4361ee"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "图表标题",
+        "type": "text",
+        "defaultValue": "Performance Metrics"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "渐变辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-progress-bars",
+    "component": "RveProgressBars",
+    "strings": {
+      "title": "Skills Overview",
+      "labels": [
+        "React",
+        "TypeScript",
+        "Node.js",
+        "Python",
+        "Go"
+      ]
+    },
+    "numbers": {
+      "values": [
+        90,
+        85,
+        75,
+        60,
+        45
+      ]
+    },
+    "colors": [
+      "#111827",
+      "#1f2937",
+      "#4361ee",
+      "#7209b7",
+      "#f72585",
+      "#4cc9f0",
+      "#a855f7"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "Skills Overview"
+      },
+      {
+        "key": "progress",
+        "label": "首项进度(%)",
+        "type": "number",
+        "defaultValue": 90
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-stat-counter",
+    "component": "RveStatCounter",
+    "strings": {
+      "title": "Total Users",
+      "subtitle": "This Month",
+      "delta": "↑ 12.5%"
+    },
+    "numbers": {
+      "value": 1247,
+      "delta": 12.5
+    },
+    "colors": [
+      "#111827",
+      "#1f2937",
+      "#22c55e"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "value",
+        "label": "统计数值",
+        "type": "number",
+        "defaultValue": 1247
+      },
+      {
+        "key": "title",
+        "label": "标签",
+        "type": "text",
+        "defaultValue": "Total Users"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#22c55e"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-comparison-chart",
+    "component": "RveComparisonChart",
+    "strings": {
+      "title": "Performance Comparison",
+      "before": "Before",
+      "after": "After"
+    },
+    "numbers": {
+      "beforeValue": 34,
+      "afterValue": 89
+    },
+    "colors": [
+      "#111827",
+      "#1f2937",
+      "#ef4444",
+      "#4361ee"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "图表标题",
+        "type": "text",
+        "defaultValue": "Performance Comparison"
+      },
+      {
+        "key": "value",
+        "label": "对比前值(%)",
+        "type": "number",
+        "defaultValue": 34
+      },
+      {
+        "key": "progress",
+        "label": "对比后值(%)",
+        "type": "number",
+        "defaultValue": 89
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      }
+    ]
+  },
+  {
+    "id": "rve-circular-progress",
+    "component": "RveCircularProgress",
+    "strings": {},
+    "numbers": {
+      "progress": 100,
+      "radius": 80
+    },
+    "colors": [
+      "#3b82f6",
+      "#1e3a8a"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "progress",
+        "label": "进度(%)",
+        "type": "number",
+        "defaultValue": 75
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#1e3a8a"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-animated-text",
+    "component": "RveAnimatedText",
+    "strings": {
+      "text": "Hello Remotion"
+    },
+    "numbers": {},
+    "colors": [],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "text",
+        "label": "文字内容",
+        "type": "text",
+        "defaultValue": "Hello Remotion"
+      },
+      {
+        "key": "primaryColor",
+        "label": "文字色",
+        "type": "color",
+        "defaultValue": "#ffffff"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-bounce-text",
+    "component": "RveBounceText",
+    "strings": {
+      "text": "Start Building",
+      "subtitle": "Theres never been a better time"
+    },
+    "numbers": {},
+    "colors": [
+      "#1e3a8a",
+      "#3b82f6"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "text",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "Start Building"
+      },
+      {
+        "key": "subtitle",
+        "label": "副标题",
+        "type": "text",
+        "defaultValue": "Theres never been a better time"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#1e3a8a"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      }
+    ]
+  },
+  {
+    "id": "rve-bubble-pop-text",
+    "component": "RveBubblePopText",
+    "strings": {
+      "text": "HELLO"
+    },
+    "numbers": {},
+    "colors": [
+      "#1e3a8a",
+      "#3b82f6"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "text",
+        "label": "文字内容",
+        "type": "text",
+        "defaultValue": "HELLO"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#1e3a8a"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      }
+    ]
+  },
+  {
+    "id": "rve-floating-bubble-text",
+    "component": "RveFloatingBubbleText",
+    "strings": {
+      "text": "Floating"
+    },
+    "numbers": {},
+    "colors": [
+      "#1e3a8a",
+      "#3b82f6"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "text",
+        "label": "文字内容",
+        "type": "text",
+        "defaultValue": "Floating"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#1e3a8a"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      }
+    ]
+  },
+  {
+    "id": "rve-glitch-text",
+    "component": "RveGlitchText",
+    "strings": {
+      "text": "GLITCH"
+    },
+    "numbers": {},
+    "colors": [],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "text",
+        "label": "文字内容",
+        "type": "text",
+        "defaultValue": "GLITCH"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "故障色",
+        "type": "color",
+        "defaultValue": "#f72585"
+      }
+    ]
+  },
+  {
+    "id": "rve-popping-text",
+    "component": "RvePoppingText",
+    "strings": {
+      "text": "BINGO!"
+    },
+    "numbers": {},
+    "colors": [
+      "#1e3a8a",
+      "#3b82f6",
+      "#A9D6E5",
+      "#fff"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "text",
+        "label": "文字内容",
+        "type": "text",
+        "defaultValue": "BINGO!"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#1e3a8a"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      }
+    ]
+  },
+  {
+    "id": "rve-pulsing-text",
+    "component": "RvePulsingText",
+    "strings": {
+      "text": "Pulse"
+    },
+    "numbers": {},
+    "colors": [],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "text",
+        "label": "文字内容",
+        "type": "text",
+        "defaultValue": "Pulse"
+      },
+      {
+        "key": "primaryColor",
+        "label": "文字色",
+        "type": "color",
+        "defaultValue": "#ffffff"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-slide-text",
+    "component": "RveSlideText",
+    "strings": {
+      "text": "Sliding Text!"
+    },
+    "numbers": {},
+    "colors": [],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "text",
+        "label": "文字内容",
+        "type": "text",
+        "defaultValue": "Sliding Text!"
+      },
+      {
+        "key": "primaryColor",
+        "label": "文字色",
+        "type": "color",
+        "defaultValue": "#ffffff"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-typewriter-subtitle",
+    "component": "RveTypewriterSubtitle",
+    "strings": {
+      "text": "I like typing..."
+    },
+    "numbers": {},
+    "colors": [
+      "#60a5fa"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "text",
+        "label": "文字内容",
+        "type": "text",
+        "defaultValue": "I like typing..."
+      },
+      {
+        "key": "primaryColor",
+        "label": "光标色",
+        "type": "color",
+        "defaultValue": "#60a5fa"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-animated-list",
+    "component": "RveAnimatedList",
+    "strings": {
+      "items": [
+        "Item One",
+        "Item Two",
+        "Item Three"
+      ]
+    },
+    "numbers": {},
+    "colors": [
+      "#3b82f6",
+      "#60a5fa",
+      "#93c5fd"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "text",
+        "label": "列表项(逗号分隔)",
+        "type": "text",
+        "defaultValue": "Item One,Item Two,Item Three"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-card-flip",
+    "component": "RveCardFlip",
+    "strings": {
+      "text": "Remotion 👋",
+      "subtitle": "Back"
+    },
+    "numbers": {},
+    "colors": [
+      "#1e3a8a",
+      "#3b82f6"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "text",
+        "label": "正面文字",
+        "type": "text",
+        "defaultValue": "Remotion 👋"
+      },
+      {
+        "key": "subtitle",
+        "label": "背面文字",
+        "type": "text",
+        "defaultValue": "Back"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#1e3a8a"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      }
+    ]
+  },
+  {
+    "id": "rve-countdown-timer",
+    "component": "RveCountdownTimer",
+    "strings": {
+      "labels": [
+        "5",
+        "4",
+        "3",
+        "2",
+        "1",
+        "GO"
+      ]
+    },
+    "numbers": {
+      "countdown": 5
+    },
+    "colors": [
+      "#111827",
+      "#3b82f6",
+      "#7209b7"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "value",
+        "label": "起始数字",
+        "type": "number",
+        "defaultValue": 5
+      },
+      {
+        "key": "text",
+        "label": "结束文字",
+        "type": "text",
+        "defaultValue": "GO"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-notification-pop",
+    "component": "RveNotificationPop",
+    "strings": {
+      "title": "Notifications",
+      "items": [
+        {
+          "title": "New Message",
+          "body": "Hey! Check out this update."
+        },
+        {
+          "title": "Task Complete",
+          "body": "Your render finished successfully."
+        },
+        {
+          "title": "New Follower",
+          "body": "Someone started following you."
+        }
+      ]
+    },
+    "numbers": {
+      "badge": 3
+    },
+    "colors": [
+      "#111827",
+      "#1f2937",
+      "#3b82f6",
+      "#a855f7",
+      "#4361ee",
+      "#ef4444"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "Notifications"
+      },
+      {
+        "key": "text",
+        "label": "首条通知标题",
+        "type": "text",
+        "defaultValue": "New Message"
+      },
+      {
+        "key": "subtitle",
+        "label": "首条通知内容",
+        "type": "text",
+        "defaultValue": "Hey! Check out this update."
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      }
+    ]
+  },
+  {
+    "id": "rve-particle-explosion",
+    "component": "RveParticleExplosion",
+    "strings": {
+      "text": "BOOM!"
+    },
+    "numbers": {
+      "particleCount": 150
+    },
+    "colors": [],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "text",
+        "label": "中心文字",
+        "type": "text",
+        "defaultValue": "BOOM!"
+      },
+      {
+        "key": "primaryColor",
+        "label": "粒子主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "粒子辅色",
+        "type": "color",
+        "defaultValue": "#f72585"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-progress-steps",
+    "component": "RveProgressSteps",
+    "strings": {
+      "title": "Project Timeline",
+      "steps": [
+        "Research",
+        "Design",
+        "Build",
+        "Launch"
+      ]
+    },
+    "numbers": {
+      "stepCount": 4
+    },
+    "colors": [
+      "#111827",
+      "#1f2937",
+      "#3b82f6"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "Project Timeline"
+      },
+      {
+        "key": "text",
+        "label": "步骤(逗号分隔)",
+        "type": "text",
+        "defaultValue": "Research,Design,Build,Launch"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-rotating-carousel",
+    "component": "RveRotatingCarousel",
+    "strings": {
+      "title": "Our Features",
+      "items": [
+        "Feature 1",
+        "Feature 2",
+        "Feature 3",
+        "Feature 4"
+      ]
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#1f2937",
+      "#3b82f6",
+      "#4361ee"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "Our Features"
+      },
+      {
+        "key": "text",
+        "label": "卡片项(逗号分隔)",
+        "type": "text",
+        "defaultValue": "Feature 1,Feature 2,Feature 3,Feature 4"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-sound-wave",
+    "component": "RveSoundWave",
+    "strings": {},
+    "numbers": {
+      "barCount": 40
+    },
+    "colors": [
+      "#3b82f6"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "primaryColor",
+        "label": "波形色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      },
+      {
+        "key": "value",
+        "label": "柱数量",
+        "type": "number",
+        "defaultValue": 40
+      }
+    ]
+  },
+  {
+    "id": "rve-text-highlight",
+    "component": "RveTextHighlight",
+    "strings": {
+      "text": "Build amazing videos with code",
+      "words": [
+        "Build",
+        "amazing",
+        "videos",
+        "with",
+        "code"
+      ]
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#1f2937",
+      "#3b82f6"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "text",
+        "label": "句子",
+        "type": "text",
+        "defaultValue": "Build amazing videos with code"
+      },
+      {
+        "key": "primaryColor",
+        "label": "高亮色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-bokeh-circles",
+    "component": "RveBokehCircles",
+    "strings": {},
+    "numbers": {
+      "circleCount": 15
+    },
+    "colors": [
+      "#111827"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#8b5cf6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-geometric-patterns",
+    "component": "RveGeometricPatterns",
+    "strings": {},
+    "numbers": {
+      "patternCount": 20
+    },
+    "colors": [
+      "#0f172a",
+      "#1e293b"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "primaryColor",
+        "label": "线条色",
+        "type": "color",
+        "defaultValue": "#ffffff"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#0f172a"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "渐变辅色",
+        "type": "color",
+        "defaultValue": "#1e293b"
+      }
+    ]
+  },
+  {
+    "id": "rve-gradient-shift",
+    "component": "RveGradientShift",
+    "strings": {},
+    "numbers": {},
+    "colors": [
+      "#1a1a2e",
+      "#16213e",
+      "#0f3460"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#1a1a2e"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#16213e"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "第三色",
+        "type": "color",
+        "defaultValue": "#0f3460"
+      }
+    ]
+  },
+  {
+    "id": "rve-grid-pulse",
+    "component": "RveGridPulse",
+    "strings": {},
+    "numbers": {
+      "cols": 12,
+      "rows": 8
+    },
+    "colors": [
+      "#111827",
+      "#3b82f6"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "primaryColor",
+        "label": "点色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-liquid-wave",
+    "component": "RveLiquidWave",
+    "strings": {},
+    "numbers": {
+      "wavePoints": 50
+    },
+    "colors": [
+      "#111827",
+      "#1e3a8a",
+      "#3b82f6"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#1e3a8a"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-matrix-rain",
+    "component": "RveMatrixRain",
+    "strings": {
+      "charset": "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*"
+    },
+    "numbers": {},
+    "colors": [
+      "#0a1933",
+      "#1e40af"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#0a1933"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#1e40af"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "文字色",
+        "type": "color",
+        "defaultValue": "#ffffff"
+      }
+    ]
+  },
+  {
+    "id": "rve-noise-grain",
+    "component": "RveNoiseGrain",
+    "strings": {
+      "title": "Film Grain Overlay",
+      "subtitle": "Subtle noise texture effect"
+    },
+    "numbers": {},
+    "colors": [
+      "#1a1a2e",
+      "#16213e",
+      "#0f3460"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "Film Grain Overlay"
+      },
+      {
+        "key": "subtitle",
+        "label": "副标题",
+        "type": "text",
+        "defaultValue": "Subtle noise texture effect"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#1a1a2e"
+      }
+    ]
+  },
+  {
+    "id": "rve-pixel-transition",
+    "component": "RvePixelTransition",
+    "strings": {},
+    "numbers": {
+      "pixelSize": 20
+    },
+    "colors": [
+      "#0f172a"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "primaryColor",
+        "label": "像素主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#0f172a"
+      },
+      {
+        "key": "value",
+        "label": "像素大小",
+        "type": "number",
+        "defaultValue": 20
+      }
+    ]
+  },
+  {
+    "id": "rve-starfield",
+    "component": "RveStarfield",
+    "strings": {},
+    "numbers": {
+      "starCount": 80
+    },
+    "colors": [
+      "#0a0a1a"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#0a0a1a"
+      },
+      {
+        "key": "primaryColor",
+        "label": "星星色",
+        "type": "color",
+        "defaultValue": "#ffffff"
+      }
+    ]
+  },
+  {
+    "id": "rve-camera-shake",
+    "component": "RveCameraShake",
+    "strings": {
+      "title": "IMPACT",
+      "subtitle": "Camera shake with decaying amplitude"
+    },
+    "numbers": {
+      "amplitude": 15
+    },
+    "colors": [
+      "#111827",
+      "#1e293b",
+      "#0f172a",
+      "#3b82f6",
+      "#a855f7"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "text",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "IMPACT"
+      },
+      {
+        "key": "subtitle",
+        "label": "副标题",
+        "type": "text",
+        "defaultValue": "Camera shake with decaying amplitude"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-film-burn",
+    "component": "RveFilmBurn",
+    "strings": {
+      "title": "Film Burn Effect",
+      "subtitle": "Light leak overlay"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#f97316",
+      "#fbbf24"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "Film Burn Effect"
+      },
+      {
+        "key": "subtitle",
+        "label": "副标题",
+        "type": "text",
+        "defaultValue": "Light leak overlay"
+      },
+      {
+        "key": "primaryColor",
+        "label": "灼烧色",
+        "type": "color",
+        "defaultValue": "#f97316"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-ken-burns",
+    "component": "RveKenBurns",
+    "strings": {},
+    "numbers": {
+      "scale": 1.5,
+      "translateX": -50,
+      "translateY": -30,
+      "duration": 20
+    },
+    "colors": [],
+    "usesImages": true,
+    "parameters": [
+      {
+        "key": "imageUrl",
+        "label": "图片地址",
+        "type": "image",
+        "defaultValue": "https://images.unsplash.com/photo-1682687220742-aba13b6e50ba"
+      },
+      {
+        "key": "value",
+        "label": "缩放倍数",
+        "type": "number",
+        "defaultValue": 1.5
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#000000"
+      }
+    ]
+  },
+  {
+    "id": "rve-letterbox-reveal",
+    "component": "RveLetterboxReveal",
+    "strings": {
+      "title": "CINEMATIC",
+      "subtitle": "A letterbox reveal"
+    },
+    "numbers": {
+      "barHeight": 50
+    },
+    "colors": [
+      "#111827",
+      "#000000",
+      "#93c5fd"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "CINEMATIC"
+      },
+      {
+        "key": "subtitle",
+        "label": "副标题",
+        "type": "text",
+        "defaultValue": "A letterbox reveal"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-parallax-pan",
+    "component": "RveParallaxPan",
+    "strings": {},
+    "numbers": {
+      "scale": 1.2,
+      "duration": 15
+    },
+    "colors": [],
+    "usesImages": true,
+    "parameters": [
+      {
+        "key": "imageUrl",
+        "label": "图片地址",
+        "type": "image",
+        "defaultValue": "https://images.pexels.com/photos/1644724/pexels-photo-1644724.jpeg"
+      },
+      {
+        "key": "value",
+        "label": "缩放",
+        "type": "number",
+        "defaultValue": 1.2
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#000000"
+      }
+    ]
+  },
+  {
+    "id": "rve-spotlight-reveal",
+    "component": "RveSpotlightReveal",
+    "strings": {
+      "title": "REVEALED",
+      "subtitle": "Spotlight reveal transition"
+    },
+    "numbers": {
+      "radius": 75
+    },
+    "colors": [
+      "#0a0a0a",
+      "#111827",
+      "#1e1b4b",
+      "#3b82f6",
+      "#a855f7"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "REVEALED"
+      },
+      {
+        "key": "subtitle",
+        "label": "副标题",
+        "type": "text",
+        "defaultValue": "Spotlight reveal transition"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#0a0a0a"
+      }
+    ]
+  },
+  {
+    "id": "rve-vignette-pulse",
+    "component": "RveVignettePulse",
+    "strings": {
+      "title": "Your Content Here",
+      "subtitle": "Vignette pulses around the edges"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "Your Content Here"
+      },
+      {
+        "key": "subtitle",
+        "label": "副标题",
+        "type": "text",
+        "defaultValue": "Vignette pulses around the edges"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-whip-pan",
+    "component": "RveWhipPan",
+    "strings": {
+      "titleA": "Scene A",
+      "subtitleA": "Blue content",
+      "titleB": "Scene B",
+      "subtitleB": "Purple content"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#3b82f6",
+      "#1d4ed8",
+      "#a855f7",
+      "#7c3aed"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "场景A标题",
+        "type": "text",
+        "defaultValue": "Scene A"
+      },
+      {
+        "key": "subtitle",
+        "label": "场景A副标题",
+        "type": "text",
+        "defaultValue": "Blue content"
+      },
+      {
+        "key": "primaryColor",
+        "label": "场景A主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "场景B主色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      }
+    ]
+  },
+  {
+    "id": "rve-zoom-pulse",
+    "component": "RveZoomPulse",
+    "strings": {},
+    "numbers": {
+      "minScale": 1,
+      "maxScale": 1.1,
+      "duration": 4
+    },
+    "colors": [],
+    "usesImages": true,
+    "parameters": [
+      {
+        "key": "imageUrl",
+        "label": "图片地址",
+        "type": "image",
+        "defaultValue": "https://images.pexels.com/photos/1726310/pexels-photo-1726310.jpeg"
+      },
+      {
+        "key": "value",
+        "label": "最大缩放",
+        "type": "number",
+        "defaultValue": 1.1
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#000000"
+      }
+    ]
+  },
+  {
+    "id": "rve-blinds-transition",
+    "component": "RveBlindsTransition",
+    "strings": {
+      "titleA": "Scene A",
+      "subtitleA": "Blinds opening...",
+      "titleB": "Scene B",
+      "subtitleB": "Behind the blinds"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#3b1f5e",
+      "#a855f7",
+      "#7209b7",
+      "#1e3a5f",
+      "#3b82f6"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "场景A标题",
+        "type": "text",
+        "defaultValue": "Scene A"
+      },
+      {
+        "key": "subtitle",
+        "label": "场景B标题",
+        "type": "text",
+        "defaultValue": "Scene B"
+      },
+      {
+        "key": "primaryColor",
+        "label": "场景A主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "场景B主色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      }
+    ]
+  },
+  {
+    "id": "rve-clock-wipe",
+    "component": "RveClockWipe",
+    "strings": {
+      "titleA": "Scene A",
+      "subtitleA": "Clock wipe transition",
+      "titleB": "Scene B",
+      "subtitleB": "Revealed by clock wipe"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#3b1f5e",
+      "#a855f7",
+      "#7209b7",
+      "#1e3a5f",
+      "#3b82f6"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "场景A标题",
+        "type": "text",
+        "defaultValue": "Scene A"
+      },
+      {
+        "key": "subtitle",
+        "label": "场景B标题",
+        "type": "text",
+        "defaultValue": "Scene B"
+      },
+      {
+        "key": "primaryColor",
+        "label": "场景A主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "场景B主色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      }
+    ]
+  },
+  {
+    "id": "rve-cross-dissolve",
+    "component": "RveCrossDissolve",
+    "strings": {
+      "titleA": "Scene A",
+      "subtitleA": "Dissolving away...",
+      "titleB": "Scene B",
+      "subtitleB": "Appearing..."
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#3b82f6",
+      "#1d4ed8",
+      "#a855f7",
+      "#7c3aed",
+      "#93c5fd",
+      "#c084fc"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "场景A标题",
+        "type": "text",
+        "defaultValue": "Scene A"
+      },
+      {
+        "key": "subtitle",
+        "label": "场景B标题",
+        "type": "text",
+        "defaultValue": "Scene B"
+      },
+      {
+        "key": "primaryColor",
+        "label": "场景A主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "场景B主色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      }
+    ]
+  },
+  {
+    "id": "rve-fade-through-black",
+    "component": "RveFadeThroughBlack",
+    "strings": {
+      "titleA": "Scene 1",
+      "subtitleA": "Fading out...",
+      "titleB": "Scene 2",
+      "subtitleB": "Fading in..."
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#000000",
+      "#3b82f6",
+      "#1d4ed8",
+      "#a855f7",
+      "#7c3aed"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "场景1标题",
+        "type": "text",
+        "defaultValue": "Scene 1"
+      },
+      {
+        "key": "subtitle",
+        "label": "场景2标题",
+        "type": "text",
+        "defaultValue": "Scene 2"
+      },
+      {
+        "key": "primaryColor",
+        "label": "场景1主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "场景2主色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      }
+    ]
+  },
+  {
+    "id": "rve-iris-transition",
+    "component": "RveIrisTransition",
+    "strings": {
+      "titleA": "Scene A",
+      "subtitleA": "Iris closing...",
+      "titleB": "Scene B",
+      "subtitleB": "Iris opening..."
+    },
+    "numbers": {},
+    "colors": [
+      "#000000",
+      "#3b1f5e",
+      "#111827",
+      "#a855f7",
+      "#7209b7",
+      "#1e3a5f",
+      "#3b82f6"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "场景A标题",
+        "type": "text",
+        "defaultValue": "Scene A"
+      },
+      {
+        "key": "subtitle",
+        "label": "场景B标题",
+        "type": "text",
+        "defaultValue": "Scene B"
+      },
+      {
+        "key": "primaryColor",
+        "label": "场景A主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "场景B主色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      }
+    ]
+  },
+  {
+    "id": "rve-morph-transition",
+    "component": "RveMorphTransition",
+    "strings": {
+      "titleA": "Scene A",
+      "subtitleA": "Morphing away...",
+      "titleB": "Scene B",
+      "subtitleB": "Morphing in..."
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#3b82f6",
+      "#1d4ed8",
+      "#a855f7",
+      "#7209b7"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "场景A标题",
+        "type": "text",
+        "defaultValue": "Scene A"
+      },
+      {
+        "key": "subtitle",
+        "label": "场景B标题",
+        "type": "text",
+        "defaultValue": "Scene B"
+      },
+      {
+        "key": "primaryColor",
+        "label": "场景A主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "场景B主色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      }
+    ]
+  },
+  {
+    "id": "rve-push-transition",
+    "component": "RvePushTransition",
+    "strings": {
+      "titleA": "Scene A",
+      "subtitleA": "Being pushed out...",
+      "titleB": "Scene B",
+      "subtitleB": "Pushing in..."
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#1e3a5f",
+      "#3b82f6",
+      "#3b1f5e",
+      "#a855f7",
+      "#7209b7"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "场景A标题",
+        "type": "text",
+        "defaultValue": "Scene A"
+      },
+      {
+        "key": "subtitle",
+        "label": "场景B标题",
+        "type": "text",
+        "defaultValue": "Scene B"
+      },
+      {
+        "key": "primaryColor",
+        "label": "场景A主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "场景B主色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      }
+    ]
+  },
+  {
+    "id": "rve-slide-wipe",
+    "component": "RveSlideWipe",
+    "strings": {
+      "titleA": "Old Scene",
+      "subtitleA": "Sliding away...",
+      "titleB": "New Scene",
+      "subtitleB": "Revealed underneath"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#a855f7",
+      "#7c3aed",
+      "#3b82f6",
+      "#1d4ed8"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "旧场景标题",
+        "type": "text",
+        "defaultValue": "Old Scene"
+      },
+      {
+        "key": "subtitle",
+        "label": "新场景标题",
+        "type": "text",
+        "defaultValue": "New Scene"
+      },
+      {
+        "key": "primaryColor",
+        "label": "旧场景主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "新场景主色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      }
+    ]
+  },
+  {
+    "id": "rve-zoom-through",
+    "component": "RveZoomThrough",
+    "strings": {
+      "titleA": "Zooming In...",
+      "titleB": "Arriving..."
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#3b82f6",
+      "#1d4ed8",
+      "#a855f7",
+      "#7209b7"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "场景A标题",
+        "type": "text",
+        "defaultValue": "Zooming In..."
+      },
+      {
+        "key": "subtitle",
+        "label": "场景B标题",
+        "type": "text",
+        "defaultValue": "Arriving..."
+      },
+      {
+        "key": "primaryColor",
+        "label": "场景A主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "场景B主色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      }
+    ]
+  },
+  {
+    "id": "rve-logo-blur-reveal",
+    "component": "RveLogoBlurReveal",
+    "strings": {
+      "title": "LOGO",
+      "subtitle": "Company Name"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#4361ee",
+      "#7209b7"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "Logo文字",
+        "type": "text",
+        "defaultValue": "LOGO"
+      },
+      {
+        "key": "subtitle",
+        "label": "公司名",
+        "type": "text",
+        "defaultValue": "Company Name"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      }
+    ]
+  },
+  {
+    "id": "rve-logo-bounce-drop",
+    "component": "RveLogoBounceDrop",
+    "strings": {
+      "title": "LOGO",
+      "subtitle": "Company Name"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#4361ee",
+      "#7209b7"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "Logo文字",
+        "type": "text",
+        "defaultValue": "LOGO"
+      },
+      {
+        "key": "subtitle",
+        "label": "公司名",
+        "type": "text",
+        "defaultValue": "Company Name"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      }
+    ]
+  },
+  {
+    "id": "rve-logo-fade-reveal",
+    "component": "RveLogoFadeReveal",
+    "strings": {
+      "title": "LOGO",
+      "subtitle": "Company Name",
+      "tagline": "Your tagline here"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#4361ee",
+      "#7209b7",
+      "#93c5fd"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "Logo文字",
+        "type": "text",
+        "defaultValue": "LOGO"
+      },
+      {
+        "key": "subtitle",
+        "label": "公司名",
+        "type": "text",
+        "defaultValue": "Company Name"
+      },
+      {
+        "key": "text",
+        "label": "标语",
+        "type": "text",
+        "defaultValue": "Your tagline here"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      }
+    ]
+  },
+  {
+    "id": "rve-logo-glitch-reveal",
+    "component": "RveLogoGlitchReveal",
+    "strings": {
+      "title": "LOGO",
+      "subtitle": "Company Name",
+      "tagline": "Your tagline here"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#4361ee",
+      "#7209b7",
+      "#93c5fd"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "Logo文字",
+        "type": "text",
+        "defaultValue": "LOGO"
+      },
+      {
+        "key": "subtitle",
+        "label": "公司名",
+        "type": "text",
+        "defaultValue": "Company Name"
+      },
+      {
+        "key": "text",
+        "label": "标语",
+        "type": "text",
+        "defaultValue": "Your tagline here"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      }
+    ]
+  },
+  {
+    "id": "rve-logo-scale-rotate",
+    "component": "RveLogoScaleRotate",
+    "strings": {
+      "title": "LOGO",
+      "subtitle": "Company Name"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#4361ee",
+      "#7209b7"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "Logo文字",
+        "type": "text",
+        "defaultValue": "LOGO"
+      },
+      {
+        "key": "subtitle",
+        "label": "公司名",
+        "type": "text",
+        "defaultValue": "Company Name"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      }
+    ]
+  },
+  {
+    "id": "rve-logo-spin-reveal",
+    "component": "RveLogoSpinReveal",
+    "strings": {
+      "title": "LOGO",
+      "subtitle": "Company Name",
+      "tagline": "Your tagline here"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#4361ee",
+      "#7209b7",
+      "#c084fc"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "Logo文字",
+        "type": "text",
+        "defaultValue": "LOGO"
+      },
+      {
+        "key": "subtitle",
+        "label": "公司名",
+        "type": "text",
+        "defaultValue": "Company Name"
+      },
+      {
+        "key": "text",
+        "label": "标语",
+        "type": "text",
+        "defaultValue": "Your tagline here"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      }
+    ]
+  },
+  {
+    "id": "rve-logo-split-reveal",
+    "component": "RveLogoSplitReveal",
+    "strings": {
+      "title": "LOGO",
+      "titleParts": [
+        "LO",
+        "GO"
+      ],
+      "subtitle": "Company Name"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#4361ee",
+      "#6240c9",
+      "#7209b7"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "Logo文字",
+        "type": "text",
+        "defaultValue": "LOGO"
+      },
+      {
+        "key": "subtitle",
+        "label": "公司名",
+        "type": "text",
+        "defaultValue": "Company Name"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      }
+    ]
+  },
+  {
+    "id": "rve-logo-stroke-draw",
+    "component": "RveLogoStrokeDraw",
+    "strings": {
+      "subtitle": "Company Name"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#4361ee",
+      "#7209b7",
+      "#3b82f6"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "subtitle",
+        "label": "公司名",
+        "type": "text",
+        "defaultValue": "Company Name"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-logo-typewriter",
+    "component": "RveLogoTypewriter",
+    "strings": {
+      "title": "ACME STUDIO"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#4361ee",
+      "#7209b7",
+      "#3b82f6"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "品牌名",
+        "type": "text",
+        "defaultValue": "ACME STUDIO"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-chapter-title",
+    "component": "RveChapterTitle",
+    "strings": {
+      "label": "Chapter",
+      "title": "1",
+      "subtitle": "The Beginning"
+    },
+    "numbers": {
+      "chapter": 1
+    },
+    "colors": [
+      "#111827",
+      "#9ca3af",
+      "#3b82f6",
+      "#d1d5db"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "章节号",
+        "type": "text",
+        "defaultValue": "1"
+      },
+      {
+        "key": "subtitle",
+        "label": "章节名",
+        "type": "text",
+        "defaultValue": "The Beginning"
+      },
+      {
+        "key": "text",
+        "label": "标签",
+        "type": "text",
+        "defaultValue": "Chapter"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      }
+    ]
+  },
+  {
+    "id": "rve-cinematic-title-intro",
+    "component": "RveCinematicTitleIntro",
+    "strings": {
+      "title": "Your Story Begins",
+      "subtitle": "A Cinematic Experience"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#1a1a2e",
+      "#4361ee",
+      "#7209b7"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "Your Story Begins"
+      },
+      {
+        "key": "subtitle",
+        "label": "副标题",
+        "type": "text",
+        "defaultValue": "A Cinematic Experience"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      }
+    ]
+  },
+  {
+    "id": "rve-countdown-intro",
+    "component": "RveCountdownIntro",
+    "strings": {
+      "labels": [
+        "3",
+        "2",
+        "1"
+      ],
+      "text": "GO!"
+    },
+    "numbers": {
+      "countdown": 3
+    },
+    "colors": [
+      "#111827",
+      "#1e293b",
+      "#3b82f6"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "value",
+        "label": "倒计时秒数",
+        "type": "number",
+        "defaultValue": 3
+      },
+      {
+        "key": "text",
+        "label": "结束文字",
+        "type": "text",
+        "defaultValue": "GO!"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-credits-roll",
+    "component": "RveCreditsRoll",
+    "strings": {
+      "credits": [
+        {
+          "role": "Director",
+          "name": "Jane Smith"
+        },
+        {
+          "role": "Producer",
+          "name": "John Doe"
+        },
+        {
+          "role": "Cinematographer",
+          "name": "Emily Chen"
+        },
+        {
+          "role": "Editor",
+          "name": "Michael Park"
+        }
+      ]
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#3b82f6"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "首条职位",
+        "type": "text",
+        "defaultValue": "Director"
+      },
+      {
+        "key": "subtitle",
+        "label": "首条姓名",
+        "type": "text",
+        "defaultValue": "Jane Smith"
+      },
+      {
+        "key": "primaryColor",
+        "label": "职位色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-end-card",
+    "component": "RveEndCard",
+    "strings": {
+      "title": "Thanks for Watching",
+      "subtitle": "Subscribe for More",
+      "footer": "STUDIO CREATIVE"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#1a1a2e",
+      "#4361ee",
+      "#7209b7",
+      "#3b82f6",
+      "#9333ea"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "Thanks for Watching"
+      },
+      {
+        "key": "subtitle",
+        "label": "按钮文字",
+        "type": "text",
+        "defaultValue": "Subscribe for More"
+      },
+      {
+        "key": "text",
+        "label": "页脚",
+        "type": "text",
+        "defaultValue": "STUDIO CREATIVE"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      }
+    ]
+  },
+  {
+    "id": "rve-lower-third",
+    "component": "RveLowerThird",
+    "strings": {
+      "title": "John Smith",
+      "subtitle": "Senior Producer"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#1f2937",
+      "#3b82f6",
+      "#4361ee"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "姓名",
+        "type": "text",
+        "defaultValue": "John Smith"
+      },
+      {
+        "key": "subtitle",
+        "label": "职位",
+        "type": "text",
+        "defaultValue": "Senior Producer"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-quote-card",
+    "component": "RveQuoteCard",
+    "strings": {
+      "text": "Design is not just what it looks like. Design is how it works.",
+      "subtitle": "— Steve Jobs"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#3b82f6",
+      "#9ca3af"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "text",
+        "label": "引用内容",
+        "type": "text",
+        "defaultValue": "Design is not just what it looks like. Design is how it works."
+      },
+      {
+        "key": "subtitle",
+        "label": "署名",
+        "type": "text",
+        "defaultValue": "Steve Jobs"
+      },
+      {
+        "key": "primaryColor",
+        "label": "引号色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-subscribe-reminder",
+    "component": "RveSubscribeReminder",
+    "strings": {
+      "title": "Your Video Content",
+      "subtitle": "Subscribe",
+      "text": "@CreativeStudio"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#374151",
+      "#3b82f6",
+      "#9ca3af"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "主内容文字",
+        "type": "text",
+        "defaultValue": "Your Video Content"
+      },
+      {
+        "key": "subtitle",
+        "label": "按钮文字",
+        "type": "text",
+        "defaultValue": "Subscribe"
+      },
+      {
+        "key": "text",
+        "label": "账号",
+        "type": "text",
+        "defaultValue": "@CreativeStudio"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      }
+    ]
+  },
+  {
+    "id": "rve-title-split",
+    "component": "RveTitleSplit",
+    "strings": {
+      "title": "CREATIVE",
+      "subtitle": "STUDIO"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#3b82f6"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "上行文字",
+        "type": "text",
+        "defaultValue": "CREATIVE"
+      },
+      {
+        "key": "subtitle",
+        "label": "下行文字",
+        "type": "text",
+        "defaultValue": "STUDIO"
+      },
+      {
+        "key": "primaryColor",
+        "label": "发光色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-gallery-grid",
+    "component": "RveGalleryGrid",
+    "strings": {},
+    "numbers": {
+      "cellCount": 6
+    },
+    "colors": [
+      "#111827",
+      "#3b82f6",
+      "#1d4ed8",
+      "#a855f7",
+      "#7c3aed",
+      "#4361ee",
+      "#7209b7"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-image-carousel",
+    "component": "RveImageCarousel",
+    "strings": {
+      "labels": [
+        "Mountain",
+        "Ocean",
+        "Forest"
+      ]
+    },
+    "numbers": {
+      "slideCount": 3
+    },
+    "colors": [
+      "#111827",
+      "#3b82f6",
+      "#1d4ed8",
+      "#4361ee",
+      "#7209b7",
+      "#a855f7",
+      "#7c3aed"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "text",
+        "label": "标签(逗号分隔)",
+        "type": "text",
+        "defaultValue": "Mountain,Ocean,Forest"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-image-comparison-slider",
+    "component": "RveImageComparisonSlider",
+    "strings": {
+      "before": "Before",
+      "after": "After"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#4361ee",
+      "#7209b7",
+      "#a855f7",
+      "#1e293b",
+      "#374151",
+      "#3b82f6"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "前标签",
+        "type": "text",
+        "defaultValue": "Before"
+      },
+      {
+        "key": "subtitle",
+        "label": "后标签",
+        "type": "text",
+        "defaultValue": "After"
+      },
+      {
+        "key": "primaryColor",
+        "label": "前色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "后色",
+        "type": "color",
+        "defaultValue": "#1e293b"
+      }
+    ]
+  },
+  {
+    "id": "rve-image-zoom-reveal",
+    "component": "RveImageZoomReveal",
+    "strings": {
+      "title": "Featured Image"
+    },
+    "numbers": {
+      "initialScale": 2
+    },
+    "colors": [
+      "#111827",
+      "#1e293b",
+      "#4361ee",
+      "#7209b7",
+      "#a855f7"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标签",
+        "type": "text",
+        "defaultValue": "Featured Image"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-masonry-gallery",
+    "component": "RveMasonryGallery",
+    "strings": {},
+    "numbers": {
+      "tileCount": 6
+    },
+    "colors": [
+      "#111827",
+      "#3b82f6",
+      "#1d4ed8",
+      "#a855f7",
+      "#7c3aed",
+      "#4361ee",
+      "#7209b7"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-photo-stack",
+    "component": "RvePhotoStack",
+    "strings": {
+      "labels": [
+        "Photo 1",
+        "Photo 2",
+        "Photo 3"
+      ]
+    },
+    "numbers": {
+      "photoCount": 3
+    },
+    "colors": [
+      "#111827",
+      "#1d4ed8",
+      "#3b82f6",
+      "#7c3aed",
+      "#a855f7",
+      "#059669",
+      "#34d399"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "text",
+        "label": "标签(逗号分隔)",
+        "type": "text",
+        "defaultValue": "Photo 1,Photo 2,Photo 3"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-picture-in-picture",
+    "component": "RvePictureInPicture",
+    "strings": {
+      "title": "Main Content",
+      "subtitle": "Speaker"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#1e293b",
+      "#6b7280",
+      "#4361ee",
+      "#3b82f6"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "主画面文字",
+        "type": "text",
+        "defaultValue": "Main Content"
+      },
+      {
+        "key": "subtitle",
+        "label": "画中画文字",
+        "type": "text",
+        "defaultValue": "Speaker"
+      },
+      {
+        "key": "primaryColor",
+        "label": "PiP主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-polaroid-frame",
+    "component": "RvePolaroidFrame",
+    "strings": {
+      "subtitle": "Summer 2024"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#4361ee",
+      "#7209b7",
+      "#374151"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "subtitle",
+        "label": "相框文字",
+        "type": "text",
+        "defaultValue": "Summer 2024"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ]
+  },
+  {
+    "id": "rve-split-screen",
+    "component": "RveSplitScreen",
+    "strings": {
+      "titleA": "Panel A",
+      "subtitleA": "Left side content slides in from the left edge",
+      "titleB": "Panel B",
+      "subtitleB": "Right side content slides in from the right edge"
+    },
+    "numbers": {},
+    "colors": [
+      "#111827",
+      "#1e3a5f",
+      "#1d4ed8",
+      "#5b21b6",
+      "#7c3aed",
+      "#bfdbfe",
+      "#ddd6fe"
+    ],
+    "usesImages": false,
+    "parameters": [
+      {
+        "key": "title",
+        "label": "左标题",
+        "type": "text",
+        "defaultValue": "Panel A"
+      },
+      {
+        "key": "subtitle",
+        "label": "右标题",
+        "type": "text",
+        "defaultValue": "Panel B"
+      },
+      {
+        "key": "primaryColor",
+        "label": "左主色",
+        "type": "color",
+        "defaultValue": "#1d4ed8"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "右主色",
+        "type": "color",
+        "defaultValue": "#7c3aed"
+      }
+    ]
+  }
+]

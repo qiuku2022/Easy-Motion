@@ -118,6 +118,13 @@ function installRemotionDeps(remotionDir) {
   });
 }
 
+/** MainSequence 从 timeline JSON 动态渲染（含预设 props），无需每次改参都重新生成代码 */
+function isTimelineDrivenPreview(remotionSrcDir) {
+  const mainSeqPath = path.join(remotionSrcDir, "components", "MainSequence.tsx");
+  if (!fs.existsSync(mainSeqPath)) return false;
+  return fs.readFileSync(mainSeqPath, "utf8").includes("flattenClipsForPreview");
+}
+
 function detectCustomRemotionCode(remotionSrcDir) {
   const mainPath = path.join(remotionSrcDir, "components", "MainSequence.tsx");
   if (!fs.existsSync(mainPath)) {
@@ -148,7 +155,73 @@ function detectCustomRemotionCode(remotionSrcDir) {
   return { custom: true, reason: "MainSequence 非 Generator 标准输出" };
 }
 
+function copyDirRecursive(srcDir, destDir) {
+  if (!fs.existsSync(srcDir)) return false;
+  fs.mkdirSync(destDir, { recursive: true });
+  for (const entry of fs.readdirSync(srcDir, { withFileTypes: true })) {
+    const srcPath = path.join(srcDir, entry.name);
+    const destPath = path.join(destDir, entry.name);
+    if (entry.isDirectory()) {
+      copyDirRecursive(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  }
+  return true;
+}
+
+/** 将模板中的 RVE 预设组件同步到已打开项目的 remotion/src（幂等，覆盖 rve 目录） */
+function ensurePresetBundle(remotionDir) {
+  const templatePresetsDir = path.join(
+    getTemplatesDir(),
+    "default-project",
+    "subprojects",
+    "default",
+    "remotion",
+    "src",
+    "presets",
+  );
+  const destPresetsDir = path.join(remotionDir, "src", "presets");
+  if (!fs.existsSync(templatePresetsDir)) return false;
+
+  const templateRve = path.join(templatePresetsDir, "rve");
+  const destRve = path.join(destPresetsDir, "rve");
+  if (fs.existsSync(templateRve)) {
+    copyDirRecursive(templateRve, destRve);
+  }
+
+  for (const file of ["registry.ts", "rve/index.ts", "ThumbnailComposition.tsx", "ThumbnailRoot.tsx", "thumbnail-entry.tsx"]) {
+    const src = path.join(templatePresetsDir, file);
+    const dest = path.join(destPresetsDir, file);
+    if (fs.existsSync(src)) {
+      fs.mkdirSync(path.dirname(dest), { recursive: true });
+      fs.copyFileSync(src, dest);
+    }
+  }
+
+  const templateMain = path.join(
+    getTemplatesDir(),
+    "default-project",
+    "subprojects",
+    "default",
+    "remotion",
+    "src",
+    "components",
+    "MainSequence.tsx",
+  );
+  const destMain = path.join(remotionDir, "src", "components", "MainSequence.tsx");
+  if (fs.existsSync(templateMain) && fs.existsSync(destMain)) {
+    const current = fs.readFileSync(destMain, "utf8");
+    if (!current.includes("resolvePresetComponent")) {
+      fs.copyFileSync(templateMain, destMain);
+    }
+  }
+
+  return true;
+}
+
 async function prepareRemotionForNativeSync(remotionDir) {
+  ensurePresetBundle(remotionDir);
   const state = ensureRemotionProject(remotionDir);
   if (state.needsInstall) {
     await installRemotionDeps(remotionDir);
@@ -173,4 +246,6 @@ module.exports = {
   requireFromRemotion,
   prepareRemotionForNativeSync,
   detectCustomRemotionCode,
+  isTimelineDrivenPreview,
+  ensurePresetBundle,
 };

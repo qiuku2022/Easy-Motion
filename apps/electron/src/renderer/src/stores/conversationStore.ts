@@ -358,6 +358,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
       messages: history,
       subprojectPath,
       selectedClipId,
+      currentFrame: timelineState.currentFrame,
       confirmOverwrite,
       attachedImages,
     });

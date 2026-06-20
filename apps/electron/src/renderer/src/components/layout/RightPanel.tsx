@@ -1,3 +1,4 @@
+import { LayoutTemplate } from "lucide-react";
 import { AIAssistantPanel } from "@/components/ai/AIAssistantPanel";
 import { PanelTabContent } from "@/components/common/PanelTabContent";
 import { PanelTabs } from "@/components/common/PanelTabs";
@@ -9,7 +10,7 @@ import { useUiStore } from "@/stores/uiStore";
 const TABS = [
   { id: "properties" as const, label: "属性" },
   { id: "assets" as const, label: "素材" },
-  { id: "presets" as const, label: "预设" },
+  { id: "templates" as const, label: "模板" },
   { id: "ai" as const, label: "AI 助手" },
 ];
 
@@ -37,8 +38,12 @@ export function RightPanel() {
           {rightTab === "assets" && (
             <p className="text-muted-foreground">快捷素材区</p>
           )}
-          {rightTab === "presets" && (
-            <p className="text-muted-foreground">预设浏览</p>
+          {rightTab === "templates" && (
+            <div className="flex min-h-[12rem] flex-col items-center justify-center gap-2 text-center text-muted-foreground">
+              <LayoutTemplate className="h-10 w-10 text-border" aria-hidden />
+              <p className="text-foreground">模板</p>
+              <p className="text-xs">浏览项目与子项目模板，快速开始</p>
+            </div>
           )}
         </PanelTabContent>
       </ScrollArea>

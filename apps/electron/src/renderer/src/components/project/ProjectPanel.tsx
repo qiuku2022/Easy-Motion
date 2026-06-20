@@ -159,7 +159,7 @@ export function ProjectPanel() {
                         type="button"
                         disabled={isLoading}
                         className={cn(
-                          "w-full rounded-md border px-2.5 py-2 text-left transition-colors",
+                          "w-full rounded-lg border px-2.5 py-2 text-left transition-colors",
                           isCurrent
                             ? "border-primary/40 bg-primary/10"
                             : "border-border/60 bg-card hover:bg-muted/50"

@@ -17,6 +17,8 @@ export interface ClipPropertyField {
   max?: number;
   step?: number;
   suffix?: string;
+  /** 单位显示在标签后（默认在输入框后） */
+  suffixOnLabel?: boolean;
   /** 常用调整区（UI 文档 §5.3） */
   quick?: boolean;
 }
@@ -56,7 +58,7 @@ export const TRANSFORM_FIELDS: ClipPropertyField[] = [
   { path: "transform.position.x", label: "位置 X", type: "number" },
   { path: "transform.position.y", label: "位置 Y", type: "number" },
   { path: "transform.scale", label: "缩放", type: "number", min: 0.01, step: 0.01 },
-  { path: "transform.rotation", label: "旋转", type: "number", suffix: "°" },
+  { path: "transform.rotation", label: "旋转", type: "number", suffix: "°", suffixOnLabel: true },
   { path: "transform.opacity", label: "透明度", type: "number", min: 0, max: 1, step: 0.01 },
 ];
 

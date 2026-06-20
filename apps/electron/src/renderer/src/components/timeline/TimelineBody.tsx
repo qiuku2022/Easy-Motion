@@ -28,7 +28,7 @@ import { BodyMarkerLines } from "@/components/timeline/TimelineMarkers";
 import { SnapGuides } from "@/components/timeline/SnapGuides";
 import { TimelineRuler } from "@/components/timeline/TimelineRuler";
 import { TrackHeader } from "@/components/timeline/TrackHeader";
-import { useAssetDrop } from "@/hooks/useAssetDrop";
+import { useTimelineDrop } from "@/hooks/useTimelineDrop";
 import { useClipDrag } from "@/hooks/useClipDrag";
 import { useSeekFrame } from "@/hooks/useSeekFrame";
 import { useTrackReorder } from "@/hooks/useTrackReorder";
@@ -234,11 +234,8 @@ export function TimelineBody({
     syncVerticalScroll,
   ]);
 
-  const { onDragOver: onAssetDragOver, onDrop: onAssetDrop } = useAssetDrop(
-    bodyScrollRef,
-    sorted,
-    pxPerFrame,
-  );
+  const { onDragOver: onTimelineDragOver, onDrop: onTimelineDrop } =
+    useTimelineDrop(bodyScrollRef, rows, pxPerFrame);
 
   const handleSelectClip = useCallback(
     (clipId: string) => {
@@ -329,8 +326,8 @@ export function TimelineBody({
         <div
           ref={bodyScrollRef}
           className="scrollbar-hidden relative min-h-0 flex-1 overflow-x-auto overflow-y-auto"
-          onDragOver={onAssetDragOver}
-          onDrop={onAssetDrop}
+          onDragOver={onTimelineDragOver}
+          onDrop={onTimelineDrop}
           onScroll={(e) => {
             if (syncingScrollRef.current) return;
             const { scrollLeft, scrollTop } = e.currentTarget;

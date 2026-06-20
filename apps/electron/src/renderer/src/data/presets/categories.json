@@ -1,0 +1,42 @@
+[
+  {
+    "id": "all",
+    "label": "全部",
+    "icon": "LayoutGrid"
+  },
+  {
+    "id": "background",
+    "label": "背景",
+    "icon": "Layers"
+  },
+  {
+    "id": "title",
+    "label": "文字",
+    "icon": "Type"
+  },
+  {
+    "id": "data-chart",
+    "label": "图表",
+    "icon": "BarChart3"
+  },
+  {
+    "id": "intro-outro",
+    "label": "片头片尾",
+    "icon": "Clapperboard"
+  },
+  {
+    "id": "social-media",
+    "label": "媒体",
+    "icon": "Image"
+  },
+  {
+    "id": "content",
+    "label": "动效",
+    "icon": "Sparkles"
+  },
+  {
+    "id": "transition",
+    "label": "转场",
+    "icon": "ArrowLeftRight"
+  }
+]

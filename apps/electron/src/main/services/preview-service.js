@@ -423,6 +423,30 @@ function ensurePreviewLoopControl(remotionDir) {
   return true;
 }
 
+/** 同步预览刷新后保持播放头位置（resumeFrameRef） */
+function ensurePreviewPlayheadPreserve(remotionDir) {
+  const destEntry = path.join(remotionDir, "src", "preview-entry.tsx");
+  if (!fs.existsSync(destEntry)) return false;
+
+  const content = fs.readFileSync(destEntry, "utf8");
+  if (content.includes("canPostFramesRef")) return false;
+
+  const templateEntry = path.join(
+    getTemplatesDir(),
+    "default-project",
+    "subprojects",
+    "default",
+    "remotion",
+    "src",
+    "preview-entry.tsx",
+  );
+  if (!fs.existsSync(templateEntry)) return false;
+
+  fs.copyFileSync(templateEntry, destEntry);
+  broadcastLog("已更新 preview-entry（刷新后保持播放头）", "preview");
+  return true;
+}
+
 async function startPreview(projectRoot, subprojectPath = "subprojects/default") {
   await stopPreview();
 
@@ -436,8 +460,14 @@ async function startPreview(projectRoot, subprojectPath = "subprojects/default")
   const soloSupportPatched = ensurePreviewSoloSupport(remotionDir);
   const canvasThemePatched = ensurePreviewCanvasTheme(remotionDir);
   const loopControlPatched = ensurePreviewLoopControl(remotionDir);
+  const playheadPreservePatched = ensurePreviewPlayheadPreserve(remotionDir);
   let remotionFingerprint = null;
-  if (soloSupportPatched || canvasThemePatched || loopControlPatched) {
+  if (
+    soloSupportPatched ||
+    canvasThemePatched ||
+    loopControlPatched ||
+    playheadPreservePatched
+  ) {
     const refreshed = timelineService.refreshRemotionFingerprint(
       projectRoot,
       subprojectPath,
@@ -561,4 +591,5 @@ module.exports = {
   ensureRemotionDeps,
   ensurePreviewEntry,
   ensurePreviewSoloSupport,
+  ensurePreviewPlayheadPreserve,
 };

@@ -12,6 +12,7 @@ function createTimelineAgent(ctx, visionContext = {}) {
     subprojectName: ctx.meta.subprojectName,
     selectedElement: ctx.meta.selectedElement,
     userInput: ctx.meta.userInput,
+    currentFrame: ctx.meta.currentFrame ?? 0,
   });
 
   systemPrompt += buildVisionContextSection({

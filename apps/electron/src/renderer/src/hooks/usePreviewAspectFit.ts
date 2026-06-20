@@ -2,6 +2,9 @@ import { useEffect, useState, type RefObject } from "react";
 
 export const PREVIEW_PADDING = 24;
 
+/** 预览区展示比例（布局与画布均锁定 16:9） */
+export const PREVIEW_DISPLAY_ASPECT = 16 / 9;
+
 /** 在容器内按宽高比 fit，返回内容区像素尺寸 */
 export function fitAspectBox(
   containerWidth: number,

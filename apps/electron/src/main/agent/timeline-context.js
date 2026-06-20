@@ -1,5 +1,7 @@
 const timelineOps = require("./timeline-ops");
 const { prepareClipUpdates } = require("./clip-updates");
+const { placePresetOnTimeline } = require("./place-preset");
+const { resolvePreset } = require("./preset-catalog");
 const assetService = require("../services/asset-service");
 
 function extractCssGradient(text) {
@@ -183,6 +185,39 @@ class TimelineContext {
 
     return asset;
   }
+
+  applyPreset(params) {
+    const preset = resolvePreset({
+      presetId: params.presetId,
+      presetName: params.presetName,
+    });
+
+    const startInFrames =
+      typeof params.startInFrames === "number"
+        ? params.startInFrames
+        : Number(this.meta.currentFrame ?? 0);
+
+    const result = placePresetOnTimeline(this.timeline, preset, {
+      startInFrames,
+      trackId: params.trackId,
+      parameters: params.parameters,
+    });
+
+    this.timeline = result.timeline;
+    this.markChanged();
+    this.logChange({
+      op: "applyPreset",
+      clipId: result.clipId,
+      presetId: preset.id,
+      name: preset.name,
+    });
+    return {
+      clipId: result.clipId,
+      trackId: result.trackId,
+      presetId: preset.id,
+      name: preset.name,
+    };
+  }
 }
 
 function formatChangeSummary(changeLog) {
@@ -204,6 +239,8 @@ function formatChangeSummary(changeLog) {
         return `为片段 ${entry.clipId} 添加关键帧 ${entry.property} @ 帧 ${entry.frame}`;
       case "importAsset":
         return `导入素材「${entry.name}」(${entry.type})`;
+      case "applyPreset":
+        return `应用预设「${entry.name}」`;
       default:
         return entry.op;
     }

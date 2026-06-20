@@ -8,13 +8,11 @@ import {
   postPreview,
   PREVIEW_CHANNEL,
 } from "@/lib/preview-messages";
-import { usePreviewAspectFit } from "@/hooks/usePreviewAspectFit";
+import { usePreviewAspectFit, PREVIEW_DISPLAY_ASPECT } from "@/hooks/usePreviewAspectFit";
 import { usePreviewBootstrap } from "@/hooks/usePreviewBootstrap";
 import { usePlaybackStore } from "@/stores/playbackStore";
 import { useTimelineStore } from "@/stores/timelineStore";
 import { getEasyMotion } from "@/types/easyMotion";
-
-const DEFAULT_ASPECT_RATIO = 16 / 9;
 
 export function PreviewWindow() {
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -37,12 +35,7 @@ export function PreviewWindow() {
   const previewTimelineNonce = useTimelineStore((s) => s.previewTimelineNonce);
   const timeline = useTimelineStore((s) => s.timeline);
 
-  const aspectRatio =
-    timeline?.width && timeline?.height
-      ? timeline.width / timeline.height
-      : DEFAULT_ASPECT_RATIO;
-
-  const previewSize = usePreviewAspectFit(viewportRef, aspectRatio);
+  const previewSize = usePreviewAspectFit(viewportRef, PREVIEW_DISPLAY_ASPECT);
 
   const setCurrentFrame = useTimelineStore((s) => s.setCurrentFrame);
   const setPlaying = usePlaybackStore((s) => s.setPlaying);
@@ -52,11 +45,45 @@ export function PreviewWindow() {
 
   const maxFrame = Math.max(0, (timeline?.durationInFrames ?? 90) - 1);
 
+  const previewUrlRef = useRef<string | null>(null);
+  previewUrlRef.current = previewUrl;
+
+  /** Ignore spurious frame-0 updates while preview remounts after reload. */
+  const preservePlayheadRef = useRef<{ frame: number; until: number } | null>(
+    null,
+  );
+
+  const markPreservePlayhead = useCallback(() => {
+    const frame = useTimelineStore.getState().currentFrame;
+    preservePlayheadRef.current = { frame, until: Date.now() + 2500 };
+    return frame;
+  }, []);
+
+  const restorePlayheadToPreview = useCallback(
+    (frame: number, delayMs = 0) => {
+      window.setTimeout(() => {
+        useTimelineStore.getState().setCurrentFrame(frame);
+        const win = iframeRef.current?.contentWindow;
+        if (win) {
+          postPreview(win, { channel: PREVIEW_CHANNEL, type: "SEEK", frame });
+        }
+      }, delayMs);
+    },
+    [],
+  );
+
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
       const msg = parsePreviewMessage(event.data);
       if (!msg) return;
       if (msg.type === "FRAME_CHANGE") {
+        const preserve = preservePlayheadRef.current;
+        if (preserve && Date.now() < preserve.until) {
+          return;
+        }
+        if (!usePlaybackStore.getState().isPlaying) {
+          return;
+        }
         setCurrentFrame(msg.frame);
       }
       if (msg.type === "PLAYBACK_STATE") {
@@ -67,16 +94,13 @@ export function PreviewWindow() {
     return () => window.removeEventListener("message", onMessage);
   }, [setCurrentFrame, setPlaying]);
 
-  const previewUrlRef = useRef<string | null>(null);
-  previewUrlRef.current = previewUrl;
-
   const reloadPreview = useCallback(async () => {
     const win = iframeRef.current?.contentWindow;
     const currentUrl = previewUrlRef.current;
-    const frame = useTimelineStore.getState().currentFrame;
+    const frame = markPreservePlayhead();
 
     if (win && currentUrl) {
-      postPreview(win, { channel: PREVIEW_CHANNEL, type: "RELOAD" });
+      postPreview(win, { channel: PREVIEW_CHANNEL, type: "RELOAD", frame });
       window.setTimeout(() => {
         const w = iframeRef.current?.contentWindow;
         if (!w) return;
@@ -86,14 +110,17 @@ export function PreviewWindow() {
             channel: PREVIEW_CHANNEL,
             type: "TIMELINE_UPDATE",
             timeline: tl,
+            frame,
           });
         }
         postPreview(w, { channel: PREVIEW_CHANNEL, type: "SEEK", frame });
       }, 120);
+      restorePlayheadToPreview(frame, 250);
     }
-  }, []);
+  }, [markPreservePlayhead, restorePlayheadToPreview]);
 
   const fullReloadPreview = useCallback(async () => {
+    const frame = markPreservePlayhead();
     await new Promise((resolve) => window.setTimeout(resolve, 400));
 
     const api = getEasyMotion();
@@ -102,12 +129,13 @@ export function PreviewWindow() {
       if (state.success && state.data?.status === "running" && state.data.url) {
         const base = state.data.url.split("?")[0];
         setPreviewUrl(`${base}?t=${Date.now()}`);
+        restorePlayheadToPreview(frame, 500);
         return;
       }
     }
 
     await reloadPreview();
-  }, [reloadPreview, setPreviewUrl]);
+  }, [markPreservePlayhead, reloadPreview, restorePlayheadToPreview, setPreviewUrl]);
 
   useEffect(() => {
     if (previewReloadNonce === 0) return;
@@ -128,29 +156,40 @@ export function PreviewWindow() {
     const win = iframeRef.current?.contentWindow;
     if (!win) return false;
 
+    const frame = markPreservePlayhead();
     postPreview(win, {
       channel: PREVIEW_CHANNEL,
       type: "TIMELINE_UPDATE",
       timeline: tl,
+      frame,
     });
     return true;
-  }, []);
+  }, [markPreservePlayhead]);
 
   useEffect(() => {
     if (previewTimelineNonce === 0) return;
 
-    if (pushTimelineToPreview()) return;
+    const frame = markPreservePlayhead();
+    const restoreOnce = () => restorePlayheadToPreview(frame, 200);
+
+    if (pushTimelineToPreview()) {
+      restoreOnce();
+      return;
+    }
 
     let attempts = 0;
     const timer = window.setInterval(() => {
       attempts += 1;
-      if (pushTimelineToPreview() || attempts >= 30) {
+      if (pushTimelineToPreview()) {
+        window.clearInterval(timer);
+        restoreOnce();
+      } else if (attempts >= 30) {
         window.clearInterval(timer);
       }
     }, 100);
 
     return () => window.clearInterval(timer);
-  }, [previewTimelineNonce, pushTimelineToPreview]);
+  }, [previewTimelineNonce, pushTimelineToPreview, markPreservePlayhead, restorePlayheadToPreview]);
 
   const pushLoopToPreview = useCallback(() => {
     const win = iframeRef.current?.contentWindow;
@@ -203,90 +242,88 @@ export function PreviewWindow() {
 
   const showOverlay = !previewUrl && (isLoading || error || !hasProject);
 
+  const previewFrameStyle =
+    previewSize.width > 0
+      ? { width: previewSize.width, height: previewSize.height }
+      : { width: "100%", aspectRatio: `${PREVIEW_DISPLAY_ASPECT}` };
+
   return (
     <section className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-preview-canvas">
       <div
         ref={viewportRef}
         className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-preview-canvas p-3"
       >
-        {showOverlay && (
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 px-6 text-center">
-            {isLoading && (
-              <Loader2 className="h-8 w-8 animate-spin text-ring" aria-hidden />
-            )}
-
-            <div className="max-w-md space-y-2">
-              {!hasProject && (
-                <p className="text-sm text-muted-foreground">
-                  打开或创建项目后将自动启动 Remotion 预览
-                </p>
+        <div
+          className="relative shrink-0 overflow-hidden rounded-lg border border-border bg-black shadow-sm"
+          style={previewFrameStyle}
+        >
+          {showOverlay && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-preview-canvas px-6 text-center">
+              {isLoading && (
+                <Loader2 className="h-8 w-8 animate-spin text-ring" aria-hidden />
               )}
 
-              {hasProject && isLoading && (
-                <>
-                  <p className="text-sm text-foreground">
-                    {isGenerating ? "正在根据时间线生成 Remotion 代码…" : hint}
+              <div className="max-w-md space-y-2">
+                {!hasProject && (
+                  <p className="text-sm text-muted-foreground">
+                    打开或创建项目后将自动启动 Remotion 预览
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    {isGenerating
-                      ? "生成完成后将自动连接预览服务"
-                      : "预览启动中，无需手动点击"}
-                  </p>
-                </>
-              )}
+                )}
 
-              {hasProject && !isLoading && error && (
-                <>
-                  <p className="text-sm text-red-400">{error}</p>
-                  <Button type="button" onClick={retry}>
-                    重试启动预览
-                  </Button>
-                </>
+                {hasProject && isLoading && (
+                  <>
+                    <p className="text-sm text-foreground">
+                      {isGenerating ? "正在根据时间线生成 Remotion 代码…" : hint}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {isGenerating
+                        ? "生成完成后将自动连接预览服务"
+                        : "预览启动中，无需手动点击"}
+                    </p>
+                  </>
+                )}
+
+                {hasProject && !isLoading && error && (
+                  <>
+                    <p className="text-sm text-destructive">{error}</p>
+                    <Button type="button" onClick={retry}>
+                      重试启动预览
+                    </Button>
+                  </>
+                )}
+              </div>
+
+              {hasProject && isLoading && logs.length > 0 && (
+                <div className="w-full max-w-lg overflow-hidden rounded-lg border border-border bg-background/90 px-3 py-2 text-left">
+                  <p className="mb-1 text-[10px] uppercase tracking-wide text-muted-foreground">
+                    启动日志
+                  </p>
+                  <ScrollArea className="h-28 w-full">
+                    <ul className="space-y-0.5 pr-3 font-mono text-[11px] leading-relaxed text-muted-foreground">
+                      {logs.map((line, i) => (
+                        <li key={`${i}-${line.slice(0, 24)}`} className="break-all">
+                          {line}
+                        </li>
+                      ))}
+                    </ul>
+                  </ScrollArea>
+                </div>
               )}
             </div>
-
-            {hasProject && isLoading && logs.length > 0 && (
-              <div className="w-full max-w-lg overflow-hidden rounded-sm border border-border bg-background/90 px-3 py-2 text-left">
-                <p className="mb-1 text-[10px] uppercase tracking-wide text-muted-foreground">
-                  启动日志
-                </p>
-                <ScrollArea className="h-28 w-full">
-                  <ul className="space-y-0.5 pr-3 font-mono text-[11px] leading-relaxed text-muted-foreground">
-                    {logs.map((line, i) => (
-                      <li key={`${i}-${line.slice(0, 24)}`} className="break-all">
-                        {line}
-                      </li>
-                    ))}
-                  </ul>
-                </ScrollArea>
-              </div>
-            )}
-          </div>
-        )}
-
-        <div
-          className={cn(
-            "relative shrink-0 overflow-hidden rounded-lg border border-border bg-black shadow-sm",
-            !previewUrl && "hidden"
           )}
-          style={
-            previewSize.width > 0
-              ? { width: previewSize.width, height: previewSize.height }
-              : { width: "100%", aspectRatio: `${aspectRatio}` }
-          }
-        >
+
           <iframe
             ref={iframeRef}
             src={previewUrl ?? undefined}
             title="Remotion Preview"
-            className="h-full w-full"
+            className={cn("h-full w-full", !previewUrl && "invisible")}
             onLoad={() => {
-              const frame = useTimelineStore.getState().currentFrame;
+              const frame = markPreservePlayhead();
               const win = iframeRef.current?.contentWindow;
               if (!win) return;
               pushTimelineToPreview();
               pushLoopToPreview();
-              postPreview(win, { channel: PREVIEW_CHANNEL, type: "SEEK", frame });
+              restorePlayheadToPreview(frame, 150);
             }}
           />
         </div>

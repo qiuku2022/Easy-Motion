@@ -38,6 +38,8 @@ function main() {
   });
   assert(prompt.includes("createTrack"), "system prompt mentions createTrack");
   assert(prompt.includes("importAsset"), "system prompt mentions importAsset");
+  assert(prompt.includes("applyPreset"), "system prompt mentions applyPreset");
+  assert(prompt.includes("listPresets"), "system prompt mentions listPresets");
   assert(prompt.includes("1280"), "system prompt includes width");
   assert(prompt.includes("30fps"), "system prompt includes fps");
 
@@ -80,9 +82,18 @@ function main() {
   });
   const tools = createTimelineTools(ctx);
   const toolNames = tools.map((tool) => tool.name).sort();
-  assert(toolNames.length === 8, "timeline agent exposes 8 tools");
+  assert(toolNames.length === 10, "timeline agent exposes 10 tools");
   assert(toolNames.includes("updateClip"), "tools include updateClip");
   assert(toolNames.includes("queryElement"), "tools include queryElement");
+  assert(toolNames.includes("applyPreset"), "tools include applyPreset");
+  assert(toolNames.includes("listPresets"), "tools include listPresets");
+
+  const presetCtx = new TimelineContext(BASE_TIMELINE, { currentFrame: 12 });
+  const applied = presetCtx.applyPreset({ presetName: "缩放弹出" });
+  assert(applied.presetId === "rve-popping-text", "applyPreset resolves Chinese name");
+  assert(presetCtx.changed, "applyPreset marks timeline changed");
+  const placed = presetCtx.timeline.tracks[0]?.clips?.[0];
+  assert(placed?.startInFrames === 12, "applyPreset uses currentFrame by default");
 
   const fallback = runSimplifiedFallback({
     timeline: BASE_TIMELINE,

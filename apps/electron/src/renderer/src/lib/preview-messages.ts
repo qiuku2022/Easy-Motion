@@ -5,9 +5,14 @@ export type PreviewOutbound =
   | { channel: typeof PREVIEW_CHANNEL; type: "PLAY" }
   | { channel: typeof PREVIEW_CHANNEL; type: "PAUSE" }
   | { channel: typeof PREVIEW_CHANNEL; type: "SEEK"; frame: number }
-  | { channel: typeof PREVIEW_CHANNEL; type: "RELOAD" }
+  | { channel: typeof PREVIEW_CHANNEL; type: "RELOAD"; frame?: number }
   | { channel: typeof PREVIEW_CHANNEL; type: "SET_LOOP"; loop: boolean }
-  | { channel: typeof PREVIEW_CHANNEL; type: "TIMELINE_UPDATE"; timeline: unknown };
+  | {
+      channel: typeof PREVIEW_CHANNEL;
+      type: "TIMELINE_UPDATE";
+      timeline: unknown;
+      frame?: number;
+    };
 
 export type PreviewInbound =
   | { channel: typeof PREVIEW_CHANNEL; type: "READY" }

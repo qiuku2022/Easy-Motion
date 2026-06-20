@@ -58,13 +58,13 @@ Scale: `text-xs` 12px → `text-2xl` 24px.
 ## Spacing & Radius
 
 - Spacing: 4 / 8 / 12 / 16 / 24px (`space-1` … `space-6`)
-- Radius: `rounded-sm` 4px (buttons), `rounded-md` 6px (inputs), `rounded-lg` 8px (panels)
+- Radius: `rounded-lg` 8px (`--radius-overlay`) for **buttons** and **inputs**; `rounded-md` 4px (`--radius-control`) for menu items / tabs; `rounded-sm` 3px for timeline canvas only
 
 ---
 
 ## Components (tokens)
 
-- **Primary button**: shadcn `Button variant="default"` → `bg-primary text-primary-foreground`（浅灰白）
+- **Primary button**: shadcn `Button variant="default"` → `bg-primary text-primary-foreground`（浅灰白）；**圆角 `rounded-lg`（8px）**，与 Input 一致（`button.tsx` 已自定义，升级 shadcn 时需保留）
 - **Secondary / outline**: `variant="secondary"` / `variant="outline"`
 - **Toolbar icons**: `variant="ghost" size="icon"`
 - **Input**: shadcn `Input`；聚焦 `ring-ring`

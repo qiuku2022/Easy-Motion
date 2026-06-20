@@ -88,6 +88,35 @@
     height: 0;
   }
 
+  /* 暗色主题原生滚动条：细、可拖拽（预设分类等壳层横向滚动） */
+  .scrollbar-theme {
+    scrollbar-width: thin;
+    scrollbar-color: oklch(1 0 0 / 28%) transparent;
+  }
+
+  .scrollbar-theme::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scrollbar-theme::-webkit-scrollbar-track {
+    background: oklch(1 0 0 / 6%);
+    border-radius: var(--radius-control);
+  }
+
+  .scrollbar-theme::-webkit-scrollbar-thumb {
+    background-color: oklch(1 0 0 / 22%);
+    border-radius: var(--radius-control);
+  }
+
+  .scrollbar-theme::-webkit-scrollbar-thumb:hover {
+    background-color: oklch(1 0 0 / 38%);
+  }
+
+  .scrollbar-theme::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
   /* 数字输入：隐藏原生步进按钮（Windows/Chromium 白底箭头与暗色主题不协调） */
   [data-slot="input"][type="number"] {
     -moz-appearance: textfield;

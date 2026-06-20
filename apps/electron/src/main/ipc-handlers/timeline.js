@@ -109,13 +109,25 @@ function registerTimelineHandlers() {
         subprojectPath,
       );
       const remotionDir = previewService.getRemotionDir(projectPath, subprojectPath);
-      previewService.ensurePreviewEntry(remotionDir);
-      previewService.ensurePreviewSoloSupport(remotionDir);
+      const entryPatched = previewService.ensurePreviewEntry(remotionDir);
+      const soloPatched = previewService.ensurePreviewSoloSupport(remotionDir);
+      let refreshed = null;
+      if (entryPatched || soloPatched) {
+        refreshed = timelineService.refreshRemotionFingerprint(
+          projectPath,
+          subprojectPath,
+        );
+      }
       const state = previewService.getPreviewState();
       if (state.status === "running") {
-        return { ...result, previewReload: true, previewUrl: state.url };
+        return {
+          ...result,
+          previewReload: true,
+          previewUrl: state.url,
+          timeline: refreshed?.timeline,
+        };
       }
-      return result;
+      return refreshed?.timeline ? { ...result, timeline: refreshed.timeline } : result;
     })
   );
 }

@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { Trash2, X } from "lucide-react";
 import { z } from "zod";
 import { ClipPropertyFields } from "@/components/properties/ClipPropertyFields";
+import { PresetParameterFields } from "@/components/properties/PresetParameterFields";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,6 +36,7 @@ import {
   pickDefaultContentElement,
 } from "@/lib/timeline/trackTree";
 import { useTimelineStore } from "@/stores/timelineStore";
+import { usePresetStore } from "@/stores/presetStore";
 import type { Clip, Track, TrackType } from "@/types/timeline";
 
 const textContentSchema = z.object({
@@ -104,6 +106,14 @@ export function PropertiesPanel() {
   const error = useTimelineStore((s) => s.error);
   const textRef = useRef<HTMLTextAreaElement>(null);
 
+  const presetId =
+    typeof resolved?.contentClip?.source?.presetId === "string"
+      ? resolved.contentClip.source.presetId
+      : undefined;
+  const preset = usePresetStore((s) =>
+    presetId ? s.getPresetById(presetId) : undefined,
+  );
+
   const debouncedPatch = useMemo(
     () =>
       debounce((clipId: string, patch: ClipPatch) => {
@@ -144,6 +154,54 @@ export function PropertiesPanel() {
 
   const { layerTrack, contentClip, contentTrack, contentType } = resolved;
   const disabled = layerTrack.locked;
+
+  if (contentClip && preset && preset.parameters.length > 0 && contentTrack) {
+    return (
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between gap-2">
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium text-foreground">
+              {layerTrack.name}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {preset.name} · 预设参数
+            </p>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 shrink-0"
+            title="取消选择 (Esc)"
+            onClick={() => clearSelection()}
+          >
+            <X className="h-4 w-4" />
+            <span className="sr-only">取消选择</span>
+          </Button>
+        </div>
+        <PresetParameterFields
+          clip={contentClip}
+          preset={preset}
+          disabled={disabled}
+          onPatch={(patch) => onPatch(contentClip.id, patch)}
+        />
+        <details className="text-xs text-muted-foreground">
+          <summary className="cursor-pointer select-none text-foreground">
+            变换
+          </summary>
+          <div className="mt-2 space-y-2 border-t border-border pt-2">
+            <ClipPropertyFields
+              clipType="animation"
+              clip={contentClip}
+              disabled={disabled}
+              onPatch={(patch) => onPatch(contentClip.id, patch)}
+              mode="transform"
+            />
+          </div>
+        </details>
+      </div>
+    );
+  }
 
   if (contentClip && contentType === "text" && contentTrack) {
     return (

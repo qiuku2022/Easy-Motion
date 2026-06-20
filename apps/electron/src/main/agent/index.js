@@ -84,6 +84,7 @@ async function runAgentAttempt({
   history = [],
   selectedElement = null,
   confirmOverwrite = false,
+  currentFrame = 0,
   imagePaths = [],
   onStatus,
   onChunk,
@@ -96,6 +97,7 @@ async function runAgentAttempt({
     selectedElement,
     userInput: input,
     confirmOverwrite,
+    currentFrame,
   });
 
   let visualAnalysis = null;
@@ -150,7 +152,7 @@ async function runAgentAttempt({
 }
 
 function looksLikeTimelineModification(input) {
-  return /改|创建|添加|删除|隐藏|渐变|背景|轨道|字体|大一点|小一点|移到|换成|新建|调整|设为|改为/.test(
+  return /改|创建|添加|删除|隐藏|渐变|背景|轨道|字体|大一点|小一点|移到|换成|新建|调整|设为|改为|预设|图表|柱状|片头|标题动画|动效/.test(
     String(input ?? "")
   );
 }
@@ -173,7 +175,7 @@ async function runAgent(options) {
         };
       }
       options.onStatus?.(AgentState.PARSING);
-      options.input = `${options.input}\n\n【系统要求】你必须调用 createTrack / createClip / updateClip 等工具修改时间线 JSON，禁止仅用文字描述已完成。`;
+      options.input = `${options.input}\n\n【系统要求】你必须调用 createTrack / createClip / updateClip / applyPreset 等工具修改时间线 JSON，禁止仅用文字描述已完成。`;
       continue;
     } catch (error) {
       if (error?.name === "AbortError") throw error;

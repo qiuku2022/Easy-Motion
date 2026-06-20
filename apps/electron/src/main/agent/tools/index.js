@@ -1,5 +1,6 @@
 const { tool } = require("langchain");
 const { z } = require("zod");
+const { searchPresets } = require("../preset-catalog");
 
 const TRACK_TYPES = [
   "text",
@@ -23,6 +24,16 @@ const ANIMATION_TYPES = [
   "rotate",
   "blur",
   "none",
+];
+
+const PRESET_CATEGORIES = [
+  "background",
+  "title",
+  "data-chart",
+  "intro-outro",
+  "social-media",
+  "content",
+  "transition",
 ];
 
 function toolResult(success, data, error) {
@@ -292,6 +303,71 @@ function createTimelineTools(ctx) {
     }
   );
 
+  const listPresetsTool = tool(
+    async ({ query, category, limit }) => {
+      try {
+        const presets = searchPresets({ query, category, limit });
+        return toolResult(true, { presets, count: presets.length });
+      } catch (error) {
+        return toolResult(false, undefined, error.message);
+      }
+    },
+    {
+      name: "listPresets",
+      description:
+        "搜索内置 Remotion 动画预设（81 个）。按名称、描述或分类查询，返回 presetId 供 applyPreset 使用。",
+      schema: z.object({
+        query: z.string().describe("搜索词，如「柱状图」「标题淡入」「片头」"),
+        category: z
+          .enum(PRESET_CATEGORIES)
+          .optional()
+          .describe("可选分类过滤"),
+        limit: z.number().min(1).max(20).optional().describe("返回条数，默认 10"),
+      }),
+    }
+  );
+
+  const applyPresetTool = tool(
+    async ({ presetId, presetName, startInFrames, trackId, parameters }) => {
+      try {
+        const data = ctx.applyPreset({
+          presetId,
+          presetName,
+          startInFrames,
+          trackId,
+          parameters,
+        });
+        return toolResult(true, data);
+      } catch (error) {
+        return toolResult(false, undefined, error.message);
+      }
+    },
+    {
+      name: "applyPreset",
+      description:
+        "将内置 Remotion 预设应用到时间线 animation 轨道。优先用 listPresets 查 presetId；也可用 presetName 模糊匹配。默认落在当前播放头位置。",
+      schema: z.object({
+        presetId: z
+          .string()
+          .optional()
+          .describe("预设 ID，如 rve-popping-text"),
+        presetName: z
+          .string()
+          .optional()
+          .describe("预设中文名或关键词，如「缩放弹出」「柱状图」"),
+        startInFrames: z
+          .number()
+          .optional()
+          .describe("起始帧；省略则使用当前播放头"),
+        trackId: z.string().optional().describe("目标 animation 轨道 ID"),
+        parameters: z
+          .record(z.string(), z.unknown())
+          .optional()
+          .describe("预设参数（如 { text: \"标题\" }），写入 clip.source.props"),
+      }),
+    }
+  );
+
   return [
     createTrackTool,
     createClipTool,
@@ -301,6 +377,8 @@ function createTimelineTools(ctx) {
     queryElementTool,
     setAnimationTool,
     importAssetTool,
+    listPresetsTool,
+    applyPresetTool,
   ];
 }
 

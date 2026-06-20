@@ -87,7 +87,7 @@ export function TimelinePanel() {
             variant="outline"
             size="sm"
             disabled={busy}
-            className="h-7 shrink-0 rounded-md border-amber-500/30 bg-amber-500/20 text-xs text-amber-50 hover:bg-amber-500/30"
+            className="h-7 shrink-0 border-amber-500/30 bg-amber-500/20 text-xs text-amber-50 hover:bg-amber-500/30"
             onClick={() => {
               clearError();
               void syncFromRemotion();

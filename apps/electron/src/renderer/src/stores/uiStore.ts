@@ -5,7 +5,7 @@ import {
 } from "@/lib/timeline/framePixels";
 
 export type LeftTab = "project" | "assets" | "presets";
-export type RightTab = "properties" | "assets" | "presets" | "ai";
+export type RightTab = "properties" | "assets" | "templates" | "ai";
 
 interface UiState {
   leftPanelWidth: number;

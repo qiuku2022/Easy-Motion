@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Player,
@@ -16,10 +16,26 @@ type EasymotionPreviewProps = {
 
 const PreviewApp: React.FC = () => {
   const playerRef = useRef<PlayerRef>(null);
+  const resumeFrameRef = useRef(0);
+  const canPostFramesRef = useRef(false);
   const [player, setPlayer] = useState<PlayerRef | null>(null);
   const [compositionKey, setCompositionKey] = useState(0);
   const [inputProps, setInputProps] = useState<EasymotionPreviewProps>({});
   const [loop, setLoop] = useState(true);
+
+  const restorePlayhead = useCallback(
+    (frame: number, target?: PlayerRef | null) => {
+      resumeFrameRef.current = frame;
+      canPostFramesRef.current = false;
+      (target ?? playerRef.current)?.seekTo(frame);
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          canPostFramesRef.current = true;
+        });
+      });
+    },
+    [],
+  );
 
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
@@ -28,11 +44,19 @@ const PreviewApp: React.FC = () => {
       const target = playerRef.current;
 
       if (data.type === "RELOAD") {
+        if (typeof data.frame === "number") {
+          resumeFrameRef.current = data.frame;
+        }
+        canPostFramesRef.current = false;
         setCompositionKey((k) => k + 1);
         return;
       }
 
       if (data.type === "TIMELINE_UPDATE" && data.timeline) {
+        if (typeof data.frame === "number") {
+          resumeFrameRef.current = data.frame;
+        }
+        canPostFramesRef.current = false;
         setInputProps({ timeline: data.timeline });
         setCompositionKey((k) => k + 1);
         return;
@@ -48,21 +72,33 @@ const PreviewApp: React.FC = () => {
       if (data.type === "PLAY") target.play();
       if (data.type === "PAUSE") target.pause();
       if (data.type === "SEEK" && typeof data.frame === "number") {
-        target.seekTo(data.frame);
+        restorePlayhead(data.frame, target);
       }
     };
 
     window.addEventListener("message", onMessage);
     window.parent.postMessage({ channel: CHANNEL, type: "READY" }, "*");
     return () => window.removeEventListener("message", onMessage);
-  }, []);
+  }, [restorePlayhead]);
+
+  useEffect(() => {
+    if (!player) return;
+    restorePlayhead(resumeFrameRef.current, player);
+  }, [player, compositionKey, restorePlayhead]);
 
   useEffect(() => {
     if (!player) return;
 
     const onFrameUpdate: CallbackListener<"frameupdate"> = (e) => {
+      const frame = e.detail.frame;
+      if (!canPostFramesRef.current && frame !== resumeFrameRef.current) {
+        return;
+      }
+      if (frame === resumeFrameRef.current) {
+        canPostFramesRef.current = true;
+      }
       window.parent.postMessage(
-        { channel: CHANNEL, type: "FRAME_CHANGE", frame: e.detail.frame },
+        { channel: CHANNEL, type: "FRAME_CHANGE", frame },
         "*",
       );
     };
@@ -98,6 +134,9 @@ const PreviewApp: React.FC = () => {
         ref={(instance) => {
           playerRef.current = instance;
           setPlayer(instance);
+          if (instance) {
+            restorePlayhead(resumeFrameRef.current, instance);
+          }
         }}
         component={MainSequence}
         durationInFrames={previewConfig.durationInFrames}

@@ -1,0 +1,3062 @@
+[
+  {
+    "id": "rve-chart-animation",
+    "name": "柱状图动画",
+    "description": "SVG 柱状图错峰生长",
+    "category": "data-chart",
+    "kind": "component",
+    "component": "RveChartAnimation",
+    "modulePath": "presets/rve/chart-animation",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-chart-animation.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "图表标题",
+        "type": "text",
+        "defaultValue": "Monthly Performance"
+      },
+      {
+        "key": "subtitle",
+        "label": "副标题",
+        "type": "text",
+        "defaultValue": "Data visualization for 2023"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-line-chart",
+    "name": "折线图",
+    "description": "折线从左向右绘制",
+    "category": "data-chart",
+    "kind": "component",
+    "component": "RveLineChart",
+    "modulePath": "presets/rve/line-chart",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-line-chart.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "图表标题",
+        "type": "text",
+        "defaultValue": "Revenue Growth"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#f72585"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-pie-chart",
+    "name": "饼图",
+    "description": "扇区依次显现",
+    "category": "data-chart",
+    "kind": "component",
+    "component": "RvePieChart",
+    "modulePath": "presets/rve/pie-chart",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-pie-chart.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "图表标题",
+        "type": "text",
+        "defaultValue": "Market Share"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-donut-chart",
+    "name": "环形图",
+    "description": "圆环分段动画",
+    "category": "data-chart",
+    "kind": "component",
+    "component": "RveDonutChart",
+    "modulePath": "presets/rve/donut-chart",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-donut-chart.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "图表标题",
+        "type": "text",
+        "defaultValue": "Completion Rate"
+      },
+      {
+        "key": "progress",
+        "label": "中心进度(%)",
+        "type": "number",
+        "defaultValue": 78
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-area-chart",
+    "name": "面积图",
+    "description": "渐变面积揭示",
+    "category": "data-chart",
+    "kind": "component",
+    "component": "RveAreaChart",
+    "modulePath": "presets/rve/area-chart",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-area-chart.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "图表标题",
+        "type": "text",
+        "defaultValue": "Performance Metrics"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "渐变辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-progress-bars",
+    "name": "进度条组",
+    "description": "多组水平进度条",
+    "category": "data-chart",
+    "kind": "component",
+    "component": "RveProgressBars",
+    "modulePath": "presets/rve/progress-bars",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-progress-bars.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "Skills Overview"
+      },
+      {
+        "key": "progress",
+        "label": "首项进度(%)",
+        "type": "number",
+        "defaultValue": 90
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-stat-counter",
+    "name": "数字统计",
+    "description": "大数字递增计数",
+    "category": "data-chart",
+    "kind": "component",
+    "component": "RveStatCounter",
+    "modulePath": "presets/rve/stat-counter",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-stat-counter.webp",
+    "parameters": [
+      {
+        "key": "value",
+        "label": "统计数值",
+        "type": "number",
+        "defaultValue": 1247
+      },
+      {
+        "key": "title",
+        "label": "标签",
+        "type": "text",
+        "defaultValue": "Total Users"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#22c55e"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-comparison-chart",
+    "name": "对比图表",
+    "description": "前后指标对比",
+    "category": "data-chart",
+    "kind": "component",
+    "component": "RveComparisonChart",
+    "modulePath": "presets/rve/comparison-chart",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-comparison-chart.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "图表标题",
+        "type": "text",
+        "defaultValue": "Performance Comparison"
+      },
+      {
+        "key": "value",
+        "label": "对比前值(%)",
+        "type": "number",
+        "defaultValue": 34
+      },
+      {
+        "key": "progress",
+        "label": "对比后值(%)",
+        "type": "number",
+        "defaultValue": 89
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-circular-progress",
+    "name": "环形进度",
+    "description": "圆环进度百分比",
+    "category": "data-chart",
+    "kind": "component",
+    "component": "RveCircularProgress",
+    "modulePath": "presets/rve/circular-progress",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-circular-progress.webp",
+    "parameters": [
+      {
+        "key": "progress",
+        "label": "进度(%)",
+        "type": "number",
+        "defaultValue": 75
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#1e3a8a"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-animated-text",
+    "name": "逐字动画",
+    "description": "字符依次弹入",
+    "category": "title",
+    "kind": "component",
+    "component": "RveAnimatedText",
+    "modulePath": "presets/rve/animated-text",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-animated-text.webp",
+    "parameters": [
+      {
+        "key": "text",
+        "label": "文字内容",
+        "type": "text",
+        "defaultValue": "Hello Remotion"
+      },
+      {
+        "key": "primaryColor",
+        "label": "文字色",
+        "type": "color",
+        "defaultValue": "#ffffff"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-bounce-text",
+    "name": "弹跳文字",
+    "description": "弹簧弹跳标题",
+    "category": "title",
+    "kind": "component",
+    "component": "RveBounceText",
+    "modulePath": "presets/rve/bounce-text",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-bounce-text.webp",
+    "parameters": [
+      {
+        "key": "text",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "Start Building"
+      },
+      {
+        "key": "subtitle",
+        "label": "副标题",
+        "type": "text",
+        "defaultValue": "Theres never been a better time"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#1e3a8a"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-bubble-pop-text",
+    "name": "气泡文字",
+    "description": "字符气泡弹出",
+    "category": "title",
+    "kind": "component",
+    "component": "RveBubblePopText",
+    "modulePath": "presets/rve/bubble-pop-text",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-bubble-pop-text.webp",
+    "parameters": [
+      {
+        "key": "text",
+        "label": "文字内容",
+        "type": "text",
+        "defaultValue": "HELLO"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#1e3a8a"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-floating-bubble-text",
+    "name": "浮动标签",
+    "description": "正弦波漂浮文字",
+    "category": "title",
+    "kind": "component",
+    "component": "RveFloatingBubbleText",
+    "modulePath": "presets/rve/floating-bubble-text",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-floating-bubble-text.webp",
+    "parameters": [
+      {
+        "key": "text",
+        "label": "文字内容",
+        "type": "text",
+        "defaultValue": "Floating"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#1e3a8a"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-glitch-text",
+    "name": "故障文字",
+    "description": "RGB 分离故障效果",
+    "category": "title",
+    "kind": "component",
+    "component": "RveGlitchText",
+    "modulePath": "presets/rve/glitch-text",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-glitch-text.webp",
+    "parameters": [
+      {
+        "key": "text",
+        "label": "文字内容",
+        "type": "text",
+        "defaultValue": "GLITCH"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "故障色",
+        "type": "color",
+        "defaultValue": "#f72585"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-popping-text",
+    "name": "缩放弹出",
+    "description": "弹簧缩放标题",
+    "category": "title",
+    "kind": "component",
+    "component": "RvePoppingText",
+    "modulePath": "presets/rve/popping-text",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-popping-text.webp",
+    "parameters": [
+      {
+        "key": "text",
+        "label": "文字内容",
+        "type": "text",
+        "defaultValue": "BINGO!"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#1e3a8a"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-pulsing-text",
+    "name": "脉冲文字",
+    "description": "持续缩放脉冲",
+    "category": "title",
+    "kind": "component",
+    "component": "RvePulsingText",
+    "modulePath": "presets/rve/pulsing-text",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-pulsing-text.webp",
+    "parameters": [
+      {
+        "key": "text",
+        "label": "文字内容",
+        "type": "text",
+        "defaultValue": "Pulse"
+      },
+      {
+        "key": "primaryColor",
+        "label": "文字色",
+        "type": "color",
+        "defaultValue": "#ffffff"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-slide-text",
+    "name": "滑入文字",
+    "description": "方向滑入标题",
+    "category": "title",
+    "kind": "component",
+    "component": "RveSlideText",
+    "modulePath": "presets/rve/slide-text",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-slide-text.webp",
+    "parameters": [
+      {
+        "key": "text",
+        "label": "文字内容",
+        "type": "text",
+        "defaultValue": "Sliding Text!"
+      },
+      {
+        "key": "primaryColor",
+        "label": "文字色",
+        "type": "color",
+        "defaultValue": "#ffffff"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-typewriter-subtitle",
+    "name": "打字机字幕",
+    "description": "逐字打字光标",
+    "category": "title",
+    "kind": "component",
+    "component": "RveTypewriterSubtitle",
+    "modulePath": "presets/rve/typewriter-subtitle",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-typewriter-subtitle.webp",
+    "parameters": [
+      {
+        "key": "text",
+        "label": "文字内容",
+        "type": "text",
+        "defaultValue": "I like typing..."
+      },
+      {
+        "key": "primaryColor",
+        "label": "光标色",
+        "type": "color",
+        "defaultValue": "#60a5fa"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-animated-list",
+    "name": "列表入场",
+    "description": "列表项错峰出现",
+    "category": "content",
+    "kind": "component",
+    "component": "RveAnimatedList",
+    "modulePath": "presets/rve/animated-list",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-animated-list.webp",
+    "parameters": [
+      {
+        "key": "text",
+        "label": "列表项(逗号分隔)",
+        "type": "text",
+        "defaultValue": "Item One,Item Two,Item Three"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-card-flip",
+    "name": "卡片翻转",
+    "description": "3D 正反面翻转",
+    "category": "content",
+    "kind": "component",
+    "component": "RveCardFlip",
+    "modulePath": "presets/rve/card-flip",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-card-flip.webp",
+    "parameters": [
+      {
+        "key": "text",
+        "label": "正面文字",
+        "type": "text",
+        "defaultValue": "Remotion 👋"
+      },
+      {
+        "key": "subtitle",
+        "label": "背面文字",
+        "type": "text",
+        "defaultValue": "Back"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#1e3a8a"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-countdown-timer",
+    "name": "倒计时",
+    "description": "5-4-3-2-1-GO",
+    "category": "content",
+    "kind": "component",
+    "component": "RveCountdownTimer",
+    "modulePath": "presets/rve/countdown-timer",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-countdown-timer.webp",
+    "parameters": [
+      {
+        "key": "value",
+        "label": "起始数字",
+        "type": "number",
+        "defaultValue": 5
+      },
+      {
+        "key": "text",
+        "label": "结束文字",
+        "type": "text",
+        "defaultValue": "GO"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-notification-pop",
+    "name": "通知弹出",
+    "description": "堆叠通知气泡",
+    "category": "content",
+    "kind": "component",
+    "component": "RveNotificationPop",
+    "modulePath": "presets/rve/notification-pop",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-notification-pop.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "Notifications"
+      },
+      {
+        "key": "text",
+        "label": "首条通知标题",
+        "type": "text",
+        "defaultValue": "New Message"
+      },
+      {
+        "key": "subtitle",
+        "label": "首条通知内容",
+        "type": "text",
+        "defaultValue": "Hey! Check out this update."
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-particle-explosion",
+    "name": "粒子爆炸",
+    "description": "中心粒子爆发",
+    "category": "content",
+    "kind": "component",
+    "component": "RveParticleExplosion",
+    "modulePath": "presets/rve/particle-explosion",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-particle-explosion.webp",
+    "parameters": [
+      {
+        "key": "text",
+        "label": "中心文字",
+        "type": "text",
+        "defaultValue": "BOOM!"
+      },
+      {
+        "key": "primaryColor",
+        "label": "粒子主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "粒子辅色",
+        "type": "color",
+        "defaultValue": "#f72585"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-progress-steps",
+    "name": "步骤进度",
+    "description": "步骤指示器填充",
+    "category": "content",
+    "kind": "component",
+    "component": "RveProgressSteps",
+    "modulePath": "presets/rve/progress-steps",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-progress-steps.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "Project Timeline"
+      },
+      {
+        "key": "text",
+        "label": "步骤(逗号分隔)",
+        "type": "text",
+        "defaultValue": "Research,Design,Build,Launch"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-rotating-carousel",
+    "name": "旋转走马灯",
+    "description": "3D 卡片旋转",
+    "category": "content",
+    "kind": "component",
+    "component": "RveRotatingCarousel",
+    "modulePath": "presets/rve/rotating-carousel",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-rotating-carousel.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "Our Features"
+      },
+      {
+        "key": "text",
+        "label": "卡片项(逗号分隔)",
+        "type": "text",
+        "defaultValue": "Feature 1,Feature 2,Feature 3,Feature 4"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-sound-wave",
+    "name": "声波可视化",
+    "description": "音频波形条",
+    "category": "content",
+    "kind": "component",
+    "component": "RveSoundWave",
+    "modulePath": "presets/rve/sound-wave",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-sound-wave.webp",
+    "parameters": [
+      {
+        "key": "primaryColor",
+        "label": "波形色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      },
+      {
+        "key": "value",
+        "label": "柱数量",
+        "type": "number",
+        "defaultValue": 40
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-text-highlight",
+    "name": "文字高亮",
+    "description": "逐词高亮强调",
+    "category": "content",
+    "kind": "component",
+    "component": "RveTextHighlight",
+    "modulePath": "presets/rve/text-highlight",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-text-highlight.webp",
+    "parameters": [
+      {
+        "key": "text",
+        "label": "句子",
+        "type": "text",
+        "defaultValue": "Build amazing videos with code"
+      },
+      {
+        "key": "primaryColor",
+        "label": "高亮色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-bokeh-circles",
+    "name": "景深光斑",
+    "description": "漂浮柔焦光斑",
+    "category": "background",
+    "kind": "component",
+    "component": "RveBokehCircles",
+    "modulePath": "presets/rve/bokeh-circles",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-bokeh-circles.webp",
+    "parameters": [
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#8b5cf6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-geometric-patterns",
+    "name": "几何图案",
+    "description": "旋转缩放几何形",
+    "category": "background",
+    "kind": "component",
+    "component": "RveGeometricPatterns",
+    "modulePath": "presets/rve/geometric-patterns",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-geometric-patterns.webp",
+    "parameters": [
+      {
+        "key": "primaryColor",
+        "label": "线条色",
+        "type": "color",
+        "defaultValue": "#ffffff"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#0f172a"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "渐变辅色",
+        "type": "color",
+        "defaultValue": "#1e293b"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-gradient-shift",
+    "name": "渐变漂移",
+    "description": "环境渐变缓变",
+    "category": "background",
+    "kind": "component",
+    "component": "RveGradientShift",
+    "modulePath": "presets/rve/gradient-shift",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-gradient-shift.webp",
+    "parameters": [
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#1a1a2e"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#16213e"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "第三色",
+        "type": "color",
+        "defaultValue": "#0f3460"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-grid-pulse",
+    "name": "网格脉冲",
+    "description": "点阵涟漪波",
+    "category": "background",
+    "kind": "component",
+    "component": "RveGridPulse",
+    "modulePath": "presets/rve/grid-pulse",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-grid-pulse.webp",
+    "parameters": [
+      {
+        "key": "primaryColor",
+        "label": "点色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-liquid-wave",
+    "name": "液体波浪",
+    "description": "流动 SVG 波浪",
+    "category": "background",
+    "kind": "component",
+    "component": "RveLiquidWave",
+    "modulePath": "presets/rve/liquid-wave",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-liquid-wave.webp",
+    "parameters": [
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#1e3a8a"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-matrix-rain",
+    "name": "矩阵雨",
+    "description": "代码雨下落",
+    "category": "background",
+    "kind": "component",
+    "component": "RveMatrixRain",
+    "modulePath": "presets/rve/matrix-rain",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-matrix-rain.webp",
+    "parameters": [
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#0a1933"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#1e40af"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "文字色",
+        "type": "color",
+        "defaultValue": "#ffffff"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-noise-grain",
+    "name": "胶片颗粒",
+    "description": "细微噪点覆盖",
+    "category": "background",
+    "kind": "component",
+    "component": "RveNoiseGrain",
+    "modulePath": "presets/rve/noise-grain",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-noise-grain.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "Film Grain Overlay"
+      },
+      {
+        "key": "subtitle",
+        "label": "副标题",
+        "type": "text",
+        "defaultValue": "Subtle noise texture effect"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#1a1a2e"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-pixel-transition",
+    "name": "像素过渡",
+    "description": "像素网格揭示",
+    "category": "background",
+    "kind": "component",
+    "component": "RvePixelTransition",
+    "modulePath": "presets/rve/pixel-transition",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-pixel-transition.webp",
+    "parameters": [
+      {
+        "key": "primaryColor",
+        "label": "像素主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#0f172a"
+      },
+      {
+        "key": "value",
+        "label": "像素大小",
+        "type": "number",
+        "defaultValue": 20
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-starfield",
+    "name": "星空穿梭",
+    "description": "飞行星空效果",
+    "category": "background",
+    "kind": "component",
+    "component": "RveStarfield",
+    "modulePath": "presets/rve/starfield",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-starfield.webp",
+    "parameters": [
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#0a0a1a"
+      },
+      {
+        "key": "primaryColor",
+        "label": "星星色",
+        "type": "color",
+        "defaultValue": "#ffffff"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-camera-shake",
+    "name": "镜头抖动",
+    "description": "衰减冲击抖动",
+    "category": "content",
+    "kind": "component",
+    "component": "RveCameraShake",
+    "modulePath": "presets/rve/camera-shake",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-camera-shake.webp",
+    "parameters": [
+      {
+        "key": "text",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "IMPACT"
+      },
+      {
+        "key": "subtitle",
+        "label": "副标题",
+        "type": "text",
+        "defaultValue": "Camera shake with decaying amplitude"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-film-burn",
+    "name": "胶片灼烧",
+    "description": "暖色光晕叠加",
+    "category": "content",
+    "kind": "component",
+    "component": "RveFilmBurn",
+    "modulePath": "presets/rve/film-burn",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-film-burn.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "Film Burn Effect"
+      },
+      {
+        "key": "subtitle",
+        "label": "副标题",
+        "type": "text",
+        "defaultValue": "Light leak overlay"
+      },
+      {
+        "key": "primaryColor",
+        "label": "灼烧色",
+        "type": "color",
+        "defaultValue": "#f97316"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-ken-burns",
+    "name": "肯伯恩斯",
+    "description": "图片平移缩放",
+    "category": "content",
+    "kind": "component",
+    "component": "RveKenBurns",
+    "modulePath": "presets/rve/ken-burns",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-ken-burns.webp",
+    "parameters": [
+      {
+        "key": "imageUrl",
+        "label": "图片地址",
+        "type": "image",
+        "defaultValue": "https://images.unsplash.com/photo-1682687220742-aba13b6e50ba"
+      },
+      {
+        "key": "value",
+        "label": "缩放倍数",
+        "type": "number",
+        "defaultValue": 1.5
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#000000"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-letterbox-reveal",
+    "name": "宽银幕揭示",
+    "description": "黑边收拢揭示",
+    "category": "content",
+    "kind": "component",
+    "component": "RveLetterboxReveal",
+    "modulePath": "presets/rve/letterbox-reveal",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-letterbox-reveal.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "CINEMATIC"
+      },
+      {
+        "key": "subtitle",
+        "label": "副标题",
+        "type": "text",
+        "defaultValue": "A letterbox reveal"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-parallax-pan",
+    "name": "视差平移",
+    "description": "多层视差滚动",
+    "category": "content",
+    "kind": "component",
+    "component": "RveParallaxPan",
+    "modulePath": "presets/rve/parallax-pan",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-parallax-pan.webp",
+    "parameters": [
+      {
+        "key": "imageUrl",
+        "label": "图片地址",
+        "type": "image",
+        "defaultValue": "https://images.pexels.com/photos/1644724/pexels-photo-1644724.jpeg"
+      },
+      {
+        "key": "value",
+        "label": "缩放",
+        "type": "number",
+        "defaultValue": 1.2
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#000000"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-spotlight-reveal",
+    "name": "聚光灯揭示",
+    "description": "圆形遮罩扩展",
+    "category": "content",
+    "kind": "component",
+    "component": "RveSpotlightReveal",
+    "modulePath": "presets/rve/spotlight-reveal",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-spotlight-reveal.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "REVEALED"
+      },
+      {
+        "key": "subtitle",
+        "label": "副标题",
+        "type": "text",
+        "defaultValue": "Spotlight reveal transition"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#0a0a0a"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-vignette-pulse",
+    "name": "暗角脉冲",
+    "description": "边缘暗化脉冲",
+    "category": "content",
+    "kind": "component",
+    "component": "RveVignettePulse",
+    "modulePath": "presets/rve/vignette-pulse",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-vignette-pulse.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "Your Content Here"
+      },
+      {
+        "key": "subtitle",
+        "label": "副标题",
+        "type": "text",
+        "defaultValue": "Vignette pulses around the edges"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-whip-pan",
+    "name": "甩镜平移",
+    "description": "快速水平甩镜",
+    "category": "content",
+    "kind": "component",
+    "component": "RveWhipPan",
+    "modulePath": "presets/rve/whip-pan",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-whip-pan.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "场景A标题",
+        "type": "text",
+        "defaultValue": "Scene A"
+      },
+      {
+        "key": "subtitle",
+        "label": "场景A副标题",
+        "type": "text",
+        "defaultValue": "Blue content"
+      },
+      {
+        "key": "primaryColor",
+        "label": "场景A主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "场景B主色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-zoom-pulse",
+    "name": "缩放脉冲",
+    "description": "节奏性缩放",
+    "category": "content",
+    "kind": "component",
+    "component": "RveZoomPulse",
+    "modulePath": "presets/rve/zoom-pulse",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-zoom-pulse.webp",
+    "parameters": [
+      {
+        "key": "imageUrl",
+        "label": "图片地址",
+        "type": "image",
+        "defaultValue": "https://images.pexels.com/photos/1726310/pexels-photo-1726310.jpeg"
+      },
+      {
+        "key": "value",
+        "label": "最大缩放",
+        "type": "number",
+        "defaultValue": 1.1
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#000000"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-blinds-transition",
+    "name": "百叶窗转场",
+    "description": "水平百叶窗",
+    "category": "transition",
+    "kind": "component",
+    "component": "RveBlindsTransition",
+    "modulePath": "presets/rve/blinds-transition",
+    "durationInFrames": 75,
+    "isBuiltin": true,
+    "thumbnail": "rve-blinds-transition.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "场景A标题",
+        "type": "text",
+        "defaultValue": "Scene A"
+      },
+      {
+        "key": "subtitle",
+        "label": "场景B标题",
+        "type": "text",
+        "defaultValue": "Scene B"
+      },
+      {
+        "key": "primaryColor",
+        "label": "场景A主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "场景B主色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-clock-wipe",
+    "name": "时钟擦除",
+    "description": "径向时钟扫过",
+    "category": "transition",
+    "kind": "component",
+    "component": "RveClockWipe",
+    "modulePath": "presets/rve/clock-wipe",
+    "durationInFrames": 75,
+    "isBuiltin": true,
+    "thumbnail": "rve-clock-wipe.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "场景A标题",
+        "type": "text",
+        "defaultValue": "Scene A"
+      },
+      {
+        "key": "subtitle",
+        "label": "场景B标题",
+        "type": "text",
+        "defaultValue": "Scene B"
+      },
+      {
+        "key": "primaryColor",
+        "label": "场景A主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "场景B主色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-cross-dissolve",
+    "name": "交叉溶解",
+    "description": "经典叠化转场",
+    "category": "transition",
+    "kind": "component",
+    "component": "RveCrossDissolve",
+    "modulePath": "presets/rve/cross-dissolve",
+    "durationInFrames": 75,
+    "isBuiltin": true,
+    "thumbnail": "rve-cross-dissolve.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "场景A标题",
+        "type": "text",
+        "defaultValue": "Scene A"
+      },
+      {
+        "key": "subtitle",
+        "label": "场景B标题",
+        "type": "text",
+        "defaultValue": "Scene B"
+      },
+      {
+        "key": "primaryColor",
+        "label": "场景A主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "场景B主色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-fade-through-black",
+    "name": "黑场过渡",
+    "description": "经黑场切换",
+    "category": "transition",
+    "kind": "component",
+    "component": "RveFadeThroughBlack",
+    "modulePath": "presets/rve/fade-through-black",
+    "durationInFrames": 75,
+    "isBuiltin": true,
+    "thumbnail": "rve-fade-through-black.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "场景1标题",
+        "type": "text",
+        "defaultValue": "Scene 1"
+      },
+      {
+        "key": "subtitle",
+        "label": "场景2标题",
+        "type": "text",
+        "defaultValue": "Scene 2"
+      },
+      {
+        "key": "primaryColor",
+        "label": "场景1主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "场景2主色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-iris-transition",
+    "name": "光圈转场",
+    "description": "圆形光圈开合",
+    "category": "transition",
+    "kind": "component",
+    "component": "RveIrisTransition",
+    "modulePath": "presets/rve/iris-transition",
+    "durationInFrames": 75,
+    "isBuiltin": true,
+    "thumbnail": "rve-iris-transition.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "场景A标题",
+        "type": "text",
+        "defaultValue": "Scene A"
+      },
+      {
+        "key": "subtitle",
+        "label": "场景B标题",
+        "type": "text",
+        "defaultValue": "Scene B"
+      },
+      {
+        "key": "primaryColor",
+        "label": "场景A主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "场景B主色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-morph-transition",
+    "name": "形变转场",
+    "description": "缩放淡入形变",
+    "category": "transition",
+    "kind": "component",
+    "component": "RveMorphTransition",
+    "modulePath": "presets/rve/morph-transition",
+    "durationInFrames": 75,
+    "isBuiltin": true,
+    "thumbnail": "rve-morph-transition.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "场景A标题",
+        "type": "text",
+        "defaultValue": "Scene A"
+      },
+      {
+        "key": "subtitle",
+        "label": "场景B标题",
+        "type": "text",
+        "defaultValue": "Scene B"
+      },
+      {
+        "key": "primaryColor",
+        "label": "场景A主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "场景B主色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-push-transition",
+    "name": "推挤转场",
+    "description": "新场景推走旧场景",
+    "category": "transition",
+    "kind": "component",
+    "component": "RvePushTransition",
+    "modulePath": "presets/rve/push-transition",
+    "durationInFrames": 75,
+    "isBuiltin": true,
+    "thumbnail": "rve-push-transition.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "场景A标题",
+        "type": "text",
+        "defaultValue": "Scene A"
+      },
+      {
+        "key": "subtitle",
+        "label": "场景B标题",
+        "type": "text",
+        "defaultValue": "Scene B"
+      },
+      {
+        "key": "primaryColor",
+        "label": "场景A主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "场景B主色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-slide-wipe",
+    "name": "滑动擦除",
+    "description": "弹簧面板滑动",
+    "category": "transition",
+    "kind": "component",
+    "component": "RveSlideWipe",
+    "modulePath": "presets/rve/slide-wipe",
+    "durationInFrames": 75,
+    "isBuiltin": true,
+    "thumbnail": "rve-slide-wipe.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "旧场景标题",
+        "type": "text",
+        "defaultValue": "Old Scene"
+      },
+      {
+        "key": "subtitle",
+        "label": "新场景标题",
+        "type": "text",
+        "defaultValue": "New Scene"
+      },
+      {
+        "key": "primaryColor",
+        "label": "旧场景主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "新场景主色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-zoom-through",
+    "name": "穿越缩放",
+    "description": "缩放穿越揭示",
+    "category": "transition",
+    "kind": "component",
+    "component": "RveZoomThrough",
+    "modulePath": "presets/rve/zoom-through",
+    "durationInFrames": 75,
+    "isBuiltin": true,
+    "thumbnail": "rve-zoom-through.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "场景A标题",
+        "type": "text",
+        "defaultValue": "Zooming In..."
+      },
+      {
+        "key": "subtitle",
+        "label": "场景B标题",
+        "type": "text",
+        "defaultValue": "Arriving..."
+      },
+      {
+        "key": "primaryColor",
+        "label": "场景A主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "场景B主色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-logo-blur-reveal",
+    "name": "Logo 模糊揭示",
+    "description": "对焦式清晰化",
+    "category": "intro-outro",
+    "kind": "component",
+    "component": "RveLogoBlurReveal",
+    "modulePath": "presets/rve/logo-blur-reveal",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-logo-blur-reveal.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "Logo文字",
+        "type": "text",
+        "defaultValue": "LOGO"
+      },
+      {
+        "key": "subtitle",
+        "label": "公司名",
+        "type": "text",
+        "defaultValue": "Company Name"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-logo-bounce-drop",
+    "name": "Logo 弹跳落下",
+    "description": "自上落下弹跳",
+    "category": "intro-outro",
+    "kind": "component",
+    "component": "RveLogoBounceDrop",
+    "modulePath": "presets/rve/logo-bounce-drop",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-logo-bounce-drop.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "Logo文字",
+        "type": "text",
+        "defaultValue": "LOGO"
+      },
+      {
+        "key": "subtitle",
+        "label": "公司名",
+        "type": "text",
+        "defaultValue": "Company Name"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-logo-fade-reveal",
+    "name": "Logo 淡入",
+    "description": "淡入微缩放",
+    "category": "intro-outro",
+    "kind": "component",
+    "component": "RveLogoFadeReveal",
+    "modulePath": "presets/rve/logo-fade-reveal",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-logo-fade-reveal.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "Logo文字",
+        "type": "text",
+        "defaultValue": "LOGO"
+      },
+      {
+        "key": "subtitle",
+        "label": "公司名",
+        "type": "text",
+        "defaultValue": "Company Name"
+      },
+      {
+        "key": "text",
+        "label": "标语",
+        "type": "text",
+        "defaultValue": "Your tagline here"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-logo-glitch-reveal",
+    "name": "Logo 故障揭示",
+    "description": "故障衰减至清晰",
+    "category": "intro-outro",
+    "kind": "component",
+    "component": "RveLogoGlitchReveal",
+    "modulePath": "presets/rve/logo-glitch-reveal",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-logo-glitch-reveal.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "Logo文字",
+        "type": "text",
+        "defaultValue": "LOGO"
+      },
+      {
+        "key": "subtitle",
+        "label": "公司名",
+        "type": "text",
+        "defaultValue": "Company Name"
+      },
+      {
+        "key": "text",
+        "label": "标语",
+        "type": "text",
+        "defaultValue": "Your tagline here"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-logo-scale-rotate",
+    "name": "Logo 旋转缩放",
+    "description": "旋转缩放入场",
+    "category": "intro-outro",
+    "kind": "component",
+    "component": "RveLogoScaleRotate",
+    "modulePath": "presets/rve/logo-scale-rotate",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-logo-scale-rotate.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "Logo文字",
+        "type": "text",
+        "defaultValue": "LOGO"
+      },
+      {
+        "key": "subtitle",
+        "label": "公司名",
+        "type": "text",
+        "defaultValue": "Company Name"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-logo-spin-reveal",
+    "name": "Logo 3D 旋转",
+    "description": "Y 轴旋转揭示",
+    "category": "intro-outro",
+    "kind": "component",
+    "component": "RveLogoSpinReveal",
+    "modulePath": "presets/rve/logo-spin-reveal",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-logo-spin-reveal.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "Logo文字",
+        "type": "text",
+        "defaultValue": "LOGO"
+      },
+      {
+        "key": "subtitle",
+        "label": "公司名",
+        "type": "text",
+        "defaultValue": "Company Name"
+      },
+      {
+        "key": "text",
+        "label": "标语",
+        "type": "text",
+        "defaultValue": "Your tagline here"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-logo-split-reveal",
+    "name": "Logo 分裂揭示",
+    "description": "左右两半展开",
+    "category": "intro-outro",
+    "kind": "component",
+    "component": "RveLogoSplitReveal",
+    "modulePath": "presets/rve/logo-split-reveal",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-logo-split-reveal.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "Logo文字",
+        "type": "text",
+        "defaultValue": "LOGO"
+      },
+      {
+        "key": "subtitle",
+        "label": "公司名",
+        "type": "text",
+        "defaultValue": "Company Name"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-logo-stroke-draw",
+    "name": "Logo 描边绘制",
+    "description": "SVG 描边动画",
+    "category": "intro-outro",
+    "kind": "component",
+    "component": "RveLogoStrokeDraw",
+    "modulePath": "presets/rve/logo-stroke-draw",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-logo-stroke-draw.webp",
+    "parameters": [
+      {
+        "key": "subtitle",
+        "label": "公司名",
+        "type": "text",
+        "defaultValue": "Company Name"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-logo-typewriter",
+    "name": "Logo 打字机",
+    "description": "图标 + 打字名称",
+    "category": "intro-outro",
+    "kind": "component",
+    "component": "RveLogoTypewriter",
+    "modulePath": "presets/rve/logo-typewriter",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-logo-typewriter.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "品牌名",
+        "type": "text",
+        "defaultValue": "ACME STUDIO"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-chapter-title",
+    "name": "章节标题",
+    "description": "章节号与延伸线",
+    "category": "intro-outro",
+    "kind": "component",
+    "component": "RveChapterTitle",
+    "modulePath": "presets/rve/chapter-title",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-chapter-title.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "章节号",
+        "type": "text",
+        "defaultValue": "1"
+      },
+      {
+        "key": "subtitle",
+        "label": "章节名",
+        "type": "text",
+        "defaultValue": "The Beginning"
+      },
+      {
+        "key": "text",
+        "label": "标签",
+        "type": "text",
+        "defaultValue": "Chapter"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-cinematic-title-intro",
+    "name": "电影感标题",
+    "description": "标题弹入下划线",
+    "category": "intro-outro",
+    "kind": "component",
+    "component": "RveCinematicTitleIntro",
+    "modulePath": "presets/rve/cinematic-title-intro",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-cinematic-title-intro.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "Your Story Begins"
+      },
+      {
+        "key": "subtitle",
+        "label": "副标题",
+        "type": "text",
+        "defaultValue": "A Cinematic Experience"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-countdown-intro",
+    "name": "开场倒计时",
+    "description": "圆环 3-2-1-GO",
+    "category": "intro-outro",
+    "kind": "component",
+    "component": "RveCountdownIntro",
+    "modulePath": "presets/rve/countdown-intro",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-countdown-intro.webp",
+    "parameters": [
+      {
+        "key": "value",
+        "label": "倒计时秒数",
+        "type": "number",
+        "defaultValue": 3
+      },
+      {
+        "key": "text",
+        "label": "结束文字",
+        "type": "text",
+        "defaultValue": "GO!"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-credits-roll",
+    "name": "演职员表",
+    "description": "滚动片尾字幕",
+    "category": "intro-outro",
+    "kind": "component",
+    "component": "RveCreditsRoll",
+    "modulePath": "presets/rve/credits-roll",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-credits-roll.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "首条职位",
+        "type": "text",
+        "defaultValue": "Director"
+      },
+      {
+        "key": "subtitle",
+        "label": "首条姓名",
+        "type": "text",
+        "defaultValue": "Jane Smith"
+      },
+      {
+        "key": "primaryColor",
+        "label": "职位色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-end-card",
+    "name": "片尾卡片",
+    "description": "订阅 CTA 片尾",
+    "category": "intro-outro",
+    "kind": "component",
+    "component": "RveEndCard",
+    "modulePath": "presets/rve/end-card",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-end-card.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标题",
+        "type": "text",
+        "defaultValue": "Thanks for Watching"
+      },
+      {
+        "key": "subtitle",
+        "label": "按钮文字",
+        "type": "text",
+        "defaultValue": "Subscribe for More"
+      },
+      {
+        "key": "text",
+        "label": "页脚",
+        "type": "text",
+        "defaultValue": "STUDIO CREATIVE"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-lower-third",
+    "name": "下三分之一",
+    "description": "新闻风格姓名条",
+    "category": "intro-outro",
+    "kind": "component",
+    "component": "RveLowerThird",
+    "modulePath": "presets/rve/lower-third",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-lower-third.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "姓名",
+        "type": "text",
+        "defaultValue": "John Smith"
+      },
+      {
+        "key": "subtitle",
+        "label": "职位",
+        "type": "text",
+        "defaultValue": "Senior Producer"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-quote-card",
+    "name": "引用卡片",
+    "description": "名言引用动画",
+    "category": "intro-outro",
+    "kind": "component",
+    "component": "RveQuoteCard",
+    "modulePath": "presets/rve/quote-card",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-quote-card.webp",
+    "parameters": [
+      {
+        "key": "text",
+        "label": "引用内容",
+        "type": "text",
+        "defaultValue": "Design is not just what it looks like. Design is how it works."
+      },
+      {
+        "key": "subtitle",
+        "label": "署名",
+        "type": "text",
+        "defaultValue": "Steve Jobs"
+      },
+      {
+        "key": "primaryColor",
+        "label": "引号色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-subscribe-reminder",
+    "name": "订阅提醒",
+    "description": "浮动订阅提示",
+    "category": "intro-outro",
+    "kind": "component",
+    "component": "RveSubscribeReminder",
+    "modulePath": "presets/rve/subscribe-reminder",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-subscribe-reminder.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "主内容文字",
+        "type": "text",
+        "defaultValue": "Your Video Content"
+      },
+      {
+        "key": "subtitle",
+        "label": "按钮文字",
+        "type": "text",
+        "defaultValue": "Subscribe"
+      },
+      {
+        "key": "text",
+        "label": "账号",
+        "type": "text",
+        "defaultValue": "@CreativeStudio"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-title-split",
+    "name": "标题汇合",
+    "description": "分裂文字汇合",
+    "category": "intro-outro",
+    "kind": "component",
+    "component": "RveTitleSplit",
+    "modulePath": "presets/rve/title-split",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-title-split.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "上行文字",
+        "type": "text",
+        "defaultValue": "CREATIVE"
+      },
+      {
+        "key": "subtitle",
+        "label": "下行文字",
+        "type": "text",
+        "defaultValue": "STUDIO"
+      },
+      {
+        "key": "primaryColor",
+        "label": "发光色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-gallery-grid",
+    "name": "画廊网格",
+    "description": "2×3 网格错峰",
+    "category": "social-media",
+    "kind": "component",
+    "component": "RveGalleryGrid",
+    "modulePath": "presets/rve/gallery-grid",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-gallery-grid.webp",
+    "parameters": [
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-image-carousel",
+    "name": "图片轮播",
+    "description": "水平滑动聚焦",
+    "category": "social-media",
+    "kind": "component",
+    "component": "RveImageCarousel",
+    "modulePath": "presets/rve/image-carousel",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-image-carousel.webp",
+    "parameters": [
+      {
+        "key": "text",
+        "label": "标签(逗号分隔)",
+        "type": "text",
+        "defaultValue": "Mountain,Ocean,Forest"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-image-comparison-slider",
+    "name": "对比滑块",
+    "description": "前后对比滑杆",
+    "category": "social-media",
+    "kind": "component",
+    "component": "RveImageComparisonSlider",
+    "modulePath": "presets/rve/image-comparison-slider",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-image-comparison-slider.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "前标签",
+        "type": "text",
+        "defaultValue": "Before"
+      },
+      {
+        "key": "subtitle",
+        "label": "后标签",
+        "type": "text",
+        "defaultValue": "After"
+      },
+      {
+        "key": "primaryColor",
+        "label": "前色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "后色",
+        "type": "color",
+        "defaultValue": "#1e293b"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-image-zoom-reveal",
+    "name": "图片缩放揭示",
+    "description": "拉焦缩放揭示",
+    "category": "social-media",
+    "kind": "component",
+    "component": "RveImageZoomReveal",
+    "modulePath": "presets/rve/image-zoom-reveal",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-image-zoom-reveal.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "标签",
+        "type": "text",
+        "defaultValue": "Featured Image"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-masonry-gallery",
+    "name": "瀑布流画廊",
+    "description": "瀑布流错峰",
+    "category": "social-media",
+    "kind": "component",
+    "component": "RveMasonryGallery",
+    "modulePath": "presets/rve/masonry-gallery",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-masonry-gallery.webp",
+    "parameters": [
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#a855f7"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-photo-stack",
+    "name": "照片堆叠",
+    "description": "重叠旋转相框",
+    "category": "social-media",
+    "kind": "component",
+    "component": "RvePhotoStack",
+    "modulePath": "presets/rve/photo-stack",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-photo-stack.webp",
+    "parameters": [
+      {
+        "key": "text",
+        "label": "标签(逗号分隔)",
+        "type": "text",
+        "defaultValue": "Photo 1,Photo 2,Photo 3"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#3b82f6"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-picture-in-picture",
+    "name": "画中画",
+    "description": "PiP 布局",
+    "category": "social-media",
+    "kind": "component",
+    "component": "RvePictureInPicture",
+    "modulePath": "presets/rve/picture-in-picture",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-picture-in-picture.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "主画面文字",
+        "type": "text",
+        "defaultValue": "Main Content"
+      },
+      {
+        "key": "subtitle",
+        "label": "画中画文字",
+        "type": "text",
+        "defaultValue": "Speaker"
+      },
+      {
+        "key": "primaryColor",
+        "label": "PiP主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-polaroid-frame",
+    "name": "拍立得相框",
+    "description": "拍立得落下",
+    "category": "social-media",
+    "kind": "component",
+    "component": "RvePolaroidFrame",
+    "modulePath": "presets/rve/polaroid-frame",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-polaroid-frame.webp",
+    "parameters": [
+      {
+        "key": "subtitle",
+        "label": "相框文字",
+        "type": "text",
+        "defaultValue": "Summer 2024"
+      },
+      {
+        "key": "primaryColor",
+        "label": "主色",
+        "type": "color",
+        "defaultValue": "#4361ee"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "辅色",
+        "type": "color",
+        "defaultValue": "#7209b7"
+      },
+      {
+        "key": "backgroundColor",
+        "label": "背景色",
+        "type": "color",
+        "defaultValue": "#111827"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  },
+  {
+    "id": "rve-split-screen",
+    "name": "分屏",
+    "description": "双画面拼合",
+    "category": "social-media",
+    "kind": "component",
+    "component": "RveSplitScreen",
+    "modulePath": "presets/rve/split-screen",
+    "durationInFrames": 90,
+    "isBuiltin": true,
+    "thumbnail": "rve-split-screen.webp",
+    "parameters": [
+      {
+        "key": "title",
+        "label": "左标题",
+        "type": "text",
+        "defaultValue": "Panel A"
+      },
+      {
+        "key": "subtitle",
+        "label": "右标题",
+        "type": "text",
+        "defaultValue": "Panel B"
+      },
+      {
+        "key": "primaryColor",
+        "label": "左主色",
+        "type": "color",
+        "defaultValue": "#1d4ed8"
+      },
+      {
+        "key": "secondaryColor",
+        "label": "右主色",
+        "type": "color",
+        "defaultValue": "#7c3aed"
+      }
+    ],
+    "license": "MIT",
+    "source": "reactvideoeditor/remotion-templates"
+  }
+]
