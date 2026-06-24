@@ -1,4 +1,4 @@
-const { app, BrowserWindow, screen } = require("electron");
+const { app, BrowserWindow, nativeTheme, screen } = require("electron");
 const path = require("node:path");
 const { loadEnv } = require("./utils/load-env");
 const { registerProjectHandlers } = require("./ipc-handlers/project");
@@ -10,10 +10,15 @@ const { registerSettingsHandlers } = require("./ipc-handlers/settings");
 const { registerConversationHandlers } = require("./ipc-handlers/conversation");
 const previewService = require("./services/preview-service");
 const uiStateService = require("./services/ui-state-service");
+const { installApplicationMenu } = require("./application-menu");
+const { getMainWindowChromeOptions } = require("./window-chrome");
 const { ensureDir } = require("./services/file-service");
 const { getConfigDir } = require("./utils/paths");
 
 loadEnv();
+
+// 固定暗色壳层，避免 Windows 浅色主题把标题栏刷成白色
+nativeTheme.themeSource = "dark";
 
 const RENDERER_DEV_URL = process.env.ELECTRON_RENDERER_URL || "http://127.0.0.1:5173";
 
@@ -40,10 +45,9 @@ const createWindow = () => {
   );
 
   const win = new BrowserWindow({
-    ...bounds,
+    ...getMainWindowChromeOptions(bounds),
     minWidth: uiStateService.MAIN_WINDOW_MIN_WIDTH,
     minHeight: uiStateService.MAIN_WINDOW_MIN_HEIGHT,
-    show: false,
     webPreferences: {
       preload: path.join(__dirname, "../preload/index.js"),
       contextIsolation: true,
@@ -87,6 +91,7 @@ const createWindow = () => {
 };
 
 app.whenReady().then(() => {
+  installApplicationMenu();
   ensureDir(getConfigDir());
   registerProjectHandlers();
   registerTimelineHandlers();

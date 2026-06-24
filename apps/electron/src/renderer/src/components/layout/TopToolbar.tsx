@@ -15,10 +15,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { PR_SHORTCUTS } from "@/lib/premiereShortcuts";
+import { cn } from "@/lib/utils";
 import { useProjectStore } from "@/stores/projectStore";
 import { toast } from "sonner";
 import { useTimelineStore } from "@/stores/timelineStore";
 import { useUiStore } from "@/stores/uiStore";
+import { getEasyMotion } from "@/types/easyMotion";
 
 function ToolbarIconButton({
   label,
@@ -61,9 +63,15 @@ export function TopToolbar() {
   const redo = useTimelineStore((s) => s.redo);
   const canUndo = useTimelineStore((s) => s.history.past.length > 0);
   const canRedo = useTimelineStore((s) => s.history.future.length > 0);
+  const shell = getEasyMotion()?.shell;
 
   return (
-    <header className="z-40 flex h-11 shrink-0 items-center justify-between border-b border-border bg-background px-2">
+    <header
+      className={cn(
+        "z-40 flex h-11 shrink-0 items-center justify-between border-b border-border bg-background px-2",
+        shell?.trafficLightInset && "pl-[4.5rem]",
+      )}
+    >
       <div className="flex items-center gap-1">
         <ToolbarIconButton label="菜单">
           <Menu className="h-4 w-4" />

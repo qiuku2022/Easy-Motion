@@ -65,6 +65,10 @@ export interface ProjectSummary {
 
 export interface EasyMotionApi {
   version: string;
+  shell?: {
+    platform: string;
+    trafficLightInset: boolean;
+  };
   project: {
     create: (config: {
       name: string;

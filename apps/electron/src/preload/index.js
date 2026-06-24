@@ -6,6 +6,10 @@ async function invoke(channel, payload) {
 
 contextBridge.exposeInMainWorld("easyMotion", {
   version: "0.1.0",
+  shell: {
+    platform: process.platform,
+    trafficLightInset: process.platform === "darwin",
+  },
   project: {
     create: (config) => invoke("main:project:create", config),
     open: (path) => invoke("main:project:open", { path }),
