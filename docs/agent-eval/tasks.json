@@ -1,0 +1,645 @@
+{
+  "version": "1.0",
+  "description": "EasyMotion 产品 Agent 评估任务集。deterministic 任务可用 test-agent-eval.js 离线验证；live 任务需 API Key，用 test-agent-live.js 模式手动或 CI nightly 跑。",
+  "baseTimeline": {
+    "version": "1.0",
+    "fps": 30,
+    "durationInFrames": 90,
+    "width": 1280,
+    "height": 720,
+    "tracks": []
+  },
+  "tasks": [
+    {
+      "id": "eval-01",
+      "name": "创建居中标题（文字 + 淡入）",
+      "mode": "deterministic",
+      "userPrompt": "在画面中央添加标题「Hello World」，白色 72px，淡入 20 帧",
+      "steps": [
+        {
+          "op": "createTrack",
+          "args": { "name": "标题", "type": "text" },
+          "saveAs": "trackId"
+        },
+        {
+          "op": "createClip",
+          "args": {
+            "trackId": "$trackId",
+            "name": "Hello World",
+            "startInFrames": 0,
+            "durationInFrames": 90,
+            "source": { "kind": "inline", "content": "Hello World" },
+            "transform": { "position": { "x": 640, "y": 360 } },
+            "style": {
+              "fontFamily": "Inter, sans-serif",
+              "fontSize": 72,
+              "color": "#ffffff",
+              "textAlign": "center"
+            },
+            "animations": { "in": { "type": "fade", "durationInFrames": 20 } }
+          },
+          "saveAs": "clipId"
+        }
+      ],
+      "assertions": [
+        { "type": "trackCount", "min": 1 },
+        { "type": "hasTrackType", "trackType": "text" },
+        { "type": "clipTextContent", "equals": "Hello World" },
+        { "type": "clipStyle", "path": "color", "equals": "#ffffff" },
+        { "type": "clipAnimationIn", "animationType": "fade" }
+      ]
+    },
+    {
+      "id": "eval-02",
+      "name": "修改已有标题文字",
+      "mode": "deterministic",
+      "userPrompt": "把标题改成「欢迎观看」",
+      "initialTimeline": {
+        "version": "1.0",
+        "fps": 30,
+        "durationInFrames": 90,
+        "width": 1280,
+        "height": 720,
+        "tracks": [
+          {
+            "id": "track-seed-1",
+            "name": "标题",
+            "type": "text",
+            "order": 0,
+            "clips": [
+              {
+                "id": "clip-seed-1",
+                "name": "旧标题",
+                "type": "text",
+                "startInFrames": 0,
+                "durationInFrames": 90,
+                "source": { "kind": "inline", "content": "旧标题" },
+                "style": { "fontSize": 60, "color": "#ffffff" }
+              }
+            ]
+          }
+        ]
+      },
+      "steps": [
+        {
+          "op": "updateClip",
+          "args": {
+            "clipId": "clip-seed-1",
+            "updates": { "source.content": "欢迎观看" }
+          }
+        }
+      ],
+      "assertions": [
+        { "type": "clipTextContent", "clipId": "clip-seed-1", "equals": "欢迎观看" },
+        { "type": "clipProperty", "clipId": "clip-seed-1", "path": "lastModifiedBy", "equals": "ai" }
+      ]
+    },
+    {
+      "id": "eval-03",
+      "name": "相对调整字号（大一点）",
+      "mode": "deterministic",
+      "userPrompt": "字体大一点",
+      "initialTimeline": {
+        "version": "1.0",
+        "fps": 30,
+        "durationInFrames": 90,
+        "width": 1280,
+        "height": 720,
+        "tracks": [
+          {
+            "id": "track-seed-1",
+            "name": "标题",
+            "type": "text",
+            "order": 0,
+            "clips": [
+              {
+                "id": "clip-seed-1",
+                "name": "标题",
+                "type": "text",
+                "startInFrames": 0,
+                "durationInFrames": 90,
+                "source": { "kind": "inline", "content": "Demo" },
+                "style": { "fontSize": 60, "color": "#ffffff" }
+              }
+            ]
+          }
+        ]
+      },
+      "steps": [
+        {
+          "op": "updateClip",
+          "args": {
+            "clipId": "clip-seed-1",
+            "updates": { "style.fontSize": 72 }
+          }
+        }
+      ],
+      "assertions": [
+        { "type": "clipStyle", "clipId": "clip-seed-1", "path": "fontSize", "equals": 72 }
+      ]
+    },
+    {
+      "id": "eval-04",
+      "name": "四色渐变背景（shape 全屏）",
+      "mode": "deterministic",
+      "note": "对应 test-place-preset / test-agent-live 的黄金场景",
+      "userPrompt": "把背景改成四色渐变 linear-gradient(135deg, #ff006e, #fb5607, #ffbe0b, #06d6a0)",
+      "steps": [
+        {
+          "op": "createTrack",
+          "args": { "name": "背景", "type": "shape", "order": 0 },
+          "saveAs": "trackId"
+        },
+        {
+          "op": "createClip",
+          "args": {
+            "trackId": "$trackId",
+            "name": "渐变背景",
+            "startInFrames": 0,
+            "durationInFrames": 90,
+            "source": { "kind": "inline", "shape": "rect" },
+            "transform": { "position": { "x": 640, "y": 360 } },
+            "style": {
+              "width": 1280,
+              "height": 720,
+              "background": "linear-gradient(135deg, #ff006e, #fb5607, #ffbe0b, #06d6a0)"
+            }
+          }
+        }
+      ],
+      "assertions": [
+        { "type": "hasTrackType", "trackType": "shape" },
+        {
+          "type": "clipStyle",
+          "path": "background",
+          "includes": "linear-gradient"
+        }
+      ]
+    },
+    {
+      "id": "eval-05",
+      "name": "应用弹跳文字预设",
+      "mode": "deterministic",
+      "userPrompt": "加一个弹跳文字动画，内容是 Agent",
+      "steps": [
+        {
+          "op": "applyPreset",
+          "args": {
+            "presetId": "rve-popping-text",
+            "startInFrames": 0,
+            "parameters": { "text": "Agent" }
+          },
+          "saveAs": "clipId"
+        }
+      ],
+      "assertions": [
+        { "type": "hasTrackType", "trackType": "animation" },
+        { "type": "clipSource", "path": "component", "equals": "RvePoppingText" },
+        { "type": "clipSource", "path": "presetId", "equals": "rve-popping-text" },
+        { "type": "clipSource", "path": "props.text", "equals": "Agent" }
+      ]
+    },
+    {
+      "id": "eval-06",
+      "name": "应用柱状图预设并改标题",
+      "mode": "deterministic",
+      "userPrompt": "添加柱状图，标题写「2024 销售」",
+      "steps": [
+        {
+          "op": "applyPreset",
+          "args": {
+            "presetId": "rve-chart-animation",
+            "startInFrames": 0,
+            "parameters": { "title": "2024 销售" }
+          }
+        }
+      ],
+      "assertions": [
+        { "type": "clipSource", "path": "component", "equals": "RveChartAnimation" },
+        { "type": "clipSource", "path": "props.title", "equals": "2024 销售" }
+      ]
+    },
+    {
+      "id": "eval-07",
+      "name": "预设搜索（catalog）",
+      "mode": "deterministic",
+      "userPrompt": "有哪些图表类预设？",
+      "steps": [
+        {
+          "op": "searchPresets",
+          "args": { "category": "data-chart" },
+          "saveAs": "searchResult"
+        }
+      ],
+      "assertions": [
+        { "type": "presetSearchMinCount", "var": "searchResult", "min": 3 },
+        { "type": "presetSearchHasId", "var": "searchResult", "presetId": "rve-chart-animation" }
+      ]
+    },
+    {
+      "id": "eval-08",
+      "name": "删除片段",
+      "mode": "deterministic",
+      "userPrompt": "删除标题片段",
+      "initialTimeline": {
+        "version": "1.0",
+        "fps": 30,
+        "durationInFrames": 90,
+        "width": 1280,
+        "height": 720,
+        "tracks": [
+          {
+            "id": "track-seed-1",
+            "name": "标题",
+            "type": "text",
+            "order": 0,
+            "clips": [
+              {
+                "id": "clip-seed-1",
+                "name": "待删",
+                "type": "text",
+                "startInFrames": 0,
+                "durationInFrames": 60,
+                "source": { "kind": "inline", "content": "待删" }
+              }
+            ]
+          }
+        ]
+      },
+      "steps": [{ "op": "deleteClip", "args": { "clipId": "clip-seed-1" } }],
+      "assertions": [{ "type": "clipCount", "equals": 0 }]
+    },
+    {
+      "id": "eval-09",
+      "name": "添加透明度关键帧",
+      "mode": "deterministic",
+      "userPrompt": "给标题加透明度关键帧：第 0 帧 0，第 30 帧 1",
+      "initialTimeline": {
+        "version": "1.0",
+        "fps": 30,
+        "durationInFrames": 90,
+        "width": 1280,
+        "height": 720,
+        "tracks": [
+          {
+            "id": "track-seed-1",
+            "name": "标题",
+            "type": "text",
+            "order": 0,
+            "clips": [
+              {
+                "id": "clip-seed-1",
+                "name": "标题",
+                "type": "text",
+                "startInFrames": 0,
+                "durationInFrames": 90,
+                "source": { "kind": "inline", "content": "Fade" },
+                "style": { "opacity": 1 }
+              }
+            ]
+          }
+        ]
+      },
+      "steps": [
+        {
+          "op": "addKeyframe",
+          "args": {
+            "clipId": "clip-seed-1",
+            "property": "style.opacity",
+            "frame": 0,
+            "value": 0
+          }
+        },
+        {
+          "op": "addKeyframe",
+          "args": {
+            "clipId": "clip-seed-1",
+            "property": "style.opacity",
+            "frame": 30,
+            "value": 1
+          }
+        }
+      ],
+      "assertions": [
+        { "type": "keyframeCount", "clipId": "clip-seed-1", "property": "style.opacity", "min": 2 }
+      ]
+    },
+    {
+      "id": "eval-10",
+      "name": "设置滑入动画",
+      "mode": "deterministic",
+      "userPrompt": "标题从左侧滑入",
+      "initialTimeline": {
+        "version": "1.0",
+        "fps": 30,
+        "durationInFrames": 90,
+        "width": 1280,
+        "height": 720,
+        "tracks": [
+          {
+            "id": "track-seed-1",
+            "name": "标题",
+            "type": "text",
+            "order": 0,
+            "clips": [
+              {
+                "id": "clip-seed-1",
+                "name": "标题",
+                "type": "text",
+                "startInFrames": 0,
+                "durationInFrames": 90,
+                "source": { "kind": "inline", "content": "Slide" }
+              }
+            ]
+          }
+        ]
+      },
+      "steps": [
+        {
+          "op": "setAnimation",
+          "args": {
+            "clipId": "clip-seed-1",
+            "animationType": "in",
+            "config": { "type": "slide-left", "durationInFrames": 20 }
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "type": "clipProperty",
+          "clipId": "clip-seed-1",
+          "path": "animations.in.type",
+          "equals": "slide-left"
+        }
+      ]
+    },
+    {
+      "id": "eval-11",
+      "name": "双层结构：背景 + 标题",
+      "mode": "deterministic",
+      "userPrompt": "黑色背景上加白色大标题「Launch」",
+      "steps": [
+        {
+          "op": "createTrack",
+          "args": { "name": "背景", "type": "shape", "order": 0 },
+          "saveAs": "bgTrackId"
+        },
+        {
+          "op": "createClip",
+          "args": {
+            "trackId": "$bgTrackId",
+            "name": "黑底",
+            "startInFrames": 0,
+            "durationInFrames": 90,
+            "source": { "kind": "inline", "shape": "rect" },
+            "style": { "width": 1280, "height": 720, "fillColor": "#000000" }
+          }
+        },
+        {
+          "op": "createTrack",
+          "args": { "name": "标题", "type": "text", "order": 1 },
+          "saveAs": "textTrackId"
+        },
+        {
+          "op": "createClip",
+          "args": {
+            "trackId": "$textTrackId",
+            "name": "Launch",
+            "startInFrames": 0,
+            "durationInFrames": 90,
+            "source": { "kind": "inline", "content": "Launch" },
+            "transform": { "position": { "x": 640, "y": 360 } },
+            "style": { "fontSize": 80, "color": "#ffffff", "textAlign": "center" }
+          },
+          "saveAs": "textClipId"
+        }
+      ],
+      "assertions": [
+        { "type": "trackCount", "equals": 2 },
+        { "type": "clipTextContent", "clipId": "$textClipId", "equals": "Launch" },
+        { "type": "clipStyle", "path": "fillColor", "equals": "#000000" }
+      ]
+    },
+    {
+      "id": "eval-12",
+      "name": "修改 shape 纯色背景",
+      "mode": "deterministic",
+      "userPrompt": "背景改成深蓝色 #1e3a5f",
+      "initialTimeline": {
+        "version": "1.0",
+        "fps": 30,
+        "durationInFrames": 90,
+        "width": 1280,
+        "height": 720,
+        "tracks": [
+          {
+            "id": "track-bg",
+            "name": "背景",
+            "type": "shape",
+            "order": 0,
+            "clips": [
+              {
+                "id": "clip-bg",
+                "name": "背景",
+                "type": "shape",
+                "startInFrames": 0,
+                "durationInFrames": 90,
+                "source": { "kind": "inline", "shape": "rect" },
+                "style": { "width": 1280, "height": 720, "fillColor": "#000000" }
+              }
+            ]
+          }
+        ]
+      },
+      "steps": [
+        {
+          "op": "updateClip",
+          "args": {
+            "clipId": "clip-bg",
+            "updates": { "style.fillColor": "#1e3a5f" }
+          }
+        }
+      ],
+      "assertions": [
+        { "type": "clipStyle", "clipId": "clip-bg", "path": "fillColor", "equals": "#1e3a5f" }
+      ]
+    },
+    {
+      "id": "eval-13",
+      "name": "应用 lower third 预设",
+      "mode": "deterministic",
+      "userPrompt": "加一个字幕条，主标题「新闻快讯」",
+      "steps": [
+        {
+          "op": "applyPreset",
+          "args": {
+            "presetId": "rve-lower-third",
+            "startInFrames": 60,
+            "parameters": { "title": "新闻快讯" }
+          }
+        }
+      ],
+      "assertions": [
+        { "type": "clipSource", "path": "component", "equals": "RveLowerThird" },
+        { "type": "clipStartFrame", "equals": 60 }
+      ]
+    },
+    {
+      "id": "eval-14",
+      "name": "预设指定播放头位置",
+      "mode": "deterministic",
+      "userPrompt": "在第 45 帧放置打字机字幕",
+      "steps": [
+        {
+          "op": "applyPreset",
+          "args": {
+            "presetId": "rve-typewriter-subtitle",
+            "startInFrames": 45,
+            "parameters": { "text": "Typewriter" }
+          }
+        }
+      ],
+      "assertions": [{ "type": "clipStartFrame", "equals": 45 }]
+    },
+    {
+      "id": "eval-15",
+      "name": "出场动画 fade",
+      "mode": "deterministic",
+      "userPrompt": "标题结尾淡出 15 帧",
+      "initialTimeline": {
+        "version": "1.0",
+        "fps": 30,
+        "durationInFrames": 90,
+        "width": 1280,
+        "height": 720,
+        "tracks": [
+          {
+            "id": "track-seed-1",
+            "name": "标题",
+            "type": "text",
+            "order": 0,
+            "clips": [
+              {
+                "id": "clip-seed-1",
+                "name": "标题",
+                "type": "text",
+                "startInFrames": 0,
+                "durationInFrames": 90,
+                "source": { "kind": "inline", "content": "Out" }
+              }
+            ]
+          }
+        ]
+      },
+      "steps": [
+        {
+          "op": "setAnimation",
+          "args": {
+            "clipId": "clip-seed-1",
+            "animationType": "out",
+            "config": { "type": "fade", "durationInFrames": 15 }
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "type": "clipProperty",
+          "clipId": "clip-seed-1",
+          "path": "animations.out.type",
+          "equals": "fade"
+        }
+      ]
+    },
+    {
+      "id": "eval-16",
+      "name": "timeline 校验通过",
+      "mode": "deterministic",
+      "userPrompt": "创建合法时间线",
+      "steps": [
+        {
+          "op": "createTrack",
+          "args": { "name": "标题", "type": "text" },
+          "saveAs": "trackId"
+        },
+        {
+          "op": "createClip",
+          "args": {
+            "trackId": "$trackId",
+            "name": "Valid",
+            "startInFrames": 0,
+            "durationInFrames": 30,
+            "source": { "kind": "inline", "content": "Valid" }
+          }
+        }
+      ],
+      "assertions": [{ "type": "timelineValid", "equals": true }]
+    },
+    {
+      "id": "eval-17",
+      "name": "冲突检测：用户编辑后需确认",
+      "mode": "deterministic",
+      "userPrompt": "（内部）用户已手改片段时 Agent 应触发冲突",
+      "initialTimeline": {
+        "version": "1.0",
+        "fps": 30,
+        "durationInFrames": 90,
+        "width": 1280,
+        "height": 720,
+        "tracks": [
+          {
+            "id": "track-seed-1",
+            "name": "标题",
+            "type": "text",
+            "order": 0,
+            "clips": [
+              {
+                "id": "clip-seed-1",
+                "name": "标题",
+                "type": "text",
+                "startInFrames": 0,
+                "durationInFrames": 90,
+                "source": { "kind": "inline", "content": "用户改的" },
+                "lastModifiedBy": "user",
+                "lastModifiedAt": 0
+              }
+            ]
+          }
+        ]
+      },
+      "steps": [{ "op": "checkConflict", "args": { "clipId": "clip-seed-1" }, "saveAs": "conflict" }],
+      "assertions": [{ "type": "varEquals", "var": "conflict", "equals": true }]
+    },
+    {
+      "id": "eval-18",
+      "name": "Fallback 简化模式（无 LLM）",
+      "mode": "deterministic",
+      "userPrompt": "标题写着 Demo",
+      "steps": [{ "op": "runFallback", "args": { "input": "标题写着 Demo" }, "saveAs": "fallback" }],
+      "assertions": [
+        { "type": "varProperty", "var": "fallback", "path": "timelineChanged", "equals": true },
+        { "type": "varProperty", "var": "fallback", "path": "simplifiedMode", "equals": true }
+      ]
+    },
+    {
+      "id": "eval-19",
+      "name": "Live：四色渐变背景（需 API Key）",
+      "mode": "live",
+      "userPrompt": "把背景改成四色渐变。新建 shape 轨道在最底层，全屏矩形，style.background 用 linear-gradient(135deg, #ff006e, #fb5607, #ffbe0b, #06d6a0)",
+      "assertions": [
+        { "type": "timelineChanged", "equals": true },
+        { "type": "hasTrackType", "trackType": "shape" },
+        { "type": "clipStyle", "path": "background", "includes": "linear-gradient" }
+      ]
+    },
+    {
+      "id": "eval-20",
+      "name": "Live：应用预设并改文案（需 API Key）",
+      "mode": "live",
+      "userPrompt": "加一个弹跳文字「EasyMotion」，颜色用 #4361ee",
+      "assertions": [
+        { "type": "timelineChanged", "equals": true },
+        { "type": "clipSource", "path": "component", "equals": "RvePoppingText" }
+      ]
+    }
+  ]
+}

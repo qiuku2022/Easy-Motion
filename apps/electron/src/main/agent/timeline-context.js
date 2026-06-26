@@ -241,6 +241,8 @@ function formatChangeSummary(changeLog) {
         return `导入素材「${entry.name}」(${entry.type})`;
       case "applyPreset":
         return `应用预设「${entry.name}」`;
+      case "registerCustomComponent":
+        return `将组件 ${entry.componentName} 添加到时间线`;
       default:
         return entry.op;
     }

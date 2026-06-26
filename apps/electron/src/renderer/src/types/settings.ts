@@ -1,5 +1,12 @@
 export type LlmProvider = "openai" | "anthropic";
 
+/** quick=仅 timeline | free=timeline+remotion | auto=按输入路由 */
+export type AgentCreationMode = "quick" | "free" | "auto";
+
+export interface AgentSettings {
+  creationMode: AgentCreationMode;
+}
+
 export interface LlmSettings {
   provider: LlmProvider;
   baseUrl: string;
@@ -15,6 +22,7 @@ export interface LlmSettings {
 export interface AppSettings {
   version: string;
   llm: LlmSettings;
+  agent: AgentSettings;
 }
 
 export interface LlmSettingsFormState {

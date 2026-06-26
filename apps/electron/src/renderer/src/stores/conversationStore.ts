@@ -17,6 +17,7 @@ import {
   type Message,
 } from "@/types/conversation";
 import type { Timeline } from "@/types/timeline";
+import type { AgentCreationMode } from "@/types/settings";
 
 interface ConversationState {
   conversation: Conversation | null;
@@ -34,6 +35,7 @@ interface ConversationState {
   loadError: string | null;
   lastAgentUndoSnapshot: Timeline | null;
   lastAgentUndoMessageId: string | null;
+  creationMode: AgentCreationMode;
 
   loadConversation: (subprojectPath?: string) => Promise<void>;
   saveConversation: () => Promise<boolean>;
@@ -57,7 +59,11 @@ interface ConversationState {
     timelinePush?: boolean;
     subprojectPath?: string;
     changeSummary?: string;
+    timelineChangeSummary?: string;
+    remotionChangeSummary?: string;
     changeLog?: unknown[];
+    remotionCodeUpdated?: boolean;
+    remotionChangeLog?: unknown[];
     cancelled?: boolean;
     simplifiedMode?: boolean;
     systemNotice?: string;
@@ -68,6 +74,8 @@ interface ConversationState {
   cancelMessage: () => Promise<void>;
   undoLastAgentChange: () => Promise<void>;
   resetForProjectClose: () => void;
+  setCreationMode: (mode: AgentCreationMode) => Promise<void>;
+  loadCreationMode: () => Promise<void>;
 }
 
 const debouncedSave = debounce(() => {
@@ -140,6 +148,23 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
   loadError: null,
   lastAgentUndoSnapshot: null,
   lastAgentUndoMessageId: null,
+  creationMode: "free",
+
+  loadCreationMode: async () => {
+    const api = getEasyMotion()?.settings;
+    if (!api) return;
+    const result = await api.get({ keys: ["agent"] });
+    if (result.success && result.data?.agent?.creationMode) {
+      set({ creationMode: result.data.agent.creationMode });
+    }
+  },
+
+  setCreationMode: async (mode) => {
+    set({ creationMode: mode });
+    const api = getEasyMotion()?.settings;
+    if (!api?.update) return;
+    await api.update({ agent: { creationMode: mode } });
+  },
 
   loadConversation: async (subprojectPath = DEFAULT_SUBPROJECT_PATH) => {
     const api = getEasyMotion()?.conversation;
@@ -351,7 +376,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
     const requestId = crypto.randomUUID();
     setActiveConversationStreamRequestId(requestId);
 
-    const { subprojectPath } = get();
+    const { subprojectPath, creationMode } = get();
     const result = await conversationApi.send({
       requestId,
       message: content,
@@ -361,6 +386,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
       currentFrame: timelineState.currentFrame,
       confirmOverwrite,
       attachedImages,
+      creationMode,
     });
 
     if (!result.success) {
@@ -420,7 +446,11 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
     previewReload,
     subprojectPath,
     changeSummary,
+    timelineChangeSummary,
+    remotionChangeSummary,
     changeLog,
+    remotionCodeUpdated,
+    remotionChangeLog,
     cancelled,
     simplifiedMode,
     systemNotice,
@@ -446,17 +476,23 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
       });
     }
 
-    if (streamingMessageId && (changeSummary || timelineUpdated)) {
+    if (
+      streamingMessageId &&
+      (changeSummary || timelineUpdated || remotionCodeUpdated)
+    ) {
       set((state) => ({
         messages: state.messages.map((message) =>
           message.id === streamingMessageId
             ? {
                 ...message,
-                ...(changeSummary
+                ...(changeSummary || timelineChangeSummary || remotionChangeSummary
                   ? {
                       codeDiff: {
                         summary: changeSummary,
+                        timelineSummary: timelineChangeSummary,
+                        remotionSummary: remotionChangeSummary,
                         operations: changeLog,
+                        remotionOperations: remotionChangeLog,
                       },
                     }
                   : {}),
@@ -502,6 +538,21 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
           }
         }
       }
+    } else if (remotionCodeUpdated) {
+      const nextSubprojectPath = subprojectPath ?? get().subprojectPath;
+      if (previewReload) {
+        eventBus.emit("conversation.diffReady", {
+          subprojectPath: nextSubprojectPath,
+          diff: remotionChangeLog ?? null,
+          timeline: null,
+          previewReload: true,
+        });
+      }
+      toast.success("Remotion 代码已更新");
+      set({
+        lastAgentUndoSnapshot: null,
+        lastAgentUndoMessageId: null,
+      });
     } else {
       set({
         lastAgentUndoSnapshot: null,

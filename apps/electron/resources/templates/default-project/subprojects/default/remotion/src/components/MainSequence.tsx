@@ -3,6 +3,7 @@ import { flattenClipsForPreview } from "../lib/flatten-clips-for-preview";
 import { isClipVisibleInPreview } from "../lib/preview-visibility";
 import { resolveClipMediaSrc } from "../lib/resolve-clip-media-src";
 import { resolvePresetComponent } from "../presets/registry";
+import { resolveCustomComponent } from "../presets/custom-registry";
 import { GradientBackground } from "./newsletter-design/GradientBackground";
 import { NewsletterBackground } from "./newsletter-design/NewsletterBackground";
 import { PreviewClipSequence } from "./PreviewClipSequence";
@@ -137,13 +138,17 @@ function renderClipContent(
     clip.source?.kind === "component" &&
     typeof clip.source.component === "string"
   ) {
+    const props =
+      clip.source.props && typeof clip.source.props === "object"
+        ? (clip.source.props as Record<string, unknown>)
+        : {};
     const PresetComponent = resolvePresetComponent(clip.source.component);
     if (PresetComponent) {
-      const props =
-        clip.source.props && typeof clip.source.props === "object"
-          ? (clip.source.props as Record<string, unknown>)
-          : {};
       return <PresetComponent {...props} />;
+    }
+    const CustomComponent = resolveCustomComponent(clip.source.component);
+    if (CustomComponent) {
+      return <CustomComponent {...props} />;
     }
   }
 

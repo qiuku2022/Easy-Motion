@@ -1,6 +1,7 @@
 import { Settings } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { AgentCreationModeToggle } from "@/components/ai/AgentCreationModeToggle";
 import { LLMSettingsDialog } from "@/components/ai/LLMSettingsDialog";
 import { HSCROLL_HOVER_EVENT } from "@/components/conversation/HorizontalScrollRegion";
 import { GenerationProgress } from "@/components/conversation/GenerationProgress";
@@ -45,6 +46,9 @@ export function AIAssistantPanel() {
     (state) => state.handleMessageAction
   );
   const agentStatus = useConversationStore((state) => state.agentStatus);
+  const creationMode = useConversationStore((state) => state.creationMode);
+  const setCreationMode = useConversationStore((state) => state.setCreationMode);
+  const loadCreationMode = useConversationStore((state) => state.loadCreationMode);
   const streamingMessageId = useConversationStore((state) => state.streamingMessageId);
   const selectedClipId = useTimelineStore((state) => state.selectedClipId);
 
@@ -159,7 +163,8 @@ export function AIAssistantPanel() {
 
   useEffect(() => {
     void refreshLlmStatus();
-  }, [refreshLlmStatus]);
+    void loadCreationMode();
+  }, [refreshLlmStatus, loadCreationMode]);
 
   useEffect(() => {
     const api = getEasyMotion()?.conversation;
@@ -212,8 +217,15 @@ export function AIAssistantPanel() {
 
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col text-sm">
-      <div className="flex shrink-0 items-center justify-between border-b border-border px-3 py-2">
-        <span className="text-xs font-medium text-muted-foreground">AI 助手</span>
+      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-3 py-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="shrink-0 text-xs font-medium text-muted-foreground">AI 助手</span>
+          <AgentCreationModeToggle
+            value={creationMode}
+            disabled={isStreaming}
+            onChange={(mode) => void setCreationMode(mode)}
+          />
+        </div>
         <Button
           type="button"
           variant="ghost"

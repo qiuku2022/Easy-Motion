@@ -22,6 +22,10 @@
 
 见 [11-剩余工作与验收.md](./11-剩余工作与验收.md)（子项目切换、多步 Tool 回滚等）。
 
+### M5.2 Remotion Code Agent（进行中 / 计划）
+
+让用户项目内 `remotion/src/components/custom/` 可被 AI 读写，见 [../m5.2-remotion-code-agent/README.md](../m5.2-remotion-code-agent/README.md)。
+
 ## 阅读顺序
 
 | 步骤 | 文档 |

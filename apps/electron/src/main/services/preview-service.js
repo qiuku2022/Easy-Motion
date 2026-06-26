@@ -21,6 +21,7 @@ let previewState = {
 function broadcastLog(line, phase = "preview") {
   const text = String(line).trimEnd();
   if (!text) return;
+  if (typeof BrowserWindow?.getAllWindows !== "function") return;
   for (const win of BrowserWindow.getAllWindows()) {
     if (!win.isDestroyed()) {
       win.webContents.send("renderer:preview:log", { line: text, phase });
@@ -317,6 +318,61 @@ function ensurePreviewSoloSupport(remotionDir) {
   return updated;
 }
 
+const { EMPTY_REGISTRY } = require("../agent/remotion-registry");
+
+/** 确保 custom 组件目录、注册表与 MainSequence 自定义解析（旧项目迁移） */
+function ensureCustomComponentSupport(remotionDir) {
+  let updated = false;
+  const srcDir = path.join(remotionDir, "src");
+  const templateSrc = path.join(
+    getTemplatesDir(),
+    "default-project",
+    "subprojects",
+    "default",
+    "remotion",
+    "src",
+  );
+
+  const customDir = path.join(srcDir, "components", "custom");
+  if (!fs.existsSync(customDir)) {
+    fs.mkdirSync(customDir, { recursive: true });
+    const templateGitkeep = path.join(templateSrc, "components", "custom", ".gitkeep");
+    if (fs.existsSync(templateGitkeep)) {
+      fs.copyFileSync(templateGitkeep, path.join(customDir, ".gitkeep"));
+    }
+    updated = true;
+  }
+
+  const destRegistry = path.join(srcDir, "presets", "custom-registry.ts");
+  if (!fs.existsSync(destRegistry)) {
+    fs.mkdirSync(path.dirname(destRegistry), { recursive: true });
+    const templateRegistry = path.join(templateSrc, "presets", "custom-registry.ts");
+    if (fs.existsSync(templateRegistry)) {
+      fs.copyFileSync(templateRegistry, destRegistry);
+    } else {
+      fs.writeFileSync(destRegistry, EMPTY_REGISTRY, "utf8");
+    }
+    broadcastLog("已添加 custom-registry（自定义组件注册表）", "preview");
+    updated = true;
+  }
+
+  const mainSeq = path.join(srcDir, "components", "MainSequence.tsx");
+  const templateMain = path.join(templateSrc, "components", "MainSequence.tsx");
+  if (fs.existsSync(mainSeq) && fs.existsSync(templateMain)) {
+    const content = fs.readFileSync(mainSeq, "utf8");
+    const needsCustomHook =
+      content.includes("flattenClipsForPreview") &&
+      !content.includes("resolveCustomComponent");
+    if (needsCustomHook) {
+      fs.copyFileSync(templateMain, mainSeq);
+      broadcastLog("已更新 MainSequence（自定义组件解析）", "preview");
+      updated = true;
+    }
+  }
+
+  return updated;
+}
+
 const PREVIEW_CANVAS_BG = "#121212";
 const LEGACY_PREVIEW_BG_PATTERN = /#0[fF]0[fF]23|#05050a/gi;
 
@@ -458,12 +514,14 @@ async function startPreview(projectRoot, subprojectPath = "subprojects/default")
   broadcastLog("正在准备 Remotion 预览环境…", "preview");
   ensurePreviewEntry(remotionDir);
   const soloSupportPatched = ensurePreviewSoloSupport(remotionDir);
+  const customSupportPatched = ensureCustomComponentSupport(remotionDir);
   const canvasThemePatched = ensurePreviewCanvasTheme(remotionDir);
   const loopControlPatched = ensurePreviewLoopControl(remotionDir);
   const playheadPreservePatched = ensurePreviewPlayheadPreserve(remotionDir);
   let remotionFingerprint = null;
   if (
     soloSupportPatched ||
+    customSupportPatched ||
     canvasThemePatched ||
     loopControlPatched ||
     playheadPreservePatched
@@ -591,5 +649,6 @@ module.exports = {
   ensureRemotionDeps,
   ensurePreviewEntry,
   ensurePreviewSoloSupport,
+  ensureCustomComponentSupport,
   ensurePreviewPlayheadPreserve,
 };

@@ -16,7 +16,10 @@ export interface ActionButton {
 
 export interface CodeDiff {
   summary?: string;
+  timelineSummary?: string;
+  remotionSummary?: string;
   operations?: unknown[];
+  remotionOperations?: unknown[];
 }
 
 export interface Message {

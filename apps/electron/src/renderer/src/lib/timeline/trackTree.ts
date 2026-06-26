@@ -46,8 +46,22 @@ export function effectiveTrackState(
   };
 }
 
+/** 预览/编译：order 升序（小=底层先画） */
+export function sortTracksForPreview(tracks: Track[]): Track[] {
+  return [...tracks].sort((a, b) => a.order - b.order);
+}
+
+/** 时间线 UI：order 降序（大=前景，显示在上方） */
+export function sortTracksForTimelineUi(tracks: Track[]): Track[] {
+  return [...tracks].sort((a, b) => b.order - a.order);
+}
+
+function sortChildrenForTimelineUi(children: Track[]): Track[] {
+  return [...children].sort((a, b) => b.order - a.order);
+}
+
 export function buildTimelineRows(tracks: Track[]): TimelineRow[] {
-  const sorted = [...tracks].sort((a, b) => a.order - b.order);
+  const sorted = sortTracksForTimelineUi(tracks);
   const rows: TimelineRow[] = [];
 
   for (const track of sorted) {
@@ -59,7 +73,7 @@ export function buildTimelineRows(tracks: Track[]): TimelineRow[] {
         isGroupHeader: true,
       });
       if (!track.collapsed && track.children?.length) {
-        const children = [...track.children].sort((a, b) => a.order - b.order);
+        const children = sortChildrenForTimelineUi(track.children);
         for (const child of children) {
           rows.push({
             track: child,
@@ -84,7 +98,7 @@ export function buildTimelineRows(tracks: Track[]): TimelineRow[] {
 
 /** 编译用：group.children 扁平化，order = 父 order 为主序、子 order 为次序 */
 export function flattenTracksForCompile(tracks: Track[]): Track[] {
-  const sorted = [...tracks].sort((a, b) => a.order - b.order);
+  const sorted = sortTracksForPreview(tracks);
   const weighted: { track: Track; order: number }[] = [];
 
   sorted.forEach((track, parentIndex) => {

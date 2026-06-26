@@ -19,6 +19,7 @@ import {
   effectiveTrackState,
   findLayerTrackForClip,
   getLeafTracks,
+  sortTracksForTimelineUi,
 } from "@/lib/timeline/trackTree";
 import { ClipBlock } from "@/components/timeline/ClipBlock";
 import type { ClipDragMode, ClipDragPreview } from "@/components/timeline/clipDragTypes";
@@ -73,9 +74,8 @@ export function TimelineBody({
     pxPerFrame,
   });
 
-  const sorted = [...tracks].sort((a, b) => a.order - b.order);
-  const rows = buildTimelineRows(sorted);
-  const sortedTrackIds = sorted.map((t) => t.id);
+  const rows = buildTimelineRows(tracks);
+  const sortedTrackIds = sortTracksForTimelineUi(tracks).map((t) => t.id);
   const { preview: trackReorderPreview, startReorder } = useTrackReorder(
     sortedTrackIds,
     headerScrollRef,

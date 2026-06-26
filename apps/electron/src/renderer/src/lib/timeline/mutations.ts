@@ -158,12 +158,14 @@ export function removeTrack(timeline: Timeline, trackId: string): Timeline {
   return withValidated({ ...timeline, tracks });
 }
 
-export function reorderTracks(timeline: Timeline, trackIdsInOrder: string[]): Timeline {
+/** @param trackIdsTopToBottom 时间线从上到下（前景→背景）的顶层轨道 id */
+export function reorderTracks(timeline: Timeline, trackIdsTopToBottom: string[]): Timeline {
   const byId = new Map(timeline.tracks.map((t) => [t.id, t]));
   const tracks: Track[] = [];
-  trackIdsInOrder.forEach((id, index) => {
+  const n = trackIdsTopToBottom.length;
+  trackIdsTopToBottom.forEach((id, uiIndex) => {
     const track = byId.get(id);
-    if (track) tracks.push({ ...track, order: index });
+    if (track) tracks.push({ ...track, order: n - 1 - uiIndex });
     byId.delete(id);
   });
   for (const track of byId.values()) {

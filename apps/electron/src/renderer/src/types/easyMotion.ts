@@ -40,11 +40,15 @@ export interface ConversationCompletePayload {
   reply?: string;
   timelineUpdated?: boolean;
   timeline?: Timeline;
+  remotionCodeUpdated?: boolean;
   previewReload?: boolean;
   timelinePush?: boolean;
   subprojectPath?: string;
   changeSummary?: string;
+  timelineChangeSummary?: string;
+  remotionChangeSummary?: string;
   changeLog?: unknown[];
+  remotionChangeLog?: unknown[];
   cancelled?: boolean;
   simplifiedMode?: boolean;
   systemNotice?: string;
@@ -273,6 +277,7 @@ export interface EasyMotionApi {
       currentFrame?: number;
       confirmOverwrite?: boolean;
       attachedImages?: AttachedImage[];
+      creationMode?: "quick" | "free" | "auto";
     }) => Promise<IpcResult<{ requestId: string }>>;
     cancel: (payload: {
       requestId: string;

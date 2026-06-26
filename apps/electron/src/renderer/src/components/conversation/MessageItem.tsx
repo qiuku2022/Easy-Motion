@@ -69,7 +69,32 @@ export const MessageItem = memo(function MessageItem({
           />
         )}
 
-        {message.codeDiff?.summary ? (
+        {message.codeDiff?.timelineSummary || message.codeDiff?.remotionSummary ? (
+          <div className="mt-2 space-y-1.5">
+            {message.codeDiff.timelineSummary ? (
+              <div className="max-w-full overflow-hidden rounded-md border border-border/60 bg-background/50 px-2 py-1.5">
+                <p className="mb-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                  时间线
+                </p>
+                <MessageMarkdown
+                  content={message.codeDiff.timelineSummary}
+                  variant="muted"
+                />
+              </div>
+            ) : null}
+            {message.codeDiff.remotionSummary ? (
+              <div className="max-w-full overflow-hidden rounded-md border border-border/60 bg-background/50 px-2 py-1.5">
+                <p className="mb-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                  Remotion 代码
+                </p>
+                <MessageMarkdown
+                  content={message.codeDiff.remotionSummary}
+                  variant="muted"
+                />
+              </div>
+            ) : null}
+          </div>
+        ) : message.codeDiff?.summary ? (
           <div className="mt-2 max-w-full overflow-hidden rounded-md border border-border/60 bg-background/50 px-2 py-1.5">
             <MessageMarkdown content={message.codeDiff.summary} variant="muted" />
           </div>

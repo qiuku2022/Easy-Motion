@@ -46,6 +46,7 @@ pnpm dev:all      # 上述 + Python（8000 被占用时自动试 8001–8019）
 | `pnpm lint` / `lint:fix` | ESLint |
 | `pnpm format` / `format:check` | Prettier（`apps` / `packages` / `.vscode` 等，不含 `docs/`） |
 | `pnpm test` | 主进程脚本测试（m1 / m2 / m3 / m5） |
+| `pnpm --filter @easymotion/electron test:m5.2` | M5.2 Remotion Code Agent 沙箱与读写工具 |
 
 开发模式下 Electron 加载 **`http://127.0.0.1:5173`**（Vite 固定 IPv4，避免 Windows 上 `localhost` 仅 IPv6 导致连不上）。
 
@@ -133,6 +134,7 @@ npx shadcn@latest add <component>
 ## 协作者
 
 - 主文档入口：本 README + [`docs/requirements/开发者README.md`](docs/requirements/开发者README.md)
+- AI Agent Harness：[`AGENTS.md`](AGENTS.md) + [`docs/agent-eval/tasks.json`](docs/agent-eval/tasks.json)
 - UI 背景笔记：[`.local/README.md`](.local/README.md)
 - 勿提交：`.env`、`node_modules/`、`.venv/`、构建产物；`.vscode` 仅提交 `launch.json` / `tasks.json` / `settings.json` / `extensions.json`
 - 可选提交：`.cursor/skills/`（本地 Agent 技能）；其余 `.cursor/` 状态已忽略

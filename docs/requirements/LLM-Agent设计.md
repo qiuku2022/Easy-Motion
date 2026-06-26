@@ -101,15 +101,27 @@ interface AgentTask {
 - 动画时长使用帧数（frame）单位
 - 默认帧率为 30fps
 
-你可以调用的工具（共 8 个，命名采用 camelCase）：
+你可以调用的工具（共 10 个 timeline + 7 个 Remotion，默认全部挂载）：
 - createTrack: 创建新轨道
 - createClip: 在指定轨道上创建片段
-- updateClip: 更新片段属性
+- updateClip: 更新片段属性（含 source.props 预设参数）
 - deleteClip: 删除片段
 - addKeyframe: 为片段属性添加关键帧
 - setAnimation: 设置片段的入场/出场动画
 - queryElement: 查询时间线元素信息
 - importAsset: 导入素材到项目
+- listPresets: 搜索内置 Remotion 预设
+- applyPreset: 将预设应用到 animation 轨道
+- listRemotionFiles / readRemotionFile: 读用户 remotion/src
+- writeRemotionFile / patchRemotionFile: 写 components/custom/** 与 custom-registry.ts
+- registerCustomComponent: 写 TSX + 注册 + 可选挂时间线
+- compileRemotionCheck: tsc --noEmit 编译检查
+- getRemotionPackageInfo: 允许 import 的包列表
+
+创作模式（`settings.json` → `agent.creationMode`）：
+- quick: 仅 timeline 工具
+- free: timeline + Remotion 工具（默认）
+- auto: 按用户输入关键词路由
 
 当前项目信息：
 - 分辨率：{width}×{height}
@@ -272,6 +284,8 @@ interface AgentTask {
 ## 工具调用定义
 
 Agent 通过 LangChain 的 Tool 机制调用以下工具。每个工具对应一个对时间线的原子操作。
+
+> **M5.2 更新（2026-06）**：除下列 timeline 工具外，Agent 还挂载 Remotion Code Tools（`listRemotionFiles`、`readRemotionFile`、`writeRemotionFile`、`patchRemotionFile`、`registerCustomComponent`、`compileRemotionCheck`、`getRemotionPackageInfo`），实现见 `apps/electron/src/main/agent/tools/remotion-code.js`。沙箱可写路径：`components/custom/**`、`presets/custom-registry.ts`。离线评估：`docs/agent-eval/remotion-code-tasks.json` + `pnpm test:m5.2`。
 
 ### 工具列表
 

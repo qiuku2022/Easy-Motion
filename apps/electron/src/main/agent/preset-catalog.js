@@ -131,7 +131,9 @@ function getPresetCatalogSummary() {
       .join("、");
     lines.push(`- ${hint}（${category}）：如 ${samples || "—"}`);
   }
-  lines.push("用 listPresets 按名称/分类查询；用 applyPreset 应用到 animation 轨道。");
+  lines.push(
+    "用 listPresets 按名称/分类查询；用 applyPreset 应用到 animation 轨道；修改已有预设片段用 updateClip 更新 source.props。"
+  );
   return lines.join("\n");
 }
 

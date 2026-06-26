@@ -50,6 +50,13 @@ function normalizeClipUpdates(updates = {}) {
     delete normalized.background;
   }
 
+  for (const key of ["primaryColor", "secondaryColor", "backgroundColor"]) {
+    if (normalized[key] !== undefined && !hasUpdatePath(normalized, `source.props.${key}`)) {
+      normalized[`source.props.${key}`] = normalized[key];
+      delete normalized[key];
+    }
+  }
+
   for (const key of NESTED_OBJECT_KEYS) {
     const value = normalized[key];
     if (!value || typeof value !== "object" || Array.isArray(value)) continue;
@@ -117,6 +124,93 @@ function resolveRelativeClipUpdates(clip, userInput, updates = {}) {
   return result;
 }
 
+const CHART_COMPONENT_HINTS = [
+  { pattern: /折线图|折线/i, component: "RveLineChart" },
+  { pattern: /饼图/i, component: "RvePieChart" },
+  { pattern: /环形图|甜甜圈/i, component: "RveDonutChart" },
+  { pattern: /面积图/i, component: "RveAreaChart" },
+  { pattern: /对比图/i, component: "RveComparisonChart" },
+];
+
+const LIGHT_PRESET_PALETTE = {
+  primaryColor: "#93c5fd",
+  secondaryColor: "#fde68a",
+  backgroundColor: "#4b5563",
+};
+
+const DARK_PRESET_PALETTE = {
+  primaryColor: "#1e40af",
+  secondaryColor: "#9d174d",
+  backgroundColor: "#111827",
+};
+
+function isPresetAnimationClip(clip) {
+  return clip?.type === "animation" && clip?.source?.kind === "component";
+}
+
+/** 图表/预设片段配色：LLM 未调工具时的确定性兜底 */
+function resolvePresetClipUpdates(clip, userInput) {
+  if (!isPresetAnimationClip(clip)) return {};
+
+  const text = String(userInput ?? "");
+  const wantsLight = /浅色|淡色|亮色系|浅色系|明亮|浅一点|浅一些/.test(text);
+  const wantsDark = /深色|暗色|暗色系|暗一点/.test(text);
+  const wantsColorChange = /颜色|配色|色调|色系|换成|改为|改成|换为/.test(text);
+
+  if (!wantsLight && !wantsDark && !wantsColorChange) return {};
+
+  const mentionsLine = /折线|曲线|线条/.test(text);
+  const mentionsPoint = /(?:数据)?点|圆点/.test(text);
+  const mentionsBg = /背景/.test(text);
+  const mentionsChart = /折线图|饼图|环形图|面积图|柱状图|图表|对比图/.test(text);
+  const isChartComponent = /Chart|Counter|Stat/i.test(clip.source?.component ?? "");
+
+  if (!mentionsChart && !mentionsLine && !mentionsPoint && !mentionsBg && !isChartComponent) {
+    return {};
+  }
+
+  const palette = wantsDark ? DARK_PRESET_PALETTE : LIGHT_PRESET_PALETTE;
+  const result = {};
+  const applyPrimary = mentionsLine || mentionsChart || (!mentionsPoint && !mentionsBg);
+  const applySecondary = mentionsPoint || mentionsChart || (!mentionsLine && !mentionsBg);
+  const applyBg = mentionsBg;
+
+  if (applyPrimary) result["source.props.primaryColor"] = palette.primaryColor;
+  if (applySecondary) result["source.props.secondaryColor"] = palette.secondaryColor;
+  if (applyBg) result["source.props.backgroundColor"] = palette.backgroundColor;
+
+  if (Object.keys(result).length === 0) {
+    result["source.props.primaryColor"] = palette.primaryColor;
+    result["source.props.secondaryColor"] = palette.secondaryColor;
+  }
+
+  return result;
+}
+
+function findPresetClipForInput(timeline, userInput) {
+  const text = String(userInput ?? "");
+
+  for (const hint of CHART_COMPONENT_HINTS) {
+    if (!hint.pattern.test(text)) continue;
+    for (const track of timeline.tracks ?? []) {
+      for (const clip of track.clips ?? []) {
+        if (clip.source?.component === hint.component) return clip;
+      }
+    }
+  }
+
+  let found = null;
+  for (const track of timeline.tracks ?? []) {
+    for (const clip of track.clips ?? []) {
+      if (!isPresetAnimationClip(clip)) continue;
+      if (!/Chart|Counter|Stat/i.test(clip.source?.component ?? "")) continue;
+      if (found) return null;
+      found = clip;
+    }
+  }
+  return found;
+}
+
 function prepareClipUpdates(clip, { userInput, updates, selectedClipId, clipId }) {
   let prepared = normalizeClipUpdates(updates);
   if (userInput && selectedClipId && clipId === selectedClipId) {
@@ -128,6 +222,8 @@ function prepareClipUpdates(clip, { userInput, updates, selectedClipId, clipId }
 module.exports = {
   normalizeClipUpdates,
   resolveRelativeClipUpdates,
+  resolvePresetClipUpdates,
+  findPresetClipForInput,
   prepareClipUpdates,
   getNestedValue,
 };

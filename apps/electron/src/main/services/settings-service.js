@@ -16,6 +16,9 @@ const DEFAULT_SETTINGS = {
     timeout: 60,
     streamResponse: true,
   },
+  agent: {
+    creationMode: "free",
+  },
 };
 
 const LLM_PROVIDERS = new Set(["openai", "anthropic"]);
@@ -77,12 +80,20 @@ function normalizeLlmSettings(llm = {}) {
   };
 }
 
+function normalizeAgentSettings(agent = {}) {
+  const modes = new Set(["quick", "free", "auto"]);
+  return {
+    creationMode: modes.has(agent.creationMode) ? agent.creationMode : "free",
+  };
+}
+
 function normalizeSettings(raw) {
   const merged = deepMerge(DEFAULT_SETTINGS, raw && typeof raw === "object" ? raw : {});
   return {
     ...merged,
     version: SETTINGS_VERSION,
     llm: normalizeLlmSettings(merged.llm),
+    agent: normalizeAgentSettings(merged.agent),
   };
 }
 

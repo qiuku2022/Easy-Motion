@@ -1,10 +1,13 @@
-import type { KeyboardEvent } from "react";
+import { useLayoutEffect, useRef, type KeyboardEvent } from "react";
 import { ImagePlus, Sparkles, Square } from "lucide-react";
 import { ImageAttachment } from "@/components/conversation/ImageAttachment";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import type { AttachedImage } from "@/types/conversation";
+
+/** 与 Tailwind `max-h-32` 一致 */
+const TEXTAREA_MAX_HEIGHT_PX = 128;
 
 interface MessageInputProps {
   value: string;
@@ -35,8 +38,20 @@ export function MessageInput({
   onRemoveImage,
   onReorderImages,
 }: MessageInputProps) {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const canAttach = attachedImages.length < maxImages;
   const inputDisabled = disabled || isStreaming;
+
+  useLayoutEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    textarea.style.height = "0px";
+    const nextHeight = Math.min(textarea.scrollHeight, TEXTAREA_MAX_HEIGHT_PX);
+    textarea.style.height = `${nextHeight}px`;
+    textarea.style.overflowY =
+      textarea.scrollHeight > TEXTAREA_MAX_HEIGHT_PX ? "auto" : "hidden";
+  }, [value]);
 
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -80,8 +95,9 @@ export function MessageInput({
         </Button>
 
         <Textarea
+          ref={textareaRef}
           placeholder={placeholder ?? "描述动画或上传参考图..."}
-          className="min-h-9 max-h-32 flex-1 resize-none border-0 bg-transparent px-0 py-2 text-sm shadow-none focus-visible:ring-0"
+          className="field-sizing-fixed scrollbar-hidden min-h-9 max-h-32 flex-1 resize-none overflow-y-auto border-0 bg-transparent px-0 py-2 text-sm shadow-none focus-visible:ring-0"
           rows={1}
           value={value}
           onChange={(event) => onChange(event.target.value)}

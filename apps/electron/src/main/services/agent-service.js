@@ -3,6 +3,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { runAgent } = require("../agent");
 const { formatChangeSummary } = require("../agent/timeline-context");
+const { formatRemotionChangeSummary } = require("../agent/remotion-context");
 const { findClipLocation } = require("../agent/timeline-ops");
 const { AgentState } = require("../agent/state");
 const timelineService = require("./timeline-service");
@@ -69,6 +70,23 @@ function isTimelineDrivenPreview(remotionDir) {
   return content.includes("flattenClipsForPreview");
 }
 
+function applyAgentRemotionPreview(ctx, timeline) {
+  const remotionDir = previewService.getRemotionDir(
+    ctx.projectPath,
+    ctx.subprojectPath
+  );
+
+  const customPatched = previewService.ensureCustomComponentSupport(remotionDir);
+  const soloPatched = previewService.ensurePreviewSoloSupport(remotionDir);
+  timelineService.refreshRemotionFingerprint(ctx.projectPath, ctx.subprojectPath);
+
+  return {
+    previewReload: customPatched || soloPatched,
+    timelinePush: false,
+    timeline,
+  };
+}
+
 function applyAgentTimelinePreview(ctx, timeline) {
   const remotionDir = previewService.getRemotionDir(
     ctx.projectPath,
@@ -90,6 +108,7 @@ function applyAgentTimelinePreview(ctx, timeline) {
   }
 
   const patched = previewService.ensurePreviewSoloSupport(remotionDir);
+  previewService.ensureCustomComponentSupport(remotionDir);
   const syncResult = timelineService.syncPreviewManifest(
     ctx.projectPath,
     timeline,
@@ -158,6 +177,7 @@ function startConversationSend(webContents, payload) {
         currentFrame:
           typeof payload?.currentFrame === "number" ? payload.currentFrame : 0,
         imagePaths: resolveAttachedImagePaths(payload?.attachedImages),
+        creationMode: payload?.creationMode ?? "free",
         signal: controller.signal,
         onStatus: (status) => sendStatus(webContents, requestId, status),
         onChunk: (chunk) => sendChunk(webContents, requestId, chunk, false),
@@ -187,18 +207,33 @@ function startConversationSend(webContents, payload) {
         previewReload = previewPlan.previewReload;
         timelinePush = previewPlan.timelinePush;
         timeline = previewPlan.timeline ?? timeline;
+      } else if (result.remotionChanged) {
+        sendStatus(webContents, requestId, AgentState.EXECUTING);
+        const remotionPlan = applyAgentRemotionPreview(ctx, timeline);
+        previewReload = remotionPlan.previewReload;
+        timelinePush = remotionPlan.timelinePush;
       }
 
       sendChunk(webContents, requestId, "", true);
+      const timelineChangeSummary = formatChangeSummary(result.changeLog);
+      const remotionChangeSummary = formatRemotionChangeSummary(result.remotionChangeLog);
+      const changeSummary = [timelineChangeSummary, remotionChangeSummary]
+        .filter(Boolean)
+        .join("\n");
+
       sendComplete(webContents, requestId, {
         reply: result.reply,
         timelineUpdated: result.timelineChanged,
         timeline: result.timelineChanged ? timeline : undefined,
+        remotionCodeUpdated: Boolean(result.remotionChanged),
         previewReload,
         timelinePush,
         subprojectPath: ctx.subprojectPath,
-        changeSummary: formatChangeSummary(result.changeLog),
+        changeSummary,
+        timelineChangeSummary,
+        remotionChangeSummary,
         changeLog: result.changeLog,
+        remotionChangeLog: result.remotionChangeLog,
         simplifiedMode: Boolean(result.simplifiedMode),
         systemNotice: result.systemNotice ?? undefined,
       });

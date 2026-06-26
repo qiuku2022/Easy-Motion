@@ -147,7 +147,7 @@ function createTimelineTools(ctx) {
     {
       name: "updateClip",
       description:
-        "更新片段属性。相对调整：大一点/小一点 ±20% 数值；快/慢 durationInFrames 减半或加倍；左/右移 position ±100px。修改文字用 source.content，字号必须用 style.fontSize。修改背景：shape 用 style.background 或 style.fillColor；NewsletterBackground 等组件背景用 style.background / style.backgroundColor。用户已选中片段时 clipId 可省略。",
+        "更新片段属性。相对调整：大一点/小一点 ±20% 数值；快/慢 durationInFrames 减半或加倍；左/右移 position ±100px。修改文字用 source.content，字号必须用 style.fontSize。修改背景：shape 用 style.background 或 style.fillColor；NewsletterBackground 等组件背景用 style.background / style.backgroundColor。修改图表/预设：updateClip 设置 source.props.primaryColor（折线）、source.props.secondaryColor（数据点）等 manifest 参数。用户已选中片段时 clipId 可省略。",
       schema: z.object({
         clipId: z
           .string()
