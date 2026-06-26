@@ -4,8 +4,9 @@
 
 本文档定义 Electron 主进程（Main）与渲染进程（Renderer）之间的完整 IPC 通信协议，包括消息命名规范、请求/响应格式、错误处理、超时策略和并发控制。所有 IPC 接口与 `技术规格.md`、`错误码统一字典.md`、`应用架构详细设计.md` 中对齐。
 
-> **版本**：v0.1  
-> **最后更新**：2026-05-30  
+> **版本**：v0.2  
+> **最后更新**：2026-06-26  
+> **实施状态**：M0–M8 IPC 已落地；`python` 代理通道未实现（Python 为可选 `dev:all` 子进程）  
 > **关联文档**：技术规格.md、应用架构详细设计.md、错误码统一字典.md、状态管理详细设计.md
 
 ---
@@ -26,18 +27,19 @@
 
 ### 2. 领域划分
 
-| 领域 | 说明 | 处理器文件 |
-|------|------|-----------|
-| `project` | 总项目/子项目 CRUD | `ipc-handlers/project.ts` |
-| `timeline` | 时间线读写、撤销/重做 | `ipc-handlers/timeline.ts` |
-| `preview` | 预览控制、iframe 管理 | `ipc-handlers/preview.ts` |
-| `conversation` | 对话历史、Agent 任务 | `ipc-handlers/conversation.ts` |
-| `assets` | 素材导入、查询、缩略图 | `ipc-handlers/assets.ts` |
-| `export` | 渲染导出、进度、取消 | `ipc-handlers/export.ts` |
-| `settings` | 应用设置读写 | `ipc-handlers/settings.ts` |
-| `app` | 应用生命周期、系统事件 | 内置于 `main/index.ts` |
-| `python` | Python 服务代理 | `ipc-handlers/python-proxy.ts` |
-| `llm` | LLM API 代理 | `ipc-handlers/llm-proxy.ts` |
+| 领域 | 说明 | 处理器文件（CommonJS） |
+|------|------|----------------------|
+| `project` | 总项目/子项目 CRUD | `ipc-handlers/project.js` |
+| `timeline` | 时间线读写、Generator、Remotion 同步 | `ipc-handlers/timeline.js` |
+| `preview` | 预览子进程、iframe 管理 | `ipc-handlers/preview.js` |
+| `conversation` | 对话历史、Agent 发送/取消 | `ipc-handlers/conversation.js` |
+| `asset` | 素材导入、查询、缩略图 | `ipc-handlers/asset.js` |
+| `data` | CSV/JSON 选取与图表字段映射 | `ipc-handlers/data.js` |
+| `export` | 视频渲染、工程 ZIP、进度 | `ipc-handlers/export.js` |
+| `settings` | 应用设置、LLM Key | `ipc-handlers/settings.js` |
+| `llm` | LLM 流式代理（旧路径，对话走 conversation） | `ipc-handlers/llm.js` |
+| `app` | 应用生命周期 | 内置于 `main/index.js` |
+| `python` | Python 服务代理 | **未实现**（规划可选） |
 
 ### 3. 动作命名
 
@@ -365,6 +367,25 @@ interface IPCNotification<T = unknown> {
 - **响应数据**：`{ cancelled: boolean }`
 - **错误码**：`E2602`（导出任务不存在或已取消）
 - **超时**：5 秒
+
+#### `main:export:project`（M8 ✅）
+- **说明**：打包 Remotion 工程为 ZIP（源码 + 素材 + README）
+- **请求参数**：`{ outputPath: string; ... }`
+- **响应数据**：`{ exportId: string }`
+
+#### `main:export:pickOutput` / `main:export:pickProjectOutput` / `main:export:getActive`
+- **说明**：导出路径选择对话框、查询进行中的导出任务
+
+#### `main:data:pickAndParse` / `main:data:mapChart`（M7 ✅）
+- **说明**：选取 CSV/JSON/XLSX 并解析；将字段映射到图表 clip 的 `source.props`
+
+#### `main:timeline:generate` / `syncFromRemotion` / `checkRemotionDrift` / `syncPreviewManifest`
+- **说明**：Generator 触发、手写 Remotion 项目双向同步（非日常预览路径）
+
+#### `main:conversation:send` / `main:conversation:cancel`
+- **说明**：LangChain Agent 流式对话；`renderer:conversation:chunk|complete|error|status` 推送
+
+**Preload 调用约定：** 渲染进程通过 `window.easyMotion.<domain>.<action>(payload)` 调用，底层为 `ipcRenderer.invoke(channel, payload)`，**不**包装 `IPCRequest { id, channel }` 外层（下文 TypeScript 接口为逻辑模型，供类型定义参考）。
 
 #### `renderer:export:progress`（通知）
 - **说明**：导出进度实时推送
@@ -716,3 +737,4 @@ function sanitizePath(inputPath: string, baseDir: string): string {
 | 版本 | 日期 | 变更说明 |
 |------|------|----------|
 | v0.1 | 2026-05-30 | 初始版本，定义 10 个领域的 IPC 接口、错误码映射、超时策略 |
+| v0.2 | 2026-06-26 | 对齐 `.js` handler；补充 data/export:project/conversation:send；标注动态预览与 python 未实现 |

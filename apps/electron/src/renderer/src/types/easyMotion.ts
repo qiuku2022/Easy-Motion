@@ -160,23 +160,45 @@ export interface EasyMotionApi {
       filePaths: string[];
       subprojectPath?: string;
       fps?: number;
-    }) => Promise<
-      IpcResult<{
-        imported: import("./asset").ProjectAsset[];
-        errors: { path?: string; message: string }[];
-        assets: import("./asset").ProjectAsset[];
-      }>
-    >;
+      duplicateResolutions?: Record<
+        string,
+        import("./asset").DuplicateResolution
+      >;
+    }) => Promise<IpcResult<import("./asset").AssetImportResult>>;
     pickAndImport: (payload?: {
       subprojectPath?: string;
       fps?: number;
-    }) => Promise<
+      duplicateResolutions?: Record<
+        string,
+        import("./asset").DuplicateResolution
+      >;
+    }) => Promise<IpcResult<import("./asset").AssetImportResult>>;
+    updateMeta: (payload: {
+      assetId: string;
+      isFavorite?: boolean;
+      name?: string;
+    }) => Promise<IpcResult<import("./asset").ProjectAsset>>;
+    recordUsage: (payload: {
+      assetId: string;
+    }) => Promise<IpcResult<import("./asset").ProjectAsset>>;
+    readThumbnail: (payload: {
+      assetId: string;
+    }) => Promise<IpcResult<{ dataUrl: string }>>;
+  };
+  data: {
+    pickAndParse: () => Promise<
       IpcResult<{
-        imported: import("./asset").ProjectAsset[];
-        errors: { path?: string; message: string }[];
-        assets: import("./asset").ProjectAsset[];
-      }>
+        relativePath: string;
+        headers: string[];
+        rows: Record<string, string>[];
+        previewRows: Record<string, string>[];
+      } | null>
     >;
+    mapChart: (payload: {
+      rows: Record<string, string>[];
+      xField: string;
+      yField: string;
+    }) => Promise<IpcResult<{ data: { label: string; value: number }[] }>>;
   };
   llm: {
     stream: (payload: {
@@ -290,6 +312,34 @@ export interface EasyMotionApi {
       callback: (data: { requestId: string; message: string }) => void
     ) => () => void;
     onStatus: (callback: (data: ConversationStatusPayload) => void) => () => void;
+  };
+  export: {
+    start: (payload: import("./export").ExportStartRequest) => Promise<
+      IpcResult<{ exportId: string }>
+    >;
+    project: (payload: import("./export").ProjectExportStartRequest) => Promise<
+      IpcResult<{ exportId: string }>
+    >;
+    cancel: (exportId: string) => Promise<IpcResult<{ cancelled: boolean }>>;
+    pickOutput: (payload: {
+      defaultPath?: string;
+      format?: import("./export").ExportFormat;
+    }) => Promise<IpcResult<{ path: string | null }>>;
+    pickProjectOutput: (payload: {
+      defaultPath?: string;
+    }) => Promise<IpcResult<{ path: string | null }>>;
+    getActive: () => Promise<
+      IpcResult<{ exportId: string; kind?: import("./export").ExportKind } | null>
+    >;
+    onProgress: (
+      callback: (data: import("./export").ExportProgressPayload) => void,
+    ) => () => void;
+    onCompleted: (
+      callback: (data: import("./export").ExportCompletedPayload) => void,
+    ) => () => void;
+    onError: (
+      callback: (data: import("./export").ExportErrorPayload) => void,
+    ) => () => void;
   };
 }
 

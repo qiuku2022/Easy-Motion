@@ -5,9 +5,11 @@ const { registerProjectHandlers } = require("./ipc-handlers/project");
 const { registerTimelineHandlers } = require("./ipc-handlers/timeline");
 const { registerPreviewHandlers } = require("./ipc-handlers/preview");
 const { registerAssetHandlers } = require("./ipc-handlers/asset");
+const { registerDataHandlers } = require("./ipc-handlers/data");
 const { registerLlmHandlers } = require("./ipc-handlers/llm");
 const { registerSettingsHandlers } = require("./ipc-handlers/settings");
 const { registerConversationHandlers } = require("./ipc-handlers/conversation");
+const { registerExportHandlers } = require("./ipc-handlers/export");
 const previewService = require("./services/preview-service");
 const uiStateService = require("./services/ui-state-service");
 const { installApplicationMenu } = require("./application-menu");
@@ -97,9 +99,11 @@ app.whenReady().then(() => {
   registerTimelineHandlers();
   registerPreviewHandlers();
   registerAssetHandlers();
+  registerDataHandlers();
   registerLlmHandlers();
   registerSettingsHandlers();
   registerConversationHandlers();
+  registerExportHandlers();
   createWindow();
 
   app.on("activate", () => {

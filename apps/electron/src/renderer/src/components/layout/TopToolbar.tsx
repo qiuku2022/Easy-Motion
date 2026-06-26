@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/tooltip";
 import { PR_SHORTCUTS } from "@/lib/premiereShortcuts";
 import { cn } from "@/lib/utils";
+import { useExportStore } from "@/stores/exportStore";
 import { useProjectStore } from "@/stores/projectStore";
 import { toast } from "sonner";
 import { useTimelineStore } from "@/stores/timelineStore";
@@ -63,6 +64,9 @@ export function TopToolbar() {
   const redo = useTimelineStore((s) => s.redo);
   const canUndo = useTimelineStore((s) => s.history.past.length > 0);
   const canRedo = useTimelineStore((s) => s.history.future.length > 0);
+  const openExportDialog = useExportStore((s) => s.openDialog);
+  const exportPhase = useExportStore((s) => s.phase);
+  const currentProject = useProjectStore((s) => s.current);
   const shell = getEasyMotion()?.shell;
 
   return (
@@ -121,7 +125,18 @@ export function TopToolbar() {
         <ToolbarIconButton label="渲染">
           <Sparkles className="h-4 w-4" />
         </ToolbarIconButton>
-        <ToolbarIconButton label="导出" variant="outline">
+        <ToolbarIconButton
+          label="导出"
+          variant="outline"
+          disabled={!currentProject || exportPhase === "exporting"}
+          onClick={() => {
+            if (!currentProject) {
+              toast.error("请先打开项目");
+              return;
+            }
+            openExportDialog();
+          }}
+        >
           <Download className="h-4 w-4" />
         </ToolbarIconButton>
       </div>

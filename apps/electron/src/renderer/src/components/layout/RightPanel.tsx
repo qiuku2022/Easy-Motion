@@ -1,5 +1,6 @@
 import { LayoutTemplate } from "lucide-react";
 import { AIAssistantPanel } from "@/components/ai/AIAssistantPanel";
+import { QuickAssetPanel } from "@/components/assets/QuickAssetPanel";
 import { PanelTabContent } from "@/components/common/PanelTabContent";
 import { PanelTabs } from "@/components/common/PanelTabs";
 import { PropertiesPanel } from "@/components/properties/PropertiesPanel";
@@ -35,9 +36,7 @@ export function RightPanel() {
       >
         <PanelTabContent tabKey={rightTab} className="p-3 text-sm">
           {rightTab === "properties" && <PropertiesPanel />}
-          {rightTab === "assets" && (
-            <p className="text-muted-foreground">快捷素材区</p>
-          )}
+          {rightTab === "assets" && <QuickAssetPanel />}
           {rightTab === "templates" && (
             <div className="flex min-h-[12rem] flex-col items-center justify-center gap-2 text-center text-muted-foreground">
               <LayoutTemplate className="h-10 w-10 text-border" aria-hidden />

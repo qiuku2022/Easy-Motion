@@ -56,13 +56,50 @@ export function createDefaultShapeClip(timeline: Timeline): Clip {
   };
 }
 
-const CONTENT_TRACK_TYPES = ["text", "shape"] as const;
+export function createDefaultChartClip(timeline: Timeline): Clip {
+  const duration = Math.min(90, timeline.durationInFrames);
+  return {
+    id: `clip-${crypto.randomUUID()}`,
+    type: "chart",
+    name: "图表",
+    startInFrames: 0,
+    durationInFrames: Math.max(1, duration),
+    source: {
+      kind: "inline",
+      chartType: "line",
+      title: "数据图表",
+      data: [
+        { label: "Q1", value: 32 },
+        { label: "Q2", value: 48 },
+        { label: "Q3", value: 41 },
+        { label: "Q4", value: 63 },
+      ],
+    },
+    transform: {
+      position: { x: Math.round(timeline.width / 2), y: Math.round(timeline.height / 2) },
+      scale: 1,
+      rotation: 0,
+      opacity: 1,
+    },
+    style: {
+      primaryColor: "#14b8a6",
+      secondaryColor: "#f59e0b",
+      backgroundColor: "#111827",
+      title: "数据图表",
+    },
+    keyframes: [],
+    lastModifiedBy: "user",
+  };
+}
+
+const CONTENT_TRACK_TYPES = ["text", "shape", "chart"] as const;
 
 export function defaultClipForTrackType(
   timeline: Timeline,
   type: (typeof CONTENT_TRACK_TYPES)[number],
 ): Clip {
   if (type === "shape") return createDefaultShapeClip(timeline);
+  if (type === "chart") return createDefaultChartClip(timeline);
   return createDefaultTextClip(timeline);
 }
 

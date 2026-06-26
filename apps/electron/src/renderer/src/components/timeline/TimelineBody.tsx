@@ -22,11 +22,13 @@ import {
   sortTracksForTimelineUi,
 } from "@/lib/timeline/trackTree";
 import { ClipBlock } from "@/components/timeline/ClipBlock";
+import { resolveClipContentType } from "@/lib/timeline/contentType";
 import type { ClipDragMode, ClipDragPreview } from "@/components/timeline/clipDragTypes";
 import { Playhead } from "@/components/timeline/Playhead";
 import { ClipFloatingToolbar } from "@/components/timeline/ClipFloatingToolbar";
 import { BodyMarkerLines } from "@/components/timeline/TimelineMarkers";
 import { SnapGuides } from "@/components/timeline/SnapGuides";
+import { WorkAreaOverlay } from "@/components/timeline/WorkAreaOverlay";
 import { TimelineRuler } from "@/components/timeline/TimelineRuler";
 import { TrackHeader } from "@/components/timeline/TrackHeader";
 import { useTimelineDrop } from "@/hooks/useTimelineDrop";
@@ -364,6 +366,15 @@ export function TimelineBody({
             ))}
 
             {timeline && (
+              <WorkAreaOverlay
+                timeline={timeline}
+                durationInFrames={durationInFrames}
+                pxPerFrame={pxPerFrame}
+                height={bodyHeight}
+              />
+            )}
+
+            {timeline && (
               <BodyMarkerLines
                 timeline={timeline}
                 pxPerFrame={pxPerFrame}
@@ -448,6 +459,7 @@ function TrackRow({
           <ClipBlock
             key={clip.id}
             clip={render.clip}
+            contentType={resolveClipContentType(clip, track)}
             pxPerFrame={pxPerFrame}
             selected={clip.id === selectedClipId}
             disabled={locked}
@@ -533,9 +545,14 @@ function CrossTrackGhost({
     durationInFrames: preview.durationInFrames,
   };
 
+  const contentType = located
+    ? resolveClipContentType(sourceClip, located.clipTrack)
+    : sourceClip.type;
+
   return (
     <ClipBlock
       clip={clip}
+      contentType={contentType}
       pxPerFrame={pxPerFrame}
       selected={selected}
       disabled={false}

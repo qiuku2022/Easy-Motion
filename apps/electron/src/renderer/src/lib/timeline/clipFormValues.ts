@@ -3,6 +3,7 @@ import type { Clip } from "@/types/timeline";
 import {
   getClipPropertyValue,
   getFieldsForClipType,
+  ANIMATION_FIELDS,
   TRANSFORM_FIELDS,
   type ClipPropertyField,
 } from "@/lib/timeline/clipPropertySchema";
@@ -12,7 +13,7 @@ export type ClipFormValues = Record<string, string>;
 
 export function resolveClipPropertyFields(
   clipType: TrackType,
-  mode: "quick" | "transform" | "all",
+  mode: "quick" | "transform" | "animation" | "all",
   excludePaths: string[] = [],
 ): ClipPropertyField[] {
   const excluded = new Set(excludePaths);
@@ -24,6 +25,9 @@ export function resolveClipPropertyFields(
   }
   if (mode === "transform") {
     return TRANSFORM_FIELDS;
+  }
+  if (mode === "animation") {
+    return ANIMATION_FIELDS;
   }
   return [
     ...contentFields,

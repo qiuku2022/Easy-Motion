@@ -1,0 +1,95 @@
+{
+  "version": "1.0",
+  "compositionId": "Main",
+  "updatedAt": 1782477759754,
+  "updatedBy": "preview",
+  "timeline": {
+    "version": "1.0",
+    "fps": 25,
+    "durationInFrames": 125,
+    "width": 1920,
+    "height": 1080,
+    "tracks": [
+      {
+        "id": "track-newsletter-group",
+        "name": "Newsletter 封面",
+        "type": "group",
+        "order": 0,
+        "visible": true,
+        "locked": false,
+        "muted": false,
+        "clips": [],
+        "collapsed": false,
+        "children": [
+          {
+            "id": "track-newsletter-bg",
+            "name": "背景",
+            "type": "animation",
+            "order": 0,
+            "visible": true,
+            "locked": false,
+            "muted": false,
+            "clips": [
+              {
+                "id": "clip-newsletter-bg",
+                "type": "animation",
+                "name": "背景",
+                "startInFrames": 0,
+                "durationInFrames": 125,
+                "source": {
+                  "kind": "component",
+                  "component": "NewsletterBackground"
+                },
+                "keyframes": []
+              }
+            ]
+          },
+          {
+            "id": "track-newsletter-text",
+            "name": "主标题",
+            "type": "text",
+            "order": 1,
+            "visible": true,
+            "locked": false,
+            "muted": false,
+            "clips": [
+              {
+                "id": "clip-title-main",
+                "type": "text",
+                "name": "主标题",
+                "startInFrames": 0,
+                "durationInFrames": 125,
+                "source": {
+                  "kind": "inline",
+                  "content": "this week in\ndesign"
+                },
+                "transform": {
+                  "position": {
+                    "x": 420,
+                    "y": 520
+                  },
+                  "scale": 1,
+                  "rotation": 0,
+                  "opacity": 1
+                },
+                "style": {
+                  "fontFamily": "Inter, sans-serif",
+                  "fontSize": 96,
+                  "color": "#0A0A0A",
+                  "textAlign": "left"
+                },
+                "keyframes": [],
+                "animations": {
+                  "in": {
+                    "type": "fade",
+                    "durationInFrames": 20
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

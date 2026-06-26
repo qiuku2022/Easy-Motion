@@ -3,6 +3,7 @@ import { blurEditableFocusUnlessTarget } from "@/lib/keyboard";
 import { useTimelineStore } from "@/stores/timelineStore";
 import { formatRemotionSyncSummary } from "@/lib/remotion-sync";
 import { TimelineBody } from "@/components/timeline/TimelineBody";
+import { KeyframeTrackPanel } from "@/components/timeline/KeyframeTrackPanel";
 import { TimelineDevMenu } from "@/components/timeline/TimelineDevMenu";
 import { TimelineTransport } from "@/components/timeline/TimelineTransport";
 import { TimelineZoomControls } from "@/components/timeline/TimelineZoomControls";
@@ -99,16 +100,19 @@ export function TimelinePanel() {
       )}
 
       {timeline && timeline.tracks.length > 0 ? (
-        <TimelineBody
-          tracks={timeline.tracks}
-          durationInFrames={duration}
-          fps={fps}
-          currentFrame={currentFrame}
-          selectedClipId={selectedClipId}
-          selectedMarkerId={selectedMarkerId}
-          onSelectClip={selectClip}
-          onPointerDownCapture={(e) => blurEditableFocusUnlessTarget(e.target)}
-        />
+        <>
+          <TimelineBody
+            tracks={timeline.tracks}
+            durationInFrames={duration}
+            fps={fps}
+            currentFrame={currentFrame}
+            selectedClipId={selectedClipId}
+            selectedMarkerId={selectedMarkerId}
+            onSelectClip={selectClip}
+            onPointerDownCapture={(e) => blurEditableFocusUnlessTarget(e.target)}
+          />
+          <KeyframeTrackPanel />
+        </>
       ) : (
         <div
           className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 p-4 text-center text-sm text-muted-foreground"

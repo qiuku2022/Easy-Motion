@@ -23,6 +23,15 @@ export function frameToPx(frame: number, pxPerFrame: number): number {
   return frame * pxPerFrame;
 }
 
+/** 帧区间边界像素：start=帧左缘，end=帧右缘（下一帧左缘） */
+export function frameBoundaryPx(
+  frame: number,
+  pxPerFrame: number,
+  side: "start" | "end",
+): number {
+  return side === "start" ? frame * pxPerFrame : (frame + 1) * pxPerFrame;
+}
+
 /** 内容区 X（不含轨道头）→ 帧号 */
 export function pxToFrame(
   contentPx: number,

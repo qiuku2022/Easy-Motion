@@ -2,7 +2,9 @@
 
 ## 概述
 
-本文档定义 Python FastAPI 子系统的完整接口契约，包括请求/响应 Schema、错误码、状态码和调用示例。Node.js 主进程通过 HTTP 调用这些接口。
+本文档定义 Python FastAPI 子系统的完整接口契约。Node.js 主进程可通过 HTTP 调用这些接口。
+
+> **实施状态（2026-06-26）**：Python 为 **可选非核心路径**。`pnpm dev` 不启动 Python；`pnpm dev:all` 启动 FastAPI。Electron 主进程 **未** 实现 `main:python:proxy` IPC；爬虫/数据处理接口供未来扩展，M8 未纳入验收。
 
 ---
 
@@ -787,4 +789,4 @@ class PythonService {
 
 ---
 
-*文档版本：v0.1 | 最后更新：2026-05-30*
+*文档版本：v0.2 | 最后更新：2026-06-26*

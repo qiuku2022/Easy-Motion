@@ -62,7 +62,6 @@ EasyMotion 是用自然语言制作 Remotion 动画的 **Electron 桌面应用**
 | 任意 JS/TS | `pnpm lint` |
 | 主进程 / Agent / Generator | `pnpm test` |
 | 仅 Agent 相关 | `pnpm --filter @easymotion/electron test:m5` |
-| Agent eval 黄金路径 | `pnpm --filter @easymotion/electron test:agent-eval` |
 | 预设 manifest / 参数 | `cd apps/electron && node scripts/test-preset-parameters.js` |
 | 仅 UI（无逻辑） | `pnpm lint`；手动 `pnpm dev` 目视检查 |
 | 格式化（提交前可选） | `pnpm format:check` |
@@ -95,9 +94,7 @@ EasyMotion 是用自然语言制作 Remotion 动画的 **Electron 桌面应用**
 - 改已有元素前先 `queryElement`；禁止虚假「已完成」回复
 - 渐变背景：`shape` 轨道 + 全屏 rect + `style.background: linear-gradient(...)`
 
-Eval 任务清单：`docs/agent-eval/tasks.json`；确定性验证：`node scripts/test-agent-eval.js`。
-
-M5.2 Remotion Code Agent 计划：`.local/m5.2-remotion-code-agent/README.md`（用户项目内读写 Remotion TSX，非 monorepo）。
+M5.2 Remotion Code Agent：**已完成**（`a1fa91a`）。详见 [`docs/requirements/LLM-Agent设计.md`](docs/requirements/LLM-Agent设计.md)；测试：`pnpm test:m5.2`。
 
 ## Cursor Skills（开发侧）
 
@@ -128,4 +125,3 @@ M5.2 Remotion Code Agent 计划：`.local/m5.2-remotion-code-agent/README.md`（
 - 开发者入口：[`docs/requirements/开发者README.md`](docs/requirements/开发者README.md)
 - 里程碑：[`docs/requirements/开发里程碑与路线图.md`](docs/requirements/开发里程碑与路线图.md)
 - IPC 规范：[`docs/requirements/IPC通信协议规范.md`](docs/requirements/IPC通信协议规范.md)
-- M5 开发笔记：[`.local/m5-ai-agent/README.md`](.local/m5-ai-agent/README.md)

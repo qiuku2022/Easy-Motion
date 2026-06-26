@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import { Trash2, X } from "lucide-react";
 import { z } from "zod";
 import { ClipPropertyFields } from "@/components/properties/ClipPropertyFields";
+import { KeyframeEditor } from "@/components/properties/KeyframeEditor";
+import { DataBindingPanel } from "@/components/properties/DataBindingPanel";
 import { PresetParameterFields } from "@/components/properties/PresetParameterFields";
 import {
   AlertDialog,
@@ -185,7 +187,8 @@ export function PropertiesPanel() {
           disabled={disabled}
           onPatch={(patch) => onPatch(contentClip.id, patch)}
         />
-        <details className="text-xs text-muted-foreground">
+        <KeyframeEditor clip={contentClip} disabled={disabled} />
+        <details className="text-xs text-muted-foreground" open>
           <summary className="cursor-pointer select-none text-foreground">
             变换
           </summary>
@@ -197,8 +200,29 @@ export function PropertiesPanel() {
               onPatch={(patch) => onPatch(contentClip.id, patch)}
               mode="transform"
             />
-          </div>
-        </details>
+        </div>
+      </details>
+      <details className="text-xs text-muted-foreground">
+        <summary className="cursor-pointer select-none text-foreground">
+          入场动画
+        </summary>
+        <div className="mt-2 space-y-2 border-t border-border pt-2">
+          <ClipPropertyFields
+            clipType="animation"
+            clip={contentClip}
+            disabled={disabled}
+            onPatch={(patch) => onPatch(contentClip.id, patch)}
+            mode="animation"
+          />
+        </div>
+      </details>
+      {preset.category === "data-chart" && (
+        <DataBindingPanel
+          clip={contentClip}
+          disabled={disabled}
+          onPatch={(patch) => onPatch(contentClip.id, patch)}
+        />
+      )}
       </div>
     );
   }
@@ -245,6 +269,38 @@ export function PropertiesPanel() {
           onPatch={(patch) => onPatch(contentClip.id, patch)}
           mode="quick"
         />
+        <KeyframeEditor clip={contentClip} disabled={disabled} />
+        <details className="text-xs text-muted-foreground">
+          <summary className="cursor-pointer select-none text-foreground">变换</summary>
+          <div className="mt-2 space-y-2 border-t border-border pt-2">
+            <ClipPropertyFields
+              clipType={contentType}
+              clip={contentClip}
+              disabled={disabled}
+              onPatch={(patch) => onPatch(contentClip.id, patch)}
+              mode="transform"
+            />
+          </div>
+        </details>
+        <details className="text-xs text-muted-foreground">
+          <summary className="cursor-pointer select-none text-foreground">入场动画</summary>
+          <div className="mt-2 space-y-2 border-t border-border pt-2">
+            <ClipPropertyFields
+              clipType={contentType}
+              clip={contentClip}
+              disabled={disabled}
+              onPatch={(patch) => onPatch(contentClip.id, patch)}
+              mode="animation"
+            />
+          </div>
+        </details>
+        {(contentType === "chart" || preset?.category === "data-chart") && (
+          <DataBindingPanel
+            clip={contentClip}
+            disabled={disabled}
+            onPatch={(patch) => onPatch(contentClip.id, patch)}
+          />
+        )}
       </div>
     );
   }
@@ -366,6 +422,21 @@ function TextEditorPanel({
             onPatch={onPatch}
             mode="quick"
             excludePaths={["source.content"]}
+          />
+        </div>
+      </details>
+
+      <KeyframeEditor clip={clip} disabled={disabled} />
+
+      <details className="text-xs text-muted-foreground">
+        <summary className="cursor-pointer select-none text-foreground">变换</summary>
+        <div className="mt-2 space-y-2 border-t border-border pt-2">
+          <ClipPropertyFields
+            clipType="text"
+            clip={clip}
+            disabled={disabled}
+            onPatch={onPatch}
+            mode="transform"
           />
         </div>
       </details>

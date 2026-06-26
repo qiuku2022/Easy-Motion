@@ -34,8 +34,16 @@ import {
   toggleTrackVisibility,
   updateClip,
   removeMarker,
+  replaceClip,
 } from "@/lib/timeline/mutations";
 import type { ClipPatch } from "@/lib/timeline/mutations";
+import {
+  addClipKeyframe,
+  getClipRelativeFrame,
+  moveClipKeyframe,
+  removeClipKeyframe,
+  updateClipKeyframe,
+} from "@/lib/timeline/keyframes";
 import { TimelineValidationError } from "@/lib/timeline/validate";
 import { getEasyMotion } from "@/types/easyMotion";
 import type {
@@ -50,6 +58,11 @@ import { placePresetOnTimeline } from "@/lib/timeline/placePresetClip";
 import { isPresetPropsOnlyPatch } from "@/lib/presetProps";
 import { findMarkerAtFrame, normalizeMarkers } from "@/lib/timeline/markers";
 import { repairTimelineForEditing } from "@/lib/timeline/repair";
+import {
+  clearWorkArea as clearTimelineWorkArea,
+  setWorkAreaInFrame,
+  setWorkAreaOutFrame,
+} from "@/lib/timeline/workArea";
 import {
   collectLayerElements,
   findLayerTrackForClip,
@@ -150,10 +163,26 @@ interface TimelineState {
   ) => void;
   splitClip: (clipId: string, splitFrame: number) => void;
   updateClip: (clipId: string, patch: ClipPatch) => void;
+  addKeyframeAtPlayhead: (clipId: string, property: string, value?: unknown) => void;
+  removeKeyframe: (clipId: string, keyframeId: string) => void;
+  moveKeyframe: (clipId: string, keyframeId: string, newRelativeFrame: number) => void;
+  updateKeyframe: (
+    clipId: string,
+    keyframeId: string,
+    patch: Partial<
+      Pick<
+        import("@/types/timeline").Keyframe,
+        "value" | "easing" | "interpolation" | "bezierCp" | "springConfig"
+      >
+    >,
+  ) => void;
   splitSelectedClipAtPlayhead: () => void;
   deleteSelectedClip: () => void;
   alignSelectedClipHorizontalCenter: () => void;
   toggleMarkerAtPlayhead: () => void;
+  setInPointAtPlayhead: () => void;
+  setOutPointAtPlayhead: () => void;
+  clearWorkArea: () => void;
   selectMarker: (markerId: string | null) => void;
   removeSelectedMarker: () => void;
   placeAssetAtFrame: (
@@ -443,6 +472,34 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
       }
       const added = findMarkerAtFrame(next, currentFrame, 0);
       set({ selectedMarkerId: added?.id ?? null });
+    },
+
+    setInPointAtPlayhead: () => {
+      const { timeline, currentFrame } = get();
+      if (!timeline) {
+        set({ error: "没有可编辑的时间线" });
+        return;
+      }
+      runMutation((t) => setWorkAreaInFrame(t, currentFrame), {
+        generate: "none",
+      });
+    },
+
+    setOutPointAtPlayhead: () => {
+      const { timeline, currentFrame } = get();
+      if (!timeline) {
+        set({ error: "没有可编辑的时间线" });
+        return;
+      }
+      runMutation((t) => setWorkAreaOutFrame(t, currentFrame), {
+        generate: "none",
+      });
+    },
+
+    clearWorkArea: () => {
+      const { timeline } = get();
+      if (!timeline?.workArea) return;
+      runMutation((t) => clearTimelineWorkArea(t), { generate: "none" });
     },
 
     removeSelectedMarker: () => {
@@ -967,6 +1024,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
           selectedClipId: result.clipId,
           selectedTrackId: result.trackId,
         });
+        void useAssetStore.getState().recordUsage(assetId);
       } catch (err) {
         const message =
           err instanceof TimelineValidationError || err instanceof Error
@@ -1058,6 +1116,82 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
       runMutation((t) => updateClip(t, clipId, patch), {
         generate: "debounced",
       });
+    },
+
+    addKeyframeAtPlayhead: (clipId, property, value) => {
+      const { timeline, currentFrame } = get();
+      if (!timeline) return;
+      const located = findLayerTrackForClip(timeline, clipId);
+      if (!located) {
+        set({ error: "片段不存在" });
+        return;
+      }
+      const relativeFrame = getClipRelativeFrame(currentFrame, located.clip);
+      try {
+        const nextClip = addClipKeyframe(located.clip, {
+          property,
+          frame: relativeFrame,
+          value,
+        });
+        runMutation((t) => replaceClip(t, clipId, nextClip), { generate: "none" });
+        debouncedPreviewPropsSync();
+      } catch (err) {
+        set({
+          error: err instanceof Error ? err.message : "无法添加关键帧",
+        });
+      }
+    },
+
+    removeKeyframe: (clipId, keyframeId) => {
+      const { timeline } = get();
+      if (!timeline) return;
+      const located = findLayerTrackForClip(timeline, clipId);
+      if (!located) return;
+      try {
+        const nextClip = removeClipKeyframe(located.clip, keyframeId);
+        runMutation((t) => replaceClip(t, clipId, nextClip), { generate: "none" });
+        debouncedPreviewPropsSync();
+      } catch (err) {
+        set({
+          error: err instanceof Error ? err.message : "无法删除关键帧",
+        });
+      }
+    },
+
+    moveKeyframe: (clipId, keyframeId, newRelativeFrame) => {
+      const { timeline } = get();
+      if (!timeline) return;
+      const located = findLayerTrackForClip(timeline, clipId);
+      if (!located) return;
+      try {
+        const nextClip = moveClipKeyframe(
+          located.clip,
+          keyframeId,
+          newRelativeFrame,
+        );
+        runMutation((t) => replaceClip(t, clipId, nextClip), { generate: "none" });
+        debouncedPreviewPropsSync();
+      } catch (err) {
+        set({
+          error: err instanceof Error ? err.message : "无法移动关键帧",
+        });
+      }
+    },
+
+    updateKeyframe: (clipId, keyframeId, patch) => {
+      const { timeline } = get();
+      if (!timeline) return;
+      const located = findLayerTrackForClip(timeline, clipId);
+      if (!located) return;
+      try {
+        const nextClip = updateClipKeyframe(located.clip, keyframeId, patch);
+        runMutation((t) => replaceClip(t, clipId, nextClip), { generate: "none" });
+        debouncedPreviewPropsSync();
+      } catch (err) {
+        set({
+          error: err instanceof Error ? err.message : "无法更新关键帧",
+        });
+      }
     },
 
     splitSelectedClipAtPlayhead: () => {

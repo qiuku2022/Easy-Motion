@@ -63,7 +63,10 @@
                   "content": "this week in\ndesign"
                 },
                 "transform": {
-                  "position": { "x": 420, "y": 520 },
+                  "position": {
+                    "x": 420,
+                    "y": 520
+                  },
                   "scale": 1,
                   "rotation": 0,
                   "opacity": 1
@@ -76,14 +79,19 @@
                 },
                 "keyframes": [],
                 "animations": {
-                  "in": { "type": "fade", "durationInFrames": 20 }
+                  "in": {
+                    "type": "fade",
+                    "durationInFrames": 20
+                  }
                 }
               }
             ]
           }
         ]
       }
-    ]
+    ],
+    "remotionFingerprint": "3cc089446c689e60",
+    "remotionSyncedAt": 1782477759753
   },
   "conversation": {
     "messages": []

@@ -1,5 +1,6 @@
-import React from "react";
-import { Img } from "remotion";
+import React, { useMemo } from "react";
+import { Img, useCurrentFrame, useVideoConfig } from "remotion";
+import { applyKeyframesToClip } from "../lib/apply-keyframes";
 
 type ImageLayerProps = {
   clipId: string;
@@ -13,9 +14,22 @@ type ImageLayerProps = {
   style?: {
     objectFit?: "cover" | "contain" | "fill";
   };
+  keyframes?: Parameters<typeof applyKeyframesToClip>[0]["keyframes"];
 };
 
-export const ImageLayer: React.FC<ImageLayerProps> = ({ src, transform, style }) => {
+export const ImageLayer: React.FC<ImageLayerProps> = ({
+  src,
+  transform,
+  style,
+  keyframes = [],
+}) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const resolved = useMemo(
+    () => applyKeyframesToClip({ transform, style, keyframes }, frame, fps),
+    [frame, fps, transform, style, keyframes],
+  );
+
   if (!src) return null;
 
   return (
@@ -23,11 +37,11 @@ export const ImageLayer: React.FC<ImageLayerProps> = ({ src, transform, style })
       src={src}
       style={{
         position: "absolute",
-        left: transform.position.x,
-        top: transform.position.y,
-        transform: `translate(-50%, -50%) scale(${transform.scale}) rotate(${transform.rotation}deg)`,
-        opacity: transform.opacity,
-        objectFit: style?.objectFit ?? "cover"
+        left: resolved.transform.position.x,
+        top: resolved.transform.position.y,
+        transform: `translate(-50%, -50%) scale(${resolved.transform.scale}) rotate(${resolved.transform.rotation}deg)`,
+        opacity: resolved.transform.opacity,
+        objectFit: (resolved.style?.objectFit as "cover" | "contain" | "fill" | undefined) ?? "cover",
       }}
     />
   );

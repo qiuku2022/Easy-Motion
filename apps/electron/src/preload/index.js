@@ -45,6 +45,13 @@ contextBridge.exposeInMainWorld("easyMotion", {
     list: () => invoke("main:asset:list"),
     importFiles: (payload) => invoke("main:asset:import", payload),
     pickAndImport: (payload) => invoke("main:asset:pickAndImport", payload),
+    updateMeta: (payload) => invoke("main:asset:updateMeta", payload),
+    recordUsage: (payload) => invoke("main:asset:recordUsage", payload),
+    readThumbnail: (payload) => invoke("main:asset:readThumbnail", payload),
+  },
+  data: {
+    pickAndParse: () => invoke("main:data:pickAndParse"),
+    mapChart: (payload) => invoke("main:data:mapChart", payload),
   },
   llm: {
     stream: (payload) => invoke("main:llm:stream", payload),
@@ -90,6 +97,29 @@ contextBridge.exposeInMainWorld("easyMotion", {
       const listener = (_event, data) => callback(data);
       ipcRenderer.on("renderer:conversation:status", listener);
       return () => ipcRenderer.removeListener("renderer:conversation:status", listener);
+    },
+  },
+  export: {
+    start: (payload) => invoke("main:export:start", payload),
+    project: (payload) => invoke("main:export:project", payload),
+    cancel: (exportId) => invoke("main:export:cancel", { exportId }),
+    pickOutput: (payload) => invoke("main:export:pickOutput", payload),
+    pickProjectOutput: (payload) => invoke("main:export:pickProjectOutput", payload),
+    getActive: () => invoke("main:export:getActive"),
+    onProgress: (callback) => {
+      const listener = (_event, data) => callback(data);
+      ipcRenderer.on("renderer:export:progress", listener);
+      return () => ipcRenderer.removeListener("renderer:export:progress", listener);
+    },
+    onCompleted: (callback) => {
+      const listener = (_event, data) => callback(data);
+      ipcRenderer.on("renderer:export:completed", listener);
+      return () => ipcRenderer.removeListener("renderer:export:completed", listener);
+    },
+    onError: (callback) => {
+      const listener = (_event, data) => callback(data);
+      ipcRenderer.on("renderer:export:error", listener);
+      return () => ipcRenderer.removeListener("renderer:export:error", listener);
     },
   },
 });

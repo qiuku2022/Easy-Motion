@@ -27,6 +27,25 @@ function requireProject() {
   return current.path;
 }
 
+function resolveImportOptions(projectPath, payload) {
+  let fps = payload?.fps ?? 30;
+  try {
+    const timeline = timelineService.loadTimeline(
+      projectPath,
+      payload?.subprojectPath,
+    );
+    fps = timeline.fps ?? fps;
+  } catch {
+    /* use default fps */
+  }
+
+  return {
+    subprojectPath: payload?.subprojectPath,
+    fps,
+    duplicateResolutions: payload?.duplicateResolutions,
+  };
+}
+
 function registerAssetHandlers() {
   ipcMain.handle(
     "main:asset:list",
@@ -45,21 +64,11 @@ function registerAssetHandlers() {
         throw new Error("未选择文件");
       }
 
-      let fps = payload?.fps ?? 30;
-      try {
-        const timeline = timelineService.loadTimeline(
-          projectPath,
-          payload?.subprojectPath,
-        );
-        fps = timeline.fps ?? fps;
-      } catch {
-        /* use default fps */
-      }
-
-      return assetService.importAssetFiles(projectPath, filePaths, {
-        subprojectPath: payload?.subprojectPath,
-        fps,
-      });
+      return assetService.importAssetFiles(
+        projectPath,
+        filePaths,
+        resolveImportOptions(projectPath, payload),
+      );
     }),
   );
 
@@ -95,24 +104,10 @@ function registerAssetHandlers() {
         return { success: true, data: { imported: [], errors: [], assets: [] } };
       }
 
-      let fps = payload?.fps ?? 30;
-      try {
-        const timeline = timelineService.loadTimeline(
-          projectPath,
-          payload?.subprojectPath,
-        );
-        fps = timeline.fps ?? fps;
-      } catch {
-        /* default */
-      }
-
       const data = await assetService.importAssetFiles(
         projectPath,
         result.filePaths,
-        {
-          subprojectPath: payload?.subprojectPath,
-          fps,
-        },
+        resolveImportOptions(projectPath, payload),
       );
       return { success: true, data };
     } catch (error) {
@@ -122,6 +117,45 @@ function registerAssetHandlers() {
       };
     }
   });
+
+  ipcMain.handle(
+    "main:asset:updateMeta",
+    wrap(async (payload) => {
+      const projectPath = requireProject();
+      const assetId = payload?.assetId;
+      if (!assetId) {
+        throw new Error("缺少 assetId");
+      }
+      return assetService.updateAssetMeta(projectPath, assetId, {
+        isFavorite: payload?.isFavorite,
+        name: payload?.name,
+      });
+    }),
+  );
+
+  ipcMain.handle(
+    "main:asset:recordUsage",
+    wrap(async (payload) => {
+      const projectPath = requireProject();
+      const assetId = payload?.assetId;
+      if (!assetId) {
+        throw new Error("缺少 assetId");
+      }
+      return assetService.recordAssetUsage(projectPath, assetId);
+    }),
+  );
+
+  ipcMain.handle(
+    "main:asset:readThumbnail",
+    wrap(async (payload) => {
+      const projectPath = requireProject();
+      const assetId = payload?.assetId;
+      if (!assetId) {
+        throw new Error("缺少 assetId");
+      }
+      return assetService.readAssetThumbnail(projectPath, assetId);
+    }),
+  );
 }
 
 module.exports = { registerAssetHandlers };

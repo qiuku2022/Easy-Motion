@@ -32,7 +32,7 @@ function collectImports(tracks, durationInFrames) {
   return lines.join("\n");
 }
 
-const LAYER_TYPES = new Set(["text", "image", "shape", "video", "audio"]);
+const LAYER_TYPES = new Set(["text", "image", "shape", "video", "audio", "chart"]);
 
 function flattenClipItems(tracks) {
   const items = [];

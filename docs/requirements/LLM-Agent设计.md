@@ -4,11 +4,31 @@
 
 本文档定义基于 LangChain 构建的多模态对话 Agent 的详细设计，包括 Agent 工作流、Prompt 模板、工具调用定义和多模态输入处理流程。
 
+> **实施状态（2026-06-26）**：M5 + **M5.2** 已落地。Agent 通过 **17 个工具**（10 timeline + 7 Remotion code）修改 `subproject.json` / 自定义 TSX；预览由 **timeline JSON → 动态 MainSequence** 刷新，**非每次**触发 Generator。入口：`apps/electron/src/main/agent/graph.js`。
+
 ---
 
 ## Agent 工作流
 
-### 整体流程
+### 整体流程（已实现）
+
+```
+用户输入（文字 + 可选参考图）
+  ↓
+LangChain createAgent（graph.js）
+  ├── Timeline 工具链：listPresets / applyPreset / createTrack / updateClip / …
+  └── Remotion Code 工具（M5.2）：readRemotionFile / writeRemotionFile / registerCustomComponent / …
+        ↓
+timeline JSON 或 remotion/src 变更
+        ↓
+conversation IPC 流式推送 → conversationStore → eventBus(diffReady) → timelineStore
+        ↓
+Remotion 预览刷新（动态 MainSequence；compile 失败时 M5.2 回滚）
+```
+
+> 下文流程图中的「代码生成器 / 触发 Generator」为 **导出与 Remotion 同步路径**，非 Agent 每轮默认行为。
+
+### 整体流程（原设计参考）
 
 ```
 用户输入（文字 + 图片）
@@ -285,7 +305,7 @@ interface AgentTask {
 
 Agent 通过 LangChain 的 Tool 机制调用以下工具。每个工具对应一个对时间线的原子操作。
 
-> **M5.2 更新（2026-06）**：除下列 timeline 工具外，Agent 还挂载 Remotion Code Tools（`listRemotionFiles`、`readRemotionFile`、`writeRemotionFile`、`patchRemotionFile`、`registerCustomComponent`、`compileRemotionCheck`、`getRemotionPackageInfo`），实现见 `apps/electron/src/main/agent/tools/remotion-code.js`。沙箱可写路径：`components/custom/**`、`presets/custom-registry.ts`。离线评估：`docs/agent-eval/remotion-code-tasks.json` + `pnpm test:m5.2`。
+> **M5.2 更新（2026-06）**：除下列 timeline 工具外，Agent 还挂载 Remotion Code Tools（`listRemotionFiles`、`readRemotionFile`、`writeRemotionFile`、`patchRemotionFile`、`registerCustomComponent`、`compileRemotionCheck`、`getRemotionPackageInfo`），实现见 `apps/electron/src/main/agent/tools/remotion-code.js`。沙箱可写路径：`components/custom/**`、`presets/custom-registry.ts`。离线测试：`pnpm test:m5.2`。
 
 ### 工具列表
 
@@ -672,4 +692,4 @@ Agent 分析：
 
 ---
 
-*文档版本：v0.1 | 最后更新：2026-05-30*
+*文档版本：v0.2 | 最后更新：2026-06-26*

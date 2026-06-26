@@ -52,6 +52,12 @@ export const CLIP_PROPERTY_FIELDS: Record<string, ClipPropertyField[]> = {
     { path: "source.width", label: "宽度", type: "number", min: 1, quick: true },
     { path: "source.height", label: "高度", type: "number", min: 1, quick: true },
   ],
+  chart: [
+    { path: "source.title", label: "标题", type: "text", quick: true },
+    { path: "source.chartType", label: "图表类型", type: "text", quick: true },
+    { path: "style.primaryColor", label: "主色", type: "color", quick: true },
+    { path: "style.backgroundColor", label: "背景色", type: "color", quick: true },
+  ],
 };
 
 export const TRANSFORM_FIELDS: ClipPropertyField[] = [
@@ -60,6 +66,23 @@ export const TRANSFORM_FIELDS: ClipPropertyField[] = [
   { path: "transform.scale", label: "缩放", type: "number", min: 0.01, step: 0.01 },
   { path: "transform.rotation", label: "旋转", type: "number", suffix: "°", suffixOnLabel: true },
   { path: "transform.opacity", label: "透明度", type: "number", min: 0, max: 1, step: 0.01 },
+];
+
+export const ANIMATION_FIELDS: ClipPropertyField[] = [
+  {
+    path: "animations.in.type",
+    label: "入场动画",
+    type: "text",
+    quick: true,
+  },
+  {
+    path: "animations.in.durationInFrames",
+    label: "入场时长",
+    type: "number",
+    min: 1,
+    suffix: "f",
+    quick: true,
+  },
 ];
 
 /** 推断用于属性面板的 clip 内容类型（clip.type 优先，其次 source 结构） */
@@ -94,6 +117,19 @@ export function getClipPropertyValue(clip: Clip, path: string): unknown {
     const source = clip.source ?? {};
     return source.publicPath ?? source.path ?? "";
   }
+  if (path === "animations.in.type") {
+    return clip.animations?.in?.type ?? "none";
+  }
+  if (path === "animations.in.durationInFrames") {
+    return clip.animations?.in?.durationInFrames ?? 15;
+  }
+  if (path === "source.title") {
+    const source = clip.source ?? {};
+    return source.title ?? clip.style?.title ?? "";
+  }
+  if (path === "source.chartType") {
+    return clip.source?.chartType ?? "line";
+  }
   return getValueByPath(clip as Record<string, unknown>, path);
 }
 
@@ -124,6 +160,19 @@ export function buildPatchFromPropertyPath(path: string, value: unknown): ClipPa
   }
   if (path === "transform.opacity") {
     return { transform: { opacity: Number(value) } };
+  }
+  if (path === "animations.in.type") {
+    return { animations: { in: { type: String(value) } } };
+  }
+  if (path === "animations.in.durationInFrames") {
+    return { animations: { in: { durationInFrames: Number(value) } } };
+  }
+  if (path === "source.title") {
+    return { source: { title: String(value) }, style: { title: String(value) } };
+  }
+  if (path === "source.chartType") {
+    const chartType = String(value) === "bar" ? "bar" : "line";
+    return { source: { chartType } };
   }
   return {};
 }

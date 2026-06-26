@@ -29,6 +29,9 @@ interface UiState {
   fitTimelineNonce: number;
   /** 用户手动缩放后，避免 ResizeObserver 自动「适配」抢回缩放 */
   timelineZoomManual: boolean;
+  /** 时间线下方关键帧轨道面板 */
+  keyframePanelExpanded: boolean;
+  selectedKeyframeProperty: string | null;
 
   setLeftPanelWidth: (w: number) => void;
   setRightPanelWidth: (w: number) => void;
@@ -42,6 +45,8 @@ interface UiState {
   setTimelineScrollX: (px: number) => void;
   toggleSnapEnabled: () => void;
   setAltKeyHeld: (held: boolean) => void;
+  toggleKeyframePanel: () => void;
+  setSelectedKeyframeProperty: (property: string | null) => void;
   zoomTimelineBy: (delta: number) => void;
   requestTimelineFit: () => void;
 }
@@ -62,6 +67,8 @@ export const useUiStore = create<UiState>((set) => ({
   altKeyHeld: false,
   fitTimelineNonce: 0,
   timelineZoomManual: false,
+  keyframePanelExpanded: true,
+  selectedKeyframeProperty: "transform.opacity",
 
   setLeftPanelWidth: (leftPanelWidth) => set({ leftPanelWidth }),
   setRightPanelWidth: (rightPanelWidth) => set({ rightPanelWidth }),
@@ -77,6 +84,12 @@ export const useUiStore = create<UiState>((set) => ({
     set({ timelineScrollX: Math.max(0, timelineScrollX) }),
   toggleSnapEnabled: () => set((s) => ({ snapEnabled: !s.snapEnabled })),
   setAltKeyHeld: (altKeyHeld) => set({ altKeyHeld }),
+
+  toggleKeyframePanel: () =>
+    set((s) => ({ keyframePanelExpanded: !s.keyframePanelExpanded })),
+
+  setSelectedKeyframeProperty: (selectedKeyframeProperty) =>
+    set({ selectedKeyframeProperty }),
 
   zoomTimelineBy: (delta) =>
     set((s) => ({

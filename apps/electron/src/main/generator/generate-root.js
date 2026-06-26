@@ -15,7 +15,7 @@ export const RemotionRoot: React.FC = () => {
       width={meta.width}
       height={meta.height}
       defaultProps={{
-        easymotion: timelineManifest,
+        timeline: meta,
       }}
       calculateMetadata={async () => ({
         durationInFrames: meta.durationInFrames,

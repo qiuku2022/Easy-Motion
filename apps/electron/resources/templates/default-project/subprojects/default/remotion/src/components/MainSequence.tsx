@@ -7,6 +7,7 @@ import { resolveCustomComponent } from "../presets/custom-registry";
 import { GradientBackground } from "./newsletter-design/GradientBackground";
 import { NewsletterBackground } from "./newsletter-design/NewsletterBackground";
 import { PreviewClipSequence } from "./PreviewClipSequence";
+import { ChartLayer } from "./layers/ChartLayer";
 import { ImageLayer } from "./layers/ImageLayer";
 import { ShapeLayer } from "./layers/ShapeLayer";
 import { TextLayer } from "./layers/TextLayer";
@@ -30,6 +31,9 @@ function renderClipContent(
       radius?: number;
       path?: string;
       publicPath?: string;
+      title?: string;
+      chartType?: "line" | "bar";
+      data?: Array<{ label: string; value: number }>;
     };
     transform?: {
       position: { x: number; y: number };
@@ -49,6 +53,14 @@ function renderClipContent(
       backgroundImage?: string;
       objectFit?: "cover" | "contain" | "fill";
     };
+    keyframes?: Array<{
+      id: string;
+      property: string;
+      frame: number;
+      value: unknown;
+      easing?: string;
+      interpolation?: string;
+    }>;
     animations?: { in?: { type: string; durationInFrames: number } };
   },
 ) {
@@ -79,6 +91,7 @@ function renderClipContent(
           textAlign: "center",
           ...clip.style,
         }}
+        keyframes={clip.keyframes}
         inAnimation={clip.animations?.in}
       />
     );
@@ -96,6 +109,7 @@ function renderClipContent(
           objectFit: "cover",
           ...clip.style,
         }}
+        keyframes={clip.keyframes}
       />
     );
   }
@@ -113,6 +127,40 @@ function renderClipContent(
         }}
         transform={transform}
         style={clip.style}
+        keyframes={clip.keyframes}
+      />
+    );
+  }
+
+  if (track.type === "chart") {
+    return (
+      <ChartLayer
+        clipId={clip.id}
+        source={{
+          kind: clip.source?.kind === "data" ? "data" : "inline",
+          chartType: clip.source?.chartType === "bar" ? "bar" : "line",
+          title:
+            (typeof clip.source?.title === "string" ? clip.source.title : undefined) ??
+            (typeof clip.style?.title === "string" ? clip.style.title : undefined),
+          data: Array.isArray(clip.source?.data)
+            ? (clip.source.data as Array<{ label: string; value: number }>)
+            : undefined,
+          primaryColor:
+            typeof clip.style?.primaryColor === "string"
+              ? clip.style.primaryColor
+              : undefined,
+          secondaryColor:
+            typeof clip.style?.secondaryColor === "string"
+              ? clip.style.secondaryColor
+              : undefined,
+          backgroundColor:
+            typeof clip.style?.backgroundColor === "string"
+              ? clip.style.backgroundColor
+              : undefined,
+        }}
+        transform={transform}
+        style={clip.style}
+        keyframes={clip.keyframes}
       />
     );
   }

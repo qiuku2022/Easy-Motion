@@ -23,6 +23,7 @@ const LAYER_COMPONENT_MAP = {
   shape: "ShapeLayer",
   video: "VideoLayer",
   audio: "AudioLayer",
+  chart: "ChartLayer",
 };
 
 /** 时间线 animation 片段引用的手写 Remotion 组件 */
@@ -120,6 +121,14 @@ function buildClipProps(track, clip) {
   }
 
   if (track.type === "shape") {
+    return {
+      ...base,
+      source: clip.source,
+      style: clip.style ?? {},
+    };
+  }
+
+  if (track.type === "chart") {
     return {
       ...base,
       source: clip.source,

@@ -189,6 +189,26 @@ export function useTimelineShortcuts() {
         return;
       }
 
+      if (!isModKey(e) && !e.altKey && !e.shiftKey && e.key.toLowerCase() === "i") {
+        consumeShortcut(e);
+        store.clearError();
+        store.setInPointAtPlayhead();
+        return;
+      }
+
+      if (!isModKey(e) && !e.altKey && !e.shiftKey && e.key.toLowerCase() === "o") {
+        consumeShortcut(e);
+        store.clearError();
+        store.setOutPointAtPlayhead();
+        return;
+      }
+
+      if (!isModKey(e) && !e.altKey && e.shiftKey && e.key.toLowerCase() === "x") {
+        consumeShortcut(e);
+        store.clearWorkArea();
+        return;
+      }
+
       if (e.key === "Escape") {
         consumeShortcut(e);
         store.clearSelection();

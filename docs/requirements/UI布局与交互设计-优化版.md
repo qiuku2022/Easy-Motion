@@ -1,5 +1,7 @@
 # UI 布局与交互设计
 
+> **实施状态（2026-06-26）**：M0–M8 已落地，M9（E2E/打包/性能）进行中。权威入口：仓库根 [README.md](../../README.md)、[开发里程碑与路线图.md](./开发里程碑与路线图.md)。
+
 > **本版本**：v1.0 优化版（v0.3 旧版已废弃并归档至 git 历史，本文档为唯一 UI 设计基准）
 > **优化目标**：融合 **Adobe Premiere Pro** 的专业性与 **剪映 (CapCut)** 的极简体验，降低剪辑师和无编程经验用户的上手门槛。
 > **核心原则**：**预览优先、操作即达、智能辅助、减少选择**。
@@ -25,7 +27,7 @@
 | **聚焦环** | `--ring` 中性灰 | 输入框、键盘焦点 |
 | **警告/错误** | `--warning` / `--destructive` | 静音、删除等 |
 
-权威 token：`apps/electron/src/renderer/src/index.css`；设计说明见 `docs/design-system/easymotion/MASTER.md` 与 `.local/theme-refresh/`。
+权威 token：`apps/electron/src/renderer/src/index.css`；设计说明见 `docs/design-system/easymotion/MASTER.md`。
 
 **暗色主题实现**：
 - shadcn `.dark` on `<html>`（v1.0 仅 dark）
@@ -807,4 +809,4 @@ App
 
 ---
 
-*文档版本：v1.0（优化版）| 基于 UI布局设计.md v0.3 + ui-ux-pro-max 设计系统 | 最后更新：2026-05-31*
+*文档版本：v1.0（优化版）| 基于 UI布局与交互设计-优化版.md v0.3 + ui-ux-pro-max 设计系统 | 最后更新：2026-06-26*

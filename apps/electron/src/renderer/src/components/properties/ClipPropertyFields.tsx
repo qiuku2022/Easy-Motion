@@ -35,7 +35,7 @@ interface ClipPropertyFieldsProps {
   clip: Clip;
   disabled?: boolean;
   onPatch: (patch: ClipPatch) => void;
-  mode?: "quick" | "transform" | "all";
+  mode?: "quick" | "transform" | "animation" | "all";
   excludePaths?: string[];
 }
 

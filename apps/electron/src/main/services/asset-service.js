@@ -4,8 +4,18 @@ const os = require("node:os");
 const path = require("node:path");
 const { copyFile, ensureDir, readJsonFile, atomicWriteJson } = require("./file-service");
 const { getRemotionDir } = require("./remotion-project");
+const thumbnailService = require("./thumbnail-service");
+
+function getNativeImage() {
+  try {
+    return require("electron").nativeImage;
+  } catch {
+    return null;
+  }
+}
 
 const ASSET_TYPES = ["image", "video", "audio"];
+const DUPLICATE_ACTIONS = ["skip", "rename", "overwrite"];
 
 const EXTENSION_MAP = {
   png: "image",
@@ -23,6 +33,36 @@ const EXTENSION_MAP = {
   m4a: "audio",
 };
 
+const MAGIC_CHECKS = {
+  png: (buf) => buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47,
+  jpg: (buf) => buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff,
+  jpeg: (buf) => buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff,
+  gif: (buf) =>
+    buf[0] === 0x47 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x38,
+  webp: (buf) =>
+    buf[0] === 0x52 &&
+    buf[1] === 0x49 &&
+    buf[2] === 0x46 &&
+    buf[3] === 0x46 &&
+    buf[8] === 0x57 &&
+    buf[9] === 0x45 &&
+    buf[10] === 0x42 &&
+    buf[11] === 0x50,
+  mp4: (buf) => buf[4] === 0x66 && buf[5] === 0x74 && buf[6] === 0x79 && buf[7] === 0x70,
+  mov: (buf) => buf[4] === 0x66 && buf[5] === 0x74 && buf[6] === 0x79 && buf[7] === 0x70,
+  webm: (buf) =>
+    buf[0] === 0x1a && buf[1] === 0x45 && buf[2] === 0xdf && buf[3] === 0xa3,
+  mp3: (buf) =>
+    (buf[0] === 0x49 && buf[1] === 0x44 && buf[2] === 0x33) ||
+    (buf[0] === 0xff && (buf[1] & 0xe0) === 0xe0),
+  wav: (buf) =>
+    buf[0] === 0x52 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x46,
+  aac: (buf) =>
+    (buf[0] === 0xff && (buf[1] === 0xf1 || buf[1] === 0xf9)) ||
+    (buf[0] === 0x41 && buf[1] === 0x44 && buf[2] === 0x49 && buf[3] === 0x46),
+  m4a: (buf) => buf[4] === 0x66 && buf[5] === 0x74 && buf[6] === 0x79 && buf[7] === 0x70,
+};
+
 function getManifestPath(projectRoot) {
   return path.join(projectRoot, "assets", "manifest.json");
 }
@@ -34,6 +74,58 @@ function getRemotionPublicDir(projectRoot, subprojectRelativePath = "subprojects
 function detectAssetType(filePath) {
   const ext = path.extname(filePath).slice(1).toLowerCase();
   return EXTENSION_MAP[ext] ?? null;
+}
+
+function readFileHeader(filePath, length = 12) {
+  const fd = fs.openSync(filePath, "r");
+  try {
+    const buf = Buffer.alloc(length);
+    fs.readSync(fd, buf, 0, length, 0);
+    return buf;
+  } finally {
+    fs.closeSync(fd);
+  }
+}
+
+function validateFileMagic(filePath, assetType) {
+  const ext = path.extname(filePath).slice(1).toLowerCase();
+  if (ext === "svg") {
+    const text = fs.readFileSync(filePath, { encoding: "utf8", flag: "r" }).slice(0, 256);
+    if (!/<svg[\s>]/i.test(text)) {
+      return "文件内容与 SVG 格式不匹配";
+    }
+    return null;
+  }
+
+  const checker = MAGIC_CHECKS[ext];
+  if (!checker) {
+    return null;
+  }
+
+  try {
+    const header = readFileHeader(filePath);
+    if (!checker(header)) {
+      return `文件内容与扩展名 .${ext} 不匹配`;
+    }
+  } catch {
+    return "无法读取文件头";
+  }
+
+  if (!assetType || EXTENSION_MAP[ext] !== assetType) {
+    return null;
+  }
+
+  return null;
+}
+
+async function computeContentHash(filePath) {
+  return new Promise((resolve, reject) => {
+    const hash = crypto.createHash("sha256");
+    const stream = fs.createReadStream(filePath);
+    stream.on("data", (chunk) => hash.update(chunk));
+    stream.on("end", () => resolve(hash.digest("hex")));
+    stream.on("error", reject);
+  });
 }
 
 function loadManifest(projectRoot) {
@@ -58,6 +150,38 @@ async function saveManifest(projectRoot, manifest) {
   await atomicWriteJson(manifestPath, manifest);
 }
 
+function activeAssets(manifest) {
+  return manifest.assets.filter((a) => !a.isDeleted);
+}
+
+function findDuplicate(manifest, { originalName, contentHash }) {
+  const assets = activeAssets(manifest);
+  const byHash = assets.find((a) => a.contentHash && a.contentHash === contentHash);
+  if (byHash) {
+    return { existing: byHash, reason: "hash" };
+  }
+  const byName = assets.find(
+    (a) => a.originalName === originalName || a.name === originalName,
+  );
+  if (byName) {
+    return { existing: byName, reason: "name" };
+  }
+  return null;
+}
+
+function uniqueDisplayName(manifest, originalName) {
+  const base = path.basename(originalName, path.extname(originalName));
+  const ext = path.extname(originalName);
+  const names = new Set(activeAssets(manifest).map((a) => a.originalName));
+  let index = 1;
+  let candidate = `${base} (${index})${ext}`;
+  while (names.has(candidate)) {
+    index += 1;
+    candidate = `${base} (${index})${ext}`;
+  }
+  return candidate;
+}
+
 function tryLoadParseMedia(remotionDir) {
   try {
     const parserRoot = path.join(remotionDir, "node_modules", "@remotion", "media-parser");
@@ -71,7 +195,16 @@ function tryLoadParseMedia(remotionDir) {
 
 async function extractMediaMetadata(absolutePath, assetType, fps, remotionDir) {
   if (assetType === "image") {
-    return { durationInFrames: Math.max(1, Math.round(fps * 3)) };
+    const nativeImage = getNativeImage();
+    const size =
+      nativeImage && !nativeImage.createFromPath(absolutePath).isEmpty()
+        ? nativeImage.createFromPath(absolutePath).getSize()
+        : null;
+    return {
+      durationInFrames: Math.max(1, Math.round(fps * 3)),
+      width: size?.width,
+      height: size?.height,
+    };
   }
 
   const parser = tryLoadParseMedia(remotionDir);
@@ -107,14 +240,154 @@ async function extractMediaMetadata(absolutePath, assetType, fps, remotionDir) {
 
 function listAssets(projectRoot) {
   const manifest = loadManifest(projectRoot);
-  return manifest.assets.filter((a) => !a.isDeleted);
+  return activeAssets(manifest);
 }
 
-async function importAssetFiles(
+function getAssetById(projectRoot, assetId) {
+  const manifest = loadManifest(projectRoot);
+  return manifest.assets.find((a) => a.id === assetId && !a.isDeleted) ?? null;
+}
+
+async function scanImportDuplicates(projectRoot, filePaths) {
+  const manifest = loadManifest(projectRoot);
+  const duplicates = [];
+
+  for (const sourcePath of filePaths) {
+    if (!sourcePath || !fs.existsSync(sourcePath)) continue;
+
+    const originalName = path.basename(sourcePath);
+    const contentHash = await computeContentHash(sourcePath);
+    const duplicate = findDuplicate(manifest, { originalName, contentHash });
+    if (duplicate) {
+      duplicates.push({
+        sourcePath,
+        originalName,
+        contentHash,
+        reason: duplicate.reason,
+        existingId: duplicate.existing.id,
+        existingName: duplicate.existing.originalName ?? duplicate.existing.name,
+      });
+    }
+  }
+
+  return duplicates;
+}
+
+async function importSingleAsset(
   projectRoot,
-  filePaths,
-  options = {},
+  sourcePath,
+  manifest,
+  context,
 ) {
+  const { subprojectPath, fps, remotionDir, publicRoot, duplicateAction, existingId } =
+    context;
+
+  const assetType = detectAssetType(sourcePath);
+  if (!assetType) {
+    throw new Error(`不支持的文件格式：${path.extname(sourcePath)}`);
+  }
+
+  const magicError = validateFileMagic(sourcePath, assetType);
+  if (magicError) {
+    throw new Error(magicError);
+  }
+
+  const contentHash = await computeContentHash(sourcePath);
+  const originalName = path.basename(sourcePath);
+  const duplicate = findDuplicate(manifest, { originalName, contentHash });
+
+  if (duplicate && duplicateAction === "skip") {
+    return { skipped: true, existing: duplicate.existing };
+  }
+
+  const ext = path.extname(originalName);
+  const sizeBytes = fs.statSync(sourcePath).size;
+
+  if (duplicate && duplicateAction === "overwrite") {
+    const existing = manifest.assets.find((a) => a.id === (existingId ?? duplicate.existing.id));
+    if (!existing || existing.isDeleted) {
+      throw new Error("要覆盖的素材不存在");
+    }
+
+    const destPath = path.join(projectRoot, existing.path.replace(/\//g, path.sep));
+    const publicName = path.basename(existing.publicPath ?? "");
+    const publicDest = path.join(publicRoot, assetType, publicName);
+
+    await copyFile(sourcePath, destPath);
+    await copyFile(sourcePath, publicDest);
+
+    const meta = await extractMediaMetadata(destPath, assetType, fps, remotionDir);
+    const thumbnailPath = await thumbnailService.generateAssetThumbnail(
+      projectRoot,
+      existing.id,
+      destPath,
+      assetType,
+    );
+
+    Object.assign(existing, {
+      type: assetType,
+      mimeType: guessMime(ext),
+      contentHash,
+      sizeBytes,
+      width: meta.width,
+      height: meta.height,
+      durationInFrames: meta.durationInFrames,
+      thumbnailPath: thumbnailPath ?? existing.thumbnailPath,
+      importedAt: Date.now(),
+    });
+
+    return { record: existing, skipped: false };
+  }
+
+  const id = crypto.randomUUID();
+  const displayName =
+    duplicate && duplicateAction === "rename"
+      ? uniqueDisplayName(manifest, originalName)
+      : originalName;
+  const storedName = `${id}${ext}`;
+  const relativePath = path.posix.join("assets", assetType, storedName);
+  const destPath = path.join(projectRoot, "assets", assetType, storedName);
+  const publicDest = path.join(publicRoot, assetType, storedName);
+
+  ensureDir(path.dirname(destPath));
+  ensureDir(path.dirname(publicDest));
+  await copyFile(sourcePath, destPath);
+  await copyFile(sourcePath, publicDest);
+
+  const meta = await extractMediaMetadata(destPath, assetType, fps, remotionDir);
+  const thumbnailPath = await thumbnailService.generateAssetThumbnail(
+    projectRoot,
+    id,
+    destPath,
+    assetType,
+  );
+
+  const record = {
+    id,
+    name: displayName,
+    originalName: displayName,
+    type: assetType,
+    mimeType: guessMime(ext),
+    path: relativePath.replace(/\\/g, "/"),
+    publicPath: `/assets/${assetType}/${storedName}`,
+    contentHash,
+    sizeBytes,
+    width: meta.width,
+    height: meta.height,
+    durationInFrames: meta.durationInFrames,
+    thumbnailPath: thumbnailPath ?? undefined,
+    isFavorite: false,
+    usageCount: 0,
+    lastUsedAt: undefined,
+    importedAt: Date.now(),
+    isDeleted: false,
+  };
+
+  manifest.assets.push(record);
+  return { record, skipped: false };
+}
+
+async function importAssetFiles(projectRoot, filePaths, options = {}) {
   const subprojectPath = options.subprojectPath ?? "subprojects/default";
   const fps = options.fps ?? 30;
   const remotionDir = getRemotionDir(projectRoot, subprojectPath);
@@ -122,6 +395,24 @@ async function importAssetFiles(
   const manifest = loadManifest(projectRoot);
   const imported = [];
   const errors = [];
+  const skipped = [];
+  const duplicateResolutions = options.duplicateResolutions ?? {};
+
+  const hasResolutions = Object.keys(duplicateResolutions).length > 0;
+  if (!hasResolutions) {
+    const duplicates = await scanImportDuplicates(projectRoot, filePaths);
+    if (duplicates.length > 0) {
+      return {
+        imported: [],
+        errors: [],
+        skipped: [],
+        assets: listAssets(projectRoot),
+        duplicates,
+        pendingFilePaths: filePaths,
+        needsDuplicateResolution: true,
+      };
+    }
+  }
 
   for (const sourcePath of filePaths) {
     if (!sourcePath || !fs.existsSync(sourcePath)) {
@@ -129,48 +420,28 @@ async function importAssetFiles(
       continue;
     }
 
-    const assetType = detectAssetType(sourcePath);
-    if (!assetType) {
-      errors.push({
-        path: sourcePath,
-        message: `不支持的文件格式：${path.extname(sourcePath)}`,
-      });
-      continue;
-    }
-
-    const id = crypto.randomUUID();
-    const originalName = path.basename(sourcePath);
-    const ext = path.extname(originalName);
-    const storedName = `${id}${ext}`;
-    const relativePath = path.posix.join("assets", assetType, storedName);
-    const destPath = path.join(projectRoot, "assets", assetType, storedName);
-    const publicDest = path.join(publicRoot, assetType, storedName);
+    const resolution = duplicateResolutions[sourcePath];
+    const duplicateAction =
+      resolution && DUPLICATE_ACTIONS.includes(resolution.action)
+        ? resolution.action
+        : "rename";
 
     try {
-      ensureDir(path.dirname(destPath));
-      ensureDir(path.dirname(publicDest));
-      await copyFile(sourcePath, destPath);
-      await copyFile(sourcePath, publicDest);
+      const result = await importSingleAsset(projectRoot, sourcePath, manifest, {
+        subprojectPath,
+        fps,
+        remotionDir,
+        publicRoot,
+        duplicateAction,
+        existingId: resolution?.existingId,
+      });
 
-      const meta = await extractMediaMetadata(destPath, assetType, fps, remotionDir);
+      if (result.skipped) {
+        skipped.push({ path: sourcePath, existingId: result.existing?.id });
+        continue;
+      }
 
-      const record = {
-        id,
-        name: originalName,
-        originalName,
-        type: assetType,
-        mimeType: guessMime(ext),
-        path: relativePath.replace(/\\/g, "/"),
-        publicPath: `/assets/${assetType}/${storedName}`,
-        width: meta.width,
-        height: meta.height,
-        durationInFrames: meta.durationInFrames,
-        importedAt: Date.now(),
-        isDeleted: false,
-      };
-
-      manifest.assets.push(record);
-      imported.push(record);
+      imported.push(result.record);
     } catch (err) {
       errors.push({
         path: sourcePath,
@@ -183,7 +454,14 @@ async function importAssetFiles(
     await saveManifest(projectRoot, manifest);
   }
 
-  return { imported, errors, assets: listAssets(projectRoot) };
+  return {
+    imported,
+    errors,
+    skipped,
+    assets: listAssets(projectRoot),
+    duplicates: [],
+    needsDuplicateResolution: false,
+  };
 }
 
 function guessExtFromUrl(urlString) {
@@ -290,6 +568,51 @@ async function importAssetSource(
   return asset;
 }
 
+async function updateAssetMeta(projectRoot, assetId, patch) {
+  const manifest = loadManifest(projectRoot);
+  const index = manifest.assets.findIndex((a) => a.id === assetId && !a.isDeleted);
+  if (index < 0) {
+    throw new Error("素材不存在");
+  }
+
+  const current = manifest.assets[index];
+  if (typeof patch.isFavorite === "boolean") {
+    current.isFavorite = patch.isFavorite;
+  }
+  if (typeof patch.name === "string" && patch.name.trim()) {
+    current.name = patch.name.trim();
+  }
+
+  await saveManifest(projectRoot, manifest);
+  return current;
+}
+
+async function recordAssetUsage(projectRoot, assetId) {
+  const manifest = loadManifest(projectRoot);
+  const index = manifest.assets.findIndex((a) => a.id === assetId && !a.isDeleted);
+  if (index < 0) {
+    throw new Error("素材不存在");
+  }
+
+  const current = manifest.assets[index];
+  current.usageCount = (current.usageCount ?? 0) + 1;
+  current.lastUsedAt = Date.now();
+  await saveManifest(projectRoot, manifest);
+  return current;
+}
+
+function readAssetThumbnail(projectRoot, assetId) {
+  const asset = getAssetById(projectRoot, assetId);
+  if (!asset) {
+    throw new Error("素材不存在");
+  }
+  const dataUrl = thumbnailService.readAssetPreviewAsDataUrl(projectRoot, asset);
+  if (!dataUrl) {
+    throw new Error("无法生成缩略图");
+  }
+  return { dataUrl };
+}
+
 function guessMime(ext) {
   const map = {
     ".png": "image/png",
@@ -311,8 +634,15 @@ function guessMime(ext) {
 
 module.exports = {
   ASSET_TYPES,
+  DUPLICATE_ACTIONS,
+  loadManifest,
   listAssets,
+  getAssetById,
   importAssetFiles,
   importAssetSource,
   detectAssetType,
+  scanImportDuplicates,
+  updateAssetMeta,
+  recordAssetUsage,
+  readAssetThumbnail,
 };

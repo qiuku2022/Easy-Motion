@@ -6,6 +6,7 @@ import {
   getRulerTickIntervals,
 } from "@/lib/timeline/rulerTicks";
 import { RulerMarkers } from "@/components/timeline/TimelineMarkers";
+import { WorkAreaRulerMarkers, WorkAreaRulerShade } from "@/components/timeline/WorkAreaOverlay";
 import { cn } from "@/lib/utils";
 import type { Timeline } from "@/types/timeline";
 
@@ -101,14 +102,25 @@ export function TimelineRuler({
         </div>
       ))}
 
-      {timeline && (
-        <RulerMarkers
+      {timeline ? (
+        <WorkAreaRulerShade
           timeline={timeline}
+          durationInFrames={durationInFrames}
           pxPerFrame={pxPerFrame}
-          selectedMarkerId={selectedMarkerId}
-          onSelect={onSelectMarker}
-          onRemove={onRemoveMarker}
         />
+      ) : null}
+
+      {timeline && (
+        <>
+          <WorkAreaRulerMarkers timeline={timeline} pxPerFrame={pxPerFrame} />
+          <RulerMarkers
+            timeline={timeline}
+            pxPerFrame={pxPerFrame}
+            selectedMarkerId={selectedMarkerId}
+            onSelect={onSelectMarker}
+            onRemove={onRemoveMarker}
+          />
+        </>
       )}
     </div>
   );

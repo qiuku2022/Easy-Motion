@@ -34,6 +34,12 @@ export interface Timeline {
   tracks: Track[];
   markers?: TimelineMarker[];
   snapGrid?: SnapGrid;
+  /** PR 风格入点/出点（I/O）；未设置时导出默认 0 → 最后有内容的帧 */
+  workArea?: {
+    inFrame: number;
+    /** inclusive */
+    outFrame: number;
+  };
   /** Remotion 源码指纹，用于检测外部修改 */
   remotionFingerprint?: string;
   remotionSyncedAt?: number;
@@ -67,6 +73,58 @@ export interface Track {
 
 export type LastModifiedBy = "user" | "ai" | null;
 
+export type KeyframeEasing =
+  | "linear"
+  | "ease-in"
+  | "ease-out"
+  | "ease-in-out"
+  | "spring";
+
+export type KeyframeInterpolation = "linear" | "bezier" | "hold";
+
+export interface KeyframeBezierCp {
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}
+
+export interface KeyframeSpringConfig {
+  damping: number;
+  stiffness: number;
+  mass?: number;
+}
+
+export type KeyframeValue = number | string | Record<string, unknown>;
+
+export interface Keyframe {
+  id: string;
+  property: string;
+  frame: number;
+  value: KeyframeValue;
+  easing?: KeyframeEasing;
+  interpolation?: KeyframeInterpolation;
+  /** Cubic-bezier control points (0–1), used when interpolation is `bezier`. */
+  bezierCp?: KeyframeBezierCp;
+  /** Spring physics config, used when easing is `spring`. */
+  springConfig?: KeyframeSpringConfig;
+}
+
+export interface AnimationConfig {
+  type:
+    | "fade"
+    | "slide-left"
+    | "slide-right"
+    | "slide-up"
+    | "slide-down"
+    | "scale-up"
+    | "scale-down"
+    | "rotate"
+    | "blur"
+    | "none";
+  durationInFrames: number;
+}
+
 export interface Clip {
   id: string;
   type: string;
@@ -78,8 +136,11 @@ export interface Clip {
   source?: Record<string, unknown>;
   transform?: Record<string, unknown>;
   style?: Record<string, unknown>;
-  keyframes?: unknown[];
-  animations?: Record<string, unknown>;
+  keyframes?: Keyframe[];
+  animations?: {
+    in?: AnimationConfig;
+    out?: AnimationConfig;
+  };
 }
 
 export type GenerateTrigger = "debounced" | "immediate" | "none";

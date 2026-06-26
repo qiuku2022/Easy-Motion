@@ -475,6 +475,11 @@ export interface ClipPatch {
     rotation?: number;
     opacity?: number;
   };
+  animations?: {
+    in?: { type?: string; durationInFrames?: number };
+    out?: { type?: string; durationInFrames?: number };
+  };
+  keyframes?: Clip["keyframes"];
 }
 
 function mergeClip(base: Clip, patch: ClipPatch): Clip {
@@ -510,6 +515,24 @@ function mergeClip(base: Clip, patch: ClipPatch): Clip {
         ...(patch.transform.position ?? {}),
       },
     };
+  }
+  if (patch.animations) {
+    const baseAnimations = base.animations ?? {};
+    next.animations = {
+      ...baseAnimations,
+      ...patch.animations,
+      in: {
+        ...(baseAnimations.in ?? {}),
+        ...(patch.animations.in ?? {}),
+      },
+      out: {
+        ...(baseAnimations.out ?? {}),
+        ...(patch.animations.out ?? {}),
+      },
+    };
+  }
+  if (patch.keyframes !== undefined) {
+    next.keyframes = patch.keyframes;
   }
 
   return next;
@@ -628,4 +651,61 @@ export function toggleMarkerAtFrame(timeline: Timeline, frame: number): Timeline
     });
   }
   return addMarker(timeline, clamped);
+}
+
+export function replaceClip(
+  timeline: Timeline,
+  clipId: string,
+  nextClip: Clip,
+): Timeline {
+  const located = findLayerTrackForClip(timeline, clipId);
+  if (!located) throw new Error("片段不存在");
+  const parentGroup = findParentGroup(timeline, located.clipTrack.id);
+  if (
+    located.layerTrack.locked ||
+    located.clipTrack.locked ||
+    parentGroup?.locked
+  ) {
+    throw new Error("轨道已锁定");
+  }
+
+  const start = clampClipStart(
+    nextClip.startInFrames,
+    nextClip.durationInFrames,
+    timeline.durationInFrames,
+  );
+  const duration = clampClipDuration(
+    nextClip.durationInFrames,
+    start,
+    timeline.durationInFrames,
+  );
+  const normalized: Clip = {
+    ...nextClip,
+    startInFrames: start,
+    durationInFrames: duration,
+  };
+
+  if (
+    hasOverlapOnTrack(
+      located.clipTrack,
+      getClipRange(normalized),
+      clipId,
+    )
+  ) {
+    throw new Error("片段与其他片段重叠");
+  }
+
+  assertValidTimeline({
+    ...timeline,
+    tracks: timeline.tracks.map((track) =>
+      replaceClipOnTrack(track, located.clipTrack.id, clipId, normalized),
+    ),
+  });
+
+  return withValidated({
+    ...timeline,
+    tracks: timeline.tracks.map((track) =>
+      replaceClipOnTrack(track, located.clipTrack.id, clipId, normalized),
+    ),
+  });
 }

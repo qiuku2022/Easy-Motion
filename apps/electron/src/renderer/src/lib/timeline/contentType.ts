@@ -21,6 +21,7 @@ export function isContentEditableType(type: TrackType): boolean {
     type === "image" ||
     type === "video" ||
     type === "audio" ||
-    type === "shape"
+    type === "shape" ||
+    type === "chart"
   );
 }

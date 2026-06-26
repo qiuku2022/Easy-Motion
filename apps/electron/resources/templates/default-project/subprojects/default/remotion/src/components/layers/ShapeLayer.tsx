@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useMemo } from "react";
+import { useCurrentFrame, useVideoConfig } from "remotion";
+import { applyKeyframesToClip } from "../lib/apply-keyframes";
 
 type ShapeLayerProps = {
   clipId: string;
@@ -22,17 +24,30 @@ type ShapeLayerProps = {
     background?: string;
     backgroundImage?: string;
   };
+  keyframes?: Parameters<typeof applyKeyframesToClip>[0]["keyframes"];
 };
 
-export const ShapeLayer: React.FC<ShapeLayerProps> = ({ source, transform, style }) => {
+export const ShapeLayer: React.FC<ShapeLayerProps> = ({
+  source,
+  transform,
+  style,
+  keyframes = [],
+}) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const resolved = useMemo(
+    () => applyKeyframesToClip({ transform, style, keyframes }, frame, fps),
+    [frame, fps, transform, style, keyframes],
+  );
+
   const width = source.width ?? 200;
   const height = source.height ?? 200;
 
-  const fillPaint: React.CSSProperties = style?.background
-    ? { background: style.background }
-    : style?.backgroundImage
-      ? { backgroundImage: style.backgroundImage }
-      : { backgroundColor: style?.fillColor ?? "#e11d48" };
+  const fillPaint: React.CSSProperties = resolved.style?.background
+    ? { background: String(resolved.style.background) }
+    : resolved.style?.backgroundImage
+      ? { backgroundImage: String(resolved.style.backgroundImage) }
+      : { backgroundColor: String(resolved.style?.fillColor ?? "#e11d48") };
 
   const shapeStyle: React.CSSProperties =
     source.shape === "circle"
@@ -45,8 +60,8 @@ export const ShapeLayer: React.FC<ShapeLayerProps> = ({ source, transform, style
       : {
           width,
           height,
-          border: style?.strokeColor
-            ? `${style.strokeWidth ?? 1}px solid ${style.strokeColor}`
+          border: resolved.style?.strokeColor
+            ? `${resolved.style.strokeWidth ?? 1}px solid ${resolved.style.strokeColor}`
             : undefined,
           ...fillPaint,
         };
@@ -55,11 +70,11 @@ export const ShapeLayer: React.FC<ShapeLayerProps> = ({ source, transform, style
     <div
       style={{
         position: "absolute",
-        left: transform.position.x,
-        top: transform.position.y,
-        transform: `translate(-50%, -50%) scale(${transform.scale}) rotate(${transform.rotation}deg)`,
-        opacity: transform.opacity,
-        ...shapeStyle
+        left: resolved.transform.position.x,
+        top: resolved.transform.position.y,
+        transform: `translate(-50%, -50%) scale(${resolved.transform.scale}) rotate(${resolved.transform.rotation}deg)`,
+        opacity: resolved.transform.opacity,
+        ...shapeStyle,
       }}
     />
   );
