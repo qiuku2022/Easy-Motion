@@ -5,14 +5,26 @@ import {
 } from "@/lib/timeline/framePixels";
 
 export type LeftTab = "project" | "assets" | "presets";
-export type RightTab = "properties" | "assets" | "templates" | "ai";
+export type RightTab = "properties" | "templates";
+
+/** 与 AppLayout 面板拖拽范围一致 */
+export const LEFT_PANEL_WIDTH_MIN = 200;
+export const LEFT_PANEL_WIDTH_MAX = 360;
+export const RIGHT_PANEL_WIDTH_MIN = 240;
+export const RIGHT_PANEL_WIDTH_MAX = 380;
+export const AI_PANEL_WIDTH_MIN = 280;
+export const AI_PANEL_WIDTH_MAX = 480;
+export const TIMELINE_HEIGHT_MIN = 160;
+export const TIMELINE_HEIGHT_MAX = 480;
 
 interface UiState {
   leftPanelWidth: number;
   rightPanelWidth: number;
+  aiPanelWidth: number;
   timelineHeight: number;
   leftCollapsed: boolean;
   rightCollapsed: boolean;
+  aiCollapsed: boolean;
   timelineCollapsed: boolean;
   leftTab: LeftTab;
   rightTab: RightTab;
@@ -35,9 +47,11 @@ interface UiState {
 
   setLeftPanelWidth: (w: number) => void;
   setRightPanelWidth: (w: number) => void;
+  setAiPanelWidth: (w: number) => void;
   setTimelineHeight: (h: number) => void;
   toggleLeftCollapsed: () => void;
   toggleRightCollapsed: () => void;
+  toggleAiCollapsed: () => void;
   toggleTimelineCollapsed: () => void;
   setLeftTab: (tab: LeftTab) => void;
   setRightTab: (tab: RightTab) => void;
@@ -52,11 +66,13 @@ interface UiState {
 }
 
 export const useUiStore = create<UiState>((set) => ({
-  leftPanelWidth: 280,
-  rightPanelWidth: 360,
-  timelineHeight: 260,
+  leftPanelWidth: 252,
+  rightPanelWidth: 280,
+  aiPanelWidth: 320,
+  timelineHeight: TIMELINE_HEIGHT_MAX,
   leftCollapsed: false,
   rightCollapsed: false,
+  aiCollapsed: false,
   timelineCollapsed: false,
   leftTab: "project",
   rightTab: "properties",
@@ -72,9 +88,11 @@ export const useUiStore = create<UiState>((set) => ({
 
   setLeftPanelWidth: (leftPanelWidth) => set({ leftPanelWidth }),
   setRightPanelWidth: (rightPanelWidth) => set({ rightPanelWidth }),
+  setAiPanelWidth: (aiPanelWidth) => set({ aiPanelWidth }),
   setTimelineHeight: (timelineHeight) => set({ timelineHeight }),
   toggleLeftCollapsed: () => set((s) => ({ leftCollapsed: !s.leftCollapsed })),
   toggleRightCollapsed: () => set((s) => ({ rightCollapsed: !s.rightCollapsed })),
+  toggleAiCollapsed: () => set((s) => ({ aiCollapsed: !s.aiCollapsed })),
   toggleTimelineCollapsed: () =>
     set((s) => ({ timelineCollapsed: !s.timelineCollapsed })),
   setLeftTab: (leftTab) => set({ leftTab }),

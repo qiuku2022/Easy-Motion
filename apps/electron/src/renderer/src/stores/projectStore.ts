@@ -1,9 +1,12 @@
 import { create } from "zustand";
 import type { ProjectSummary } from "@/types/easyMotion";
 import { getEasyMotion } from "@/types/easyMotion";
+import { createHistory } from "@/lib/timeline/history";
 import { useTimelineStore } from "@/stores/timelineStore";
 import { useAssetStore } from "@/stores/assetStore";
 import { useConversationStore } from "@/stores/conversationStore";
+import { useExportStore } from "@/stores/exportStore";
+import { usePlaybackStore } from "@/stores/playbackStore";
 
 export interface CurrentProject {
   name: string;
@@ -24,6 +27,7 @@ interface ProjectState {
   openProjectByPicker: () => Promise<boolean>;
   openProjectByPath: (path: string) => Promise<boolean>;
   saveProject: () => Promise<boolean>;
+  closeProject: () => Promise<boolean>;
   deleteProject: (path: string) => Promise<boolean>;
   clearError: () => void;
 }
@@ -53,12 +57,17 @@ async function clearProjectWorkspace() {
     selectedClipId: null,
     selectedMarkerId: null,
     hasUnsavedChanges: false,
+    history: createHistory(),
     remotionDrift: null,
     isSyncingRemotion: false,
     lastRemotionSync: null,
   });
   useAssetStore.getState().clear();
   useConversationStore.getState().resetForProjectClose();
+  usePlaybackStore.getState().setPlaying(false);
+  if (useExportStore.getState().phase !== "exporting") {
+    useExportStore.getState().reset();
+  }
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
@@ -198,6 +207,37 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     return true;
   },
 
+  closeProject: async () => {
+    const api = getEasyMotion();
+    if (!get().current) return true;
+
+    if (!api?.project.close) {
+      set({ error: "项目 API 不可用" });
+      return false;
+    }
+
+    if (useTimelineStore.getState().hasUnsavedChanges) {
+      const confirmed = window.confirm(
+        "当前项目有未保存的更改。\n关闭项目将丢弃这些更改，是否继续？",
+      );
+      if (!confirmed) return false;
+    }
+
+    set({ isLoading: true, error: null });
+    const res = await api.project.close();
+    set({ isLoading: false });
+
+    if (!res.success) {
+      set({ error: res.error?.message ?? "关闭项目失败" });
+      return false;
+    }
+
+    await clearProjectWorkspace();
+    await get().refreshCurrent();
+    await get().loadLocalProjects();
+    return true;
+  },
+
   deleteProject: async (projectPath) => {
     const api = getEasyMotion();
     if (!api?.project.delete) {
@@ -222,6 +262,10 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     }
 
     if (wasCurrent) {
+      const api = getEasyMotion();
+      if (api?.project.close) {
+        await api.project.close();
+      }
       await clearProjectWorkspace();
     }
 

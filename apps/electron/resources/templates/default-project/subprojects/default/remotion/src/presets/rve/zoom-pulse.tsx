@@ -10,10 +10,12 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { type RveBaseProps, pImage, pNum, pColor } from "./shared";
+import { type RveBaseProps, pImage, pNum, pColor, RVE_DEFAULT_SAMPLE_IMAGE_PATH, resolvePresetImageSrc } from "./shared";
 
 export function RveZoomPulse(props: RveBaseProps = {}) {
-  const imageUrl = pImage(props, "imageUrl", "https://images.pexels.com/photos/1726310/pexels-photo-1726310.jpeg");
+  const imageUrl = resolvePresetImageSrc(
+    pImage(props, "imageUrl", RVE_DEFAULT_SAMPLE_IMAGE_PATH),
+  );
   const maxScale = pNum(props, "value", 1.1);
   const backgroundColor = pColor(props, "backgroundColor", "#000000");
   const duration = 4;

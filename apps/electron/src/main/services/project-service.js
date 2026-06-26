@@ -227,6 +227,14 @@ function getCurrentProject() {
   return currentProject;
 }
 
+function closeCurrentProject() {
+  if (!currentProject) {
+    return { closed: false };
+  }
+  currentProject = null;
+  return { closed: true };
+}
+
 module.exports = {
   createProject,
   openProject,
@@ -235,4 +243,5 @@ module.exports = {
   listLocalProjects,
   deleteProject,
   getCurrentProject,
+  closeCurrentProject,
 };

@@ -10,10 +10,12 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { type RveBaseProps, pImage, pNum, pColor } from "./shared";
+import { type RveBaseProps, pImage, pNum, pColor, RVE_DEFAULT_SAMPLE_IMAGE_PATH, resolvePresetImageSrc } from "./shared";
 
 export function RveKenBurns(props: RveBaseProps = {}) {
-  const imageUrl = pImage(props, "imageUrl", "https://images.unsplash.com/photo-1682687220742-aba13b6e50ba");
+  const imageUrl = resolvePresetImageSrc(
+    pImage(props, "imageUrl", RVE_DEFAULT_SAMPLE_IMAGE_PATH),
+  );
   const scale = pNum(props, "value", 1.5);
   const backgroundColor = pColor(props, "backgroundColor", "#000000");
   const duration = 20;

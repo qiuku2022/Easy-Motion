@@ -87,33 +87,7 @@
       "args": ["${workspaceFolder}/apps/electron/scripts/cleanup-debug-processes.cjs"],
       "options": {
         "cwd": "${workspaceFolder}/apps/electron",
-        "env": {
-          "ELECTRON_CDP_PORT": "9333",
-          "EASY_MOTION_PYTHON_PORT": "8001"
-        }
-      },
-      "presentation": {
-        "reveal": "never",
-        "echo": false,
-        "focus": false,
-        "panel": "dedicated",
-        "showReuseMessage": false,
-        "close": true
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "debug: cleanup (full stack)",
-      "type": "process",
-      "command": "node",
-      "args": ["${workspaceFolder}/apps/electron/scripts/cleanup-debug-processes.cjs"],
-      "options": {
-        "cwd": "${workspaceFolder}/apps/electron",
-        "env": {
-          "ELECTRON_CDP_PORT": "9333",
-          "EASY_MOTION_PYTHON_PORT": "8001",
-          "EASY_MOTION_CLEANUP_PYTHON": "1"
-        }
+        "env": { "ELECTRON_CDP_PORT": "9333" }
       },
       "presentation": {
         "reveal": "never",
@@ -136,62 +110,12 @@
       "problemMatcher": []
     },
     {
-      "label": "pnpm: dev:all",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["dev:all"],
-      "options": { "cwd": "${workspaceFolder}" },
-      "presentation": { "reveal": "always", "panel": "dedicated", "group": "dev" },
-      "problemMatcher": []
-    },
-    {
-      "label": "pnpm: dev:electron",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["dev:electron"],
-      "options": { "cwd": "${workspaceFolder}" },
-      "dependsOn": ["debug: prepare"],
-      "dependsOrder": "sequence",
-      "presentation": { "reveal": "always", "panel": "dedicated", "group": "dev" },
-      "problemMatcher": []
-    },
-    {
       "label": "pnpm: test",
       "type": "shell",
       "command": "pnpm",
       "args": ["test"],
       "options": { "cwd": "${workspaceFolder}" },
       "presentation": { "reveal": "always", "panel": "dedicated" },
-      "problemMatcher": []
-    },
-    {
-      "label": "pnpm: lint",
-      "type": "shell",
-      "command": "pnpm",
-      "args": ["lint"],
-      "options": { "cwd": "${workspaceFolder}" },
-      "presentation": { "reveal": "always", "panel": "shared" },
-      "problemMatcher": ["$eslint-stylish"]
-    },
-    {
-      "label": "uv: install python deps",
-      "type": "shell",
-      "windows": {
-        "command": "${workspaceFolder}\\apps\\python\\.venv\\Scripts\\pip.exe",
-        "args": ["install", "-r", "requirements.txt"],
-        "options": { "cwd": "${workspaceFolder}\\apps\\python" }
-      },
-      "linux": {
-        "command": "${workspaceFolder}/apps/python/.venv/bin/pip",
-        "args": ["install", "-r", "requirements.txt"],
-        "options": { "cwd": "${workspaceFolder}/apps/python" }
-      },
-      "osx": {
-        "command": "${workspaceFolder}/apps/python/.venv/bin/pip",
-        "args": ["install", "-r", "requirements.txt"],
-        "options": { "cwd": "${workspaceFolder}/apps/python" }
-      },
-      "presentation": { "reveal": "always" },
       "problemMatcher": []
     }
   ]

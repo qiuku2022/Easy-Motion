@@ -18,13 +18,21 @@ export function LeftPanel() {
   return (
     <aside className="flex h-full min-w-0 flex-col border-r border-border bg-background">
       <PanelTabs tabs={TABS} active={leftTab} onChange={setLeftTab} />
-      <ScrollArea className="min-h-0 flex-1">
-        <PanelTabContent tabKey={leftTab} className="p-3 text-sm text-muted-foreground">
-          {leftTab === "project" && <ProjectPanel />}
-          {leftTab === "assets" && <AssetsPanel />}
-          {leftTab === "presets" && <PresetPanel />}
+      {leftTab === "presets" ? (
+        <PanelTabContent
+          tabKey={leftTab}
+          className="flex min-h-0 flex-1 flex-col p-3 text-sm text-muted-foreground"
+        >
+          <PresetPanel />
         </PanelTabContent>
-      </ScrollArea>
+      ) : (
+        <ScrollArea className="min-h-0 flex-1">
+          <PanelTabContent tabKey={leftTab} className="p-3 text-sm text-muted-foreground">
+            {leftTab === "project" && <ProjectPanel />}
+            {leftTab === "assets" && <AssetsPanel />}
+          </PanelTabContent>
+        </ScrollArea>
+      )}
     </aside>
   );
 }

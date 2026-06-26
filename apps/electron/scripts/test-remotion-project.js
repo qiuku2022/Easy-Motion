@@ -4,6 +4,7 @@ const os = require("node:os");
 const { removeDirRecursive } = require("../src/main/services/file-service");
 const {
   ensureRemotionProject,
+  ensureLayerKeyframesImport,
   getMissingRemotionDeps,
 } = require("../src/main/services/remotion-project");
 
@@ -48,6 +49,19 @@ function run() {
 
   if (getMissingRemotionDeps(remotionDir).length === 0) {
     throw new Error("bundler should still be missing before npm install");
+  }
+
+  const layersDir = path.join(remotionDir, "src", "components", "layers");
+  write(
+    path.join(layersDir, "TextLayer.tsx"),
+    'import { applyKeyframesToClip } from "../lib/apply-keyframes";\n',
+  );
+  if (!ensureLayerKeyframesImport(remotionDir)) {
+    throw new Error("ensureLayerKeyframesImport should patch bad import");
+  }
+  const fixed = fs.readFileSync(path.join(layersDir, "TextLayer.tsx"), "utf8");
+  if (!fixed.includes('from "../../lib/apply-keyframes"')) {
+    throw new Error("layer import should be rewritten to ../../lib/apply-keyframes");
   }
 
   console.log("[PASS] remotion-project");

@@ -1403,7 +1403,7 @@
         "key": "imageUrl",
         "label": "图片地址",
         "type": "image",
-        "defaultValue": "https://images.unsplash.com/photo-1682687220742-aba13b6e50ba"
+        "defaultValue": "presets/sample-landscape.png"
       },
       {
         "key": "value",
@@ -1471,7 +1471,7 @@
         "key": "imageUrl",
         "label": "图片地址",
         "type": "image",
-        "defaultValue": "https://images.pexels.com/photos/1644724/pexels-photo-1644724.jpeg"
+        "defaultValue": "presets/sample-landscape.png"
       },
       {
         "key": "value",
@@ -1619,7 +1619,7 @@
         "key": "imageUrl",
         "label": "图片地址",
         "type": "image",
-        "defaultValue": "https://images.pexels.com/photos/1726310/pexels-photo-1726310.jpeg"
+        "defaultValue": "presets/sample-landscape.png"
       },
       {
         "key": "value",

@@ -53,6 +53,13 @@
     --sidebar-ring: oklch(0.556 0 0);
     /* 预览区「舞台」：比壳层更深的中性灰，无紫调（≈ #121212） */
     --preview-canvas: oklch(0.085 0 0);
+    /* 窗口壳层（TitleBar + Frame），见 .local/window-chrome-dev-plan.md */
+    --shell-chrome-height: 32px;
+    --shell-toolbar-height: 44px;
+    --shell-titlebar: var(--card);
+    --shell-titlebar-fg: var(--muted-foreground);
+    --shell-frame: var(--border);
+    --shell-workspace: var(--background);
   }
 
   body {

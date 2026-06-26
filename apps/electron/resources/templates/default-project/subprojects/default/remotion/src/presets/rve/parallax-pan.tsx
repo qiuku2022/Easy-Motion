@@ -10,10 +10,12 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { type RveBaseProps, pImage, pNum, pColor } from "./shared";
+import { type RveBaseProps, pImage, pNum, pColor, RVE_DEFAULT_SAMPLE_IMAGE_PATH, resolvePresetImageSrc } from "./shared";
 
 export function RveParallaxPan(props: RveBaseProps = {}) {
-  const imageUrl = pImage(props, "imageUrl", "https://images.pexels.com/photos/1644724/pexels-photo-1644724.jpeg");
+  const imageUrl = resolvePresetImageSrc(
+    pImage(props, "imageUrl", RVE_DEFAULT_SAMPLE_IMAGE_PATH),
+  );
   const scale = pNum(props, "value", 1.2);
   const backgroundColor = pColor(props, "backgroundColor", "#000000");
   const duration = 15;

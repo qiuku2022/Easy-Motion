@@ -88,8 +88,8 @@ export function PresetPanel() {
   );
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-3">
-      <div className="relative">
+    <div className="flex h-full min-h-0 flex-col gap-3">
+      <div className="relative shrink-0">
         <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={searchQuery}
@@ -100,7 +100,7 @@ export function PresetPanel() {
         />
       </div>
 
-      <div className="scrollbar-theme -mx-1 flex gap-1 overflow-x-auto overflow-y-hidden px-1 pb-1">
+      <div className="scrollbar-theme -mx-1 shrink-0 flex gap-1 overflow-x-auto overflow-y-hidden px-1 pb-1">
         {categories.map((cat) => (
           <CategoryChip
             key={cat.id}
@@ -111,26 +111,28 @@ export function PresetPanel() {
         ))}
       </div>
 
-      <p className="text-[10px] text-muted-foreground">
+      <p className="shrink-0 text-[10px] text-muted-foreground">
         单击查看 · 双击应用到播放头 · 拖到时间线放置
       </p>
 
-      {filteredPresets.length === 0 ? (
-        <p className="py-8 text-center text-xs text-muted-foreground">
-          该分类下没有匹配的预设
-        </p>
-      ) : (
-        <div className="grid grid-cols-2 gap-2">
-          {filteredPresets.map((preset) => (
-            <PresetCard
-              key={preset.id}
-              preset={preset}
-              onSingleClick={() => openApplyDialog(preset)}
-              onDoubleClick={() => applyPreset(preset)}
-            />
-          ))}
-        </div>
-      )}
+      <div className="scrollbar-theme -mr-1 min-h-0 flex-1 overflow-y-auto pr-1">
+        {filteredPresets.length === 0 ? (
+          <p className="py-8 text-center text-xs text-muted-foreground">
+            该分类下没有匹配的预设
+          </p>
+        ) : (
+          <div className="grid grid-cols-2 gap-2 pb-1">
+            {filteredPresets.map((preset) => (
+              <PresetCard
+                key={preset.id}
+                preset={preset}
+                onSingleClick={() => openApplyDialog(preset)}
+                onDoubleClick={() => applyPreset(preset)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
       <Dialog
         open={applyDialogOpen}
@@ -209,14 +211,14 @@ function PresetPreviewThumb({
       <div
         ref={dragImageRef}
         className={cn(
-          "relative overflow-hidden rounded-lg border border-border bg-card",
+          "relative flex items-center justify-center overflow-hidden rounded-lg border border-border bg-preview-canvas",
           className,
         )}
       >
         <img
           src={src}
           alt=""
-          className="h-full w-full object-cover"
+          className="max-h-full max-w-full object-contain object-center"
           loading="lazy"
           decoding="async"
           draggable={false}

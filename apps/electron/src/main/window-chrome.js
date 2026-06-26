@@ -1,18 +1,24 @@
 /**
  * 壳层窗口外观：固定深色，不跟随 Windows 浅色系统主题。
- * 背景色对齐 renderer index.css --background（oklch(0.145 0 0) ≈ #252525）。
  *
- * Windows：保留系统原生标题栏 + nativeTheme.dark，由 Win11 统一绘制深色 caption 按钮。
- * （titleBarOverlay 在 Win11 上易出现按钮区灰块，与工具栏色差。）
+ * TitleBar 顶盖对齐 renderer --card（oklch(0.205 0 0) ≈ #343434）。
+ * 工作区对齐 --background（oklch(0.145 0 0) ≈ #252525）。
+ *
+ * macOS：hiddenInset + 系统红绿灯。
+ * Windows/Linux：frameless + thickFrame，渲染层自绘 WindowControls。
  */
-const SHELL_BACKGROUND = "#252525";
+const SHELL_TITLEBAR_BG = "#343434";
+const SHELL_WORKSPACE_BG = "#252525";
+
+/** @deprecated 使用 SHELL_TITLEBAR_BG / SHELL_WORKSPACE_BG */
+const SHELL_BACKGROUND = SHELL_WORKSPACE_BG;
 
 /** @param {Electron.BrowserWindowConstructorOptions} bounds */
 function getMainWindowChromeOptions(bounds) {
   const base = {
     ...bounds,
     title: "EasyMotion",
-    backgroundColor: SHELL_BACKGROUND,
+    backgroundColor: SHELL_TITLEBAR_BG,
     autoHideMenuBar: true,
     show: false,
   };
@@ -24,10 +30,17 @@ function getMainWindowChromeOptions(bounds) {
     };
   }
 
-  return base;
+  return {
+    ...base,
+    frame: false,
+    thickFrame: true,
+    roundedCorners: true,
+  };
 }
 
 module.exports = {
   SHELL_BACKGROUND,
+  SHELL_TITLEBAR_BG,
+  SHELL_WORKSPACE_BG,
   getMainWindowChromeOptions,
 };

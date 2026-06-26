@@ -1,18 +1,12 @@
 import { LayoutTemplate } from "lucide-react";
-import { AIAssistantPanel } from "@/components/ai/AIAssistantPanel";
-import { QuickAssetPanel } from "@/components/assets/QuickAssetPanel";
 import { PanelTabContent } from "@/components/common/PanelTabContent";
 import { PanelTabs } from "@/components/common/PanelTabs";
 import { PropertiesPanel } from "@/components/properties/PropertiesPanel";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
 import { useUiStore } from "@/stores/uiStore";
 
 const TABS = [
   { id: "properties" as const, label: "属性" },
-  { id: "assets" as const, label: "素材" },
   { id: "templates" as const, label: "模板" },
-  { id: "ai" as const, label: "AI 助手" },
 ];
 
 export function RightPanel() {
@@ -21,22 +15,12 @@ export function RightPanel() {
   return (
     <aside className="flex h-full min-w-0 flex-col border-l border-border bg-background">
       <PanelTabs tabs={TABS} active={rightTab} onChange={setRightTab} />
-      {/* 保持挂载，避免切换 Tab 时对话 state 丢失 */}
       <PanelTabContent
-        tabKey="ai"
-        className={cn(
-          "flex min-h-0 flex-1 flex-col",
-          rightTab !== "ai" && "hidden",
-        )}
+        tabKey={rightTab}
+        className="flex min-h-0 flex-1 flex-col p-3 text-sm"
       >
-        <AIAssistantPanel />
-      </PanelTabContent>
-      <ScrollArea
-        className={cn("min-h-0 flex-1", rightTab === "ai" && "hidden")}
-      >
-        <PanelTabContent tabKey={rightTab} className="p-3 text-sm">
+        <div className="scrollbar-theme -mr-1 min-h-0 flex-1 overflow-y-auto pr-1">
           {rightTab === "properties" && <PropertiesPanel />}
-          {rightTab === "assets" && <QuickAssetPanel />}
           {rightTab === "templates" && (
             <div className="flex min-h-[12rem] flex-col items-center justify-center gap-2 text-center text-muted-foreground">
               <LayoutTemplate className="h-10 w-10 text-border" aria-hidden />
@@ -44,8 +28,8 @@ export function RightPanel() {
               <p className="text-xs">浏览项目与子项目模板，快速开始</p>
             </div>
           )}
-        </PanelTabContent>
-      </ScrollArea>
+        </div>
+      </PanelTabContent>
     </aside>
   );
 }

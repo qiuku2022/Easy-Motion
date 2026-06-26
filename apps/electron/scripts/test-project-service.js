@@ -8,6 +8,8 @@ const {
   listRecentProjects,
   listLocalProjects,
   deleteProject,
+  closeCurrentProject,
+  getCurrentProject,
 } = require("../src/main/services/project-service");
 
 const parentPath = path.join(os.tmpdir(), `easymotion-proj-test-${Date.now()}`);
@@ -49,6 +51,11 @@ async function run() {
   const reopened = await openProject(created.path);
   if (reopened.project.name !== "测试项目-已保存") {
     throw new Error("save project failed");
+  }
+
+  const closed = closeCurrentProject();
+  if (!closed.closed || getCurrentProject() !== null) {
+    throw new Error("close project failed");
   }
 
   await deleteProject(created.path);

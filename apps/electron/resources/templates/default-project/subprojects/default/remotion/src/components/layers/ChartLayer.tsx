@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
-import { applyKeyframesToClip } from "../lib/apply-keyframes";
+import { applyKeyframesToClip } from "../../lib/apply-keyframes";
 
 export type ChartDataPoint = {
   label: string;

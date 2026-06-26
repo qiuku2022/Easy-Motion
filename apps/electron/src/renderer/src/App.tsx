@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { ExportDialogs } from "@/components/export/ExportDialogs";
-import { AppLayout } from "@/components/layout/AppLayout";
+import { AppShell } from "@/components/shell/AppShell";
 import { useTimelineShortcuts } from "@/hooks/useTimelineShortcuts";
 import { useAssetStore } from "@/stores/assetStore";
 import { useConversationStore } from "@/stores/conversationStore";
@@ -36,7 +36,7 @@ export default function App() {
 
   return (
     <>
-      <AppLayout />
+      <AppShell />
       <ExportDialogs />
     </>
   );

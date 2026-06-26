@@ -9,6 +9,20 @@ contextBridge.exposeInMainWorld("easyMotion", {
   shell: {
     platform: process.platform,
     trafficLightInset: process.platform === "darwin",
+    customWindowControls:
+      process.platform === "win32" || process.platform === "linux",
+  },
+  window: {
+    minimize: () => invoke("main:window:minimize"),
+    toggleMaximize: () => invoke("main:window:toggleMaximize"),
+    close: () => invoke("main:window:close"),
+    getState: () => invoke("main:window:getState"),
+    onStateChanged: (callback) => {
+      const listener = (_event, data) => callback(data);
+      ipcRenderer.on("renderer:window:stateChanged", listener);
+      return () =>
+        ipcRenderer.removeListener("renderer:window:stateChanged", listener);
+    },
   },
   project: {
     create: (config) => invoke("main:project:create", config),
@@ -18,6 +32,7 @@ contextBridge.exposeInMainWorld("easyMotion", {
     listLocal: () => invoke("main:project:listLocal"),
     delete: (path, options) => invoke("main:project:delete", { path, options }),
     getCurrent: () => invoke("main:project:getCurrent"),
+    close: () => invoke("main:project:close"),
     pickParentDirectory: () => invoke("main:project:pickParentDirectory"),
     pickProjectDirectory: () => invoke("main:project:pickProjectDirectory"),
   },

@@ -10,6 +10,10 @@ const { registerLlmHandlers } = require("./ipc-handlers/llm");
 const { registerSettingsHandlers } = require("./ipc-handlers/settings");
 const { registerConversationHandlers } = require("./ipc-handlers/conversation");
 const { registerExportHandlers } = require("./ipc-handlers/export");
+const {
+  registerWindowHandlers,
+  attachMainWindowStateEvents,
+} = require("./ipc-handlers/window");
 const previewService = require("./services/preview-service");
 const uiStateService = require("./services/ui-state-service");
 const { installApplicationMenu } = require("./application-menu");
@@ -58,6 +62,7 @@ const createWindow = () => {
   });
 
   mainWindow = win;
+  attachMainWindowStateEvents(win);
 
   if (fullscreen) {
     win.setFullScreen(true);
@@ -104,6 +109,7 @@ app.whenReady().then(() => {
   registerSettingsHandlers();
   registerConversationHandlers();
   registerExportHandlers();
+  registerWindowHandlers();
   createWindow();
 
   app.on("activate", () => {

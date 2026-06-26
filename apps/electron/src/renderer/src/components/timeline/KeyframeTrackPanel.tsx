@@ -50,17 +50,19 @@ export function KeyframeTrackPanel() {
       </button>
 
       {expanded && (
-        <div className="max-h-40 space-y-2 overflow-y-auto px-3 pb-2">
-          {properties.map((property) => (
-            <PropertyKeyframeRow
-              key={property}
-              clip={clip}
-              property={property}
-              pxPerFrame={pxPerFrame}
-              active={property === selectedProperty}
-              onSelect={() => setSelectedProperty(property)}
-            />
-          ))}
+        <div className="px-3 pb-2">
+          <div className="scrollbar-theme -mr-1 max-h-40 space-y-2 overflow-y-auto pr-1">
+            {properties.map((property) => (
+              <PropertyKeyframeRow
+                key={property}
+                clip={clip}
+                property={property}
+                pxPerFrame={pxPerFrame}
+                active={property === selectedProperty}
+                onSelect={() => setSelectedProperty(property)}
+              />
+            ))}
+          </div>
         </div>
       )}
     </div>

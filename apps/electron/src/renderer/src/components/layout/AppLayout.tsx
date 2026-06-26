@@ -1,81 +1,125 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState, type CSSProperties } from "react";
+import { AiPanel } from "@/components/layout/AiPanel";
 import { PanelResizer } from "@/components/layout/PanelResizer";
-import { TopToolbar } from "@/components/layout/TopToolbar";
 import { LeftPanel } from "@/components/layout/LeftPanel";
 import { RightPanel } from "@/components/layout/RightPanel";
 import { PreviewWindow } from "@/components/preview/PreviewWindow";
 import { TimelinePanel } from "@/components/timeline/TimelinePanel";
-import { usePreviewColumnWidth, PREVIEW_DISPLAY_ASPECT } from "@/hooks/usePreviewAspectFit";
+import {
+  PREVIEW_DISPLAY_ASPECT,
+  usePreviewColumnWidth,
+} from "@/hooks/usePreviewAspectFit";
 import { useRemotionAutoSync } from "@/hooks/useRemotionAutoSync";
-import { useUiStore } from "@/stores/uiStore";
-import { cn } from "@/lib/utils";
+import {
+  useUiStore,
+  LEFT_PANEL_WIDTH_MIN,
+  LEFT_PANEL_WIDTH_MAX,
+  RIGHT_PANEL_WIDTH_MIN,
+  RIGHT_PANEL_WIDTH_MAX,
+  AI_PANEL_WIDTH_MIN,
+  AI_PANEL_WIDTH_MAX,
+  TIMELINE_HEIGHT_MIN,
+  TIMELINE_HEIGHT_MAX,
+} from "@/stores/uiStore";
 
-const LEFT_MIN = 200;
-const LEFT_MAX = 480;
-const RIGHT_MIN = 240;
-const RIGHT_MAX = 520;
-const TIMELINE_MIN = 150;
-const TIMELINE_MAX = 350;
+const LEFT_MIN = LEFT_PANEL_WIDTH_MIN;
+const LEFT_MAX = LEFT_PANEL_WIDTH_MAX;
+const RIGHT_MIN = RIGHT_PANEL_WIDTH_MIN;
+const RIGHT_MAX = RIGHT_PANEL_WIDTH_MAX;
+const AI_MIN = AI_PANEL_WIDTH_MIN;
+const AI_MAX = AI_PANEL_WIDTH_MAX;
+const TIMELINE_MIN = TIMELINE_HEIGHT_MIN;
+const TIMELINE_MAX = TIMELINE_HEIGHT_MAX;
+
+function sidePanelStyle(
+  pinned: boolean,
+  width: number,
+  min: number,
+  max: number,
+): CSSProperties {
+  return pinned
+    ? { flex: `0 0 ${width}px`, minWidth: min, maxWidth: max }
+    : { flex: "1 1 0", minWidth: min };
+}
 
 export function AppLayout() {
   useRemotionAutoSync();
+
   const rowRef = useRef<HTMLDivElement>(null);
-  const previewColumnWidth = usePreviewColumnWidth(
-    rowRef,
-    PREVIEW_DISPLAY_ASPECT
-  );
+  const leftRef = useRef<HTMLDivElement>(null);
+  const rightRef = useRef<HTMLDivElement>(null);
+
+  const previewColumnWidth = usePreviewColumnWidth(rowRef, PREVIEW_DISPLAY_ASPECT);
+
+  const [leftPinned, setLeftPinned] = useState(false);
+  const [rightPinned, setRightPinned] = useState(false);
 
   const {
     leftPanelWidth,
     rightPanelWidth,
+    aiPanelWidth,
     timelineHeight,
     leftCollapsed,
     rightCollapsed,
+    aiCollapsed,
     timelineCollapsed,
     setLeftPanelWidth,
     setRightPanelWidth,
+    setAiPanelWidth,
     setTimelineHeight,
   } = useUiStore();
 
   const onResizeLeft = useCallback(
     (delta: number) => {
-      setLeftPanelWidth(Math.min(LEFT_MAX, Math.max(LEFT_MIN, leftPanelWidth + delta)));
+      const base = leftPinned
+        ? leftPanelWidth
+        : (leftRef.current?.getBoundingClientRect().width ?? leftPanelWidth);
+      if (!leftPinned) setLeftPinned(true);
+      setLeftPanelWidth(Math.min(LEFT_MAX, Math.max(LEFT_MIN, base + delta)));
     },
-    [leftPanelWidth, setLeftPanelWidth]
+    [leftPanelWidth, leftPinned, setLeftPanelWidth],
   );
 
   const onResizeRight = useCallback(
     (delta: number) => {
-      setRightPanelWidth(
-        Math.min(RIGHT_MAX, Math.max(RIGHT_MIN, rightPanelWidth - delta))
-      );
+      const base = rightPinned
+        ? rightPanelWidth
+        : (rightRef.current?.getBoundingClientRect().width ?? rightPanelWidth);
+      if (!rightPinned) setRightPinned(true);
+      setRightPanelWidth(Math.min(RIGHT_MAX, Math.max(RIGHT_MIN, base - delta)));
     },
-    [rightPanelWidth, setRightPanelWidth]
+    [rightPanelWidth, rightPinned, setRightPanelWidth],
+  );
+
+  const onResizeAi = useCallback(
+    (delta: number) => {
+      setAiPanelWidth(Math.min(AI_MAX, Math.max(AI_MIN, aiPanelWidth - delta)));
+    },
+    [aiPanelWidth, setAiPanelWidth],
   );
 
   const onResizeTimeline = useCallback(
     (delta: number) => {
       setTimelineHeight(
-        Math.min(TIMELINE_MAX, Math.max(TIMELINE_MIN, timelineHeight - delta))
+        Math.min(TIMELINE_MAX, Math.max(TIMELINE_MIN, timelineHeight - delta)),
       );
     },
-    [timelineHeight, setTimelineHeight]
+    [timelineHeight, setTimelineHeight],
   );
 
-  const bothSidesCollapsed = leftCollapsed && rightCollapsed;
+  const editorSideCount = (leftCollapsed ? 0 : 1) + (rightCollapsed ? 0 : 1);
+  const previewFlex =
+    editorSideCount === 0 ? "1 1 0" : `0 0 ${previewColumnWidth}px`;
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden">
-      <TopToolbar />
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+    <div className="flex min-h-0 flex-1 overflow-hidden">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
         <div ref={rowRef} className="flex min-h-0 flex-1 overflow-hidden">
           {!leftCollapsed && (
             <>
               <div
-                style={{
-                  flex: `1 1 ${leftPanelWidth}px`,
-                  minWidth: LEFT_MIN,
-                }}
+                ref={leftRef}
+                style={sidePanelStyle(leftPinned, leftPanelWidth, LEFT_MIN, LEFT_MAX)}
                 className="min-w-0 overflow-hidden"
               >
                 <LeftPanel />
@@ -84,18 +128,8 @@ export function AppLayout() {
             </>
           )}
           <main
-            style={
-              bothSidesCollapsed
-                ? undefined
-                : {
-                    width: previewColumnWidth,
-                    flex: "0 0 auto",
-                  }
-            }
-            className={cn(
-              "flex min-h-0 min-w-0 flex-col overflow-hidden",
-              bothSidesCollapsed && "flex-1"
-            )}
+            style={{ flex: previewFlex }}
+            className="flex min-h-0 min-w-0 flex-col overflow-hidden"
           >
             <PreviewWindow />
           </main>
@@ -103,12 +137,9 @@ export function AppLayout() {
             <>
               <PanelResizer axis="horizontal" onResize={onResizeRight} />
               <div
-                style={{
-                  flex: `0 0 ${rightPanelWidth}px`,
-                  minWidth: RIGHT_MIN,
-                  maxWidth: RIGHT_MAX,
-                }}
-                className="min-w-0 shrink-0 overflow-hidden"
+                ref={rightRef}
+                style={sidePanelStyle(rightPinned, rightPanelWidth, RIGHT_MIN, RIGHT_MAX)}
+                className="min-w-0 overflow-hidden"
               >
                 <RightPanel />
               </div>
@@ -120,13 +151,28 @@ export function AppLayout() {
             <PanelResizer axis="vertical" onResize={onResizeTimeline} />
             <div
               style={{ height: timelineHeight }}
-              className={cn("shrink-0 overflow-hidden")}
+              className="shrink-0 overflow-hidden"
             >
               <TimelinePanel />
             </div>
           </>
         )}
       </div>
+      {!aiCollapsed && (
+        <>
+          <PanelResizer axis="horizontal" onResize={onResizeAi} />
+          <div
+            style={{
+              flex: `0 0 ${aiPanelWidth}px`,
+              minWidth: AI_MIN,
+              maxWidth: AI_MAX,
+            }}
+            className="min-h-0 min-w-0 shrink-0 overflow-hidden"
+          >
+            <AiPanel />
+          </div>
+        </>
+      )}
     </div>
   );
 }

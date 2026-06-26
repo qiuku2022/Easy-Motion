@@ -2,12 +2,12 @@ import {
   Bot,
   Download,
   Loader2,
-  Menu,
   Redo2,
   Save,
   Sparkles,
   Undo2,
 } from "lucide-react";
+import { AppMenu } from "@/components/layout/AppMenu";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -15,13 +15,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { PR_SHORTCUTS } from "@/lib/premiereShortcuts";
-import { cn } from "@/lib/utils";
 import { useExportStore } from "@/stores/exportStore";
 import { useProjectStore } from "@/stores/projectStore";
 import { toast } from "sonner";
 import { useTimelineStore } from "@/stores/timelineStore";
 import { useUiStore } from "@/stores/uiStore";
-import { getEasyMotion } from "@/types/easyMotion";
 
 function ToolbarIconButton({
   label,
@@ -59,7 +57,8 @@ function ToolbarIconButton({
 export function TopToolbar() {
   const saveProject = useProjectStore((s) => s.saveProject);
   const isLoading = useProjectStore((s) => s.isLoading);
-  const setRightTab = useUiStore((s) => s.setRightTab);
+  const toggleAiCollapsed = useUiStore((s) => s.toggleAiCollapsed);
+  const aiCollapsed = useUiStore((s) => s.aiCollapsed);
   const undo = useTimelineStore((s) => s.undo);
   const redo = useTimelineStore((s) => s.redo);
   const canUndo = useTimelineStore((s) => s.history.past.length > 0);
@@ -67,19 +66,11 @@ export function TopToolbar() {
   const openExportDialog = useExportStore((s) => s.openDialog);
   const exportPhase = useExportStore((s) => s.phase);
   const currentProject = useProjectStore((s) => s.current);
-  const shell = getEasyMotion()?.shell;
 
   return (
-    <header
-      className={cn(
-        "z-40 flex h-11 shrink-0 items-center justify-between border-b border-border bg-background px-2",
-        shell?.trafficLightInset && "pl-[4.5rem]",
-      )}
-    >
+    <header className="z-40 flex h-11 shrink-0 items-center justify-between border-b border-border bg-background px-2">
       <div className="flex items-center gap-1">
-        <ToolbarIconButton label="菜单">
-          <Menu className="h-4 w-4" />
-        </ToolbarIconButton>
+        <AppMenu />
         <ToolbarIconButton
           label={`撤销 (${PR_SHORTCUTS.undo})`}
           disabled={!canUndo}
@@ -119,7 +110,12 @@ export function TopToolbar() {
         </ToolbarIconButton>
       </div>
       <div className="flex items-center gap-1">
-        <ToolbarIconButton label="AI 助手" onClick={() => setRightTab("ai")}>
+        <ToolbarIconButton
+          label="AI 助手"
+          onClick={() => {
+            if (aiCollapsed) toggleAiCollapsed();
+          }}
+        >
           <Bot className="h-4 w-4" />
         </ToolbarIconButton>
         <ToolbarIconButton label="渲染">

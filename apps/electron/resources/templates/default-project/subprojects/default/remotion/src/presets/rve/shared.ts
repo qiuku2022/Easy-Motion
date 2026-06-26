@@ -1,4 +1,26 @@
 /** Shared preset props helpers for vendored RVE components. */
+import { staticFile } from "remotion";
+
+/** Offline-safe default for image-based presets (thumbnail render + new clips). */
+export const RVE_DEFAULT_SAMPLE_IMAGE_PATH = "presets/sample-landscape.png";
+
+export function resolvePresetImageSrc(src: string): string {
+  if (
+    src.startsWith("http://") ||
+    src.startsWith("https://") ||
+    src.startsWith("data:") ||
+    src.startsWith("file://")
+  ) {
+    return src;
+  }
+  const normalized = src.startsWith("/") ? src.slice(1) : src;
+  return staticFile(normalized);
+}
+
+export const RVE_DEFAULT_SAMPLE_IMAGE = resolvePresetImageSrc(
+  RVE_DEFAULT_SAMPLE_IMAGE_PATH,
+);
+
 export type RveBaseProps = {
   text?: string;
   title?: string;

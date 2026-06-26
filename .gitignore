@@ -79,3 +79,7 @@ temp/
 **/remotion/.cache/
 **/remotion/build/
 **/remotion/.easymotion/
+
+# Preset animated WebP thumbnails (large; generate locally — see README)
+apps/electron/resources/presets/thumbnails/*.webp
+apps/electron/src/renderer/public/presets/thumbnails/*.webp

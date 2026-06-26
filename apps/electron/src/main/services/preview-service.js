@@ -4,6 +4,7 @@ const http = require("node:http");
 const { spawn, execSync } = require("node:child_process");
 const { BrowserWindow } = require("electron");
 const timelineService = require("./timeline-service");
+const { ensureLayerKeyframesImport } = require("./remotion-project");
 const { getTemplatesDir } = require("../utils/paths");
 
 const PREVIEW_CHANNEL = "easymotion-preview";
@@ -512,6 +513,7 @@ async function startPreview(projectRoot, subprojectPath = "subprojects/default")
   }
 
   broadcastLog("正在准备 Remotion 预览环境…", "preview");
+  ensureLayerKeyframesImport(remotionDir);
   ensurePreviewEntry(remotionDir);
   const soloSupportPatched = ensurePreviewSoloSupport(remotionDir);
   const customSupportPatched = ensureCustomComponentSupport(remotionDir);

@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
-import { applyKeyframesToClip } from "../lib/apply-keyframes";
+import { applyKeyframesToClip } from "../../lib/apply-keyframes";
 
 type Transform = {
   position: { x: number; y: number };

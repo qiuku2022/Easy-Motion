@@ -103,7 +103,7 @@ CREATE INDEX idx_assets_name ON assets(name COLLATE NOCASE);  -- 不区分大小
 - `content_hash` 用于全局去重：同一文件导入到不同项目时，提示引用现有文件
 - `width`/`height`/`duration_ms` 根据素材类型选择性填充（图片/视频有宽高，音频/视频有时长）
 - `tags` 用 JSON 字符串存储，查询时通过应用层解析（SQLite 原生不支持数组类型）
-- `usage_count` 和 `last_used_at` 用于右侧面板"快捷素材区"的"最近使用"排序
+- `usage_count` 和 `last_used_at` 用于左侧素材库 `AssetsPanel`「最近使用」排序（星标收藏用 `is_favorite`）
 
 ---
 

@@ -200,6 +200,14 @@ interface IPCNotification<T = unknown> {
 - **错误码**：`E2104`（项目不存在）、`E2115`（项目文件损坏）
 - **超时**：5 秒
 
+#### `main:project:close`
+- **说明**：关闭当前打开的项目（不删除磁盘文件），主进程清空 `currentProject`
+- **请求参数**：无
+- **响应数据**：`{ closed: boolean }`（无打开项目时 `closed: false`）
+- **渲染层**：`projectStore.closeProject()` 停止预览、清空时间线/素材/对话 store，并 `refreshCurrent`
+- **UI**：应用菜单 **文件 → 关闭项目**；有未保存时间线更改时 `window.confirm`
+- **超时**：5 秒
+
 #### `main:project:delete`
 - **说明**：删除项目（软删除）
 - **请求参数**：`{ projectId: string; force?: boolean }` // force=true 彻底删除

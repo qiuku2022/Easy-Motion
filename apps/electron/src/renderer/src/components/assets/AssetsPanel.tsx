@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { FileUp, Film, Image, Loader2, Music, Search } from "lucide-react";
+import { Clock, FileUp, Film, Image, Loader2, Music, Search, Star } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  favoriteAssets,
   filterAssets,
   groupAssetsByType,
+  recentAssets,
   useAssetStore,
 } from "@/stores/assetStore";
 import type { AssetMediaType, AssetTypeFilter } from "@/types/asset";
@@ -55,6 +57,10 @@ export function AssetsPanel() {
   );
 
   const grouped = useMemo(() => groupAssetsByType(filtered), [filtered]);
+  const favorites = useMemo(() => favoriteAssets(assets), [assets]);
+  const recent = useMemo(() => recentAssets(assets), [assets]);
+
+  const showGrouped = typeFilter === "all" && !searchQuery.trim();
 
   const importFromFileList = useCallback(
     async (files: FileList | File[]) => {
@@ -82,8 +88,6 @@ export function AssetsPanel() {
     },
     [importFromFileList],
   );
-
-  const showGrouped = typeFilter === "all" && !searchQuery.trim();
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3">
@@ -158,31 +162,75 @@ export function AssetsPanel() {
         <p className="text-xs text-muted-foreground">暂无素材。导入后可拖到时间线。</p>
       ) : filtered.length === 0 ? (
         <p className="text-xs text-muted-foreground">没有匹配的素材。</p>
-      ) : showGrouped ? (
-        <div className="flex flex-col gap-4">
-          {(["image", "video", "audio"] as AssetMediaType[]).map((type) => {
-            const items = grouped[type];
-            if (!items.length) return null;
-            return (
-              <section key={type}>
-                <h3 className="mb-1.5 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-                  {TYPE_LABELS[type]} ({items.length})
-                </h3>
-                <ul className="flex flex-col gap-1">
-                  {items.map((asset) => (
-                    <AssetCard key={asset.id} asset={asset} />
-                  ))}
-                </ul>
-              </section>
-            );
-          })}
-        </div>
       ) : (
-        <ul className="flex flex-col gap-1">
-          {filtered.map((asset) => (
-            <AssetCard key={asset.id} asset={asset} />
-          ))}
-        </ul>
+        <>
+          {showGrouped && (
+            <div className="flex flex-col gap-4">
+              <section>
+                <h3 className="mb-2 flex items-center gap-1.5 text-xs font-medium text-foreground">
+                  <Star className="h-3.5 w-3.5 text-amber-400" />
+                  收藏
+                </h3>
+                {favorites.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">
+                    点击素材旁的星标即可收藏，便于快速访问。
+                  </p>
+                ) : (
+                  <ul className="flex flex-col gap-1">
+                    {favorites.map((asset) => (
+                      <AssetCard key={asset.id} asset={asset} compact showMeta={false} />
+                    ))}
+                  </ul>
+                )}
+              </section>
+
+              <section>
+                <h3 className="mb-2 flex items-center gap-1.5 text-xs font-medium text-foreground">
+                  <Clock className="h-3.5 w-3.5 text-em-teal" />
+                  最近使用
+                </h3>
+                {recent.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">
+                    将素材拖到时间线后，会出现在这里。
+                  </p>
+                ) : (
+                  <ul className="flex flex-col gap-1">
+                    {recent.map((asset) => (
+                      <AssetCard key={asset.id} asset={asset} compact />
+                    ))}
+                  </ul>
+                )}
+              </section>
+            </div>
+          )}
+
+          {showGrouped ? (
+            <div className="flex flex-col gap-4">
+              {(["image", "video", "audio"] as AssetMediaType[]).map((type) => {
+                const items = grouped[type];
+                if (!items.length) return null;
+                return (
+                  <section key={type}>
+                    <h3 className="mb-1.5 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                      {TYPE_LABELS[type]} ({items.length})
+                    </h3>
+                    <ul className="flex flex-col gap-1">
+                      {items.map((asset) => (
+                        <AssetCard key={asset.id} asset={asset} />
+                      ))}
+                    </ul>
+                  </section>
+                );
+              })}
+            </div>
+          ) : (
+            <ul className="flex flex-col gap-1">
+              {filtered.map((asset) => (
+                <AssetCard key={asset.id} asset={asset} />
+              ))}
+            </ul>
+          )}
+        </>
       )}
 
       <DuplicateImportDialog />

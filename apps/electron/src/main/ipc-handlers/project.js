@@ -54,6 +54,11 @@ function registerProjectHandlers() {
     wrap(() => projectService.getCurrentProject())
   );
 
+  ipcMain.handle(
+    "main:project:close",
+    wrap(() => projectService.closeCurrentProject())
+  );
+
   ipcMain.handle("main:project:pickParentDirectory", async () => {
     const result = await dialog.showOpenDialog({
       title: "选择项目保存位置",

@@ -170,6 +170,42 @@ function copyDirRecursive(srcDir, destDir) {
   return true;
 }
 
+const LAYER_FILES = [
+  "TextLayer.tsx",
+  "ImageLayer.tsx",
+  "ShapeLayer.tsx",
+  "ChartLayer.tsx",
+];
+const BAD_KEYFRAMES_IMPORT = 'from "../lib/apply-keyframes"';
+const GOOD_KEYFRAMES_IMPORT = 'from "../../lib/apply-keyframes"';
+
+/** layers/* 曾错误引用 ../lib/apply-keyframes（实际在 src/lib/），打开预览时自动修正 */
+function ensureLayerKeyframesImport(remotionDir) {
+  const layersDir = path.join(remotionDir, "src", "components", "layers");
+  let patched = false;
+
+  for (const file of LAYER_FILES) {
+    const filePath = path.join(layersDir, file);
+    if (!fs.existsSync(filePath)) continue;
+    const content = fs.readFileSync(filePath, "utf8");
+    if (!content.includes(BAD_KEYFRAMES_IMPORT)) continue;
+    fs.writeFileSync(
+      filePath,
+      content.replace(BAD_KEYFRAMES_IMPORT, GOOD_KEYFRAMES_IMPORT),
+      "utf8",
+    );
+    patched = true;
+  }
+
+  const keyframesDest = path.join(remotionDir, "src", "lib", "apply-keyframes.ts");
+  if (!fs.existsSync(keyframesDest)) {
+    patched =
+      copyTemplateFile("src/lib/apply-keyframes.ts", keyframesDest) || patched;
+  }
+
+  return patched;
+}
+
 /** 将模板中的 RVE 预设组件同步到已打开项目的 remotion/src（幂等，覆盖 rve 目录） */
 function ensurePresetBundle(remotionDir) {
   const templatePresetsDir = path.join(
@@ -248,4 +284,5 @@ module.exports = {
   detectCustomRemotionCode,
   isTimelineDrivenPreview,
   ensurePresetBundle,
+  ensureLayerKeyframesImport,
 };

@@ -67,11 +67,24 @@ export interface ProjectSummary {
   modifiedAt: number;
 }
 
+export interface WindowState {
+  maximized: boolean;
+  fullscreen: boolean;
+}
+
 export interface EasyMotionApi {
   version: string;
   shell?: {
     platform: string;
     trafficLightInset: boolean;
+    customWindowControls: boolean;
+  };
+  window?: {
+    minimize: () => Promise<IpcResult<void>>;
+    toggleMaximize: () => Promise<IpcResult<WindowState>>;
+    close: () => Promise<IpcResult<void>>;
+    getState: () => Promise<IpcResult<WindowState>>;
+    onStateChanged: (callback: (state: WindowState) => void) => () => void;
   };
   project: {
     create: (config: {
@@ -88,6 +101,7 @@ export interface EasyMotionApi {
     getCurrent: () => Promise<
       IpcResult<{ path: string; data: { name: string } } | null>
     >;
+    close: () => Promise<IpcResult<{ closed: boolean }>>;
     pickParentDirectory: () => Promise<IpcResult<{ path: string }>>;
     pickProjectDirectory: () => Promise<IpcResult<{ path: string }>>;
   };
