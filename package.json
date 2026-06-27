@@ -4,9 +4,6 @@
   "private": true,
   "description": "EasyMotion monorepo workspace",
   "packageManager": "pnpm@10.13.1",
-  "pnpm": {
-    "onlyBuiltDependencies": ["electron", "esbuild"]
-  },
   "scripts": {
     "dev": "concurrently -n renderer,electron -c blue,magenta \"pnpm dev:renderer\" \"pnpm dev:electron\"",
     "dev:all": "concurrently -k -n renderer,electron,python -c blue,magenta,green \"pnpm dev:renderer\" \"pnpm dev:electron\" \"pnpm dev:python\"",

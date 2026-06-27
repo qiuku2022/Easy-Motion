@@ -56,5 +56,8 @@
   "terminal.integrated.env.windows": {
     "PYTHONIOENCODING": "utf-8",
     "PYTHONUTF8": "1"
-  }
+  },
+  "npm.packageManager": "pnpm",
+  "npm.exclude": "**/node_modules/**",
+  "npm.scriptExplorerExclude": ["**/node_modules/**", "**/release/**"]
 }
