@@ -168,6 +168,7 @@ M5.2 Remotion Code Agent：**已完成**（`a1fa91a`）。详见 [`docs/requirem
 | F5 / 启动报 `ENOENT path.txt`（Electron） | `pnpm --filter @easymotion/electron debug:prepare`；根 `package.json` 保留 `pnpm.onlyBuiltDependencies: ["electron","esbuild"]` |
 | `build:python` 因 `PYTHONHOME` 失败 | 脚本内 `cleanHostPythonEnv()`；勿在 shell 遗留 Python 隔离变量 |
 | 打包态读开发路径（templates / presets / Python） | 用 `apps/electron/src/main/utils/paths.js` 的 `get*Dir()`，区分 `app.isPackaged` |
+| 安装包打开项目报 `Cannot find module .../scripts/process-utils.cjs` | 主进程运行时代码放 `src/main/`；`scripts/` 仅 dev 脚本，`process-utils` 在 `src/main/utils/process-utils.js` |
 
 ## 初始化检查（新 session / 新 Agent）
 

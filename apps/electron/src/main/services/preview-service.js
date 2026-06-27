@@ -6,6 +6,7 @@ const { BrowserWindow } = require("electron");
 const timelineService = require("./timeline-service");
 const { ensureLayerKeyframesImport } = require("./remotion-project");
 const { getTemplatesDir } = require("../utils/paths");
+const { killPortListeners } = require("../utils/process-utils");
 
 const PREVIEW_CHANNEL = "easymotion-preview";
 const DEFAULT_PORT = 5174;
@@ -663,7 +664,6 @@ async function stopPreview() {
     previewProcess = null;
   }
 
-  const { killPortListeners } = require("../../../scripts/process-utils.cjs");
   for (let port = DEFAULT_PORT; port < DEFAULT_PORT + PORT_RANGE; port += 1) {
     killPortListeners(port);
   }

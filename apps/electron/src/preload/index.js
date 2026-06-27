@@ -5,7 +5,7 @@ async function invoke(channel, payload) {
 }
 
 contextBridge.exposeInMainWorld("easyMotion", {
-  version: "0.1.1",
+  version: "0.1.2",
   shell: {
     platform: process.platform,
     trafficLightInset: process.platform === "darwin",
