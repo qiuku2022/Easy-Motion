@@ -16,6 +16,7 @@ function renderJsxProps(props) {
 }
 
 const path = require("node:path");
+const { getPresetsDir } = require("../utils/paths");
 
 const LAYER_COMPONENT_MAP = {
   text: "TextLayer",
@@ -35,7 +36,7 @@ const COMPONENT_MODULE_MAP = {
 let PRESET_COMPONENT_REGISTRY = {};
 try {
   PRESET_COMPONENT_REGISTRY = require(
-    path.join(__dirname, "../../../resources/presets/component-registry.json"),
+    path.join(getPresetsDir(), "component-registry.json"),
   );
 } catch {
   /* preset bundle optional during partial checkout */

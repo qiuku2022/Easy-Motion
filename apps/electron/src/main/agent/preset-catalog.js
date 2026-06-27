@@ -1,21 +1,21 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const { getPresetsDir } = require("../utils/paths");
 
-const MANIFEST_PATH = path.join(
-  __dirname,
-  "../../../resources/presets/manifest.json",
-);
+function getManifestPath() {
+  return path.join(getPresetsDir(), "manifest.json");
+}
 
 /** @type {import("../../../src/renderer/src/types/preset").PresetDefinition[] | null} */
 let cachedManifest = null;
 
 function loadManifest() {
   if (cachedManifest) return cachedManifest;
-  if (!fs.existsSync(MANIFEST_PATH)) {
+  if (!fs.existsSync(getManifestPath())) {
     cachedManifest = [];
     return cachedManifest;
   }
-  cachedManifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, "utf8"));
+  cachedManifest = JSON.parse(fs.readFileSync(getManifestPath(), "utf8"));
   return cachedManifest;
 }
 

@@ -19,6 +19,8 @@ EasyMotion 是用自然语言制作 Remotion 动画的 **Electron 桌面应用**
 
 **数据流核心：** 时间线 JSON → Generator（可选）→ Remotion 预览。预设走 `animation` 轨道 + `source.component` + `source.props`，多数场景由 timeline 动态驱动 `MainSequence`，**不必每次改参都重新生成 TSX**。
 
+**里程碑（2026-06-27）：** M0–M8 ✅；**M9 进行中**——Windows NSIS 打包已通（`pnpm build:win`），E2E / 签名 / macOS·Linux 待建。详见 [`开发里程碑与路线图.md`](docs/requirements/开发里程碑与路线图.md)、[`构建与部署.md`](docs/requirements/构建与部署.md)。
+
 ## WIP=1：一次只做一件事
 
 - 单次任务只改**一个里程碑子项**或**一个 bug**，不要跨模块大重构。
@@ -64,6 +66,8 @@ EasyMotion 是用自然语言制作 Remotion 动画的 **Electron 桌面应用**
 | 仅 Agent 相关 | `pnpm --filter @easymotion/electron test:m5` |
 | 预设 manifest / 参数 | `cd apps/electron && node scripts/test-preset-parameters.js` |
 | 仅 UI（无逻辑） | `pnpm lint`；手动 `pnpm dev` 目视检查 |
+| 打包 / electron-builder / 安装包路径 | `pnpm build:win`（或 `pnpm --filter @easymotion/electron build:dir`）；手测 `release/win-unpacked/EasyMotion.exe` |
+| Python bundle / 打包态 Python 启动 | `pnpm build:python`；安装包内验证 FastAPI 子进程 |
 | 格式化（提交前可选） | `pnpm format:check` |
 
 **不要**在未跑测试的情况下声称「已完成」或「通过验证」。
@@ -113,15 +117,21 @@ M5.2 Remotion Code Agent：**已完成**（`a1fa91a`）。详见 [`docs/requirem
 | Windows 上 Electron 连不上 Vite | 用 `127.0.0.1:5173`，不用 `localhost` |
 | 改 Agent tool 未改 Zod schema | tools 的 schema 与 `timeline-ops` 参数必须一致 |
 | 提交 `.env` 或 API Key | Key 存 `~/.easymotion/secrets.json`；仅提交 `.env.example` |
+| 安装包缺 `@langchain/core` 等 peer 依赖 | 在 `apps/electron/package.json` **显式声明**依赖；改完跑 `verify-packaged-deps.cjs` |
+| 安装包预设缩略图空白 | 渲染层用 `import.meta.env.BASE_URL` 相对路径；构建前 `sync-preset-thumbnails.cjs`；勿用 `/presets/...` 绝对路径 |
+| F5 / 启动报 `ENOENT path.txt`（Electron） | `pnpm --filter @easymotion/electron debug:prepare`；根 `package.json` 保留 `pnpm.onlyBuiltDependencies: ["electron","esbuild"]` |
+| `build:python` 因 `PYTHONHOME` 失败 | 脚本内 `cleanHostPythonEnv()`；勿在 shell 遗留 Python 隔离变量 |
+| 打包态读开发路径（templates / presets / Python） | 用 `apps/electron/src/main/utils/paths.js` 的 `get*Dir()`，区分 `app.isPackaged` |
 
 ## 初始化检查（新 session / 新 Agent）
 
 1. 读本文 + 任务相关的 `docs/requirements/` 文档
-2. `pnpm install`（若 node_modules 缺失）
-3. 确认要改的子系统.
+2. `pnpm install`（若 node_modules 缺失；Windows F5 异常见上表 `path.txt`）
+3. 确认要改的子系统；**M9 打包任务**先读 [`构建与部署.md`](docs/requirements/构建与部署.md)
 
 ## 参考
 
 - 开发者入口：[`docs/requirements/开发者README.md`](docs/requirements/开发者README.md)
 - 里程碑：[`docs/requirements/开发里程碑与路线图.md`](docs/requirements/开发里程碑与路线图.md)
+- 打包与部署：[`docs/requirements/构建与部署.md`](docs/requirements/构建与部署.md)
 - IPC 规范：[`docs/requirements/IPC通信协议规范.md`](docs/requirements/IPC通信协议规范.md)

@@ -16,6 +16,7 @@ function runStep(name) {
   });
 }
 
+runStep("ensure-electron-binary.cjs");
 runStep("free-cdp-port.cjs");
 runStep("ensure-vite-for-debug.cjs");
 console.log("[debug-prepare] done");

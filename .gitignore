@@ -43,6 +43,11 @@ venv/
 .ruff_cache/
 *.egg-info/
 .Python
+# PyInstaller / bundle-for-electron 中间产物
+apps/python/.build-bundle/
+# 打进安装包的 venv（build:python 生成，体积大）
+apps/electron/resources/python/**
+!apps/electron/resources/python/.gitkeep
 
 # IDE / editor (share team debug config only)
 .DS_Store
@@ -65,6 +70,9 @@ desktop.ini
 !.cursor/skills/
 !.cursor/skills/**
 .cursor/skills/**/__pycache__/
+
+# Local-only notes (agent plans, scratch — not for commit)
+.local/
 
 # Runtime / local app data
 tmp/

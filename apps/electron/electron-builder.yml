@@ -1,0 +1,34 @@
+appId: com.easymotion.app
+productName: EasyMotion
+copyright: Copyright © 2026 EasyMotion Team
+
+directories:
+  output: release
+  buildResources: build
+
+files:
+  - src/main/**/*
+  - src/preload/**/*
+  - dist/renderer/**/*
+  - resources/templates/**/*
+  - resources/presets/**/*
+  - package.json
+
+extraResources:
+  - from: resources/python
+    to: python
+    filter:
+      - "**/*"
+
+asar: true
+
+win:
+  target:
+    - nsis
+  artifactName: "${productName}-Setup-${version}.${ext}"
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true

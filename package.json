@@ -4,12 +4,17 @@
   "private": true,
   "description": "EasyMotion monorepo workspace",
   "packageManager": "pnpm@10.13.1",
+  "pnpm": {
+    "onlyBuiltDependencies": ["electron", "esbuild"]
+  },
   "scripts": {
     "dev": "concurrently -n renderer,electron -c blue,magenta \"pnpm dev:renderer\" \"pnpm dev:electron\"",
     "dev:all": "concurrently -k -n renderer,electron,python -c blue,magenta,green \"pnpm dev:renderer\" \"pnpm dev:electron\" \"pnpm dev:python\"",
     "dev:renderer": "pnpm --filter @easymotion/electron dev:renderer",
     "dev:electron": "pnpm --filter @easymotion/electron dev:electron",
     "dev:python": "pnpm --filter @easymotion/python dev",
+    "build:python": "pnpm --filter @easymotion/python build:bundle",
+    "build:win": "pnpm --filter @easymotion/electron build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"apps/**/*.{js,ts,tsx,cjs,json}\" \"packages/**/*.{js,json}\" \"eslint.config.mjs\" \".prettierrc.json\" \"package.json\" \"pnpm-workspace.yaml\" \".vscode/*.json\"",

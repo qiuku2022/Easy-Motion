@@ -15,6 +15,7 @@ const {
   attachMainWindowStateEvents,
 } = require("./ipc-handlers/window");
 const previewService = require("./services/preview-service");
+const pythonService = require("./services/python-service");
 const uiStateService = require("./services/ui-state-service");
 const { installApplicationMenu } = require("./application-menu");
 const { getMainWindowChromeOptions } = require("./window-chrome");
@@ -97,7 +98,7 @@ const createWindow = () => {
   }
 };
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   installApplicationMenu();
   ensureDir(getConfigDir());
   registerProjectHandlers();
@@ -110,6 +111,15 @@ app.whenReady().then(() => {
   registerConversationHandlers();
   registerExportHandlers();
   registerWindowHandlers();
+
+  if (app.isPackaged) {
+    try {
+      await pythonService.startBundledPython();
+    } catch (err) {
+      console.error("[app] bundled python failed to start:", err);
+    }
+  }
+
   createWindow();
 
   app.on("activate", () => {
@@ -130,4 +140,6 @@ app.on("before-quit", () => {
   void previewService.stopPreview().catch((err) => {
     console.error("[app] preview cleanup failed:", err);
   });
+
+  pythonService.stopBundledPython();
 });
