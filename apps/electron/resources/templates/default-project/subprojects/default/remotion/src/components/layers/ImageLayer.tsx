@@ -1,6 +1,8 @@
 import React, { useMemo } from "react";
 import { Img, useCurrentFrame, useVideoConfig } from "remotion";
 import { applyKeyframesToClip } from "../../lib/apply-keyframes";
+import { buildCenterAnchoredLayerStyle } from "../../lib/layer-anchor-style";
+import { useLayerScreenPosition } from "../../lib/use-layer-screen-position";
 
 type ImageLayerProps = {
   clipId: string;
@@ -32,15 +34,16 @@ export const ImageLayer: React.FC<ImageLayerProps> = ({
 
   if (!src) return null;
 
+  const screen = useLayerScreenPosition(
+    resolved.transform.position.x,
+    resolved.transform.position.y,
+  );
+
   return (
     <Img
       src={src}
       style={{
-        position: "absolute",
-        left: resolved.transform.position.x,
-        top: resolved.transform.position.y,
-        transform: `translate(-50%, -50%) scale(${resolved.transform.scale}) rotate(${resolved.transform.rotation}deg)`,
-        opacity: resolved.transform.opacity,
+        ...buildCenterAnchoredLayerStyle(screen, resolved.transform),
         objectFit: (resolved.style?.objectFit as "cover" | "contain" | "fill" | undefined) ?? "cover",
       }}
     />

@@ -14,6 +14,35 @@ type EasymotionPreviewProps = {
   timeline?: Record<string, unknown>;
 };
 
+type PreviewMeta = {
+  durationInFrames: number;
+  fps: number;
+  width: number;
+  height: number;
+};
+
+function metaFromTimeline(timeline: Record<string, unknown> | undefined): PreviewMeta | null {
+  if (!timeline) return null;
+  const durationInFrames = Number(timeline.durationInFrames);
+  const fps = Number(timeline.fps);
+  const width = Number(timeline.width);
+  const height = Number(timeline.height);
+  if (
+    !Number.isFinite(durationInFrames) ||
+    !Number.isFinite(fps) ||
+    !Number.isFinite(width) ||
+    !Number.isFinite(height)
+  ) {
+    return null;
+  }
+  return {
+    durationInFrames: Math.max(1, Math.round(durationInFrames)),
+    fps: Math.max(1, fps),
+    width: Math.max(1, Math.round(width)),
+    height: Math.max(1, Math.round(height)),
+  };
+}
+
 const PreviewApp: React.FC = () => {
   const playerRef = useRef<PlayerRef>(null);
   const resumeFrameRef = useRef(0);
@@ -21,6 +50,12 @@ const PreviewApp: React.FC = () => {
   const [player, setPlayer] = useState<PlayerRef | null>(null);
   const [compositionKey, setCompositionKey] = useState(0);
   const [inputProps, setInputProps] = useState<EasymotionPreviewProps>({});
+  const [previewMeta, setPreviewMeta] = useState<PreviewMeta>({
+    durationInFrames: previewConfig.durationInFrames,
+    fps: previewConfig.fps,
+    width: previewConfig.width,
+    height: previewConfig.height,
+  });
   const [loop, setLoop] = useState(true);
 
   const restorePlayhead = useCallback(
@@ -57,7 +92,12 @@ const PreviewApp: React.FC = () => {
           resumeFrameRef.current = data.frame;
         }
         canPostFramesRef.current = false;
-        setInputProps({ timeline: data.timeline });
+        const timeline = data.timeline as Record<string, unknown>;
+        const nextMeta = metaFromTimeline(timeline);
+        if (nextMeta) {
+          setPreviewMeta(nextMeta);
+        }
+        setInputProps({ timeline });
         setCompositionKey((k) => k + 1);
         return;
       }
@@ -84,6 +124,11 @@ const PreviewApp: React.FC = () => {
   useEffect(() => {
     if (!player) return;
     restorePlayhead(resumeFrameRef.current, player);
+    player.pause();
+    window.parent.postMessage(
+      { channel: CHANNEL, type: "PLAYBACK_STATE", playing: false },
+      "*",
+    );
   }, [player, compositionKey, restorePlayhead]);
 
   useEffect(() => {
@@ -103,6 +148,13 @@ const PreviewApp: React.FC = () => {
       );
     };
 
+    const onPlay: CallbackListener<"play"> = () => {
+      window.parent.postMessage(
+        { channel: CHANNEL, type: "PLAYBACK_STATE", playing: true },
+        "*",
+      );
+    };
+
     const onPause: CallbackListener<"pause"> = () => {
       window.parent.postMessage(
         { channel: CHANNEL, type: "PLAYBACK_STATE", playing: false },
@@ -111,9 +163,11 @@ const PreviewApp: React.FC = () => {
     };
 
     player.addEventListener("frameupdate", onFrameUpdate);
+    player.addEventListener("play", onPlay);
     player.addEventListener("pause", onPause);
     return () => {
       player.removeEventListener("frameupdate", onFrameUpdate);
+      player.removeEventListener("play", onPlay);
       player.removeEventListener("pause", onPause);
     };
   }, [player]);
@@ -139,10 +193,10 @@ const PreviewApp: React.FC = () => {
           }
         }}
         component={MainSequence}
-        durationInFrames={previewConfig.durationInFrames}
-        fps={previewConfig.fps}
-        compositionWidth={previewConfig.width}
-        compositionHeight={previewConfig.height}
+        durationInFrames={previewMeta.durationInFrames}
+        fps={previewMeta.fps}
+        compositionWidth={previewMeta.width}
+        compositionHeight={previewMeta.height}
         style={{ width: "100%", maxHeight: "100%" }}
         controls={false}
         loop={loop}

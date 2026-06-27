@@ -175,32 +175,123 @@ const LAYER_FILES = [
   "ImageLayer.tsx",
   "ShapeLayer.tsx",
   "ChartLayer.tsx",
+  "VideoLayer.tsx",
+  "ClipTransformWrapper.tsx",
 ];
 const BAD_KEYFRAMES_IMPORT = 'from "../lib/apply-keyframes"';
 const GOOD_KEYFRAMES_IMPORT = 'from "../../lib/apply-keyframes"';
 
-/** layers/* 曾错误引用 ../lib/apply-keyframes（实际在 src/lib/），打开预览时自动修正 */
+function layerNeedsKeyframeSupport(content) {
+  return !content.includes("applyKeyframesToClip");
+}
+
+function mainSequenceNeedsKeyframePassThrough(content) {
+  if (!content.includes("flattenClipsForPreview")) return false;
+  return (
+    !content.includes("keyframes={clip.keyframes}") ||
+    !content.includes("ClipTransformWrapper")
+  );
+}
+
+function syncTemplateFile(templateRelativePath, destPath) {
+  const templatePath = path.join(
+    getTemplatesDir(),
+    "default-project",
+    "subprojects",
+    "default",
+    "remotion",
+    templateRelativePath,
+  );
+  if (!fs.existsSync(templatePath)) return false;
+  const next = fs.readFileSync(templatePath, "utf8");
+  if (fs.existsSync(destPath)) {
+    const current = fs.readFileSync(destPath, "utf8");
+    if (current === next) return false;
+  }
+  fs.mkdirSync(path.dirname(destPath), { recursive: true });
+  fs.writeFileSync(destPath, next, "utf8");
+  return true;
+}
+
+/** 同步 apply-keyframes、Layer 与 MainSequence，使时间线关键帧在预览中生效 */
 function ensureLayerKeyframesImport(remotionDir) {
   const layersDir = path.join(remotionDir, "src", "components", "layers");
   let patched = false;
 
-  for (const file of LAYER_FILES) {
-    const filePath = path.join(layersDir, file);
-    if (!fs.existsSync(filePath)) continue;
-    const content = fs.readFileSync(filePath, "utf8");
-    if (!content.includes(BAD_KEYFRAMES_IMPORT)) continue;
-    fs.writeFileSync(
-      filePath,
-      content.replace(BAD_KEYFRAMES_IMPORT, GOOD_KEYFRAMES_IMPORT),
-      "utf8",
-    );
-    patched = true;
+  const keyframesDest = path.join(remotionDir, "src", "lib", "apply-keyframes.ts");
+  patched =
+    syncTemplateFile("src/lib/apply-keyframes.ts", keyframesDest) || patched;
+
+  for (const libFile of [
+    "src/lib/timeline-coordinates.ts",
+    "src/lib/use-layer-screen-position.ts",
+    "src/lib/layer-anchor-style.ts",
+  ]) {
+    patched =
+      syncTemplateFile(
+        libFile,
+        path.join(remotionDir, libFile),
+      ) || patched;
   }
 
-  const keyframesDest = path.join(remotionDir, "src", "lib", "apply-keyframes.ts");
-  if (!fs.existsSync(keyframesDest)) {
-    patched =
-      copyTemplateFile("src/lib/apply-keyframes.ts", keyframesDest) || patched;
+  for (const file of LAYER_FILES) {
+    const filePath = path.join(layersDir, file);
+    const templatePath = path.join(
+      getTemplatesDir(),
+      "default-project",
+      "subprojects",
+      "default",
+      "remotion",
+      "src",
+      "components",
+      "layers",
+      file,
+    );
+    if (!fs.existsSync(templatePath)) continue;
+
+    if (!fs.existsSync(filePath)) {
+      fs.mkdirSync(layersDir, { recursive: true });
+      fs.copyFileSync(templatePath, filePath);
+      patched = true;
+      continue;
+    }
+
+    let content = fs.readFileSync(filePath, "utf8");
+    const fixedImport = content.replace(BAD_KEYFRAMES_IMPORT, GOOD_KEYFRAMES_IMPORT);
+    if (fixedImport !== content) {
+      content = fixedImport;
+      fs.writeFileSync(filePath, content, "utf8");
+      patched = true;
+    }
+
+    const templateContent = fs.readFileSync(templatePath, "utf8");
+    const needsUpgrade =
+      file === "ClipTransformWrapper.tsx" ||
+      layerNeedsKeyframeSupport(content) ||
+      content !== templateContent;
+    if (needsUpgrade && content !== templateContent) {
+      fs.copyFileSync(templatePath, filePath);
+      patched = true;
+    }
+  }
+
+  const mainSeq = path.join(remotionDir, "src", "components", "MainSequence.tsx");
+  const templateMain = path.join(
+    getTemplatesDir(),
+    "default-project",
+    "subprojects",
+    "default",
+    "remotion",
+    "src",
+    "components",
+    "MainSequence.tsx",
+  );
+  if (fs.existsSync(mainSeq) && fs.existsSync(templateMain)) {
+    const content = fs.readFileSync(mainSeq, "utf8");
+    if (mainSequenceNeedsKeyframePassThrough(content)) {
+      fs.copyFileSync(templateMain, mainSeq);
+      patched = true;
+    }
   }
 
   return patched;

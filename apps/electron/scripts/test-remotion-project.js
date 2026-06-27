@@ -63,6 +63,38 @@ function run() {
   if (!fixed.includes('from "../../lib/apply-keyframes"')) {
     throw new Error("layer import should be rewritten to ../../lib/apply-keyframes");
   }
+  if (!fixed.includes("applyKeyframesToClip")) {
+    throw new Error("layer should be replaced with template that applies keyframes");
+  }
+  if (!fs.existsSync(path.join(remotionDir, "src", "lib", "apply-keyframes.ts"))) {
+    throw new Error("apply-keyframes.ts should be copied from template");
+  }
+
+  write(
+    path.join(layersDir, "TextLayer.tsx"),
+    "export const TextLayer = () => null;\n",
+  );
+  write(
+    path.join(remotionDir, "src", "components", "MainSequence.tsx"),
+    'import { flattenClipsForPreview } from "../lib/flatten-clips-for-preview";\nexport const MainSequence = () => null;\n',
+  );
+  if (!ensureLayerKeyframesImport(remotionDir)) {
+    throw new Error("ensureLayerKeyframesImport should upgrade legacy layers");
+  }
+  const upgraded = fs.readFileSync(path.join(layersDir, "TextLayer.tsx"), "utf8");
+  if (!upgraded.includes("applyKeyframesToClip")) {
+    throw new Error("legacy TextLayer should be upgraded from template");
+  }
+  const mainSeq = fs.readFileSync(
+    path.join(remotionDir, "src", "components", "MainSequence.tsx"),
+    "utf8",
+  );
+  if (!mainSeq.includes("ClipTransformWrapper")) {
+    throw new Error("MainSequence should wrap presets with ClipTransformWrapper");
+  }
+  if (!fs.existsSync(path.join(layersDir, "ClipTransformWrapper.tsx"))) {
+    throw new Error("ClipTransformWrapper should be copied from template");
+  }
 
   console.log("[PASS] remotion-project");
 }

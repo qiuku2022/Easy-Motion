@@ -2,6 +2,9 @@ const { readJsonFile } = require("../src/main/services/file-service");
 const path = require("node:path");
 const {
   getContentEndInclusive,
+  getContentEndExclusive,
+  fitTimelineDuration,
+  resolveTimelineViewportDuration,
   resolveExportFrameRange,
   setWorkAreaInFrame,
   setWorkAreaOutFrame,
@@ -19,6 +22,14 @@ function main() {
 
   const contentEnd = getContentEndInclusive(timeline);
   assert(contentEnd === 89, `expected content end 89, got ${contentEnd}`);
+  assert(getContentEndExclusive(timeline) === 90, "content end exclusive");
+
+  const padded = fitTimelineDuration({ ...timeline, durationInFrames: 300 });
+  assert(padded.durationInFrames === 120, `expected fitted duration 120, got ${padded.durationInFrames}`);
+  assert(
+    resolveTimelineViewportDuration({ ...timeline, durationInFrames: 300 }) === 120,
+    "viewport duration",
+  );
 
   const autoRange = resolveExportFrameRange(timeline);
   assert(autoRange.inFrame === 0, "auto in");
@@ -35,6 +46,10 @@ function main() {
   const ioRange = resolveExportFrameRange(withIo);
   assert(ioRange.inFrame === 30 && ioRange.outFrame === 45, "explicit io");
   assert(ioRange.custom === true, "custom flag");
+
+  const pastContent = setWorkAreaOutFrame(timeline, 200);
+  const cappedRange = resolveExportFrameRange(pastContent);
+  assert(cappedRange.outFrame === 89, "export out capped to content end");
 
   const swapped = setWorkAreaInFrame(withIo, 60);
   const swappedRange = resolveExportFrameRange(swapped);

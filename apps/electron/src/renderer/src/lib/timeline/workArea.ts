@@ -31,9 +31,8 @@ function forEachTimelineClip(timeline: Timeline | null | undefined, visit: (clip
   }
 }
 
-/** Last frame index that still has clip content (inclusive). */
-export function getContentEndInclusive(timeline: Timeline | null | undefined): number {
-  const maxDuration = Math.max(1, Number(timeline?.durationInFrames) || 1);
+/** First frame index after the last clip (exclusive). At least 1 when empty. */
+export function getContentEndExclusive(timeline: Timeline | null | undefined): number {
   let endExclusive = 1;
 
   forEachTimelineClip(timeline, (clip) => {
@@ -43,8 +42,71 @@ export function getContentEndInclusive(timeline: Timeline | null | undefined): n
     if (clipEnd > endExclusive) endExclusive = clipEnd;
   });
 
+  return Math.max(1, endExclusive);
+}
+
+/** Last frame index that still has clip content (inclusive). */
+export function getContentEndInclusive(timeline: Timeline | null | undefined): number {
+  const maxDuration = Math.max(1, Number(timeline?.durationInFrames) || 1);
+  const endExclusive = getContentEndExclusive(timeline);
   const capped = Math.min(endExclusive, maxDuration);
   return Math.max(0, capped - 1);
+}
+
+export function resolveTailPaddingFrames(timeline: Timeline | null | undefined): number {
+  const fps = Math.max(1, Number(timeline?.fps) || 30);
+  return Math.max(15, Math.round(fps));
+}
+
+/** Shrink or grow duration to content end + tail padding (~1s). */
+export function fitTimelineDuration(
+  timeline: Timeline,
+  options: { tailPaddingFrames?: number; minDurationFrames?: number } = {},
+): Timeline {
+  const tail = options.tailPaddingFrames ?? resolveTailPaddingFrames(timeline);
+  const minFrames = options.minDurationFrames ?? 30;
+  const contentEndExclusive = getContentEndExclusive(timeline);
+  const needed = Math.max(contentEndExclusive + tail, minFrames);
+  const current = Math.max(1, Number(timeline.durationInFrames) || 1);
+  const contentEndInclusive = Math.max(0, contentEndExclusive - 1);
+
+  let next: Timeline = { ...timeline, durationInFrames: needed };
+
+  if (next.workArea) {
+    const maxFrame = needed - 1;
+    const rawOut = Number(next.workArea.outFrame);
+    const rawIn = Number(next.workArea.inFrame);
+    const outFrame = Math.min(
+      Number.isFinite(rawOut) ? rawOut : contentEndInclusive,
+      maxFrame,
+      contentEndInclusive,
+    );
+    const inFrame = Math.min(
+      Number.isFinite(rawIn) ? rawIn : 0,
+      outFrame,
+      maxFrame,
+    );
+    next = {
+      ...next,
+      workArea: normalizeWorkArea(next, inFrame, outFrame),
+    };
+  }
+
+  if (
+    needed === current &&
+    (!timeline.workArea ||
+      (next.workArea?.inFrame === timeline.workArea.inFrame &&
+        next.workArea?.outFrame === timeline.workArea.outFrame))
+  ) {
+    return timeline;
+  }
+
+  return next;
+}
+
+export function resolveTimelineViewportDuration(timeline: Timeline | null | undefined): number {
+  if (!timeline) return 1;
+  return fitTimelineDuration(timeline).durationInFrames;
 }
 
 export interface ExportFrameRange {
@@ -82,9 +144,7 @@ export function resolveExportFrameRange(
     outFrame = swap;
   }
 
-  if (!custom) {
-    outFrame = Math.min(outFrame, contentEndInclusive);
-  }
+  outFrame = Math.min(outFrame, contentEndInclusive);
 
   const frameCount = Math.max(1, outFrame - inFrame + 1);
 

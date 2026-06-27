@@ -16,17 +16,36 @@ function parsePercentOrKeyword(value, axisSize, keywordMap) {
   return axisSize / 2;
 }
 
+function parseTimelineY(value, height) {
+  if (value == null || value === "") return Math.round(height / 2);
+  const str = String(value).trim().toLowerCase();
+
+  const keywordMap = {
+    top: Math.round(height * 0.8),
+    center: Math.round(height / 2),
+    bottom: Math.round(height * 0.2),
+  };
+  if (keywordMap[str] != null) return keywordMap[str];
+
+  const pct = str.match(/^(\d+(?:\.\d+)?)%$/);
+  if (pct) return Math.round((height * Number(pct[1])) / 100);
+
+  const num = Number(str);
+  if (!Number.isNaN(num) && num >= 0 && num <= 1) {
+    return Math.round(height * num);
+  }
+  if (!Number.isNaN(num)) return Math.round(num);
+
+  return Math.round(height / 2);
+}
+
 function resolvePosition(position = {}, width, height) {
   const x = parsePercentOrKeyword(position.x, width, {
     left: Math.round(width * 0.2),
     center: Math.round(width / 2),
     right: Math.round(width * 0.8),
   });
-  const y = parsePercentOrKeyword(position.y, height, {
-    top: Math.round(height * 0.2),
-    center: Math.round(height / 2),
-    bottom: Math.round(height * 0.8),
-  });
+  const y = parseTimelineY(position.y, height);
   return { x, y };
 }
 

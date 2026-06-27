@@ -4,15 +4,13 @@ export const FPS = 25;
 export const DURATION = 125;
 
 export const COLORS = {
-  mint: "#C8EBE8",
-  mintLight: "#E4F6F4",
-  lime: "#C8F020",
-  limeSoft: "#D8F558",
-  black: "#0A0A0A"
+  base: "#09090b",
+  indigo: "#6366f1",
+  violet: "#8b5cf6",
+  cyan: "#22d3ee",
+  slate: "#a1a1aa",
+  white: "#fafafa",
 } as const;
 
 export const FONT_SANS =
   '"Inter", "Helvetica Neue", "Arial", sans-serif';
-
-export const FONT_SCRIPT =
-  '"Georgia", "Times New Roman", serif';

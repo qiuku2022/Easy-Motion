@@ -44,6 +44,7 @@ interface UiState {
   /** 时间线下方关键帧轨道面板 */
   keyframePanelExpanded: boolean;
   selectedKeyframeProperty: string | null;
+  selectedKeyframeId: string | null;
 
   setLeftPanelWidth: (w: number) => void;
   setRightPanelWidth: (w: number) => void;
@@ -61,6 +62,7 @@ interface UiState {
   setAltKeyHeld: (held: boolean) => void;
   toggleKeyframePanel: () => void;
   setSelectedKeyframeProperty: (property: string | null) => void;
+  setSelectedKeyframeId: (keyframeId: string | null) => void;
   zoomTimelineBy: (delta: number) => void;
   requestTimelineFit: () => void;
 }
@@ -85,6 +87,7 @@ export const useUiStore = create<UiState>((set) => ({
   timelineZoomManual: false,
   keyframePanelExpanded: true,
   selectedKeyframeProperty: "transform.opacity",
+  selectedKeyframeId: null,
 
   setLeftPanelWidth: (leftPanelWidth) => set({ leftPanelWidth }),
   setRightPanelWidth: (rightPanelWidth) => set({ rightPanelWidth }),
@@ -107,7 +110,9 @@ export const useUiStore = create<UiState>((set) => ({
     set((s) => ({ keyframePanelExpanded: !s.keyframePanelExpanded })),
 
   setSelectedKeyframeProperty: (selectedKeyframeProperty) =>
-    set({ selectedKeyframeProperty }),
+    set({ selectedKeyframeProperty, selectedKeyframeId: null }),
+
+  setSelectedKeyframeId: (selectedKeyframeId) => set({ selectedKeyframeId }),
 
   zoomTimelineBy: (delta) =>
     set((s) => ({

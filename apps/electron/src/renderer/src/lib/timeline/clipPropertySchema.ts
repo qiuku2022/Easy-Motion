@@ -6,6 +6,9 @@ import type { Clip, TrackType } from "@/types/timeline";
 import type { ClipPatch } from "@/lib/timeline/mutations";
 import { getValueByPath } from "@/lib/timeline/objectPath";
 import { isKnownTrackType } from "@/lib/timeline/contentType";
+import { clampOpacityInternal } from "@/lib/timeline/opacityProperty";
+import { clampScaleInternal } from "@/lib/timeline/scaleProperty";
+import { snapPositionValue } from "@/lib/timeline/positionProperty";
 
 export type PropertyFieldType = "text" | "multiline" | "number" | "color";
 
@@ -30,18 +33,18 @@ export const CLIP_PROPERTY_FIELDS: Record<string, ClipPropertyField[]> = {
     { path: "style.fontSize", label: "字体大小", type: "number", min: 1, suffix: "px", quick: true },
     { path: "style.color", label: "颜色", type: "color", quick: true },
     { path: "style.fontFamily", label: "字体", type: "text" },
-    { path: "transform.position.x", label: "位置 X", type: "number", quick: true },
-    { path: "transform.position.y", label: "位置 Y", type: "number", quick: true },
+    { path: "transform.position.x", label: "锚点 X", type: "number", step: 1, quick: true },
+    { path: "transform.position.y", label: "锚点 Y", type: "number", step: 1, quick: true },
   ],
   image: [
     { path: "source.publicPath", label: "资源路径", type: "text", quick: true },
     { path: "source.path", label: "路径", type: "text" },
-    { path: "transform.scale", label: "缩放", type: "number", min: 0.01, step: 0.01, quick: true },
+    { path: "transform.scale", label: "缩放", type: "number", step: 1, suffix: "%", suffixOnLabel: true, quick: true },
   ],
   video: [
     { path: "source.publicPath", label: "资源路径", type: "text", quick: true },
     { path: "source.path", label: "路径", type: "text" },
-    { path: "transform.scale", label: "缩放", type: "number", min: 0.01, step: 0.01, quick: true },
+    { path: "transform.scale", label: "缩放", type: "number", step: 1, suffix: "%", suffixOnLabel: true, quick: true },
   ],
   audio: [
     { path: "source.publicPath", label: "资源路径", type: "text", quick: true },
@@ -61,11 +64,11 @@ export const CLIP_PROPERTY_FIELDS: Record<string, ClipPropertyField[]> = {
 };
 
 export const TRANSFORM_FIELDS: ClipPropertyField[] = [
-  { path: "transform.position.x", label: "位置 X", type: "number" },
-  { path: "transform.position.y", label: "位置 Y", type: "number" },
-  { path: "transform.scale", label: "缩放", type: "number", min: 0.01, step: 0.01 },
+  { path: "transform.position.x", label: "锚点 X", type: "number", step: 1 },
+  { path: "transform.position.y", label: "锚点 Y", type: "number", step: 1 },
+  { path: "transform.scale", label: "缩放", type: "number", step: 1, suffix: "%", suffixOnLabel: true },
   { path: "transform.rotation", label: "旋转", type: "number", suffix: "°", suffixOnLabel: true },
-  { path: "transform.opacity", label: "透明度", type: "number", min: 0, max: 1, step: 0.01 },
+  { path: "transform.opacity", label: "透明度", type: "number", min: 0, max: 100, step: 1, suffix: "%", suffixOnLabel: true },
 ];
 
 export const ANIMATION_FIELDS: ClipPropertyField[] = [
@@ -147,19 +150,19 @@ export function buildPatchFromPropertyPath(path: string, value: unknown): ClipPa
     return { style: { [key]: value } };
   }
   if (path === "transform.position.x") {
-    return { transform: { position: { x: Number(value) } } };
+    return { transform: { position: { x: snapPositionValue(value) } } };
   }
   if (path === "transform.position.y") {
-    return { transform: { position: { y: Number(value) } } };
+    return { transform: { position: { y: snapPositionValue(value) } } };
   }
   if (path === "transform.scale") {
-    return { transform: { scale: Number(value) } };
+    return { transform: { scale: clampScaleInternal(Number(value)) } };
   }
   if (path === "transform.rotation") {
     return { transform: { rotation: Number(value) } };
   }
   if (path === "transform.opacity") {
-    return { transform: { opacity: Number(value) } };
+    return { transform: { opacity: clampOpacityInternal(Number(value)) } };
   }
   if (path === "animations.in.type") {
     return { animations: { in: { type: String(value) } } };

@@ -504,6 +504,54 @@ function ensurePreviewPlayheadPreserve(remotionDir) {
   return true;
 }
 
+/** 时间线热更新后强制暂停，避免 Player 重挂载后自动播放与 UI 不同步 */
+function ensurePreviewPlaybackSync(remotionDir) {
+  const destEntry = path.join(remotionDir, "src", "preview-entry.tsx");
+  if (!fs.existsSync(destEntry)) return false;
+
+  const content = fs.readFileSync(destEntry, "utf8");
+  if (content.includes('addEventListener("play"')) return false;
+
+  const templateEntry = path.join(
+    getTemplatesDir(),
+    "default-project",
+    "subprojects",
+    "default",
+    "remotion",
+    "src",
+    "preview-entry.tsx",
+  );
+  if (!fs.existsSync(templateEntry)) return false;
+
+  fs.copyFileSync(templateEntry, destEntry);
+  broadcastLog("已更新 preview-entry（时间线更新后保持暂停）", "preview");
+  return true;
+}
+
+/** Player duration follows timeline JSON instead of static preview-config */
+function ensurePreviewDynamicDuration(remotionDir) {
+  const destEntry = path.join(remotionDir, "src", "preview-entry.tsx");
+  if (!fs.existsSync(destEntry)) return false;
+
+  const content = fs.readFileSync(destEntry, "utf8");
+  if (content.includes("previewMeta.durationInFrames")) return false;
+
+  const templateEntry = path.join(
+    getTemplatesDir(),
+    "default-project",
+    "subprojects",
+    "default",
+    "remotion",
+    "src",
+    "preview-entry.tsx",
+  );
+  if (!fs.existsSync(templateEntry)) return false;
+
+  fs.copyFileSync(templateEntry, destEntry);
+  broadcastLog("已更新 preview-entry（时长随时间线同步）", "preview");
+  return true;
+}
+
 async function startPreview(projectRoot, subprojectPath = "subprojects/default") {
   await stopPreview();
 
@@ -513,20 +561,25 @@ async function startPreview(projectRoot, subprojectPath = "subprojects/default")
   }
 
   broadcastLog("正在准备 Remotion 预览环境…", "preview");
-  ensureLayerKeyframesImport(remotionDir);
+  const keyframesPatched = ensureLayerKeyframesImport(remotionDir);
   ensurePreviewEntry(remotionDir);
   const soloSupportPatched = ensurePreviewSoloSupport(remotionDir);
   const customSupportPatched = ensureCustomComponentSupport(remotionDir);
   const canvasThemePatched = ensurePreviewCanvasTheme(remotionDir);
   const loopControlPatched = ensurePreviewLoopControl(remotionDir);
   const playheadPreservePatched = ensurePreviewPlayheadPreserve(remotionDir);
+  const playbackSyncPatched = ensurePreviewPlaybackSync(remotionDir);
+  const dynamicDurationPatched = ensurePreviewDynamicDuration(remotionDir);
   let remotionFingerprint = null;
   if (
+    keyframesPatched ||
     soloSupportPatched ||
     customSupportPatched ||
     canvasThemePatched ||
     loopControlPatched ||
-    playheadPreservePatched
+    playheadPreservePatched ||
+    playbackSyncPatched ||
+    dynamicDurationPatched
   ) {
     const refreshed = timelineService.refreshRemotionFingerprint(
       projectRoot,

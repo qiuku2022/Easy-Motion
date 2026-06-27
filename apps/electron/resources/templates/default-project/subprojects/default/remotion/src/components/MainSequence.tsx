@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { AbsoluteFill, staticFile } from "remotion";
 import { flattenClipsForPreview } from "../lib/flatten-clips-for-preview";
 import { isClipVisibleInPreview } from "../lib/preview-visibility";
@@ -8,6 +9,10 @@ import { GradientBackground } from "./newsletter-design/GradientBackground";
 import { NewsletterBackground } from "./newsletter-design/NewsletterBackground";
 import { PreviewClipSequence } from "./PreviewClipSequence";
 import { ChartLayer } from "./layers/ChartLayer";
+import {
+  ClipTransformWrapper,
+  resolveClipTransformLayout,
+} from "./layers/ClipTransformWrapper";
 import { ImageLayer } from "./layers/ImageLayer";
 import { ShapeLayer } from "./layers/ShapeLayer";
 import { TextLayer } from "./layers/TextLayer";
@@ -64,13 +69,31 @@ function renderClipContent(
     animations?: { in?: { type: string; durationInFrames: number } };
   },
 ) {
-  const transform =
-    clip.transform ?? {
-      position: { x: 960, y: 540 },
-      scale: 1,
-      rotation: 0,
-      opacity: 1,
-    };
+  const defaultTransform = {
+    position: { x: 960, y: 540 },
+    scale: 1,
+    rotation: 0,
+    opacity: 1,
+  };
+  const transform = clip.transform ?? defaultTransform;
+
+  const wrapMotion = (content: ReactNode) => {
+    const hasMotion =
+      (clip.keyframes?.length ?? 0) > 0 ||
+      clip.animations?.in != null ||
+      clip.transform != null;
+    if (!hasMotion) return content;
+    return (
+      <ClipTransformWrapper
+        transform={clip.transform ?? defaultTransform}
+        keyframes={clip.keyframes}
+        inAnimation={clip.animations?.in}
+        layout={resolveClipTransformLayout(clip.transform, clip.keyframes)}
+      >
+        {content}
+      </ClipTransformWrapper>
+    );
+  };
 
   if (track.type === "text") {
     return (
@@ -170,7 +193,7 @@ function renderClipContent(
     clip.source?.kind === "component" &&
     clip.source.component === "NewsletterBackground"
   ) {
-    return <NewsletterBackground style={clip.style} />;
+    return wrapMotion(<NewsletterBackground style={clip.style} />);
   }
 
   if (
@@ -178,7 +201,7 @@ function renderClipContent(
     clip.source?.kind === "component" &&
     clip.source.component === "GradientBackground"
   ) {
-    return <GradientBackground style={clip.style} />;
+    return wrapMotion(<GradientBackground style={clip.style} />);
   }
 
   if (
@@ -192,11 +215,11 @@ function renderClipContent(
         : {};
     const PresetComponent = resolvePresetComponent(clip.source.component);
     if (PresetComponent) {
-      return <PresetComponent {...props} />;
+      return wrapMotion(<PresetComponent {...props} />);
     }
     const CustomComponent = resolveCustomComponent(clip.source.component);
     if (CustomComponent) {
-      return <CustomComponent {...props} />;
+      return wrapMotion(<CustomComponent {...props} />);
     }
   }
 

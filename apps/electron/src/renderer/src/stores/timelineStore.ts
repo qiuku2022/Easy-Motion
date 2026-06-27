@@ -40,10 +40,18 @@ import type { ClipPatch } from "@/lib/timeline/mutations";
 import {
   addClipKeyframe,
   getClipRelativeFrame,
+  getPropertyValueAtFrame,
   moveClipKeyframe,
   removeClipKeyframe,
   updateClipKeyframe,
 } from "@/lib/timeline/keyframes";
+import { clipHasKeyframesForProperty, findKeyframeAtFrame } from "@/lib/timeline/keyframeProperty";
+import { buildPatchFromPropertyPath } from "@/lib/timeline/clipPropertySchema";
+import { clampTimelinePosition } from "@/lib/timeline/coordinates";
+import {
+  POSITION_X_PATH,
+  POSITION_Y_PATH,
+} from "@/lib/timeline/positionProperty";
 import { TimelineValidationError } from "@/lib/timeline/validate";
 import { getEasyMotion } from "@/types/easyMotion";
 import type {
@@ -60,6 +68,7 @@ import { findMarkerAtFrame, normalizeMarkers } from "@/lib/timeline/markers";
 import { repairTimelineForEditing } from "@/lib/timeline/repair";
 import {
   clearWorkArea as clearTimelineWorkArea,
+  fitTimelineDuration,
   setWorkAreaInFrame,
   setWorkAreaOutFrame,
 } from "@/lib/timeline/workArea";
@@ -150,6 +159,8 @@ interface TimelineState {
   }) => Promise<boolean>;
   /** 预设参数变更：保存并推送 timeline 到预览，不重新生成代码 */
   syncPreviewAfterPropsEdit: () => Promise<boolean>;
+  schedulePreviewPropsSync: () => void;
+  flushPreviewPropsSync: () => Promise<boolean>;
   renameTrack: (trackId: string, name: string) => void;
 
   addClip: (trackId: string, clip: Clip) => void;
@@ -164,7 +175,11 @@ interface TimelineState {
   splitClip: (clipId: string, splitFrame: number) => void;
   updateClip: (clipId: string, patch: ClipPatch) => void;
   addKeyframeAtPlayhead: (clipId: string, property: string, value?: unknown) => void;
+  toggleKeyframeAtPlayhead: (clipId: string, property: string) => void;
+  toggleKeyframeAtPlayheadForSelectedProperty: () => void;
+  setPropertyValueAtPlayhead: (clipId: string, property: string, value: unknown) => void;
   removeKeyframe: (clipId: string, keyframeId: string) => void;
+  removeSelectedKeyframe: () => boolean;
   moveKeyframe: (clipId: string, keyframeId: string, newRelativeFrame: number) => void;
   updateKeyframe: (
     clipId: string,
@@ -203,6 +218,24 @@ interface TimelineState {
   canRedo: () => boolean;
 }
 
+/** 属性/关键帧变更后推送预览的防抖间隔 */
+export const PREVIEW_PROPS_DEBOUNCE_MS = 250;
+
+function clampPropertyValueForTimeline(
+  timeline: Timeline,
+  property: string,
+  value: unknown,
+): unknown {
+  if (typeof value !== "number" || !Number.isFinite(value)) return value;
+  if (property === POSITION_X_PATH) {
+    return clampTimelinePosition(value, 0, timeline.width, timeline.height).x;
+  }
+  if (property === POSITION_Y_PATH) {
+    return clampTimelinePosition(0, value, timeline.width, timeline.height).y;
+  }
+  return value;
+}
+
 const HISTORY_MERGE_MS = 500;
 
 const debouncedGenerate = debounce(() => {
@@ -211,7 +244,13 @@ const debouncedGenerate = debounce(() => {
 
 const debouncedPreviewPropsSync = debounce(() => {
   void useTimelineStore.getState().syncPreviewAfterPropsEdit();
-}, 400);
+}, PREVIEW_PROPS_DEBOUNCE_MS);
+
+function usesTimelinePreviewPush(
+  drift: TimelineState["remotionDrift"],
+): boolean {
+  return Boolean(drift?.hasCustomRemotionCode || drift?.timelineDrivenPreview);
+}
 
 let previewSyncCooldownUntil = 0;
 
@@ -302,18 +341,23 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
       }
     }
 
+    const fitted = fitTimelineDuration(next);
+    const maxFrame = Math.max(0, fitted.durationInFrames - 1);
+    const clampedFrame = Math.min(get().currentFrame, maxFrame);
+
     const selection = syncSelectionAfterTimelineChange(
-      next,
+      fitted,
       selectedClipId,
       selectedTrackId,
       selectedMarkerId,
     );
 
     set({
-      timeline: next,
+      timeline: fitted,
       history,
       hasUnsavedChanges: true,
       error: null,
+      currentFrame: clampedFrame,
       ...selection,
     });
 
@@ -382,6 +426,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
     },
 
     clearSelection: () => {
+      useUiStore.getState().setSelectedKeyframeId(null);
       set({ selectedTrackId: null, selectedClipId: null, selectedMarkerId: null });
     },
 
@@ -626,11 +671,13 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
       useUiStore.getState().setTimelineScrollX(0);
 
       const { timeline: loaded, repaired } = repairTimelineForEditing(res.data);
+      const fitted = fitTimelineDuration(loaded);
+      const durationAdjusted = fitted.durationInFrames !== loaded.durationInFrames;
       const prev = get();
 
       const selection = options?.skipAutoSync
         ? syncSelectionAfterTimelineChange(
-            loaded,
+            fitted,
             prev.selectedClipId,
             prev.selectedTrackId,
             prev.selectedMarkerId,
@@ -641,11 +688,14 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
             selectedMarkerId: null,
           };
 
+      const maxFrame = Math.max(0, fitted.durationInFrames - 1);
       set({
-        timeline: loaded,
-        currentFrame: options?.skipAutoSync ? prev.currentFrame : 0,
+        timeline: fitted,
+        currentFrame: options?.skipAutoSync
+          ? Math.min(prev.currentFrame, maxFrame)
+          : 0,
         ...selection,
-        hasUnsavedChanges: repaired,
+        hasUnsavedChanges: repaired || durationAdjusted,
         history: createHistory(),
       });
       if (!options?.skipAutoSync) {
@@ -659,20 +709,22 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
       useUiStore.getState().setTimelineScrollX(0);
 
       const { timeline: loaded, repaired } = repairTimelineForEditing(incoming);
+      const fitted = fitTimelineDuration(loaded);
+      const durationAdjusted = fitted.durationInFrames !== loaded.durationInFrames;
       const prev = get();
       const selection = syncSelectionAfterTimelineChange(
-        loaded,
+        fitted,
         prev.selectedClipId,
         prev.selectedTrackId,
         prev.selectedMarkerId,
       );
-      const maxFrame = Math.max(0, loaded.durationInFrames - 1);
+      const maxFrame = Math.max(0, fitted.durationInFrames - 1);
 
       set({
-        timeline: loaded,
+        timeline: fitted,
         currentFrame: Math.min(prev.currentFrame, maxFrame),
         ...selection,
-        hasUnsavedChanges: repaired,
+        hasUnsavedChanges: repaired || durationAdjusted,
         history: createHistory(),
         error: null,
         isLoading: false,
@@ -975,6 +1027,15 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
       return get().syncPreviewAfterTimelineEdit({ force: true });
     },
 
+    schedulePreviewPropsSync: () => {
+      debouncedPreviewPropsSync();
+    },
+
+    flushPreviewPropsSync: async () => {
+      debouncedPreviewPropsSync.cancel();
+      return get().syncPreviewAfterPropsEdit();
+    },
+
     syncPreviewForTrackFilters: async () => {
       const { remotionDrift } = get();
       if (remotionDrift?.hasCustomRemotionCode) {
@@ -1108,7 +1169,8 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
     },
 
     updateClip: (clipId, patch) => {
-      if (isPresetPropsOnlyPatch(patch)) {
+      const previewPush = usesTimelinePreviewPush(get().remotionDrift);
+      if (isPresetPropsOnlyPatch(patch) || previewPush) {
         runMutation((t) => updateClip(t, clipId, patch), { generate: "none" });
         debouncedPreviewPropsSync();
         return;
@@ -1128,18 +1190,134 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
       }
       const relativeFrame = getClipRelativeFrame(currentFrame, located.clip);
       try {
+        const resolvedValue =
+          value !== undefined
+            ? value
+            : getPropertyValueAtFrame(
+                located.clip,
+                property,
+                relativeFrame,
+                timeline.fps,
+              );
         const nextClip = addClipKeyframe(located.clip, {
           property,
           frame: relativeFrame,
-          value,
+          value: resolvedValue,
         });
+        const added = findKeyframeAtFrame(nextClip, property, relativeFrame);
         runMutation((t) => replaceClip(t, clipId, nextClip), { generate: "none" });
         debouncedPreviewPropsSync();
+        if (added) {
+          useUiStore.getState().setSelectedKeyframeProperty(property);
+          useUiStore.getState().setSelectedKeyframeId(added.id);
+        }
       } catch (err) {
         set({
           error: err instanceof Error ? err.message : "无法添加关键帧",
         });
       }
+    },
+
+    toggleKeyframeAtPlayhead: (clipId, property) => {
+      const { timeline, currentFrame } = get();
+      if (!timeline) return;
+      const located = findLayerTrackForClip(timeline, clipId);
+      if (!located) {
+        set({ error: "片段不存在" });
+        return;
+      }
+      const relativeFrame = getClipRelativeFrame(currentFrame, located.clip);
+      const existing = findKeyframeAtFrame(located.clip, property, relativeFrame);
+      try {
+        if (existing) {
+          const nextClip = removeClipKeyframe(located.clip, existing.id);
+          runMutation((t) => replaceClip(t, clipId, nextClip), { generate: "none" });
+          debouncedPreviewPropsSync();
+          if (useUiStore.getState().selectedKeyframeId === existing.id) {
+            useUiStore.getState().setSelectedKeyframeId(null);
+          }
+          return;
+        }
+        const resolvedValue = getPropertyValueAtFrame(
+          located.clip,
+          property,
+          relativeFrame,
+          timeline.fps,
+        );
+        const nextClip = addClipKeyframe(located.clip, {
+          property,
+          frame: relativeFrame,
+          value: resolvedValue,
+        });
+        const added = findKeyframeAtFrame(nextClip, property, relativeFrame);
+        runMutation((t) => replaceClip(t, clipId, nextClip), { generate: "none" });
+        debouncedPreviewPropsSync();
+        if (added) {
+          useUiStore.getState().setSelectedKeyframeProperty(property);
+          useUiStore.getState().setSelectedKeyframeId(added.id);
+        }
+      } catch (err) {
+        set({
+          error: err instanceof Error ? err.message : "无法切换关键帧",
+        });
+      }
+    },
+
+    toggleKeyframeAtPlayheadForSelectedProperty: () => {
+      const { timeline, selectedClipId } = get();
+      if (!timeline || !selectedClipId) {
+        set({ error: "请先选中片段" });
+        return;
+      }
+      const property =
+        useUiStore.getState().selectedKeyframeProperty ?? "transform.opacity";
+      get().toggleKeyframeAtPlayhead(selectedClipId, property);
+    },
+
+    setPropertyValueAtPlayhead: (clipId, property, value) => {
+      const { timeline, currentFrame } = get();
+      if (!timeline) return;
+      const located = findLayerTrackForClip(timeline, clipId);
+      if (!located) return;
+
+      const normalizedValue = clampPropertyValueForTimeline(timeline, property, value);
+      const relativeFrame = getClipRelativeFrame(currentFrame, located.clip);
+      const existing = findKeyframeAtFrame(located.clip, property, relativeFrame);
+
+      if (existing) {
+        try {
+          const nextClip = updateClipKeyframe(located.clip, existing.id, {
+            value: normalizedValue as import("@/types/timeline").Keyframe["value"],
+          });
+          runMutation((t) => replaceClip(t, clipId, nextClip), { generate: "none" });
+          debouncedPreviewPropsSync();
+        } catch (err) {
+          set({
+            error: err instanceof Error ? err.message : "无法更新关键帧",
+          });
+        }
+        return;
+      }
+
+      if (clipHasKeyframesForProperty(located.clip, property)) {
+        try {
+          const nextClip = addClipKeyframe(located.clip, {
+            property,
+            frame: relativeFrame,
+            value: normalizedValue,
+          });
+          runMutation((t) => replaceClip(t, clipId, nextClip), { generate: "none" });
+          debouncedPreviewPropsSync();
+        } catch (err) {
+          set({
+            error: err instanceof Error ? err.message : "无法添加关键帧",
+          });
+        }
+        return;
+      }
+
+      const patch = buildPatchFromPropertyPath(property, normalizedValue);
+      get().updateClip(clipId, patch);
     },
 
     removeKeyframe: (clipId, keyframeId) => {
@@ -1151,11 +1329,28 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
         const nextClip = removeClipKeyframe(located.clip, keyframeId);
         runMutation((t) => replaceClip(t, clipId, nextClip), { generate: "none" });
         debouncedPreviewPropsSync();
+        if (useUiStore.getState().selectedKeyframeId === keyframeId) {
+          useUiStore.getState().setSelectedKeyframeId(null);
+        }
       } catch (err) {
         set({
           error: err instanceof Error ? err.message : "无法删除关键帧",
         });
       }
+    },
+
+    removeSelectedKeyframe: () => {
+      const { timeline, selectedClipId } = get();
+      const keyframeId = useUiStore.getState().selectedKeyframeId;
+      if (!timeline || !selectedClipId || !keyframeId) return false;
+      const located = findLayerTrackForClip(timeline, selectedClipId);
+      if (!located) return false;
+      if (!(located.clip.keyframes ?? []).some((kf) => kf.id === keyframeId)) {
+        useUiStore.getState().setSelectedKeyframeId(null);
+        return false;
+      }
+      get().removeKeyframe(selectedClipId, keyframeId);
+      return true;
     },
 
     moveKeyframe: (clipId, keyframeId, newRelativeFrame) => {

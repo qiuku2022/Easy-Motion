@@ -121,7 +121,12 @@ export function useTimelineShortcuts() {
       if (!isModKey(e) && !e.altKey && !e.shiftKey && timeline) {
         if (e.key.toLowerCase() === "k") {
           consumeShortcut(e);
-          if (playback.isPlaying) playback.togglePlay();
+          if (playback.isPlaying) {
+            playback.togglePlay();
+          } else if (store.selectedClipId) {
+            store.clearError();
+            store.toggleKeyframeAtPlayheadForSelectedProperty();
+          }
           return;
         }
         if (e.key.toLowerCase() === "l") {
@@ -169,6 +174,11 @@ export function useTimelineShortcuts() {
       }
 
       if (e.key === "Delete" || e.key === "Backspace") {
+        if (useUiStore.getState().selectedKeyframeId && store.selectedClipId) {
+          consumeShortcut(e);
+          store.clearError();
+          if (store.removeSelectedKeyframe()) return;
+        }
         if (store.selectedMarkerId) {
           consumeShortcut(e);
           store.clearError();

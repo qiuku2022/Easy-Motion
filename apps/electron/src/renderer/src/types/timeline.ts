@@ -52,6 +52,8 @@ export interface Timeline {
     | "native+ast"
     | "import"
     | "import-ast";
+  /** 位置坐标原点；缺省视为旧版左上角，加载时迁移为 bottom-left */
+  coordinateOrigin?: "bottom-left" | "top-left";
 }
 
 export interface Track {

@@ -3,6 +3,7 @@ const trackSolo = require("./track-solo");
 const previewVisibility = require("./preview-visibility");
 const keyframes = require("./keyframes");
 const workArea = require("./work-area");
+const coordinates = require("./coordinates");
 
 module.exports = {
   ...timeline,
@@ -10,4 +11,5 @@ module.exports = {
   ...previewVisibility,
   ...keyframes,
   ...workArea,
+  ...coordinates,
 };

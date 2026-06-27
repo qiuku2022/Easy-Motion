@@ -3,6 +3,7 @@ import {
   trackTypeNeedsDefaultClip,
 } from "@/lib/timeline/defaultClips";
 import { normalizeMarkers } from "@/lib/timeline/markers";
+import { migrateTimelineToBottomLeft } from "@/lib/timeline/coordinates";
 import { assertValidTimeline } from "@/lib/timeline/validate";
 import type { Timeline, Track } from "@/types/timeline";
 
@@ -21,13 +22,15 @@ export function repairTimelineForEditing(timeline: Timeline): {
   timeline: Timeline;
   repaired: boolean;
 } {
-  let repaired = false;
+  const coordinateMigrated = migrateTimelineToBottomLeft(timeline);
+  let working = coordinateMigrated.timeline;
+  let repaired = coordinateMigrated.migrated;
 
-  const tracks = timeline.tracks.map((track) => {
+  const tracks = working.tracks.map((track) => {
     if (track.type === "group") {
       let groupRepaired = false;
       const children = (track.children ?? []).map((child) => {
-        const next = repairTrackContent(timeline, child);
+        const next = repairTrackContent(working, child);
         if (next !== child) groupRepaired = true;
         return next;
       });
@@ -38,21 +41,22 @@ export function repairTimelineForEditing(timeline: Timeline): {
       return track;
     }
 
-    const next = repairTrackContent(timeline, track);
+    const next = repairTrackContent(working, track);
     if (next !== track) repaired = true;
     return next;
   });
 
-  const markers = normalizeMarkers(timeline.markers);
+  const markers = normalizeMarkers(working.markers);
   const markersChanged =
-    markers.length !== (timeline.markers?.length ?? 0) ||
-    timeline.markers === undefined;
+    markers.length !== (working.markers?.length ?? 0) || working.markers === undefined;
 
-  if (!repaired && !markersChanged) return { timeline, repaired: false };
+  if (!repaired && !markersChanged) {
+    return { timeline: working, repaired: coordinateMigrated.migrated };
+  }
 
   const next = {
-    ...timeline,
-    tracks: repaired ? tracks : timeline.tracks,
+    ...working,
+    tracks: repaired ? tracks : working.tracks,
     markers,
   };
   assertValidTimeline(next);

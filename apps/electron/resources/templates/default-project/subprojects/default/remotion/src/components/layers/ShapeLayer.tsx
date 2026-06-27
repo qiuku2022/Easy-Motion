@@ -1,6 +1,8 @@
 import React, { useMemo } from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import { applyKeyframesToClip } from "../../lib/apply-keyframes";
+import { buildCenterAnchoredLayerStyle } from "../../lib/layer-anchor-style";
+import { useLayerScreenPosition } from "../../lib/use-layer-screen-position";
 
 type ShapeLayerProps = {
   clipId: string;
@@ -66,14 +68,15 @@ export const ShapeLayer: React.FC<ShapeLayerProps> = ({
           ...fillPaint,
         };
 
+  const screen = useLayerScreenPosition(
+    resolved.transform.position.x,
+    resolved.transform.position.y,
+  );
+
   return (
     <div
       style={{
-        position: "absolute",
-        left: resolved.transform.position.x,
-        top: resolved.transform.position.y,
-        transform: `translate(-50%, -50%) scale(${resolved.transform.scale}) rotate(${resolved.transform.rotation}deg)`,
-        opacity: resolved.transform.opacity,
+        ...buildCenterAnchoredLayerStyle(screen, resolved.transform),
         ...shapeStyle,
       }}
     />

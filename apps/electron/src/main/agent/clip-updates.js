@@ -110,8 +110,8 @@ function resolveRelativeClipUpdates(clip, userInput, updates = {}) {
     const offset = Math.round((clip?.timelineWidth ?? 1920) * 0.1) || 100;
     if (/左/.test(text)) result["transform.position.x"] = x - offset;
     if (/右/.test(text)) result["transform.position.x"] = x + offset;
-    if (/上/.test(text)) result["transform.position.y"] = y - offset;
-    if (/下/.test(text)) result["transform.position.y"] = y + offset;
+    if (/上/.test(text)) result["transform.position.y"] = y + offset;
+    if (/下/.test(text)) result["transform.position.y"] = y - offset;
     return result;
   }
 

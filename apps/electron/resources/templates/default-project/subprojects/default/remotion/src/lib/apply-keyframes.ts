@@ -92,6 +92,14 @@ function segmentProgress(
   return mapEasing(end.easing)(rawT);
 }
 
+function resolveBaseValue(property: string, baseValue: unknown): unknown {
+  if (baseValue !== undefined && baseValue !== null) return baseValue;
+  if (property === "transform.opacity") return 1;
+  if (property === "transform.scale") return 1;
+  if (property === "transform.rotation") return 0;
+  return baseValue;
+}
+
 function interpolateProperty(
   keyframes: TimelineKeyframe[],
   property: string,
@@ -103,9 +111,11 @@ function interpolateProperty(
     .filter((kf) => kf.property === property)
     .sort((a, b) => a.frame - b.frame);
 
-  if (sorted.length === 0) return baseValue;
+  if (sorted.length === 0) return resolveBaseValue(property, baseValue);
   if (frame <= sorted[0]!.frame) {
-    return frame < sorted[0]!.frame ? baseValue : sorted[0]!.value;
+    return frame < sorted[0]!.frame
+      ? resolveBaseValue(property, baseValue)
+      : sorted[0]!.value;
   }
   const last = sorted[sorted.length - 1]!;
   if (frame >= last.frame) return last.value;
@@ -127,7 +137,7 @@ function interpolateProperty(
     return frame >= end.frame ? end.value : start.value;
   }
 
-  return baseValue;
+  return resolveBaseValue(property, baseValue);
 }
 
 export function applyKeyframesToClip(
@@ -150,7 +160,10 @@ export function applyKeyframesToClip(
   let result: Record<string, unknown> = { ...base };
 
   for (const property of properties) {
-    const baseValue = getValueByPath(base, property);
+    const baseValue = resolveBaseValue(
+      property,
+      getValueByPath(base, property),
+    );
     const value = interpolateProperty(keyframes, property, relativeFrame, baseValue, fps);
     result = setValueByPath(result, property, value);
   }

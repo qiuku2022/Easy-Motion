@@ -157,6 +157,7 @@ export function PreviewWindow() {
     if (!win) return false;
 
     const frame = markPreservePlayhead();
+    usePlaybackStore.getState().setPlaying(false);
     postPreview(win, {
       channel: PREVIEW_CHANNEL,
       type: "TIMELINE_UPDATE",

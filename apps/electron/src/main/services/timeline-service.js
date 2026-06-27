@@ -1,7 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { readJsonFile, atomicWriteJson } = require("./file-service");
-const { validateTimeline } = require("@easymotion/shared");
+const { validateTimeline, fitTimelineDuration } = require("@easymotion/shared");
 const { writeTimelineManifest } = require("../importer/timeline-manifest");
 const { generateRemotionCode } = require("../generator");
 const { fingerprintRemotionSrc } = require("../importer/remotion-fingerprint");
@@ -39,17 +39,33 @@ function loadTimeline(projectRoot, subprojectRelativePath = "subprojects/default
   return subproject.timeline;
 }
 
+function writePreviewConfig(remotionSrcDir, timeline) {
+  const previewConfig = {
+    durationInFrames: timeline.durationInFrames,
+    fps: timeline.fps,
+    width: timeline.width,
+    height: timeline.height,
+  };
+  const previewConfigPath = path.join(remotionSrcDir, "preview-config.json");
+  fs.writeFileSync(
+    previewConfigPath,
+    `${JSON.stringify(previewConfig, null, 2)}\n`,
+    "utf8",
+  );
+}
+
 async function saveTimeline(
   projectRoot,
   timeline,
   subprojectRelativePath = "subprojects/default",
 ) {
-  validateTimeline(timeline);
+  const fitted = fitTimelineDuration(timeline);
+  validateTimeline(fitted);
   const subprojectPath = getSubprojectJsonPath(projectRoot, subprojectRelativePath);
   const subproject = readJsonFile(subprojectPath);
-  subproject.timeline = timeline;
+  subproject.timeline = fitted;
   await atomicWriteJson(subprojectPath, subproject);
-  return timeline;
+  return fitted;
 }
 
 function applySampleTimeline(
@@ -78,9 +94,10 @@ function syncPreviewManifest(
     throw new Error("E2201: remotion/src directory not found");
   }
 
+  const fitted = fitTimelineDuration(timeline);
   const { fingerprint } = fingerprintRemotionSrc(remotionSrcDir);
   const nextTimeline = {
-    ...timeline,
+    ...fitted,
     remotionFingerprint: fingerprint,
     remotionSyncedAt: Date.now(),
   };
@@ -91,6 +108,7 @@ function syncPreviewManifest(
   subproject.timeline = nextTimeline;
   fs.writeFileSync(subprojectPath, `${JSON.stringify(subproject, null, 2)}\n`, "utf8");
   writeTimelineManifest(remotionSrcDir, nextTimeline, "preview");
+  writePreviewConfig(remotionSrcDir, nextTimeline);
 
   return { manifestWritten: true, timeline: nextTimeline };
 }

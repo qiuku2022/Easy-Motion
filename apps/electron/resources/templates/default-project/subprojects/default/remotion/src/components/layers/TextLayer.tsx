@@ -1,6 +1,8 @@
 import React, { useMemo } from "react";
 import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { applyKeyframesToClip } from "../../lib/apply-keyframes";
+import { buildCenterAnchoredLayerStyle } from "../../lib/layer-anchor-style";
+import { useLayerScreenPosition } from "../../lib/use-layer-screen-position";
 
 type Transform = {
   position: { x: number; y: number };
@@ -49,15 +51,19 @@ export const TextLayer: React.FC<TextLayerProps> = ({
       : 1;
 
   const opacity = resolved.transform.opacity * fadeIn;
+  const screen = useLayerScreenPosition(
+    resolved.transform.position.x,
+    resolved.transform.position.y,
+  );
 
   return (
     <div
       style={{
-        position: "absolute",
-        left: resolved.transform.position.x,
-        top: resolved.transform.position.y,
-        transform: `translate(-50%, -50%) scale(${resolved.transform.scale}) rotate(${resolved.transform.rotation}deg)`,
-        opacity,
+        ...buildCenterAnchoredLayerStyle(screen, {
+          scale: resolved.transform.scale,
+          rotation: resolved.transform.rotation,
+          opacity,
+        }),
         color: resolved.style.color,
         fontFamily: resolved.style.fontFamily,
         fontSize: resolved.style.fontSize,

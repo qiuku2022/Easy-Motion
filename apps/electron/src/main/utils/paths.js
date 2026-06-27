@@ -12,7 +12,27 @@ function getDefaultProjectsParentDir() {
 }
 
 function getAppRootDir() {
-  return app.getAppPath();
+  if (app?.isPackaged) {
+    return app.getAppPath();
+  }
+
+  const fromModule = path.resolve(__dirname, "../../..");
+  if (fs.existsSync(path.join(fromModule, "package.json"))) {
+    return fromModule;
+  }
+
+  const appPath = app?.getAppPath?.();
+  if (appPath) {
+    const fromMainEntry = path.resolve(appPath, "../..");
+    if (fs.existsSync(path.join(fromMainEntry, "resources", "templates"))) {
+      return fromMainEntry;
+    }
+    if (fs.existsSync(path.join(appPath, "resources", "templates"))) {
+      return appPath;
+    }
+  }
+
+  return fromModule;
 }
 
 function getTemplatesDir() {
@@ -24,7 +44,7 @@ function getPresetsDir() {
 }
 
 function getPythonBundleDir() {
-  const candidates = app.isPackaged
+  const candidates = app?.isPackaged
     ? [path.join(process.resourcesPath, "python")]
     : [path.join(getAppRootDir(), "resources/python")];
 

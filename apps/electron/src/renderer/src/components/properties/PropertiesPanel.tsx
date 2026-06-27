@@ -1,10 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Trash2, X } from "lucide-react";
 import { z } from "zod";
 import { ClipPropertyFields } from "@/components/properties/ClipPropertyFields";
-import { KeyframeEditor } from "@/components/properties/KeyframeEditor";
 import { DataBindingPanel } from "@/components/properties/DataBindingPanel";
 import { PresetParameterFields } from "@/components/properties/PresetParameterFields";
 import {
@@ -37,7 +36,7 @@ import {
   findTrackById,
   pickDefaultContentElement,
 } from "@/lib/timeline/trackTree";
-import { useTimelineStore } from "@/stores/timelineStore";
+import { useTimelineStore, PREVIEW_PROPS_DEBOUNCE_MS } from "@/stores/timelineStore";
 import { usePresetStore } from "@/stores/presetStore";
 import type { Clip, Track, TrackType } from "@/types/timeline";
 
@@ -104,9 +103,9 @@ export function PropertiesPanel() {
   const resolved = usePropertyTarget();
   const clearSelection = useTimelineStore((s) => s.clearSelection);
   const updateClip = useTimelineStore((s) => s.updateClip);
+  const flushPreviewPropsSync = useTimelineStore((s) => s.flushPreviewPropsSync);
   const deleteSelectedClip = useTimelineStore((s) => s.deleteSelectedClip);
   const error = useTimelineStore((s) => s.error);
-  const textRef = useRef<HTMLTextAreaElement>(null);
 
   const presetId =
     typeof resolved?.contentClip?.source?.presetId === "string"
@@ -120,8 +119,9 @@ export function PropertiesPanel() {
     () =>
       debounce((clipId: string, patch: ClipPatch) => {
         updateClip(clipId, patch);
-      }, 400),
-    [updateClip],
+        void flushPreviewPropsSync();
+      }, PREVIEW_PROPS_DEBOUNCE_MS),
+    [flushPreviewPropsSync, updateClip],
   );
 
   useEffect(() => () => debouncedPatch.cancel(), [debouncedPatch]);
@@ -139,17 +139,10 @@ export function PropertiesPanel() {
     [debouncedPatch, updateClip],
   );
 
-  useEffect(() => {
-    if (resolved?.contentType === "text") {
-      textRef.current?.focus();
-      textRef.current?.select();
-    }
-  }, [resolved?.contentClip?.id, resolved?.contentType]);
-
   if (!resolved) {
     return (
       <p className="text-sm text-muted-foreground">
-        点击时间线上的文字片段即可直接编辑。按 Esc 取消选择。
+        选中时间线上的片段以编辑属性；文字图层点击输入框改字。按 Esc 取消选择。
       </p>
     );
   }
@@ -187,7 +180,6 @@ export function PropertiesPanel() {
           disabled={disabled}
           onPatch={(patch) => onPatch(contentClip.id, patch)}
         />
-        <KeyframeEditor clip={contentClip} disabled={disabled} />
         <details className="text-xs text-muted-foreground" open>
           <summary className="cursor-pointer select-none text-foreground">
             变换
@@ -202,7 +194,7 @@ export function PropertiesPanel() {
             />
         </div>
       </details>
-      <details className="text-xs text-muted-foreground">
+      <details className="text-xs text-muted-foreground" open>
         <summary className="cursor-pointer select-none text-foreground">
           入场动画
         </summary>
@@ -234,7 +226,6 @@ export function PropertiesPanel() {
         layerName={layerTrack.name}
         clip={contentClip}
         disabled={disabled}
-        textRef={textRef}
         error={error}
         onPatch={(patch) => onPatch(contentClip.id, patch)}
         onClear={() => clearSelection()}
@@ -269,8 +260,7 @@ export function PropertiesPanel() {
           onPatch={(patch) => onPatch(contentClip.id, patch)}
           mode="quick"
         />
-        <KeyframeEditor clip={contentClip} disabled={disabled} />
-        <details className="text-xs text-muted-foreground">
+        <details className="text-xs text-muted-foreground" open>
           <summary className="cursor-pointer select-none text-foreground">变换</summary>
           <div className="mt-2 space-y-2 border-t border-border pt-2">
             <ClipPropertyFields
@@ -282,7 +272,7 @@ export function PropertiesPanel() {
             />
           </div>
         </details>
-        <details className="text-xs text-muted-foreground">
+        <details className="text-xs text-muted-foreground" open>
           <summary className="cursor-pointer select-none text-foreground">入场动画</summary>
           <div className="mt-2 space-y-2 border-t border-border pt-2">
             <ClipPropertyFields
@@ -334,7 +324,6 @@ function TextEditorPanel({
   layerName,
   clip,
   disabled,
-  textRef,
   error,
   onPatch,
   onClear,
@@ -343,7 +332,6 @@ function TextEditorPanel({
   layerName: string;
   clip: Clip;
   disabled: boolean;
-  textRef: React.RefObject<HTMLTextAreaElement>;
   error: string | null;
   onPatch: (patch: ClipPatch) => void;
   onClear: () => void;
@@ -365,7 +353,7 @@ function TextEditorPanel({
       <div className="flex items-center justify-between gap-2">
         <div className="min-w-0">
           <p className="truncate text-sm font-medium text-foreground">{layerName}</p>
-          <p className="text-xs text-muted-foreground">直接改字，自动写入时间线</p>
+          <p className="text-xs text-muted-foreground">文字 · 点击输入框编辑内容</p>
         </div>
         <Button
           type="button"
@@ -380,39 +368,38 @@ function TextEditorPanel({
         </Button>
       </div>
 
-      <Form {...form}>
-        <form onSubmit={(e) => e.preventDefault()}>
-          <FormField
-            control={form.control}
-            name="content"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    ref={(el) => {
-                      field.ref(el);
-                      (
-                        textRef as React.MutableRefObject<HTMLTextAreaElement | null>
-                      ).current = el;
-                    }}
-                    className="min-h-[120px] resize-y text-sm leading-relaxed"
-                    disabled={disabled}
-                    placeholder="输入文字…"
-                    onChange={(e) => {
-                      field.onChange(e);
-                      onPatch({ source: { kind: "inline", content: e.target.value } });
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </form>
-      </Form>
+      <details className="text-xs text-muted-foreground" open>
+        <summary className="cursor-pointer select-none text-foreground">文字内容</summary>
+        <div className="mt-2 space-y-2 border-t border-border pt-2">
+          <Form {...form}>
+            <form onSubmit={(e) => e.preventDefault()}>
+              <FormField
+                control={form.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        className="min-h-[96px] resize-y text-sm leading-relaxed"
+                        disabled={disabled}
+                        placeholder="点击此处输入文字…"
+                        onChange={(e) => {
+                          field.onChange(e);
+                          onPatch({ source: { kind: "inline", content: e.target.value } });
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
+        </div>
+      </details>
 
-      <details className="text-xs text-muted-foreground">
+      <details className="text-xs text-muted-foreground" open>
         <summary className="cursor-pointer select-none text-foreground">更多样式</summary>
         <div className="mt-2 space-y-2 border-t border-border pt-2">
           <ClipPropertyFields
@@ -426,9 +413,7 @@ function TextEditorPanel({
         </div>
       </details>
 
-      <KeyframeEditor clip={clip} disabled={disabled} />
-
-      <details className="text-xs text-muted-foreground">
+      <details className="text-xs text-muted-foreground" open>
         <summary className="cursor-pointer select-none text-foreground">变换</summary>
         <div className="mt-2 space-y-2 border-t border-border pt-2">
           <ClipPropertyFields
@@ -442,7 +427,7 @@ function TextEditorPanel({
       </details>
 
       <p className="text-[11px] text-muted-foreground">
-        改字后约 1 秒自动更新预览（需已启动预览）。Esc 或 × 可退出。
+        改字后约 0.25 秒自动更新预览（需已启动预览）。Esc 或 × 可退出。
       </p>
 
       {error ? <p className="text-xs text-destructive">{error}</p> : null}

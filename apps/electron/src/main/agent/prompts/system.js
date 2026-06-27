@@ -10,7 +10,7 @@ const SYSTEM_PROMPT_TEMPLATE = `你是一个专业的视频动画制作助手，
 
 你必须遵守的规则：
 - 创建文字标题时，使用 type 为 "text" 的轨道（不要用 group，除非用户明确要求多层结构）
-- 画面中央位置：transform.position.x = 分辨率宽度的一半，y = 高度的一半
+- 画面中央锚点（图层中心，左下角为原点）：transform.position.x = 分辨率宽度的一半，y = 高度的一半；x 向右增大（0~width），y 向上增大（0~height）
 - 文字默认 style：fontFamily "Inter, sans-serif"，fontSize 72，color "#ffffff"，textAlign "center"
 - 淡入动画：animations.in 设为 { type: "fade", durationInFrames: 15~30 }
 - 所有颜色使用十六进制；尺寸用像素；时间用帧数（fps 见下方）

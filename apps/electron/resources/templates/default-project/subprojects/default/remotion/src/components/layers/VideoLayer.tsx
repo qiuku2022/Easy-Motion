@@ -1,5 +1,7 @@
 import React from "react";
-import { Video } from "remotion";
+import { Video, useVideoConfig } from "remotion";
+import { buildCenterAnchoredLayerStyle } from "../../lib/layer-anchor-style";
+import { useLayerScreenPosition } from "../../lib/use-layer-screen-position";
 
 type VideoLayerProps = {
   clipId: string;
@@ -16,21 +18,22 @@ type VideoLayerProps = {
 };
 
 export const VideoLayer: React.FC<VideoLayerProps> = ({ src, transform, style }) => {
+  const { width, height } = useVideoConfig();
+
   if (!src) return null;
 
+  const screen = useLayerScreenPosition(transform.position.x, transform.position.y);
+
   return (
-    <Video
-      src={src}
-      style={{
-        position: "absolute",
-        left: transform.position.x,
-        top: transform.position.y,
-        width: "100%",
-        height: "100%",
-        transform: `translate(-50%, -50%) scale(${transform.scale}) rotate(${transform.rotation}deg)`,
-        opacity: transform.opacity,
-        objectFit: style?.objectFit ?? "contain",
-      }}
-    />
+    <div style={buildCenterAnchoredLayerStyle(screen, transform)}>
+      <Video
+        src={src}
+        style={{
+          maxWidth: width,
+          maxHeight: height,
+          objectFit: style?.objectFit ?? "contain",
+        }}
+      />
+    </div>
   );
 };

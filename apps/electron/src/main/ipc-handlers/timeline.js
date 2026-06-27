@@ -2,6 +2,7 @@ const { ipcMain } = require("electron");
 const timelineService = require("../services/timeline-service");
 const projectService = require("../services/project-service");
 const previewService = require("../services/preview-service");
+const { ensureLayerKeyframesImport } = require("../services/remotion-project");
 
 function wrap(handler) {
   return async (_event, payload) => {
@@ -81,6 +82,7 @@ function registerTimelineHandlers() {
       const projectPath = getProjectRoot(payload);
       const subprojectPath = payload?.subprojectPath;
       const remotionDir = previewService.getRemotionDir(projectPath, subprojectPath);
+      const keyframesPatched = ensureLayerKeyframesImport(remotionDir);
       const soloSupportPatched = previewService.ensurePreviewSoloSupport(remotionDir);
       const result = timelineService.syncPreviewManifest(
         projectPath,
@@ -89,10 +91,11 @@ function registerTimelineHandlers() {
       );
       const state = previewService.getPreviewState();
       if (state.status === "running") {
+        const needsPreviewReload = soloSupportPatched || keyframesPatched;
         return {
           ...result,
-          previewReload: soloSupportPatched,
-          timelinePush: !soloSupportPatched,
+          previewReload: needsPreviewReload,
+          timelinePush: !needsPreviewReload,
         };
       }
       return result;

@@ -1,6 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const { validateTimeline } = require("@easymotion/shared");
+const { validateTimeline, fitTimelineDuration } = require("@easymotion/shared");
 const { generateRoot } = require("./generate-root");
 const { generateMainSequence } = require("./generate-main-sequence");
 const { writeTimelineManifest } = require("../importer/timeline-manifest");
@@ -15,13 +15,14 @@ function writeFile(filePath, content) {
 }
 
 function generateRemotionCode({ remotionSrcDir, timeline }) {
-  validateTimeline(timeline);
+  const fitted = fitTimelineDuration(timeline);
+  validateTimeline(fitted);
 
   const rootPath = path.join(remotionSrcDir, "Root.tsx");
   const mainSequencePath = path.join(remotionSrcDir, "components", "MainSequence.tsx");
 
-  const rootCode = generateRoot(timeline);
-  const mainSequenceCode = generateMainSequence(timeline);
+  const rootCode = generateRoot(fitted);
+  const mainSequenceCode = generateMainSequence(fitted);
 
   assertTsxSecurity(rootCode);
   assertTsxSecurity(mainSequenceCode);
@@ -29,13 +30,13 @@ function generateRemotionCode({ remotionSrcDir, timeline }) {
   const previewConfigPath = path.join(remotionSrcDir, "preview-config.json");
   const manifestPath = path.join(remotionSrcDir, "easymotion-timeline.manifest.json");
   const previewConfig = {
-    durationInFrames: timeline.durationInFrames,
-    fps: timeline.fps,
-    width: timeline.width,
-    height: timeline.height,
+    durationInFrames: fitted.durationInFrames,
+    fps: fitted.fps,
+    width: fitted.width,
+    height: fitted.height,
   };
 
-  writeTimelineManifest(remotionSrcDir, timeline, "generator");
+  writeTimelineManifest(remotionSrcDir, fitted, "generator");
   writeFile(rootPath, rootCode);
   writeFile(mainSequencePath, mainSequenceCode);
   writeFile(previewConfigPath, previewConfig);

@@ -1,18 +1,19 @@
 {
   "version": "1.0",
   "compositionId": "Main",
-  "updatedAt": 1782477759754,
-  "updatedBy": "preview",
+  "updatedAt": 0,
+  "updatedBy": "template",
   "timeline": {
     "version": "1.0",
     "fps": 25,
     "durationInFrames": 125,
     "width": 1920,
     "height": 1080,
+    "coordinateOrigin": "bottom-left",
     "tracks": [
       {
-        "id": "track-newsletter-group",
-        "name": "Newsletter 封面",
+        "id": "track-intro-group",
+        "name": "开场",
         "type": "group",
         "order": 0,
         "visible": true,
@@ -22,8 +23,8 @@
         "collapsed": false,
         "children": [
           {
-            "id": "track-newsletter-bg",
-            "name": "背景",
+            "id": "track-intro-bg",
+            "name": "景深光斑",
             "type": "animation",
             "order": 0,
             "visible": true,
@@ -31,42 +32,77 @@
             "muted": false,
             "clips": [
               {
-                "id": "clip-newsletter-bg",
+                "id": "clip-intro-bg",
                 "type": "animation",
-                "name": "背景",
+                "name": "景深光斑",
                 "startInFrames": 0,
                 "durationInFrames": 125,
                 "source": {
                   "kind": "component",
-                  "component": "NewsletterBackground"
+                  "component": "RveBokehCircles",
+                  "presetId": "rve-bokeh-circles",
+                  "props": {
+                    "primaryColor": "#6366f1",
+                    "secondaryColor": "#a78bfa",
+                    "backgroundColor": "#09090b"
+                  }
                 },
                 "keyframes": []
               }
             ]
           },
           {
-            "id": "track-newsletter-text",
-            "name": "主标题",
-            "type": "text",
+            "id": "track-intro-title",
+            "name": "逐字标题",
+            "type": "animation",
             "order": 1,
             "visible": true,
             "locked": false,
             "muted": false,
             "clips": [
               {
-                "id": "clip-title-main",
+                "id": "clip-intro-title",
+                "type": "animation",
+                "name": "逐字动画",
+                "startInFrames": 8,
+                "durationInFrames": 90,
+                "source": {
+                  "kind": "component",
+                  "component": "RveAnimatedText",
+                  "presetId": "rve-animated-text",
+                  "props": {
+                    "text": "EasyMotion",
+                    "primaryColor": "#fafafa",
+                    "backgroundColor": "#09090b"
+                  }
+                },
+                "keyframes": []
+              }
+            ]
+          },
+          {
+            "id": "track-intro-subtitle",
+            "name": "副标题",
+            "type": "text",
+            "order": 2,
+            "visible": true,
+            "locked": false,
+            "muted": false,
+            "clips": [
+              {
+                "id": "clip-intro-subtitle",
                 "type": "text",
-                "name": "主标题",
-                "startInFrames": 0,
-                "durationInFrames": 125,
+                "name": "副标题",
+                "startInFrames": 40,
+                "durationInFrames": 85,
                 "source": {
                   "kind": "inline",
-                  "content": "this week in\ndesign"
+                  "content": "用对话，做动画"
                 },
                 "transform": {
                   "position": {
-                    "x": 420,
-                    "y": 520
+                    "x": 960,
+                    "y": 440
                   },
                   "scale": 1,
                   "rotation": 0,
@@ -74,15 +110,15 @@
                 },
                 "style": {
                   "fontFamily": "Inter, sans-serif",
-                  "fontSize": 96,
-                  "color": "#0A0A0A",
-                  "textAlign": "left"
+                  "fontSize": 42,
+                  "color": "#a1a1aa",
+                  "textAlign": "center"
                 },
                 "keyframes": [],
                 "animations": {
                   "in": {
                     "type": "fade",
-                    "durationInFrames": 20
+                    "durationInFrames": 28
                   }
                 }
               }

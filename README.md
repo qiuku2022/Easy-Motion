@@ -3,7 +3,7 @@
 > 用自然语言制作 Remotion 动画 —— Electron 桌面应用（React + LangChain Agent）  
 > **更新：2026-06-27** · M0–M8 ✅ · M9 进行中（Windows 安装包已可本地构建）
 
-![EasyMotion 主界面：预设库、Newsletter 预览、属性与关键帧、时间线与 AI 助手](docs/images/app-screenshot.png)
+![EasyMotion 主界面：预设库、Newsletter 预览、变换属性与关键帧、时间线与 AI 助手](docs/images/app-screenshot.png)
 
 EasyMotion 让剪辑师和内容创作者用**对话**驱动时间线编辑，实时预览 Remotion 动画，并导出视频或完整工程。内置 **81 个 RVE 预设**、关键帧编辑、素材库与 AI 助手。
 

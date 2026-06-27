@@ -106,7 +106,11 @@ async function runVideoExport(request, exportId, cancelSignal) {
     const timeline = timelineService.loadTimeline(request.projectPath, subprojectPath);
     await prepareTimelineForExport(request.projectPath, subprojectPath, timeline);
 
-    const exportRange = resolveExportFrameRange(timeline);
+    const fittedTimeline = timelineService.loadTimeline(
+      request.projectPath,
+      subprojectPath,
+    );
+    const exportRange = resolveExportFrameRange(fittedTimeline);
     const frameRange = [exportRange.inFrame, exportRange.outFrame];
 
     const inputProps = buildInputProps(remotionSrcDir);

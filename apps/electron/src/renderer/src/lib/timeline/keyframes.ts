@@ -2,6 +2,7 @@ import type { Clip, Keyframe, KeyframeEasing, KeyframeInterpolation } from "@/ty
 import { getValueByPath } from "@/lib/timeline/objectPath";
 import { newId } from "@/lib/timeline/mutations";
 import { applySegmentEasing } from "@/lib/timeline/keyframeEasing";
+import { normalizeKeyframePropertyValue } from "@/lib/timeline/positionProperty";
 
 export const VALID_KEYFRAME_EASING = [
   "linear",
@@ -14,10 +15,10 @@ export const VALID_KEYFRAME_EASING = [
 export const VALID_KEYFRAME_INTERPOLATION = ["linear", "bezier", "hold"] as const;
 
 export const KEYFRAME_ANIMATABLE_PROPERTIES = [
-  { path: "transform.opacity", label: "透明度" },
-  { path: "transform.position.x", label: "位置 X" },
-  { path: "transform.position.y", label: "位置 Y" },
-  { path: "transform.scale", label: "缩放" },
+  { path: "transform.opacity", label: "透明度 (%)" },
+  { path: "transform.position.x", label: "锚点 X" },
+  { path: "transform.position.y", label: "锚点 Y" },
+  { path: "transform.scale", label: "缩放 (%)" },
   { path: "transform.rotation", label: "旋转" },
   { path: "style.fontSize", label: "字体大小" },
   { path: "style.color", label: "颜色" },
@@ -45,6 +46,14 @@ function setValueByPath(
   return root;
 }
 
+function resolveBaseValue(property: string, baseValue: unknown): unknown {
+  if (baseValue !== undefined && baseValue !== null) return baseValue;
+  if (property === "transform.opacity") return 1;
+  if (property === "transform.scale") return 1;
+  if (property === "transform.rotation") return 0;
+  return baseValue;
+}
+
 export function interpolateKeyframeProperty(
   keyframes: Keyframe[],
   property: string,
@@ -52,13 +61,14 @@ export function interpolateKeyframeProperty(
   baseValue: unknown,
   fps = 30,
 ) {
+  const resolvedBase = resolveBaseValue(property, baseValue);
   const sorted = keyframes
     .filter((kf) => kf.property === property)
     .sort((a, b) => a.frame - b.frame);
 
-  if (sorted.length === 0) return baseValue;
+  if (sorted.length === 0) return resolvedBase;
   if (frame <= sorted[0]!.frame) {
-    return frame < sorted[0]!.frame ? baseValue : sorted[0]!.value;
+    return frame < sorted[0]!.frame ? resolvedBase : sorted[0]!.value;
   }
   const last = sorted[sorted.length - 1]!;
   if (frame >= last.frame) return last.value;
@@ -79,7 +89,7 @@ export function interpolateKeyframeProperty(
     return frame >= end.frame ? end.value : start.value;
   }
 
-  return baseValue;
+  return resolvedBase;
 }
 
 export function applyKeyframesToClip(clip: Clip, relativeFrame: number, fps = 30) {
@@ -94,7 +104,10 @@ export function applyKeyframesToClip(clip: Clip, relativeFrame: number, fps = 30
   let result: Record<string, unknown> = { ...base };
 
   for (const property of properties) {
-    const baseValue = getValueByPath(clip as Record<string, unknown>, property);
+    const baseValue = resolveBaseValue(
+      property,
+      getValueByPath(clip as Record<string, unknown>, property),
+    );
     const value = interpolateKeyframeProperty(
       keyframes,
       property,
@@ -132,7 +145,10 @@ export function getPropertyValueAtFrame(
   relativeFrame: number,
   fps = 30,
 ): unknown {
-  const base = getValueByPath(clip as Record<string, unknown>, property);
+  const base = resolveBaseValue(
+    property,
+    getValueByPath(clip as Record<string, unknown>, property),
+  );
   return interpolateKeyframeProperty(
     clip.keyframes ?? [],
     property,
@@ -157,10 +173,11 @@ export function addClipKeyframe(
     throw new Error("关键帧须落在片段时长内");
   }
 
-  const value =
+  const rawValue =
     input.value !== undefined
       ? input.value
       : getValueByPath(clip as Record<string, unknown>, input.property);
+  const value = normalizeKeyframePropertyValue(input.property, rawValue);
 
   const keyframe: Keyframe = {
     id: newId("kf"),
@@ -250,9 +267,17 @@ export function updateClipKeyframe(
     >
   >,
 ): Clip {
-  const keyframes = (clip.keyframes ?? []).map((kf) =>
-    kf.id === keyframeId ? { ...kf, ...patch } : kf,
-  );
+  const keyframes = (clip.keyframes ?? []).map((kf) => {
+    if (kf.id !== keyframeId) return kf;
+    const next = { ...kf, ...patch };
+    if (patch.value !== undefined) {
+      next.value = normalizeKeyframePropertyValue(
+        kf.property,
+        patch.value,
+      ) as Keyframe["value"];
+    }
+    return next;
+  });
   if (!keyframes.some((kf) => kf.id === keyframeId)) {
     throw new Error("关键帧不存在");
   }

@@ -7,6 +7,7 @@ import { KeyframeTrackPanel } from "@/components/timeline/KeyframeTrackPanel";
 import { TimelineDevMenu } from "@/components/timeline/TimelineDevMenu";
 import { TimelineTransport } from "@/components/timeline/TimelineTransport";
 import { TimelineZoomControls } from "@/components/timeline/TimelineZoomControls";
+import { resolveTimelineViewportDuration } from "@/lib/timeline/workArea";
 import { useUiStore } from "@/stores/uiStore";
 
 export function TimelinePanel() {
@@ -38,7 +39,7 @@ export function TimelinePanel() {
   }
 
   const fps = timeline?.fps ?? 30;
-  const duration = timeline?.durationInFrames ?? 0;
+  const duration = timeline ? resolveTimelineViewportDuration(timeline) : 0;
 
   return (
     <footer className="relative z-20 flex h-full min-h-0 flex-col overflow-hidden border-t border-border bg-background">

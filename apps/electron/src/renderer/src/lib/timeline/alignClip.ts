@@ -2,7 +2,7 @@ import { findClipTrack } from "@/lib/timeline/clipCollision";
 import { assertValidTimeline } from "@/lib/timeline/validate";
 import type { Timeline } from "@/types/timeline";
 
-/** 将片段在画布中水平居中（改 transform.position.x） */
+/** 将片段锚点在画布中水平居中（改 transform.position.x） */
 export function alignClipHorizontalCenter(timeline: Timeline, clipId: string): Timeline {
   const located = findClipTrack(timeline, clipId);
   if (!located) throw new Error("片段不存在");
