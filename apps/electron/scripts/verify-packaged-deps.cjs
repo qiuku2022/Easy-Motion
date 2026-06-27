@@ -8,10 +8,19 @@ const REQUIRED = [
   "@langchain/core",
   "@langchain/anthropic",
   "@langchain/openai",
-  "node_modules/langchain",
+  '"langchain":',
   "@easymotion/shared",
   "presets/thumbnails",
 ];
+
+function asarContains(header, entry) {
+  const variants = [
+    entry,
+    entry.replace(/\//g, "\\"),
+    entry.replace(/\\/g, "/"),
+  ];
+  return variants.some((needle) => header.includes(needle));
+}
 
 function main() {
   const appDir = process.argv[2];
@@ -27,7 +36,7 @@ function main() {
   }
 
   const header = fs.readFileSync(asarPath);
-  const missing = REQUIRED.filter((entry) => !header.includes(entry));
+  const missing = REQUIRED.filter((entry) => !asarContains(header, entry));
 
   if (missing.length > 0) {
     console.error("[verify-packaged-deps] missing in app.asar:");
