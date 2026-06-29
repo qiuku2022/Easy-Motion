@@ -10,6 +10,7 @@ const { registerLlmHandlers } = require("./ipc-handlers/llm");
 const { registerSettingsHandlers } = require("./ipc-handlers/settings");
 const { registerConversationHandlers } = require("./ipc-handlers/conversation");
 const { registerExportHandlers } = require("./ipc-handlers/export");
+const { registerWorkspaceHandlers } = require("./ipc-handlers/workspace");
 const {
   registerWindowHandlers,
   attachMainWindowStateEvents,
@@ -92,6 +93,11 @@ const createWindow = () => {
 
   const isDev = !app.isPackaged;
   if (isDev) {
+    win.webContents.once("did-finish-load", () => {
+      if (process.env.ELECTRON_CDP_PORT) {
+        console.log("[easymotion] renderer cdp ready");
+      }
+    });
     win.loadURL(RENDERER_DEV_URL);
   } else {
     win.loadFile(path.join(__dirname, "../../dist/renderer/index.html"));
@@ -110,6 +116,7 @@ app.whenReady().then(async () => {
   registerSettingsHandlers();
   registerConversationHandlers();
   registerExportHandlers();
+  registerWorkspaceHandlers();
   registerWindowHandlers();
 
   if (app.isPackaged) {

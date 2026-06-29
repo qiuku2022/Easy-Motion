@@ -3,9 +3,11 @@ const path = require("node:path");
 const {
   getContentEndInclusive,
   getContentEndExclusive,
+  ensureTimelineFitsClip,
   fitTimelineDuration,
   resolveTimelineViewportDuration,
   resolveExportFrameRange,
+  resolveWorkAreaDisplayRange,
   setWorkAreaInFrame,
   setWorkAreaOutFrame,
   clearWorkArea,
@@ -25,9 +27,9 @@ function main() {
   assert(getContentEndExclusive(timeline) === 90, "content end exclusive");
 
   const padded = fitTimelineDuration({ ...timeline, durationInFrames: 300 });
-  assert(padded.durationInFrames === 120, `expected fitted duration 120, got ${padded.durationInFrames}`);
+  assert(padded.durationInFrames === 150, `expected fitted duration 150 (5s min), got ${padded.durationInFrames}`);
   assert(
-    resolveTimelineViewportDuration({ ...timeline, durationInFrames: 300 }) === 120,
+    resolveTimelineViewportDuration({ ...timeline, durationInFrames: 300 }) === 150,
     "viewport duration",
   );
 
@@ -41,6 +43,25 @@ function main() {
   const customRange = resolveExportFrameRange(withIn);
   assert(customRange.inFrame === 30, "custom in");
   assert(customRange.outFrame === 89, "custom out keeps content end default");
+
+  const empty = {
+    version: "1.0",
+    fps: 30,
+    durationInFrames: 150,
+    width: 1920,
+    height: 1080,
+    tracks: [],
+  };
+  const emptyIn = setWorkAreaInFrame(empty, 30);
+  const emptyDisplay = resolveWorkAreaDisplayRange(emptyIn);
+  assert(emptyDisplay.inFrame === 30, "empty timeline in point");
+  assert(emptyDisplay.outFrame === 149, "empty timeline default out at timeline end");
+  const emptyOut = setWorkAreaOutFrame(empty, 80);
+  const emptyOutDisplay = resolveWorkAreaDisplayRange(emptyOut);
+  assert(emptyOutDisplay.outFrame === 80, "empty timeline out not capped to content");
+
+  const fittedEmpty = fitTimelineDuration(empty);
+  assert(fittedEmpty.durationInFrames === 150, "empty timeline keeps 5s minimum");
 
   const withIo = setWorkAreaOutFrame(withIn, 45);
   const ioRange = resolveExportFrameRange(withIo);
@@ -57,6 +78,10 @@ function main() {
 
   const cleared = clearWorkArea(withIo);
   assert(!cleared.workArea, "cleared work area");
+
+  const short = { ...timeline, durationInFrames: 30 };
+  const extended = ensureTimelineFitsClip(short, 0, 90);
+  assert(extended.durationInFrames === 90, "ensureTimelineFitsClip extends duration");
 
   console.log("work-area tests passed");
 }

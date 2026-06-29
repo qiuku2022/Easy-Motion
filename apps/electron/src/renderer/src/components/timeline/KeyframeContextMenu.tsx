@@ -17,6 +17,7 @@ interface KeyframeContextMenuProps {
   children: ReactNode;
   onDelete: () => void;
   onSetEasing: (easing: KeyframeEasing) => void;
+  onEasyEase?: () => void;
 }
 
 export function KeyframeContextMenu({
@@ -24,6 +25,7 @@ export function KeyframeContextMenu({
   children,
   onDelete,
   onSetEasing,
+  onEasyEase,
 }: KeyframeContextMenuProps) {
   return (
     <ContextMenu>
@@ -44,6 +46,11 @@ export function KeyframeContextMenu({
             ))}
           </ContextMenuSubContent>
         </ContextMenuSub>
+        {onEasyEase && (
+          <ContextMenuItem className="text-xs" onSelect={onEasyEase}>
+            Easy Ease (F9)
+          </ContextMenuItem>
+        )}
         <ContextMenuSeparator />
         <ContextMenuItem className="text-xs text-destructive" onSelect={onDelete}>
           删除关键帧

@@ -1,13 +1,14 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import { frameToPx, clampFrame } from "@/lib/timeline/framePixels";
 import { RULER_HEIGHT } from "@/lib/timeline/constants";
 import {
+  buildRulerTicks,
   formatRulerLabel,
-  getRulerTickIntervals,
 } from "@/lib/timeline/rulerTicks";
 import { RulerMarkers } from "@/components/timeline/TimelineMarkers";
 import { WorkAreaRulerMarkers, WorkAreaRulerShade } from "@/components/timeline/WorkAreaOverlay";
 import { cn } from "@/lib/utils";
+import { useUiStore } from "@/stores/uiStore";
 import type { Timeline } from "@/types/timeline";
 
 interface TimelineRulerProps {
@@ -23,7 +24,7 @@ interface TimelineRulerProps {
   className?: string;
 }
 
-export function TimelineRuler({
+export const TimelineRuler = memo(function TimelineRuler({
   timeline,
   durationInFrames,
   fps,
@@ -35,18 +36,12 @@ export function TimelineRuler({
   onRemoveMarker,
   className,
 }: TimelineRulerProps) {
-  const { majorFrames, minorFrames } = useMemo(
-    () => getRulerTickIntervals(pxPerFrame, fps),
-    [pxPerFrame, fps],
-  );
+  const timelineTimeDisplay = useUiStore((s) => s.timelineTimeDisplay);
 
-  const ticks = useMemo(() => {
-    const items: { frame: number; major: boolean }[] = [];
-    for (let frame = 0; frame <= durationInFrames; frame += minorFrames) {
-      items.push({ frame, major: frame % majorFrames === 0 });
-    }
-    return items;
-  }, [durationInFrames, majorFrames, minorFrames]);
+  const ticks = useMemo(
+    () => buildRulerTicks(durationInFrames, pxPerFrame, fps),
+    [durationInFrames, pxPerFrame, fps],
+  );
 
   const seekFromPointer = (clientX: number, el: HTMLElement) => {
     const rect = el.getBoundingClientRect();
@@ -82,7 +77,7 @@ export function TimelineRuler({
         }
       }}
     >
-      {ticks.map(({ frame, major }) => (
+      {ticks.map(({ frame, kind }) => (
         <div
           key={frame}
           className="pointer-events-none absolute bottom-0 top-0"
@@ -91,14 +86,14 @@ export function TimelineRuler({
           <div
             className={cn(
               "absolute bottom-0 w-px bg-em-border",
-              major ? "h-full" : "h-2",
+              kind === "labeled" ? "h-full" : "h-2",
             )}
           />
-          {major && (
-            <span className="absolute left-0.5 top-0.5 font-mono text-[10px] text-em-muted">
-              {formatRulerLabel(frame, fps, majorFrames)}
+          {kind === "labeled" ? (
+            <span className="absolute left-0.5 top-0.5 whitespace-nowrap font-mono text-[10px] tabular-nums text-em-muted">
+              {formatRulerLabel(frame, fps, timelineTimeDisplay)}
             </span>
-          )}
+          ) : null}
         </div>
       ))}
 
@@ -124,4 +119,4 @@ export function TimelineRuler({
       )}
     </div>
   );
-}
+});

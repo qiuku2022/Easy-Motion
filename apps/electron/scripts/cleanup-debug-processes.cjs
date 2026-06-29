@@ -8,6 +8,7 @@
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
+const { execSync } = require("node:child_process");
 const { killPidTree, killPortListeners } = require("./process-utils.cjs");
 
 const VITE_PID_FILE = path.join(os.tmpdir(), "easymotion-debug-vite.pid");
@@ -58,6 +59,32 @@ function cleanupCdpPort() {
   }
 }
 
+/** 终止 F5 中断后可能残留的 wait-cdp preLaunch 子进程 */
+function cleanupWaitCdpScripts() {
+  if (process.platform !== "win32") return;
+
+  let out = "";
+  try {
+    out = execSync(
+      'powershell -NoProfile -Command "Get-CimInstance Win32_Process -Filter \\"Name = \'node.exe\'\\" | Where-Object { $_.CommandLine -like \'*wait-cdp.cjs*\' } | Select-Object -ExpandProperty ProcessId"',
+      { encoding: "utf8", stdio: ["pipe", "pipe", "ignore"], windowsHide: true },
+    );
+  } catch {
+    return;
+  }
+
+  const pids = out
+    .split(/\s+/)
+    .map((s) => Number(s.trim()))
+    .filter((n) => Number.isInteger(n) && n > 0);
+
+  for (const pid of pids) {
+    if (killPidTree(pid)) {
+      console.log(`[debug-cleanup] stopped orphan wait-cdp pid ${pid}`);
+    }
+  }
+}
+
 function cleanupPythonIfRequested() {
   if (process.env.EASY_MOTION_CLEANUP_PYTHON !== "1") return;
   const n = killPortListeners(Number(PYTHON_PORT));
@@ -66,7 +93,16 @@ function cleanupPythonIfRequested() {
   }
 }
 
+function sleepSync(ms) {
+  const end = Date.now() + ms;
+  while (Date.now() < end) {
+    /* allow chrome attach session to detach before killing CDP */
+  }
+}
+
 function main() {
+  sleepSync(600);
+  cleanupWaitCdpScripts();
   cleanupViteStartedByDebug();
   cleanupRemotionPreviewPorts();
   cleanupCdpPort();

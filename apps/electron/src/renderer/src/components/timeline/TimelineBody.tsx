@@ -64,9 +64,23 @@ export function TimelineBody({
   const bodyScrollRef = useRef<HTMLDivElement>(null);
   const headerScrollRef = useRef<HTMLDivElement>(null);
   const syncingScrollRef = useRef(false);
+  const zoomWheelRef = useRef({ delta: 0, clientX: 0 });
+  const zoomRafRef = useRef(0);
 
   const pxPerFrame = useUiStore((s) => s.pxPerFrame);
   const fitTimelineNonce = useUiStore((s) => s.fitTimelineNonce);
+  const timelineScrollX = useUiStore((s) => s.timelineScrollX);
+
+  useEffect(() => {
+    const body = bodyScrollRef.current;
+    const ruler = rulerScrollRef.current;
+    if (!body) return;
+    if (Math.abs(body.scrollLeft - timelineScrollX) < 0.5) return;
+    syncingScrollRef.current = true;
+    body.scrollLeft = timelineScrollX;
+    if (ruler) ruler.scrollLeft = timelineScrollX;
+    syncingScrollRef.current = false;
+  }, [timelineScrollX]);
   const setPxPerFrame = useUiStore((s) => s.setPxPerFrame);
   const setTimelineScrollX = useUiStore((s) => s.setTimelineScrollX);
   const seekFrame = useSeekFrame();
@@ -105,11 +119,34 @@ export function TimelineBody({
       syncingScrollRef.current = true;
       if (rulerScrollRef.current) rulerScrollRef.current.scrollLeft = scrollLeft;
       if (bodyScrollRef.current) bodyScrollRef.current.scrollLeft = scrollLeft;
-      setTimelineScrollX(scrollLeft);
       syncingScrollRef.current = false;
+      setTimelineScrollX(scrollLeft);
     },
     [setTimelineScrollX],
   );
+
+  const flushZoomWheel = useCallback(() => {
+    zoomRafRef.current = 0;
+    const body = bodyScrollRef.current;
+    const pending = zoomWheelRef.current;
+    if (!body || pending.delta === 0) return;
+
+    const wheelDelta = pending.delta;
+    pending.delta = 0;
+
+    const currentPx = useUiStore.getState().pxPerFrame;
+    const result = zoomTimelineAtPointer(
+      body,
+      pending.clientX,
+      wheelDelta,
+      durationInFrames,
+      currentPx,
+    );
+    if (!result) return;
+
+    useUiStore.setState({ timelineZoomManual: true, pxPerFrame: result.pxPerFrame });
+    syncHorizontalScroll(result.scrollLeft);
+  }, [durationInFrames, syncHorizontalScroll]);
 
   const syncVerticalScroll = useCallback((scrollTop: number) => {
     syncingScrollRef.current = true;
@@ -195,18 +232,10 @@ export function TimelineBody({
 
       // PR：Alt/Option + 滚轮 → 时间线缩放（锚定指针位置）
       if (e.altKey) {
-        const currentPx = useUiStore.getState().pxPerFrame;
-        const result = zoomTimelineAtPointer(
-          body,
-          e.clientX,
-          delta,
-          durationInFrames,
-          currentPx,
-        );
-        if (result) {
-          useUiStore.setState({ timelineZoomManual: true });
-          setPxPerFrame(result.pxPerFrame);
-          syncHorizontalScroll(result.scrollLeft);
+        zoomWheelRef.current.delta += delta;
+        zoomWheelRef.current.clientX = e.clientX;
+        if (!zoomRafRef.current) {
+          zoomRafRef.current = requestAnimationFrame(flushZoomWheel);
         }
         return;
       }
@@ -225,13 +254,14 @@ export function TimelineBody({
     root.addEventListener("wheel", onWheel, { passive: false, capture: true });
     return () => {
       cancelAnimationFrame(resizeRaf);
+      if (zoomRafRef.current) cancelAnimationFrame(zoomRafRef.current);
       ro.disconnect();
       root.removeEventListener("wheel", onWheel, { capture: true });
     };
   }, [
     durationInFrames,
     fitTimelineToView,
-    setPxPerFrame,
+    flushZoomWheel,
     syncHorizontalScroll,
     syncVerticalScroll,
   ]);

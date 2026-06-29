@@ -189,7 +189,8 @@ function mainSequenceNeedsKeyframePassThrough(content) {
   if (!content.includes("flattenClipsForPreview")) return false;
   return (
     !content.includes("keyframes={clip.keyframes}") ||
-    !content.includes("ClipTransformWrapper")
+    !content.includes("ClipTransformWrapper") ||
+    !content.includes("shouldWrapClipMotion")
   );
 }
 
@@ -226,6 +227,7 @@ function ensureLayerKeyframesImport(remotionDir) {
     "src/lib/timeline-coordinates.ts",
     "src/lib/use-layer-screen-position.ts",
     "src/lib/layer-anchor-style.ts",
+    "src/lib/clip-motion-wrapper.ts",
   ]) {
     patched =
       syncTemplateFile(

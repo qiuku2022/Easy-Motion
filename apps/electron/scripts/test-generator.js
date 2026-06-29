@@ -7,6 +7,7 @@ const {
   removeDirRecursive,
 } = require("../src/main/services/file-service");
 const { generateRemotionCode } = require("../src/main/generator");
+const { fitTimelineDuration } = require("@easymotion/shared");
 
 const tmpRoot = path.join(os.tmpdir(), `easymotion-gen-${Date.now()}`);
 const remotionSrcDir = path.join(tmpRoot, "remotion", "src");
@@ -19,6 +20,7 @@ async function run() {
   const timeline = readJsonFile(
     path.join(__dirname, "../../../packages/shared/fixtures/sample-timeline.json")
   );
+  const expectedDuration = fitTimelineDuration(timeline).durationInFrames;
 
   fs.mkdirSync(path.join(remotionSrcDir, "components", "layers"), { recursive: true });
   copyDirRecursive(templateLayers, path.join(remotionSrcDir, "components", "layers"));
@@ -49,8 +51,10 @@ async function run() {
   const config = JSON.parse(
     fs.readFileSync(path.join(remotionSrcDir, "preview-config.json"), "utf8")
   );
-  if (config.durationInFrames !== 90) {
-    throw new Error("preview-config duration mismatch");
+  if (config.durationInFrames !== expectedDuration) {
+    throw new Error(
+      `preview-config duration mismatch: expected ${expectedDuration}, got ${config.durationInFrames}`,
+    );
   }
   const manifest = JSON.parse(
     fs.readFileSync(
@@ -58,8 +62,10 @@ async function run() {
       "utf8",
     ),
   );
-  if (manifest.timeline.durationInFrames !== 90) {
-    throw new Error("manifest duration mismatch");
+  if (manifest.timeline.durationInFrames !== expectedDuration) {
+    throw new Error(
+      `manifest duration mismatch: expected ${expectedDuration}, got ${manifest.timeline.durationInFrames}`,
+    );
   }
   if (result.files.length !== 4) {
     throw new Error("generator output file count mismatch");

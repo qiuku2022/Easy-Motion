@@ -114,6 +114,10 @@ contextBridge.exposeInMainWorld("easyMotion", {
       return () => ipcRenderer.removeListener("renderer:conversation:status", listener);
     },
   },
+  workspace: {
+    load: (payload) => invoke("main:workspace:load", payload),
+    save: (payload) => invoke("main:workspace:save", payload),
+  },
   export: {
     start: (payload) => invoke("main:export:start", payload),
     project: (payload) => invoke("main:export:project", payload),

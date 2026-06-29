@@ -15,11 +15,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { formatTimecode } from "@/lib/timecode";
-import { resolveExportFrameRange } from "@/lib/timeline/workArea";
+import { formatFrameCount, formatSmpteTimecode } from "@/lib/timecode";
+import { resolveWorkAreaDisplayRange } from "@/lib/timeline/workArea";
 import { PR_SHORTCUTS } from "@/lib/premiereShortcuts";
 import { usePlaybackStore } from "@/stores/playbackStore";
 import { useTimelineStore } from "@/stores/timelineStore";
+import { useUiStore } from "@/stores/uiStore";
+import { cn } from "@/lib/utils";
 
 function TransportButton({
   label,
@@ -95,12 +97,21 @@ export function TimelineTransport() {
   const isPlaying = usePlaybackStore((s) => s.isPlaying);
   const seekTo = usePlaybackStore((s) => s.seekTo);
   const togglePlay = usePlaybackStore((s) => s.togglePlay);
+  const timelineTimeDisplay = useUiStore((s) => s.timelineTimeDisplay);
+  const toggleTimelineTimeDisplay = useUiStore((s) => s.toggleTimelineTimeDisplay);
 
   const fps = timeline?.fps ?? 30;
   const totalFrames = timeline?.durationInFrames ?? 0;
   const maxFrame = Math.max(0, totalFrames - 1);
   const hasTimeline = Boolean(timeline && totalFrames > 0);
-  const workArea = timeline ? resolveExportFrameRange(timeline) : null;
+  const workArea = timeline ? resolveWorkAreaDisplayRange(timeline) : null;
+
+  const formatPosition = (frame: number) => {
+    if (timelineTimeDisplay === "frames") {
+      return formatFrameCount(frame);
+    }
+    return formatSmpteTimecode(frame, fps);
+  };
 
   return (
     <div className="flex shrink-0 items-center gap-1">
@@ -190,22 +201,46 @@ export function TimelineTransport() {
         <Flag className="h-4 w-4 text-amber-400" />
       </TransportButton>
 
-      <div className="ml-2 flex flex-col gap-0.5 font-mono text-[10px] leading-tight tabular-nums text-foreground">
-        <span>
-          {hasTimeline ? formatTimecode(currentFrame, fps) : "--:--"}
-          <span className="mx-1 text-muted-foreground">/</span>
-          {hasTimeline ? formatTimecode(totalFrames, fps) : "--:--"}
-        </span>
+      <button
+        type="button"
+        title="Ctrl+点击切换时间码 / 帧"
+        disabled={!hasTimeline}
+        className={cn(
+          "ml-2 flex cursor-pointer flex-col gap-0.5 rounded px-1 py-0.5 text-left font-mono text-[10px] leading-tight tabular-nums text-foreground",
+          "hover:bg-muted/60 disabled:cursor-default disabled:opacity-50",
+        )}
+        onClick={(e) => {
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            toggleTimelineTimeDisplay();
+          }
+        }}
+      >
+        {timelineTimeDisplay === "timecode" ? (
+          <span>
+            {hasTimeline ? `${currentFrame}/${totalFrames}帧` : "--/--帧"}
+            <span className="mx-1.5 text-muted-foreground">·</span>
+            {hasTimeline ? formatSmpteTimecode(currentFrame, fps) : "--:--:--"}
+            <span className="mx-1 text-muted-foreground">/</span>
+            {hasTimeline ? formatSmpteTimecode(totalFrames, fps) : "--:--:--"}
+          </span>
+        ) : (
+          <span>
+            {hasTimeline ? formatFrameCount(currentFrame) : "--"}
+            <span className="mx-1 text-muted-foreground">/</span>
+            {hasTimeline ? formatFrameCount(totalFrames) : "--"}
+          </span>
+        )}
         {hasTimeline && workArea ? (
           <span className="text-amber-400/90">
-            I/O {formatTimecode(workArea.inFrame, fps)} –{" "}
-            {formatTimecode(workArea.outFrame + 1, fps)}
+            I/O {formatPosition(workArea.inFrame)} –{" "}
+            {formatPosition(workArea.outFrame + 1)}
             {!workArea.custom ? (
               <span className="ml-1 text-muted-foreground">(内容末尾)</span>
             ) : null}
           </span>
         ) : null}
-      </div>
+      </button>
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { useConversationStore } from "@/stores/conversationStore";
 import { useExportStore } from "@/stores/exportStore";
 import { useProjectStore } from "@/stores/projectStore";
 import { useTimelineStore } from "@/stores/timelineStore";
+import { hydrateProjectWorkspace } from "@/lib/workspace/projectWorkspace";
 
 export default function App() {
   useTimelineShortcuts();
@@ -27,6 +28,7 @@ export default function App() {
           useAssetStore.getState().loadAssets(),
           useConversationStore.getState().loadConversation(),
         ]);
+        await hydrateProjectWorkspace();
       } else {
         useAssetStore.getState().clear();
         useConversationStore.getState().resetForProjectClose();

@@ -67,6 +67,22 @@ function resolveTailPaddingFrames(timeline) {
   return Math.max(15, Math.round(fps));
 }
 
+function resolveDefaultMinDurationFrames(timeline) {
+  const fps = Math.max(1, Number(timeline?.fps) || 30);
+  return fps * 5;
+}
+
+/** Grow timeline duration so a clip at start + duration fits (preset placement). */
+function ensureTimelineFitsClip(timeline, startInFrames, durationInFrames) {
+  if (!isObject(timeline)) return timeline;
+  const start = Math.max(0, Math.round(Number(startInFrames) || 0));
+  const duration = Math.max(1, Math.round(Number(durationInFrames) || 1));
+  const needed = start + duration;
+  const current = Math.max(1, Number(timeline.durationInFrames) || 1);
+  if (needed <= current) return timeline;
+  return { ...timeline, durationInFrames: needed };
+}
+
 /**
  * Shrink or grow timeline.durationInFrames to content end + tail padding.
  * Keeps work area in/out within the new bounds.
@@ -76,7 +92,8 @@ function fitTimelineDuration(timeline, options = {}) {
 
   const tail =
     options.tailPaddingFrames ?? resolveTailPaddingFrames(timeline);
-  const minFrames = options.minDurationFrames ?? 30;
+  const minFrames =
+    options.minDurationFrames ?? resolveDefaultMinDurationFrames(timeline);
   const contentEndExclusive = getContentEndExclusive(timeline);
   const needed = Math.max(contentEndExclusive + tail, minFrames);
   const current = Math.max(1, Number(timeline.durationInFrames) || 1);
@@ -91,7 +108,6 @@ function fitTimelineDuration(timeline, options = {}) {
     const outFrame = Math.min(
       Number.isFinite(rawOut) ? rawOut : contentEndInclusive,
       maxFrame,
-      contentEndInclusive,
     );
     const inFrame = Math.min(
       Number.isFinite(rawIn) ? rawIn : 0,
@@ -122,11 +138,6 @@ function resolveTimelineViewportDuration(timeline) {
   return fitTimelineDuration(timeline).durationInFrames;
 }
 
-/**
- * Resolve export in/out (inclusive) for renderMedia frameRange.
- * - No workArea: [0, contentEnd]
- * - With workArea: user I/O clamped to timeline; out defaults to content end when missing
- */
 function resolveExportFrameRange(timeline) {
   if (!isObject(timeline)) {
     return { inFrame: 0, outFrame: 0, frameCount: 1, contentEndInclusive: 0, custom: false };
@@ -166,6 +177,43 @@ function resolveExportFrameRange(timeline) {
   };
 }
 
+/**
+ * UI I/O range: honor user in/out within timeline bounds (not capped to content end).
+ */
+function resolveWorkAreaDisplayRange(timeline) {
+  if (!isObject(timeline)) {
+    return { inFrame: 0, outFrame: 0, custom: false, contentEndInclusive: 0 };
+  }
+
+  const maxFrame = Math.max(0, Number(timeline.durationInFrames) - 1);
+  const contentEndInclusive = getContentEndInclusive(timeline);
+  const custom = isObject(timeline.workArea);
+
+  if (!custom) {
+    return {
+      inFrame: 0,
+      outFrame: contentEndInclusive,
+      custom: false,
+      contentEndInclusive,
+    };
+  }
+
+  let inFrame = Number(timeline.workArea.inFrame);
+  let outFrame = Number(timeline.workArea.outFrame);
+  if (!Number.isFinite(inFrame)) inFrame = 0;
+  if (!Number.isFinite(outFrame)) outFrame = maxFrame;
+
+  inFrame = clampInt(inFrame, 0, maxFrame);
+  outFrame = clampInt(outFrame, 0, maxFrame);
+  if (inFrame > outFrame) {
+    const swap = inFrame;
+    inFrame = outFrame;
+    outFrame = swap;
+  }
+
+  return { inFrame, outFrame, custom: true, contentEndInclusive };
+}
+
 function normalizeWorkArea(timeline, inFrame, outFrame) {
   const maxFrame = Math.max(0, Number(timeline.durationInFrames) - 1);
   let inF = clampInt(inFrame, 0, maxFrame);
@@ -179,9 +227,9 @@ function normalizeWorkArea(timeline, inFrame, outFrame) {
 }
 
 function setWorkAreaInFrame(timeline, frame) {
-  const contentEndInclusive = getContentEndInclusive(timeline);
+  const maxFrame = Math.max(0, Number(timeline.durationInFrames) - 1);
   const current = timeline.workArea;
-  const outFrame = current?.outFrame ?? contentEndInclusive;
+  const outFrame = current?.outFrame ?? maxFrame;
   return {
     ...timeline,
     workArea: normalizeWorkArea(timeline, frame, outFrame),
@@ -208,9 +256,12 @@ module.exports = {
   getContentEndExclusive,
   getContentEndInclusive,
   resolveTailPaddingFrames,
+  ensureTimelineFitsClip,
   fitTimelineDuration,
+  resolveDefaultMinDurationFrames,
   resolveTimelineViewportDuration,
   resolveExportFrameRange,
+  resolveWorkAreaDisplayRange,
   setWorkAreaInFrame,
   setWorkAreaOutFrame,
   clearWorkArea,

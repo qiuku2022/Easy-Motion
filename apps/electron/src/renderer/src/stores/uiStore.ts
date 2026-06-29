@@ -3,9 +3,14 @@ import {
   DEFAULT_PX_PER_FRAME,
   clampPxPerFrame,
 } from "@/lib/timeline/framePixels";
+import { scheduleKeyframePanelSave } from "@/lib/workspace/projectWorkspace";
 
 export type LeftTab = "project" | "assets" | "presets";
 export type RightTab = "properties" | "templates";
+/** 关键帧图编辑器纵轴：速度图（AE 默认）或值图 */
+export type KeyframeGraphMode = "speed" | "value";
+/** Premiere：时间码 SMPTE 或纯帧计数（Ctrl+点击 Transport 切换） */
+export type TimelineTimeDisplay = "timecode" | "frames";
 
 /** 与 AppLayout 面板拖拽范围一致 */
 export const LEFT_PANEL_WIDTH_MIN = 200;
@@ -45,6 +50,9 @@ interface UiState {
   keyframePanelExpanded: boolean;
   selectedKeyframeProperty: string | null;
   selectedKeyframeId: string | null;
+  keyframeGraphMode: KeyframeGraphMode;
+  /** 时间线标尺与 Transport 时间显示 */
+  timelineTimeDisplay: TimelineTimeDisplay;
 
   setLeftPanelWidth: (w: number) => void;
   setRightPanelWidth: (w: number) => void;
@@ -63,6 +71,8 @@ interface UiState {
   toggleKeyframePanel: () => void;
   setSelectedKeyframeProperty: (property: string | null) => void;
   setSelectedKeyframeId: (keyframeId: string | null) => void;
+  setKeyframeGraphMode: (mode: KeyframeGraphMode) => void;
+  toggleTimelineTimeDisplay: () => void;
   zoomTimelineBy: (delta: number) => void;
   requestTimelineFit: () => void;
 }
@@ -85,9 +95,11 @@ export const useUiStore = create<UiState>((set) => ({
   altKeyHeld: false,
   fitTimelineNonce: 0,
   timelineZoomManual: false,
-  keyframePanelExpanded: true,
+  keyframePanelExpanded: false,
   selectedKeyframeProperty: "transform.opacity",
   selectedKeyframeId: null,
+  keyframeGraphMode: "speed",
+  timelineTimeDisplay: "timecode",
 
   setLeftPanelWidth: (leftPanelWidth) => set({ leftPanelWidth }),
   setRightPanelWidth: (rightPanelWidth) => set({ rightPanelWidth }),
@@ -107,12 +119,24 @@ export const useUiStore = create<UiState>((set) => ({
   setAltKeyHeld: (altKeyHeld) => set({ altKeyHeld }),
 
   toggleKeyframePanel: () =>
-    set((s) => ({ keyframePanelExpanded: !s.keyframePanelExpanded })),
+    set((s) => {
+      const keyframePanelExpanded = !s.keyframePanelExpanded;
+      scheduleKeyframePanelSave(keyframePanelExpanded);
+      return { keyframePanelExpanded };
+    }),
 
   setSelectedKeyframeProperty: (selectedKeyframeProperty) =>
     set({ selectedKeyframeProperty, selectedKeyframeId: null }),
 
   setSelectedKeyframeId: (selectedKeyframeId) => set({ selectedKeyframeId }),
+
+  setKeyframeGraphMode: (keyframeGraphMode) => set({ keyframeGraphMode }),
+
+  toggleTimelineTimeDisplay: () =>
+    set((s) => ({
+      timelineTimeDisplay:
+        s.timelineTimeDisplay === "timecode" ? "frames" : "timecode",
+    })),
 
   zoomTimelineBy: (delta) =>
     set((s) => ({

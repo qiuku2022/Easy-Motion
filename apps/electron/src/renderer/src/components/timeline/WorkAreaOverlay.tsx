@@ -1,5 +1,5 @@
 import { frameBoundaryPx, frameToPx } from "@/lib/timeline/framePixels";
-import { resolveExportFrameRange } from "@/lib/timeline/workArea";
+import { resolveWorkAreaDisplayRange } from "@/lib/timeline/workArea";
 import { cn } from "@/lib/utils";
 import type { Timeline } from "@/types/timeline";
 
@@ -10,7 +10,7 @@ function useWorkAreaBounds(
   durationInFrames: number,
   pxPerFrame: number,
 ) {
-  const { inFrame, outFrame, custom } = resolveExportFrameRange(timeline);
+  const { inFrame, outFrame, custom } = resolveWorkAreaDisplayRange(timeline);
   const width = frameToPx(durationInFrames, pxPerFrame);
   const inPx = frameBoundaryPx(inFrame, pxPerFrame, "start");
   const outEndPx = frameBoundaryPx(outFrame, pxPerFrame, "end");
@@ -191,7 +191,7 @@ interface WorkAreaRulerMarkersProps {
 }
 
 export function WorkAreaRulerMarkers({ timeline, pxPerFrame }: WorkAreaRulerMarkersProps) {
-  const { inFrame, outFrame, custom } = resolveExportFrameRange(timeline);
+  const { inFrame, outFrame, custom } = resolveWorkAreaDisplayRange(timeline);
   const maxFrame = Math.max(0, timeline.durationInFrames - 1);
   const inPx = frameBoundaryPx(inFrame, pxPerFrame, "start");
   const outPx = frameBoundaryPx(outFrame, pxPerFrame, "end");

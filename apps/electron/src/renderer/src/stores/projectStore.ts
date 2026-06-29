@@ -7,6 +7,11 @@ import { useAssetStore } from "@/stores/assetStore";
 import { useConversationStore } from "@/stores/conversationStore";
 import { useExportStore } from "@/stores/exportStore";
 import { usePlaybackStore } from "@/stores/playbackStore";
+import {
+  flushProjectWorkspace,
+  hydrateProjectWorkspace,
+  resetProjectWorkspaceRuntime,
+} from "@/lib/workspace/projectWorkspace";
 
 export interface CurrentProject {
   name: string;
@@ -33,8 +38,9 @@ interface ProjectState {
 }
 
 async function reloadProjectWorkspace() {
+  await useTimelineStore.getState().loadTimeline();
+  await hydrateProjectWorkspace();
   await Promise.all([
-    useTimelineStore.getState().loadTimeline(),
     useAssetStore.getState().loadAssets(),
     useConversationStore.getState().loadConversation(),
   ]);
@@ -68,6 +74,7 @@ async function clearProjectWorkspace() {
   if (useExportStore.getState().phase !== "exporting") {
     useExportStore.getState().reset();
   }
+  resetProjectWorkspaceRuntime();
 }
 
 export const useProjectStore = create<ProjectState>((set, get) => ({
@@ -126,6 +133,10 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       return false;
     }
 
+    if (get().current) {
+      await flushProjectWorkspace();
+    }
+
     set({ isLoading: true, error: null });
     const res = await api.project.open(projectPath);
     set({ isLoading: false });
@@ -152,6 +163,10 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     if (!trimmed) {
       set({ error: "请输入项目名称" });
       return false;
+    }
+
+    if (get().current) {
+      await flushProjectWorkspace();
     }
 
     set({ isLoading: true, error: null });
@@ -194,6 +209,8 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     const timelineSaved = await useTimelineStore.getState().saveTimeline();
     if (!timelineSaved) return false;
 
+    await flushProjectWorkspace();
+
     set({ isLoading: true, error: null });
     const res = await api.project.save();
     set({ isLoading: false });
@@ -222,6 +239,8 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       );
       if (!confirmed) return false;
     }
+
+    await flushProjectWorkspace();
 
     set({ isLoading: true, error: null });
     const res = await api.project.close();

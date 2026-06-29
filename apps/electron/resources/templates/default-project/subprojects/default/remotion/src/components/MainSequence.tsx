@@ -10,9 +10,10 @@ import { NewsletterBackground } from "./newsletter-design/NewsletterBackground";
 import { PreviewClipSequence } from "./PreviewClipSequence";
 import { ChartLayer } from "./layers/ChartLayer";
 import {
-  ClipTransformWrapper,
   resolveClipTransformLayout,
-} from "./layers/ClipTransformWrapper";
+  shouldWrapClipMotion,
+} from "../lib/clip-motion-wrapper";
+import { ClipTransformWrapper } from "./layers/ClipTransformWrapper";
 import { ImageLayer } from "./layers/ImageLayer";
 import { ShapeLayer } from "./layers/ShapeLayer";
 import { TextLayer } from "./layers/TextLayer";
@@ -23,6 +24,7 @@ export type MainSequenceProps = {
 
 function renderClipContent(
   track: { type: string },
+  canvas: { width: number; height: number },
   clip: {
     id: string;
     name?: string;
@@ -78,17 +80,17 @@ function renderClipContent(
   const transform = clip.transform ?? defaultTransform;
 
   const wrapMotion = (content: ReactNode) => {
-    const hasMotion =
-      (clip.keyframes?.length ?? 0) > 0 ||
-      clip.animations?.in != null ||
-      clip.transform != null;
-    if (!hasMotion) return content;
+    if (!shouldWrapClipMotion(clip, canvas)) return content;
     return (
       <ClipTransformWrapper
         transform={clip.transform ?? defaultTransform}
         keyframes={clip.keyframes}
         inAnimation={clip.animations?.in}
-        layout={resolveClipTransformLayout(clip.transform, clip.keyframes)}
+        layout={resolveClipTransformLayout(
+          clip.transform,
+          clip.keyframes,
+          canvas,
+        )}
       >
         {content}
       </ClipTransformWrapper>
@@ -229,12 +231,16 @@ function renderClipContent(
 /** Player 通过 inputProps 传入 timeline；所有片段从 JSON 动态渲染（含 AI 新建/修改） */
 export const MainSequence: React.FC<MainSequenceProps> = ({ timeline }) => {
   const items = flattenClipsForPreview(timeline);
+  const canvas = {
+    width: timeline?.width ?? 1920,
+    height: timeline?.height ?? 1080,
+  };
 
   return (
     <AbsoluteFill style={{ backgroundColor: "#121212" }}>
       {items.map(({ track, clip }) => {
         if (!isClipVisibleInPreview(clip.id, timeline)) return null;
-        const content = renderClipContent(track, clip);
+        const content = renderClipContent(track, canvas, clip);
         if (!content) return null;
 
         return (

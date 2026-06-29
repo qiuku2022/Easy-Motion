@@ -58,13 +58,33 @@ export function resolveTailPaddingFrames(timeline: Timeline | null | undefined):
   return Math.max(15, Math.round(fps));
 }
 
+export function resolveDefaultMinDurationFrames(timeline: Timeline | null | undefined): number {
+  const fps = Math.max(1, Number(timeline?.fps) || 30);
+  return fps * 5;
+}
+
+/** 放置预设前拉长时间线，避免片段时长被当前 duration 截断 */
+export function ensureTimelineFitsClip(
+  timeline: Timeline,
+  startInFrames: number,
+  durationInFrames: number,
+): Timeline {
+  const start = Math.max(0, Math.round(startInFrames));
+  const duration = Math.max(1, Math.round(durationInFrames));
+  const needed = start + duration;
+  const current = Math.max(1, Number(timeline.durationInFrames) || 1);
+  if (needed <= current) return timeline;
+  return { ...timeline, durationInFrames: needed };
+}
+
 /** Shrink or grow duration to content end + tail padding (~1s). */
 export function fitTimelineDuration(
   timeline: Timeline,
   options: { tailPaddingFrames?: number; minDurationFrames?: number } = {},
 ): Timeline {
   const tail = options.tailPaddingFrames ?? resolveTailPaddingFrames(timeline);
-  const minFrames = options.minDurationFrames ?? 30;
+  const minFrames =
+    options.minDurationFrames ?? resolveDefaultMinDurationFrames(timeline);
   const contentEndExclusive = getContentEndExclusive(timeline);
   const needed = Math.max(contentEndExclusive + tail, minFrames);
   const current = Math.max(1, Number(timeline.durationInFrames) || 1);
@@ -79,7 +99,6 @@ export function fitTimelineDuration(
     const outFrame = Math.min(
       Number.isFinite(rawOut) ? rawOut : contentEndInclusive,
       maxFrame,
-      contentEndInclusive,
     );
     const inFrame = Math.min(
       Number.isFinite(rawIn) ? rawIn : 0,
@@ -157,6 +176,50 @@ export function resolveExportFrameRange(
   };
 }
 
+export interface WorkAreaDisplayRange {
+  inFrame: number;
+  outFrame: number;
+  custom: boolean;
+  contentEndInclusive: number;
+}
+
+/** UI I/O：按用户设置的入出点显示，不压到内容末尾 */
+export function resolveWorkAreaDisplayRange(
+  timeline: Timeline | null | undefined,
+): WorkAreaDisplayRange {
+  if (!isObject(timeline)) {
+    return { inFrame: 0, outFrame: 0, custom: false, contentEndInclusive: 0 };
+  }
+
+  const maxFrame = Math.max(0, Number(timeline.durationInFrames) - 1);
+  const contentEndInclusive = getContentEndInclusive(timeline);
+  const custom = isObject(timeline.workArea);
+
+  if (!custom) {
+    return {
+      inFrame: 0,
+      outFrame: contentEndInclusive,
+      custom: false,
+      contentEndInclusive,
+    };
+  }
+
+  let inFrame = Number(timeline.workArea.inFrame);
+  let outFrame = Number(timeline.workArea.outFrame);
+  if (!Number.isFinite(inFrame)) inFrame = 0;
+  if (!Number.isFinite(outFrame)) outFrame = maxFrame;
+
+  inFrame = clampInt(inFrame, 0, maxFrame);
+  outFrame = clampInt(outFrame, 0, maxFrame);
+  if (inFrame > outFrame) {
+    const swap = inFrame;
+    inFrame = outFrame;
+    outFrame = swap;
+  }
+
+  return { inFrame, outFrame, custom: true, contentEndInclusive };
+}
+
 function normalizeWorkArea(timeline: Timeline, inFrame: number, outFrame: number) {
   const maxFrame = Math.max(0, Number(timeline.durationInFrames) - 1);
   let inF = clampInt(inFrame, 0, maxFrame);
@@ -170,9 +233,9 @@ function normalizeWorkArea(timeline: Timeline, inFrame: number, outFrame: number
 }
 
 export function setWorkAreaInFrame(timeline: Timeline, frame: number): Timeline {
-  const contentEndInclusive = getContentEndInclusive(timeline);
+  const maxFrame = Math.max(0, Number(timeline.durationInFrames) - 1);
   const current = timeline.workArea;
-  const outFrame = current?.outFrame ?? contentEndInclusive;
+  const outFrame = current?.outFrame ?? maxFrame;
   return {
     ...timeline,
     workArea: normalizeWorkArea(timeline, frame, outFrame),

@@ -31,10 +31,44 @@
       "presentation": { "hidden": true }
     },
     {
+      "name": "▸ Electron Main + Renderer",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/electron",
+      "preLaunchTask": "debug: prepare",
+      "postDebugTask": "debug: cleanup",
+      "runtimeExecutable": "${workspaceFolder}/apps/electron/node_modules/.bin/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceFolder}/apps/electron/node_modules/.bin/electron.cmd"
+      },
+      "program": "${workspaceFolder}/apps/electron/src/main/index.js",
+      "args": ["--remote-debugging-port=9333"],
+      "outputCapture": "std",
+      "console": "integratedTerminal",
+      "sourceMaps": true,
+      "timeout": 120000,
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/apps/electron/node_modules/**"
+      ],
+      "env": {
+        "ELECTRON_ENABLE_LOGGING": "1",
+        "NODE_ENV": "development",
+        "ELECTRON_RENDERER_URL": "http://127.0.0.1:5173",
+        "ELECTRON_CDP_PORT": "9333"
+      },
+      "serverReadyAction": {
+        "pattern": "\\[easymotion\\] renderer cdp ready",
+        "action": "debugWithConfig",
+        "name": "▸ Attach React Renderer"
+      },
+      "presentation": { "hidden": true }
+    },
+    {
       "name": "▸ Attach React Renderer",
       "type": "chrome",
       "request": "attach",
-      "preLaunchTask": "wait: electron cdp",
+      "address": "127.0.0.1",
       "port": 9333,
       "urlFilter": "http://127.0.0.1:5173/*",
       "webRoot": "${workspaceFolder}/apps/electron/src/renderer/src",
@@ -58,7 +92,7 @@
     },
     {
       "name": "EasyMotion: Dev + React",
-      "configurations": ["▸ Electron Main", "▸ Attach React Renderer"],
+      "configurations": ["▸ Electron Main + Renderer"],
       "stopAll": true,
       "presentation": { "group": "main", "order": 2 }
     }

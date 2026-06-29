@@ -106,12 +106,7 @@ export function ClipTransformWrapper({
   );
 }
 
-export function resolveClipTransformLayout(
-  transform: ClipTransformWrapperProps["transform"],
-  keyframes: TimelineKeyframe,
-): "fill" | "positioned" {
-  if (transform?.position != null) return "positioned";
-  return (keyframes ?? []).some((kf) => kf.property.startsWith("transform.position"))
-    ? "positioned"
-    : "fill";
-}
+export {
+  resolveClipTransformLayout,
+  shouldWrapClipMotion,
+} from "../../lib/clip-motion-wrapper";

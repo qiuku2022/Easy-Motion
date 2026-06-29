@@ -59,8 +59,9 @@ function stampTemplateProject(projectRoot, config) {
     width: config.width ?? 1920,
     height: config.height ?? 1080,
   };
-  project.settings.defaultFps = config.fps ?? 30;
-  project.settings.defaultDurationInFrames = config.durationInFrames ?? 300;
+  const fps = config.fps ?? 30;
+  project.settings.defaultFps = fps;
+  project.settings.defaultDurationInFrames = config.durationInFrames ?? fps * 5;
 
   const sub = project.subprojects[0];
   sub.createdAt = now;

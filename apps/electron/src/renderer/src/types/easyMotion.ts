@@ -67,6 +67,18 @@ export interface ProjectSummary {
   modifiedAt: number;
 }
 
+/** 子项目内 `.easymotion/workspace.json` */
+export interface ProjectWorkspace {
+  version: string;
+  timeline: {
+    keyframePanelExpanded: boolean;
+  };
+}
+
+export interface ProjectWorkspacePatch {
+  timeline?: Partial<ProjectWorkspace["timeline"]>;
+}
+
 export interface WindowState {
   maximized: boolean;
   fullscreen: boolean;
@@ -326,6 +338,15 @@ export interface EasyMotionApi {
       callback: (data: { requestId: string; message: string }) => void
     ) => () => void;
     onStatus: (callback: (data: ConversationStatusPayload) => void) => () => void;
+  };
+  workspace: {
+    load: (payload?: {
+      subprojectPath?: string;
+    }) => Promise<IpcResult<ProjectWorkspace>>;
+    save: (payload: {
+      patch: ProjectWorkspacePatch;
+      subprojectPath?: string;
+    }) => Promise<IpcResult<ProjectWorkspace>>;
   };
   export: {
     start: (payload: import("./export").ExportStartRequest) => Promise<

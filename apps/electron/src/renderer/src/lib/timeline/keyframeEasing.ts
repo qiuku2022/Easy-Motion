@@ -43,6 +43,39 @@ export function cubicBezierEase(
   return sampleY(u);
 }
 
+/** dy/dt for CSS cubic-bezier easing at normalized time t ∈ [0,1]. */
+export function cubicBezierEaseDerivative(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  t: number,
+): number {
+  const cx = 3 * x1;
+  const bx = 3 * (x2 - x1) - cx;
+  const ax = 1 - cx - bx;
+  const cy = 3 * y1;
+  const by = 3 * (y2 - y1) - cy;
+  const ay = 1 - cy - by;
+
+  const sampleX = (u: number) => ((ax * u + bx) * u + cx) * u;
+  const derivX = (u: number) => (3 * ax * u + 2 * bx) * u + cx;
+  const derivY = (u: number) => (3 * ay * u + 2 * by) * u + cy;
+
+  const target = Math.max(0, Math.min(1, t));
+  let low = 0;
+  let high = 1;
+  for (let i = 0; i < 14; i += 1) {
+    const mid = (low + high) / 2;
+    if (sampleX(mid) < target) low = mid;
+    else high = mid;
+  }
+  const u = (low + high) / 2;
+  const dx = derivX(u);
+  const dy = derivY(u);
+  return Math.abs(dx) > 1e-9 ? dy / dx : 0;
+}
+
 function applyNamedEasing(name: string | undefined, t: number): number {
   const clamped = Math.max(0, Math.min(1, t));
   switch (name) {
@@ -57,6 +90,22 @@ function applyNamedEasing(name: string | undefined, t: number): number {
     case "linear":
     default:
       return clamped;
+  }
+}
+
+/** d(progress)/dt for named easing at t ∈ [0,1]. */
+export function namedEasingDerivative(name: string | undefined, t: number): number {
+  const clamped = Math.max(0, Math.min(1, t));
+  switch (name) {
+    case "ease-in":
+      return 2 * clamped;
+    case "ease-out":
+      return 2 - 2 * clamped;
+    case "ease-in-out":
+      return clamped < 0.5 ? 4 * clamped : 4 - 4 * clamped;
+    case "linear":
+    default:
+      return 1;
   }
 }
 
