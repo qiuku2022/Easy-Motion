@@ -38,7 +38,7 @@
 
 ### 善用 Skills
 
-- 改 Remotion / UI / 视觉相关代码前，先读 `.cursor/skills/`、`.agents/skills/` 下对应 `SKILL.md`。
+- 改 Remotion / UI / 视觉相关代码前，先读 `.cursor/skills/` 下对应 `SKILL.md`。
 - Skill 是项目内沉淀的操作指南，优先级高于通用经验；读了再写，不要边写边猜。
 
 ### 善用 MCP
@@ -148,10 +148,15 @@ M5.2 Remotion Code Agent：**已完成**（`a1fa91a`）。详见 [`docs/requirem
 
 | Skill | 路径 | 何时读 |
 |-------|------|--------|
-| Remotion 最佳实践 | `.agents/skills/remotion-best-practices/SKILL.md` | 改 Remotion 组件、预设、渲染逻辑 |
+| Remotion 最佳实践 | `.cursor/skills/remotion-best-practices/SKILL.md` | 改 Remotion 组件、预设、渲染逻辑 |
+| shadcn/ui | `.cursor/skills/shadcn/SKILL.md` | 增改 shadcn 组件、registry、样式与组合 |
 | UI/UX | `.cursor/skills/ui-ux-pro-max/SKILL.md` | 改布局、视觉、交互 |
 | Frontend Design | `.cursor/skills/frontend-design/SKILL.md` | 新建或重塑 UI 视觉方向 |
 | Theme Factory | `.cursor/skills/theme-factory/SKILL.md` | 需要统一主题/配色/字体时 |
+| Web 界面规范 | `.cursor/skills/web-design-guidelines/SKILL.md` | UI 可访问性、UX、界面规范审查 |
+| Find Bugs | `.cursor/skills/find-bugs/SKILL.md` | 审查分支 diff，查 bug / 安全 / 代码质量 |
+
+版本锁定见仓库根目录 `skills-lock.json`（来源：GitHub registry）。
 
 ## 常见 Agent 错误 → 永久修复
 
