@@ -63,7 +63,7 @@ EasyMotion 是用自然语言制作 Remotion 动画的 **Electron 桌面应用**
 
 **数据流核心：** 时间线 JSON → Generator（可选）→ Remotion 预览。预设走 `animation` 轨道 + `source.component` + `source.props`，多数场景由 timeline 动态驱动 `MainSequence`，**不必每次改参都重新生成 TSX**。
 
-**里程碑（2026-06-27）：** M0–M8 ✅；**M9 进行中**——Windows NSIS 打包已通（`pnpm build:win`），E2E / 签名 / macOS·Linux 待建。详见 [`开发里程碑与路线图.md`](docs/requirements/开发里程碑与路线图.md)、[`构建与部署.md`](docs/requirements/构建与部署.md)。
+**里程碑（2026-06-30）：** M0–M9 ✅（Windows NSIS 预发行 v0.1.2）。E2E / 签名 / CI / 多平台按需补建；后续迭代以功能增强为主。详见 [`开发里程碑与路线图.md`](docs/requirements/开发里程碑与路线图.md)、[`构建与部署.md`](docs/requirements/构建与部署.md)。
 
 ## WIP=1：一次只做一件事
 
@@ -156,7 +156,20 @@ M5.2 Remotion Code Agent：**已完成**（`a1fa91a`）。详见 [`docs/requirem
 | Web 界面规范 | `.cursor/skills/web-design-guidelines/SKILL.md` | UI 可访问性、UX、界面规范审查 |
 | Find Bugs | `.cursor/skills/find-bugs/SKILL.md` | 审查分支 diff，查 bug / 安全 / 代码质量 |
 
-版本锁定见仓库根目录 `skills-lock.json`（来源：GitHub registry）。
+**Skills 维护**（`.agents/` 已 gitignore；仓库内权威副本在 `.cursor/skills/`）：
+
+```bash
+# 更新 + 同步到 .cursor/skills（推荐）
+pnpm skills:update
+
+# 或分步
+npx skills update -p -y
+pnpm skills:sync
+
+# 首次安装示例（装到 .agents，再 sync）
+npx skills add shadcn-ui/ui --skill shadcn --agent cursor -y --copy
+pnpm skills:sync
+```
 
 ## 常见 Agent 错误 → 永久修复
 

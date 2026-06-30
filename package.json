@@ -19,7 +19,9 @@
     "test:m1": "pnpm --filter @easymotion/electron test:m1",
     "test:m2": "pnpm --filter @easymotion/electron test:m2",
     "test:m3": "pnpm --filter @easymotion/electron test:m3",
-    "test": "pnpm --filter @easymotion/electron test"
+    "test": "pnpm --filter @easymotion/electron test",
+    "skills:sync": "node scripts/sync-cursor-skills.cjs",
+    "skills:update": "npx skills update -p -y && node scripts/sync-cursor-skills.cjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.28.0",

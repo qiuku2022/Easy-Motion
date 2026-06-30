@@ -1,28 +1,20 @@
 # Dependencies
 node_modules/
-**/node_modules/
 
 # Build & bundler outputs
 dist/
-build/
 out/
 release/
-dist-electron/
-.turbo/
 .cache/
 coverage/
 *.tsbuildinfo
 
-# Vite / tooling caches (may live under node_modules)
+# Vite / tooling caches
 **/.vite/
 .eslintcache
 
 # Logs
 *.log
-npm-debug.log*
-pnpm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
 # Environment & secrets
 .env
@@ -43,9 +35,7 @@ venv/
 .ruff_cache/
 *.egg-info/
 .Python
-# PyInstaller / bundle-for-electron 中间产物
 apps/python/.build-bundle/
-# 打进安装包的 venv（build:python 生成，体积大）
 apps/electron/resources/python/**
 !apps/electron/resources/python/.gitkeep
 
@@ -65,11 +55,13 @@ desktop.ini
 !.vscode/settings.json
 !.vscode/extensions.json
 
-# Cursor: optional project skills; ignore local agent state
+# Cursor: ignore local agent state; committed skills live under .cursor/skills/
 .cursor/*
 !.cursor/skills/
 !.cursor/skills/**
-.cursor/skills/**/__pycache__/
+
+# npx skills 管理目录（不提交；更新后运行 pnpm skills:sync）
+.agents/
 
 # Local-only notes (agent plans, scratch — not for commit)
 .local/
@@ -78,7 +70,6 @@ desktop.ini
 tmp/
 temp/
 *.pid
-.omo/
 
 # ui-ux-pro-max --persist 在仓库根目录生成的设计快照（权威：docs/design-system/）
 /design-system/
