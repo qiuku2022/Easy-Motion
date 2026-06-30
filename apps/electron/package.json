@@ -9,7 +9,6 @@
     "dev": "concurrently -k \"pnpm dev:renderer\" \"pnpm dev:electron\"",
     "dev:renderer": "vite",
     "dev:electron": "wait-on http://127.0.0.1:5173 && cross-env ELECTRON_RENDERER_URL=http://127.0.0.1:5173 electron .",
-    "dev:legacy": "electron . --legacy-ui",
     "build:renderer": "node scripts/sync-preset-thumbnails.cjs && vite build",
     "build:python": "node ../python/scripts/build-python-bundle.cjs",
     "build": "pnpm build:renderer && pnpm build:python && electron-builder --win --publish=never && node scripts/verify-packaged-deps.cjs release/win-unpacked",

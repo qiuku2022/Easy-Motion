@@ -34,7 +34,7 @@ function WorkAreaShadeMask({
   inPx,
   outEndPx,
   width,
-  height,
+  height: _height,
   className,
 }: {
   inPx: number;

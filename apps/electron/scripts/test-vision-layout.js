@@ -65,7 +65,8 @@ function main() {
 
   const pos = resolvePosition({ x: "center", y: "top" }, 1920, 1080);
   assert(pos.x === 960, "center x");
-  assert(pos.y === 216, "top y");
+  // bottom-left 坐标系：y 向上增大，"top" ≈ 画布高度 80%
+  assert(pos.y === 864, "top y");
 
   const section = buildVisionContextSection({
     visualAnalysis: analysis,

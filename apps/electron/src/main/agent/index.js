@@ -1,6 +1,6 @@
 const { HumanMessage, AIMessage } = require("langchain");
 const { TimelineContext } = require("./timeline-context");
-const { RemotionContext, formatRemotionChangeSummary } = require("./remotion-context");
+const { RemotionContext } = require("./remotion-context");
 const { createHybridAgent } = require("./graph");
 const { AgentState } = require("./state");
 const { findClipLocation } = require("./timeline-ops");

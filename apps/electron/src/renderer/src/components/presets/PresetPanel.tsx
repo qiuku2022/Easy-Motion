@@ -115,7 +115,7 @@ export function PresetPanel() {
         单击查看 · 双击应用到播放头 · 拖到时间线放置
       </p>
 
-      <div className="scrollbar-theme -mr-1 min-h-0 flex-1 overflow-y-auto pr-1">
+      <div className="scrollbar-theme -mr-1 min-h-0 flex-1 overflow-y-auto px-1">
         {filteredPresets.length === 0 ? (
           <p className="py-8 text-center text-xs text-muted-foreground">
             该分类下没有匹配的预设

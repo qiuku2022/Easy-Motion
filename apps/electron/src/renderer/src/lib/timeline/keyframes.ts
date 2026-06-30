@@ -16,8 +16,8 @@ export const VALID_KEYFRAME_INTERPOLATION = ["linear", "bezier", "hold"] as cons
 
 export const KEYFRAME_ANIMATABLE_PROPERTIES = [
   { path: "transform.opacity", label: "透明度 (%)" },
-  { path: "transform.position.x", label: "锚点 X" },
-  { path: "transform.position.y", label: "锚点 Y" },
+  { path: "transform.position.x", label: "X 坐标" },
+  { path: "transform.position.y", label: "Y 坐标" },
   { path: "transform.scale", label: "缩放 (%)" },
   { path: "transform.rotation", label: "旋转" },
   { path: "style.fontSize", label: "字体大小" },

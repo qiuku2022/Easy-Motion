@@ -10,7 +10,6 @@ import { NewsletterBackground } from "./newsletter-design/NewsletterBackground";
 import { PreviewClipSequence } from "./PreviewClipSequence";
 import { ChartLayer } from "./layers/ChartLayer";
 import {
-  resolveClipTransformLayout,
   shouldWrapClipMotion,
 } from "../lib/clip-motion-wrapper";
 import { ClipTransformWrapper } from "./layers/ClipTransformWrapper";
@@ -86,11 +85,6 @@ function renderClipContent(
         transform={clip.transform ?? defaultTransform}
         keyframes={clip.keyframes}
         inAnimation={clip.animations?.in}
-        layout={resolveClipTransformLayout(
-          clip.transform,
-          clip.keyframes,
-          canvas,
-        )}
       >
         {content}
       </ClipTransformWrapper>

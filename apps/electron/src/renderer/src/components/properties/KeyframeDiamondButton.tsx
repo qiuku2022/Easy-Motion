@@ -26,7 +26,7 @@ export function KeyframeDiamondButton({
       aria-label={title ?? "关键帧"}
       aria-pressed={atPlayhead}
       className={cn(
-        "flex h-5 w-5 shrink-0 items-center justify-center rounded-sm transition-colors",
+        "flex h-6 w-6 shrink-0 items-center justify-center overflow-visible rounded-sm transition-colors",
         "hover:bg-accent/60 disabled:pointer-events-none disabled:opacity-40",
         atPlayhead && "text-amber-400",
         !atPlayhead && animated && "text-sky-400/80",
@@ -38,7 +38,10 @@ export function KeyframeDiamondButton({
         onClick();
       }}
     >
-      <Diamond className={cn("h-3 w-3", atPlayhead && "fill-current")} />
+      <Diamond
+        className={cn("h-3.5 w-3.5 overflow-visible", atPlayhead && "fill-current")}
+        strokeWidth={1.75}
+      />
     </button>
   );
 }

@@ -33,8 +33,8 @@ export const CLIP_PROPERTY_FIELDS: Record<string, ClipPropertyField[]> = {
     { path: "style.fontSize", label: "字体大小", type: "number", min: 1, suffix: "px", quick: true },
     { path: "style.color", label: "颜色", type: "color", quick: true },
     { path: "style.fontFamily", label: "字体", type: "text" },
-    { path: "transform.position.x", label: "锚点 X", type: "number", step: 1, quick: true },
-    { path: "transform.position.y", label: "锚点 Y", type: "number", step: 1, quick: true },
+    { path: "transform.position.x", label: "X 坐标", type: "number", step: 1, quick: true },
+    { path: "transform.position.y", label: "Y 坐标", type: "number", step: 1, quick: true },
   ],
   image: [
     { path: "source.publicPath", label: "资源路径", type: "text", quick: true },
@@ -64,8 +64,8 @@ export const CLIP_PROPERTY_FIELDS: Record<string, ClipPropertyField[]> = {
 };
 
 export const TRANSFORM_FIELDS: ClipPropertyField[] = [
-  { path: "transform.position.x", label: "锚点 X", type: "number", step: 1 },
-  { path: "transform.position.y", label: "锚点 Y", type: "number", step: 1 },
+  { path: "transform.position.x", label: "X 坐标", type: "number", step: 1 },
+  { path: "transform.position.y", label: "Y 坐标", type: "number", step: 1 },
   { path: "transform.scale", label: "缩放", type: "number", step: 1, suffix: "%", suffixOnLabel: true },
   { path: "transform.rotation", label: "旋转", type: "number", suffix: "°", suffixOnLabel: true },
   { path: "transform.opacity", label: "透明度", type: "number", min: 0, max: 100, step: 1, suffix: "%", suffixOnLabel: true },

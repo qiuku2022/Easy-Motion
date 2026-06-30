@@ -1,4 +1,4 @@
-function generateRoot(timeline) {
+function generateRoot(_timeline) {
   return `import { Composition } from "remotion";
 import { MainSequence } from "./components/MainSequence";
 import timelineManifest from "./easymotion-timeline.manifest.json";

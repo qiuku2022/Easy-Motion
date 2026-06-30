@@ -1,4 +1,3 @@
-const { HumanMessage } = require("langchain");
 const { createChatModel } = require("./llm-factory");
 const { buildVisionAnalysisPrompt } = require("./prompts/vision");
 const { buildMultimodalHumanMessage } = require("./multimodal");

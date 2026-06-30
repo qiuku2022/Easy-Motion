@@ -12,6 +12,7 @@ import {
   useFormField,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { ScrubNumberInput } from "@/components/ui/scrub-number-input";
 import { Textarea } from "@/components/ui/textarea";
 import { ColorField } from "@/components/ui/color-field";
 import type { Clip } from "@/types/timeline";
@@ -139,16 +140,26 @@ export function PresetParameterFields({
                           }}
                           onChange={(e) => field.onChange(e)}
                         />
+                      ) : fieldType === "number" ? (
+                        <ScrubNumberInput
+                          {...field}
+                          disabled={disabled}
+                          className="h-8 text-xs"
+                          min={param.min}
+                          max={param.max}
+                          step={param.step}
+                          onCommit={() => {
+                            void commit(param);
+                          }}
+                          onBlur={() => {
+                            field.onBlur();
+                            void commit(param);
+                          }}
+                        />
                       ) : (
                         <Input
                           {...field}
-                          type={
-                            fieldType === "number"
-                              ? "number"
-                              : fieldType === "url"
-                                ? "url"
-                                : "text"
-                          }
+                          type={fieldType === "url" ? "url" : "text"}
                           disabled={disabled}
                           className="h-8 text-xs"
                           onBlur={() => {

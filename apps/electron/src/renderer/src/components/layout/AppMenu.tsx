@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Menu } from "lucide-react";
 import { toast } from "sonner";
 import { LLMSettingsDialog } from "@/components/ai/LLMSettingsDialog";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
 import {
   Dialog,
   DialogContent,

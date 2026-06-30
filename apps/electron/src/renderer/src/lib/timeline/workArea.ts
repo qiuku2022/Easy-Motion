@@ -1,4 +1,4 @@
-import type { Clip, Timeline, Track } from "@/types/timeline";
+import type { Clip, Timeline } from "@/types/timeline";
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);

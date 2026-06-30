@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { TRACK_ROW_HEIGHT } from "@/lib/timeline/constants";import { useTimelineStore } from "@/stores/timelineStore";
+import { useTimelineStore } from "@/stores/timelineStore";
 
 export interface TrackReorderPreview {
   trackId: string;

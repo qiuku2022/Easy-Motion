@@ -452,7 +452,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
     remotionCodeUpdated,
     remotionChangeLog,
     cancelled,
-    simplifiedMode,
+    simplifiedMode: _simplifiedMode,
     systemNotice,
   }) => {
     const activeId = getActiveConversationStreamRequestId();
@@ -618,7 +618,8 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
   handleMessageAction: async (action, messageId) => {
     if (action !== "undo-agent") return;
 
-    let { lastAgentUndoSnapshot, lastAgentUndoMessageId } = get();
+    const { lastAgentUndoMessageId } = get();
+    let { lastAgentUndoSnapshot } = get();
 
     if (lastAgentUndoMessageId !== messageId) {
       toast.error("无法撤销", { description: "该修改已过期或已被撤销" });

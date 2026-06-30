@@ -13,11 +13,11 @@ import {
   MIN_PX_PER_FRAME,
 } from "@/lib/timeline/framePixels";
 import { PR_SHORTCUTS } from "@/lib/premiereShortcuts";
+import { useTimelineToolbarMenu } from "@/hooks/useTimelineToolbarMenu";
 import {
   TimelineMenuItem,
   TimelineMenuPanel,
   TIMELINE_MENU_TRIGGER_OPEN_CLASS,
-  useTimelineToolbarMenu,
 } from "@/lib/timeline/toolbar-menu";
 import { usePlaybackStore } from "@/stores/playbackStore";
 import { useUiStore } from "@/stores/uiStore";

@@ -85,7 +85,17 @@ export function DataBindingPanel({
         },
       },
     });
-  }, [clip.name, clip.source?.chartType, clip.source?.props, clip.type, onPatch, parsed, xField, yField]);
+  }, [
+    clip.name,
+    clip.source?.chartType,
+    clip.source?.props,
+    clip.source?.title,
+    clip.type,
+    onPatch,
+    parsed,
+    xField,
+    yField,
+  ]);
 
   const pickFile = async () => {
     const api = getEasyMotion();

@@ -1,8 +1,7 @@
 import React, { useMemo } from "react";
 import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { applyKeyframesToClip } from "../../lib/apply-keyframes";
-import { buildCenterAnchoredLayerStyle } from "../../lib/layer-anchor-style";
-import { useLayerScreenPosition } from "../../lib/use-layer-screen-position";
+import { resolveFillLayoutOffset } from "../../lib/clip-motion-wrapper";
 
 type Transform = {
   position: { x: number; y: number };
@@ -19,8 +18,6 @@ type ClipTransformWrapperProps = {
   };
   keyframes?: TimelineKeyframe;
   inAnimation?: { type: string; durationInFrames: number };
-  /** fill：全画布预设；positioned：图层中心为锚点 */
-  layout?: "fill" | "positioned";
   children: React.ReactNode;
 };
 
@@ -35,11 +32,10 @@ export function ClipTransformWrapper({
   transform: transformInput,
   keyframes = [],
   inAnimation,
-  layout = "fill",
   children,
 }: ClipTransformWrapperProps) {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, width, height } = useVideoConfig();
 
   const baseTransform = useMemo(
     (): Transform => ({
@@ -71,26 +67,13 @@ export function ClipTransformWrapper({
       : 1;
 
   const opacity = (resolved.transform.opacity ?? 1) * fadeIn;
-  const screen = useLayerScreenPosition(
-    resolved.transform.position.x,
-    resolved.transform.position.y,
-  );
-
-  if (layout === "positioned") {
-    return (
-      <div
-        style={buildCenterAnchoredLayerStyle(screen, {
-          scale: resolved.transform.scale ?? 1,
-          rotation: resolved.transform.rotation ?? 0,
-          opacity,
-        })}
-      >
-        {children}
-      </div>
-    );
-  }
-
-  const transformCss = `scale(${resolved.transform.scale ?? 1}) rotate(${resolved.transform.rotation ?? 0}deg)`;
+  const offset = resolveFillLayoutOffset(resolved.transform.position, {
+    width,
+    height,
+  });
+  const scale = resolved.transform.scale ?? 1;
+  const rotation = resolved.transform.rotation ?? 0;
+  const transformCss = `translate(${offset.x}px, ${offset.y}px) scale(${scale}) rotate(${rotation}deg)`;
 
   return (
     <div

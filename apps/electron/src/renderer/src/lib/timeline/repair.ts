@@ -23,7 +23,7 @@ export function repairTimelineForEditing(timeline: Timeline): {
   repaired: boolean;
 } {
   const coordinateMigrated = migrateTimelineToBottomLeft(timeline);
-  let working = coordinateMigrated.timeline;
+  const working = coordinateMigrated.timeline;
   let repaired = coordinateMigrated.migrated;
 
   const tracks = working.tracks.map((track) => {

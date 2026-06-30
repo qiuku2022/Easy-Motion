@@ -1,5 +1,5 @@
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSlidingTabIndicator } from "@/hooks/useSlidingTabIndicator";
 import { cn } from "@/lib/utils";
 
 export interface TabItem<T extends string> {
@@ -12,33 +12,6 @@ interface PanelTabsProps<T extends string> {
   active: T;
   onChange: (id: T) => void;
   className?: string;
-}
-
-function useSlidingTabIndicator(active: string) {
-  const listRef = useRef<HTMLDivElement>(null);
-  const [indicator, setIndicator] = useState({ left: 0, width: 0 });
-
-  const update = useCallback(() => {
-    const list = listRef.current;
-    if (!list) return;
-    const el = list.querySelector<HTMLElement>('[data-state="active"]');
-    if (!el) return;
-    setIndicator({ left: el.offsetLeft, width: el.offsetWidth });
-  }, []);
-
-  useLayoutEffect(() => {
-    update();
-  }, [active, update]);
-
-  useLayoutEffect(() => {
-    const list = listRef.current;
-    if (!list) return;
-    const ro = new ResizeObserver(() => update());
-    ro.observe(list);
-    return () => ro.disconnect();
-  }, [update]);
-
-  return { listRef, indicator };
 }
 
 export function PanelTabs<T extends string>({

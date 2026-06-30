@@ -83,14 +83,6 @@ const createWindow = () => {
     }
   });
 
-  const useLegacy =
-    process.env.EASY_MOTION_LEGACY_UI === "1" || process.argv.includes("--legacy-ui");
-
-  if (useLegacy) {
-    win.loadFile(path.join(__dirname, "../renderer/legacy/index.html"));
-    return;
-  }
-
   const isDev = !app.isPackaged;
   if (isDev) {
     win.webContents.once("did-finish-load", () => {

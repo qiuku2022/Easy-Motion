@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form";
 import { ColorField } from "@/components/ui/color-field";
 import { Input } from "@/components/ui/input";
+import { ScrubNumberInput } from "@/components/ui/scrub-number-input";
 import { Textarea } from "@/components/ui/textarea";
 import { KeyframeDiamondButton } from "@/components/properties/KeyframeDiamondButton";
 import type { Clip } from "@/types/timeline";
@@ -44,9 +45,16 @@ import {
   findKeyframeAtFrame,
   isAnimatableProperty,
 } from "@/lib/timeline/keyframeProperty";
-import { isOpacityProperty, opacityInternalToFormValue } from "@/lib/timeline/opacityProperty";
-import { isScaleProperty, scaleInternalToFormValue } from "@/lib/timeline/scaleProperty";
-import { isPositionProperty, positionInternalToFormValue } from "@/lib/timeline/positionProperty";
+import { opacityInternalToFormValue } from "@/lib/timeline/opacityProperty";
+import { scaleInternalToFormValue } from "@/lib/timeline/scaleProperty";
+import {
+  isPositionProperty,
+  positionInternalToFormValue,
+} from "@/lib/timeline/positionProperty";
+import {
+  KEYFRAME_AT_PLAYHEAD_FIELD_CLASS,
+  KEYFRAME_AT_PLAYHEAD_INPUT_CLASS,
+} from "@/lib/timeline/keyframeFieldHighlight";
 import type { TrackType } from "@/types/timeline";
 import { cn } from "@/lib/utils";
 import { useTimelineStore } from "@/stores/timelineStore";
@@ -216,6 +224,19 @@ function ClipPropertyForm({
     onPatch(buildResetAllTransformPatch(clip, canvas));
   }, [canvas, clip, onPatch]);
 
+  const applyNumericField = useCallback(
+    (field: ClipPropertyField, raw: string) => {
+      const parsed = parseFieldValue(field, raw);
+      if (parsed === null) return;
+      if (isAnimatableProperty(field.path)) {
+        setPropertyValueAtPlayhead(clip.id, field.path, parsed);
+      } else {
+        onPatch(buildPatchFromPropertyPath(field.path, parsed));
+      }
+    },
+    [clip.id, onPatch, setPropertyValueAtPlayhead],
+  );
+
   const canResetAll = showTransformReset && canResetAnyTransformProperty(clip, canvas);
 
   return (
@@ -258,7 +279,7 @@ function ClipPropertyForm({
                   className={cn(
                     "grid items-center gap-2 space-y-0",
                     animatable
-                      ? "grid-cols-[20px_88px_1fr]"
+                      ? "grid-cols-[24px_88px_1fr]"
                       : "grid-cols-[88px_1fr]",
                     field.type === "multiline" && "items-start",
                   )}
@@ -310,29 +331,52 @@ function ClipPropertyForm({
                           />
                         ) : (
                           <div className="flex items-center gap-1.5">
-                            <Input
-                              type={field.type === "number" ? "number" : "text"}
-                              className={cn(
-                                "h-8 text-xs",
-                                field.type === "number" ? "font-mono" : "font-sans",
-                                atPlayhead && "ring-1 ring-amber-400/40",
-                              )}
-                              disabled={disabled}
-                              min={field.min}
-                              max={field.max}
-                              step={field.step}
-                              {...rf}
-                              onBlur={() => {
-                                void rf.onBlur();
-                                void commitField(field);
-                              }}
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                  e.preventDefault();
+                            {field.type === "number" ? (
+                              <ScrubNumberInput
+                                className={cn(
+                                  "h-8 text-xs",
+                                  atPlayhead && KEYFRAME_AT_PLAYHEAD_INPUT_CLASS,
+                                )}
+                                disabled={disabled}
+                                min={field.min}
+                                max={field.max}
+                                step={field.step}
+                                value={rf.value}
+                                onChange={rf.onChange}
+                                onScrub={(next) => applyNumericField(field, next)}
+                                onCommit={() => void commitField(field)}
+                                onBlur={() => {
+                                  void rf.onBlur();
                                   void commitField(field);
-                                }
-                              }}
-                            />
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    void commitField(field);
+                                  }
+                                }}
+                              />
+                            ) : (
+                              <Input
+                                type="text"
+                                className={cn(
+                                  "h-8 text-xs font-sans",
+                                  atPlayhead && KEYFRAME_AT_PLAYHEAD_INPUT_CLASS,
+                                )}
+                                disabled={disabled}
+                                {...rf}
+                                onBlur={() => {
+                                  void rf.onBlur();
+                                  void commitField(field);
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    void commitField(field);
+                                  }
+                                }}
+                              />
+                            )}
                             {field.suffix && !field.suffixOnLabel ? (
                               <span className="shrink-0 text-xs text-muted-foreground">
                                 {field.suffix}
@@ -398,7 +442,7 @@ function ClipColorField({
       value={rf.value || "#000000"}
       disabled={disabled}
       aria-label={`选择${field.label}`}
-      className={atPlayhead ? "ring-1 ring-amber-400/40 rounded-md" : undefined}
+      className={atPlayhead ? KEYFRAME_AT_PLAYHEAD_FIELD_CLASS : undefined}
       onChange={rf.onChange}
       onCommit={(next) => {
         if (isAnimatableProperty(field.path)) {

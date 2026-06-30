@@ -23,19 +23,18 @@ export function SpringConfigEditor({
 }: SpringConfigEditorProps) {
   const config = { ...DEFAULT_SPRING_CONFIG, ...(value ?? {}) };
 
-  const previewKf: Keyframe = {
-    id: "preview",
-    property: "preview",
-    frame: segmentFrames,
-    value: 1,
-    easing: "spring",
-    springConfig: config,
-  };
-
-  const curve = useMemo(
-    () => sampleEasingCurve(previewKf, segmentFrames, fps, 32),
-    [config.damping, config.stiffness, config.mass, fps, segmentFrames],
-  );
+  const curve = useMemo(() => {
+    const springConfig = { ...DEFAULT_SPRING_CONFIG, ...(value ?? {}) };
+    const previewKf: Keyframe = {
+      id: "preview",
+      property: "preview",
+      frame: segmentFrames,
+      value: 1,
+      easing: "spring",
+      springConfig,
+    };
+    return sampleEasingCurve(previewKf, segmentFrames, fps, 32);
+  }, [value, fps, segmentFrames]);
 
   const path = curve
     .map((p, i) => {

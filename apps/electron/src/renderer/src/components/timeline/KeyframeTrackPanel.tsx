@@ -4,8 +4,8 @@ import { Playhead } from "@/components/timeline/Playhead";
 import { SpeedGraphHandlesLayer } from "@/components/timeline/graph-editor/SpeedGraphHandlesLayer";
 import {
   buildValueGraphHandleBindings,
-  ValueGraphHandlesLayer,
-} from "@/components/timeline/graph-editor/ValueGraphHandlesLayer";
+} from "@/lib/timeline/graph-editor/valueGraphHandleBindings";
+import { ValueGraphHandlesLayer } from "@/components/timeline/graph-editor/ValueGraphHandlesLayer";
 import { patchValueHandle } from "@/lib/timeline/graph-editor/bezierTangent";
 import { easingKeyframePatch } from "@/lib/timeline/graph-editor/easingKeyframePatch";
 import {
@@ -35,6 +35,7 @@ import { findLayerTrackForClip } from "@/lib/timeline/trackTree";
 import { resolveTimelineViewportDuration } from "@/lib/timeline/workArea";
 import { KeyframeContextMenu } from "@/components/timeline/KeyframeContextMenu";
 import { KeyframeEasingPanel } from "@/components/timeline/KeyframeEasingPanel";
+import { CompactSegmentedTabs } from "@/components/common/CompactSegmentedTabs";
 import { clampOpacityInternal, formatOpacityValue, isOpacityProperty } from "@/lib/timeline/opacityProperty";
 import { clampScaleInternal, formatScaleValue, isScaleProperty } from "@/lib/timeline/scaleProperty";
 import {
@@ -238,28 +239,14 @@ function PropertyKeyframeLabelRow({
         {label}
       </button>
       {active && (
-        <div className="flex gap-0.5 rounded border border-border/60 p-0.5 text-[10px]">
-          <button
-            type="button"
-            className={cn(
-              "rounded px-1.5 py-0.5",
-              graphMode === "speed" && "bg-primary text-primary-foreground",
-            )}
-            onClick={() => onGraphMode("speed")}
-          >
-            速度图
-          </button>
-          <button
-            type="button"
-            className={cn(
-              "rounded px-1.5 py-0.5",
-              graphMode === "value" && "bg-primary text-primary-foreground",
-            )}
-            onClick={() => onGraphMode("value")}
-          >
-            值图
-          </button>
-        </div>
+        <CompactSegmentedTabs
+          tabs={[
+            { id: "speed", label: "速度图" },
+            { id: "value", label: "值图" },
+          ]}
+          active={graphMode}
+          onChange={onGraphMode}
+        />
       )}
     </div>
   );

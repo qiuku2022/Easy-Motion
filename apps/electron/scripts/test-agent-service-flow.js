@@ -4,7 +4,6 @@ const os = require("node:os");
 const { loadEnv } = require("../src/main/utils/load-env");
 const { resolveLlmConfig } = require("../src/main/services/llm-service");
 const { createProject } = require("../src/main/services/project-service");
-const { runAgent } = require("../src/main/agent");
 const timelineService = require("../src/main/services/timeline-service");
 const agentService = require("../src/main/services/agent-service");
 

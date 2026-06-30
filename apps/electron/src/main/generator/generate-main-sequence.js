@@ -7,7 +7,7 @@ const {
 } = require("./utils");
 const { flattenTracksForCompile } = require("./flatten-tracks");
 
-function collectImports(tracks, durationInFrames) {
+function collectImports(tracks, _durationInFrames) {
   const layerSet = new Set();
   const componentModules = new Map();
 

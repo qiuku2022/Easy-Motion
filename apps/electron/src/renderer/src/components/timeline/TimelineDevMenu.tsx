@@ -8,10 +8,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AddTrackMenu } from "@/components/timeline/AddTrackMenu";
+import { useTimelineToolbarMenu } from "@/hooks/useTimelineToolbarMenu";
 import {
   TimelineMenuItem,
   TimelineMenuPanel,
-  useTimelineToolbarMenu,
 } from "@/lib/timeline/toolbar-menu";
 import { useTimelineStore } from "@/stores/timelineStore";
 

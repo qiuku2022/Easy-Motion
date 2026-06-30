@@ -279,8 +279,7 @@ async function importSingleAsset(
   manifest,
   context,
 ) {
-  const { subprojectPath, fps, remotionDir, publicRoot, duplicateAction, existingId } =
-    context;
+  const { fps, remotionDir, publicRoot, duplicateAction, existingId } = context;
 
   const assetType = detectAssetType(sourcePath);
   if (!assetType) {

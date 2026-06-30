@@ -12,6 +12,7 @@ export default tseslint.config(
       "**/dist/**",
       "**/build/**",
       "**/out/**",
+      "**/release/**",
       "**/.venv/**",
       "**/coverage/**",
       "apps/electron/resources/templates/**",

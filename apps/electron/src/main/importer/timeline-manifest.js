@@ -21,8 +21,10 @@ function readTimelineManifest(remotionSrcDir) {
 
 function writeTimelineManifest(remotionSrcDir, timeline, updatedBy = "generator") {
   const manifestPath = getManifestPath(remotionSrcDir);
-  const { remotionFingerprint, remotionSyncedAt, remotionSyncSource, ...timelineData } =
-    timeline;
+  const timelineData = { ...timeline };
+  delete timelineData.remotionFingerprint;
+  delete timelineData.remotionSyncedAt;
+  delete timelineData.remotionSyncSource;
 
   const manifest = {
     version: "1.0",

@@ -6,6 +6,7 @@ import { z } from "zod";
 import { ClipPropertyFields } from "@/components/properties/ClipPropertyFields";
 import { DataBindingPanel } from "@/components/properties/DataBindingPanel";
 import { PresetParameterFields } from "@/components/properties/PresetParameterFields";
+import { PropertyCollapsibleSection } from "@/components/properties/PropertyCollapsibleSection";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -180,25 +181,16 @@ export function PropertiesPanel() {
           disabled={disabled}
           onPatch={(patch) => onPatch(contentClip.id, patch)}
         />
-        <details className="text-xs text-muted-foreground" open>
-          <summary className="cursor-pointer select-none text-foreground">
-            变换
-          </summary>
-          <div className="mt-2 space-y-2 border-t border-border pt-2">
-            <ClipPropertyFields
-              clipType="animation"
-              clip={contentClip}
-              disabled={disabled}
-              onPatch={(patch) => onPatch(contentClip.id, patch)}
-              mode="transform"
-            />
-        </div>
-      </details>
-      <details className="text-xs text-muted-foreground" open>
-        <summary className="cursor-pointer select-none text-foreground">
-          入场动画
-        </summary>
-        <div className="mt-2 space-y-2 border-t border-border pt-2">
+        <PropertyCollapsibleSection title="变换" resetKey={contentClip.id}>
+          <ClipPropertyFields
+            clipType="animation"
+            clip={contentClip}
+            disabled={disabled}
+            onPatch={(patch) => onPatch(contentClip.id, patch)}
+            mode="transform"
+          />
+        </PropertyCollapsibleSection>
+        <PropertyCollapsibleSection title="入场动画" resetKey={contentClip.id}>
           <ClipPropertyFields
             clipType="animation"
             clip={contentClip}
@@ -206,8 +198,7 @@ export function PropertiesPanel() {
             onPatch={(patch) => onPatch(contentClip.id, patch)}
             mode="animation"
           />
-        </div>
-      </details>
+        </PropertyCollapsibleSection>
       {preset.category === "data-chart" && (
         <DataBindingPanel
           clip={contentClip}
@@ -260,30 +251,24 @@ export function PropertiesPanel() {
           onPatch={(patch) => onPatch(contentClip.id, patch)}
           mode="quick"
         />
-        <details className="text-xs text-muted-foreground" open>
-          <summary className="cursor-pointer select-none text-foreground">变换</summary>
-          <div className="mt-2 space-y-2 border-t border-border pt-2">
-            <ClipPropertyFields
-              clipType={contentType}
-              clip={contentClip}
-              disabled={disabled}
-              onPatch={(patch) => onPatch(contentClip.id, patch)}
-              mode="transform"
-            />
-          </div>
-        </details>
-        <details className="text-xs text-muted-foreground" open>
-          <summary className="cursor-pointer select-none text-foreground">入场动画</summary>
-          <div className="mt-2 space-y-2 border-t border-border pt-2">
-            <ClipPropertyFields
-              clipType={contentType}
-              clip={contentClip}
-              disabled={disabled}
-              onPatch={(patch) => onPatch(contentClip.id, patch)}
-              mode="animation"
-            />
-          </div>
-        </details>
+        <PropertyCollapsibleSection title="变换" resetKey={contentClip.id}>
+          <ClipPropertyFields
+            clipType={contentType}
+            clip={contentClip}
+            disabled={disabled}
+            onPatch={(patch) => onPatch(contentClip.id, patch)}
+            mode="transform"
+          />
+        </PropertyCollapsibleSection>
+        <PropertyCollapsibleSection title="入场动画" resetKey={contentClip.id}>
+          <ClipPropertyFields
+            clipType={contentType}
+            clip={contentClip}
+            disabled={disabled}
+            onPatch={(patch) => onPatch(contentClip.id, patch)}
+            mode="animation"
+          />
+        </PropertyCollapsibleSection>
         {(contentType === "chart" || preset?.category === "data-chart") && (
           <DataBindingPanel
             clip={contentClip}
@@ -368,63 +353,54 @@ function TextEditorPanel({
         </Button>
       </div>
 
-      <details className="text-xs text-muted-foreground" open>
-        <summary className="cursor-pointer select-none text-foreground">文字内容</summary>
-        <div className="mt-2 space-y-2 border-t border-border pt-2">
-          <Form {...form}>
-            <form onSubmit={(e) => e.preventDefault()}>
-              <FormField
-                control={form.control}
-                name="content"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Textarea
-                        {...field}
-                        className="min-h-[96px] resize-y text-sm leading-relaxed"
-                        disabled={disabled}
-                        placeholder="点击此处输入文字…"
-                        onChange={(e) => {
-                          field.onChange(e);
-                          onPatch({ source: { kind: "inline", content: e.target.value } });
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
-        </div>
-      </details>
+      <PropertyCollapsibleSection title="文字内容" resetKey={clip.id}>
+        <Form {...form}>
+          <form onSubmit={(e) => e.preventDefault()}>
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      className="min-h-[96px] resize-y text-sm leading-relaxed"
+                      disabled={disabled}
+                      placeholder="点击此处输入文字…"
+                      onChange={(e) => {
+                        field.onChange(e);
+                        onPatch({ source: { kind: "inline", content: e.target.value } });
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </form>
+        </Form>
+      </PropertyCollapsibleSection>
 
-      <details className="text-xs text-muted-foreground" open>
-        <summary className="cursor-pointer select-none text-foreground">更多样式</summary>
-        <div className="mt-2 space-y-2 border-t border-border pt-2">
-          <ClipPropertyFields
-            clipType="text"
-            clip={clip}
-            disabled={disabled}
-            onPatch={onPatch}
-            mode="quick"
-            excludePaths={["source.content"]}
-          />
-        </div>
-      </details>
+      <PropertyCollapsibleSection title="更多样式" resetKey={clip.id}>
+        <ClipPropertyFields
+          clipType="text"
+          clip={clip}
+          disabled={disabled}
+          onPatch={onPatch}
+          mode="quick"
+          excludePaths={["source.content"]}
+        />
+      </PropertyCollapsibleSection>
 
-      <details className="text-xs text-muted-foreground" open>
-        <summary className="cursor-pointer select-none text-foreground">变换</summary>
-        <div className="mt-2 space-y-2 border-t border-border pt-2">
-          <ClipPropertyFields
-            clipType="text"
-            clip={clip}
-            disabled={disabled}
-            onPatch={onPatch}
-            mode="transform"
-          />
-        </div>
-      </details>
+      <PropertyCollapsibleSection title="变换" resetKey={clip.id}>
+        <ClipPropertyFields
+          clipType="text"
+          clip={clip}
+          disabled={disabled}
+          onPatch={onPatch}
+          mode="transform"
+        />
+      </PropertyCollapsibleSection>
 
       <p className="text-[11px] text-muted-foreground">
         改字后约 0.25 秒自动更新预览（需已启动预览）。Esc 或 × 可退出。

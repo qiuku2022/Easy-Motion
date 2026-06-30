@@ -124,7 +124,6 @@ function evalFrameExpression(expression, constants, fallbackDuration) {
   }
 
   try {
-    // eslint-disable-next-line no-new-func
     return Number(Function(`"use strict"; return (${replaced});`)());
   } catch {
     return 0;
@@ -166,7 +165,6 @@ function extractJsxPropObject(content, propName) {
       if (depth === 0 && jsonStart >= 0) {
         const raw = content.slice(jsonStart, i);
         try {
-          // eslint-disable-next-line no-new-func
           return Function(`"use strict"; return (${raw});`)();
         } catch {
           return null;

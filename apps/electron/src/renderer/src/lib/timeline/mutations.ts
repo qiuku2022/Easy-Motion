@@ -10,7 +10,6 @@ import {
 } from "@/lib/timeline/clipCollision";
 import { findLayerTrackForClip, findParentGroup, findTrackById } from "@/lib/timeline/trackTree";
 import {
-  createDefaultTextClip,
   defaultClipForTrackType,
   trackTypeNeedsDefaultClip,
 } from "@/lib/timeline/defaultClips";

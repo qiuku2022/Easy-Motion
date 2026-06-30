@@ -12,6 +12,7 @@ const { execSync } = require("node:child_process");
 const { killPidTree, killPortListeners } = require("./process-utils.cjs");
 
 const VITE_PID_FILE = path.join(os.tmpdir(), "easymotion-debug-vite.pid");
+const CLEANUP_LOCK_FILE = path.join(os.tmpdir(), "easymotion-debug-cleanup.lock");
 const RENDERER_PORT = 5173;
 const REMOTION_PORT_START = 5174;
 const REMOTION_PORT_END = 5193;
@@ -100,8 +101,51 @@ function sleepSync(ms) {
   }
 }
 
+function acquireCleanupLock() {
+  try {
+    if (fs.existsSync(CLEANUP_LOCK_FILE)) {
+      const ageMs = Date.now() - fs.statSync(CLEANUP_LOCK_FILE).mtimeMs;
+      if (ageMs < 15000) {
+        console.log("[debug-cleanup] already running, skip");
+        return false;
+      }
+      fs.unlinkSync(CLEANUP_LOCK_FILE);
+    }
+    fs.writeFileSync(CLEANUP_LOCK_FILE, String(process.pid));
+    return true;
+  } catch {
+    return true;
+  }
+}
+
+function releaseCleanupLock() {
+  try {
+    if (fs.existsSync(CLEANUP_LOCK_FILE)) {
+      fs.unlinkSync(CLEANUP_LOCK_FILE);
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
 function main() {
-  sleepSync(600);
+  const force = process.env.EASY_MOTION_CLEANUP_FORCE === "1";
+
+  if (!force) {
+    if (!acquireCleanupLock()) return;
+    try {
+      runCleanupBody();
+    } finally {
+      releaseCleanupLock();
+    }
+    return;
+  }
+
+  runCleanupBody();
+}
+
+function runCleanupBody() {
+  sleepSync(300);
   cleanupWaitCdpScripts();
   cleanupViteStartedByDebug();
   cleanupRemotionPreviewPorts();

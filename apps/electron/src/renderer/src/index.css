@@ -125,15 +125,25 @@
   }
 
   /* 数字输入：隐藏原生步进按钮（Windows/Chromium 白底箭头与暗色主题不协调） */
+  input[type="number"],
   [data-slot="input"][type="number"] {
     -moz-appearance: textfield;
     appearance: textfield;
   }
 
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button,
   [data-slot="input"][type="number"]::-webkit-inner-spin-button,
   [data-slot="input"][type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+  }
+
+  /* Chromium 新版数字框右侧装饰（Win11 白底步进区） */
+  input[type="number"]::-webkit-textfield-decoration-container,
+  [data-slot="input"][type="number"]::-webkit-textfield-decoration-container {
+    display: none;
+    pointer-events: none;
   }
 
   @keyframes clip-floating-toolbar-in-above {

@@ -70,11 +70,15 @@
         "cwd": "${workspaceFolder}/apps/electron",
         "env": { "ELECTRON_CDP_PORT": "9333" }
       },
+      "runOptions": {
+        "instanceLimit": 1,
+        "reevaluateOnRerun": true
+      },
       "presentation": {
         "reveal": "never",
         "echo": false,
         "focus": false,
-        "panel": "dedicated",
+        "panel": "shared",
         "showReuseMessage": false,
         "close": true
       },
@@ -84,7 +88,7 @@
       "label": "debug: cleanup",
       "type": "process",
       "command": "node",
-      "args": ["${workspaceFolder}/apps/electron/scripts/cleanup-debug-processes.cjs"],
+      "args": ["${workspaceFolder}/apps/electron/scripts/cleanup-debug-async.cjs"],
       "options": {
         "cwd": "${workspaceFolder}/apps/electron",
         "env": { "ELECTRON_CDP_PORT": "9333" }
@@ -93,7 +97,7 @@
         "reveal": "never",
         "echo": false,
         "focus": false,
-        "panel": "dedicated",
+        "panel": "shared",
         "showReuseMessage": false,
         "close": true
       },

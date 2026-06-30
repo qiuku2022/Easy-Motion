@@ -1,4 +1,3 @@
-const path = require("node:path");
 const { ipcMain, dialog } = require("electron");
 const exportService = require("../services/export-service");
 const projectService = require("../services/project-service");

@@ -81,12 +81,6 @@ function readRegistryContent(srcDir) {
   return fs.readFileSync(absolute, "utf8");
 }
 
-function writeRegistryContent(srcDir, content) {
-  const absolute = path.join(srcDir, CUSTOM_REGISTRY_REL);
-  fs.mkdirSync(path.dirname(absolute), { recursive: true });
-  fs.writeFileSync(absolute, content, "utf8");
-}
-
 function upsertRegistryEntry(srcDir, componentName) {
   const current = readRegistryContent(srcDir);
   const names = listRegisteredComponents(current);

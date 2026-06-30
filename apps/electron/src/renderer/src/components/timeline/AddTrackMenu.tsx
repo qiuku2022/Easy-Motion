@@ -6,12 +6,12 @@ import {
   defaultTrackName,
   TRACK_TYPE_LABELS,
 } from "@/lib/timeline/trackLabels";
+import { useTimelineToolbarMenu } from "@/hooks/useTimelineToolbarMenu";
 import {
   TimelineMenuItem,
   TimelineMenuPanel,
   TimelineMenuSeparator,
   TIMELINE_MENU_TRIGGER_OPEN_CLASS,
-  useTimelineToolbarMenu,
 } from "@/lib/timeline/toolbar-menu";
 import { useTimelineStore } from "@/stores/timelineStore";
 

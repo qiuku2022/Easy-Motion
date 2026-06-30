@@ -39,7 +39,6 @@ function raceWithTimeout(promise, ms, errorMessage, signal) {
  */
 async function consumeAgentMessageStream(stream, { signal, onChunk, onStatus, isAiMessage, getMessageText }) {
   let streamed = "";
-  let firstReceived = false;
 
   for await (const [message] of stream) {
     if (signal?.aborted) {
@@ -59,7 +58,6 @@ async function consumeAgentMessageStream(stream, { signal, onChunk, onStatus, is
     const delta = text.startsWith(streamed) ? text.slice(streamed.length) : text;
     streamed = text.startsWith(streamed) ? text : streamed + delta;
     if (delta) onChunk?.(delta);
-    firstReceived = true;
   }
 
   return streamed;

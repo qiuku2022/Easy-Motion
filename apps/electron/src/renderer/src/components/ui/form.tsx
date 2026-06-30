@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- shadcn form exports useFormField hook */
 import * as React from "react";
 import { Slot } from "radix-ui";
 import {

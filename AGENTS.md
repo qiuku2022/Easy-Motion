@@ -69,7 +69,6 @@ EasyMotion 是用自然语言制作 Remotion 动画的 **Electron 桌面应用**
 
 - 单次任务只改**一个里程碑子项**或**一个 bug**，不要跨模块大重构。
 - 改完必须跑对应验证（见下方「改完必跑」），通过后再进入下一项。
-- 不要同时改 Legacy UI（`apps/electron/src/renderer/legacy/`）与新 UI，除非任务明确要求。
 
 ## 进程边界（严禁越界）
 
