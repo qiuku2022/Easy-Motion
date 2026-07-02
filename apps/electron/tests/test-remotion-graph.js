@@ -31,12 +31,12 @@ function main() {
   const timelineTools = createTimelineTools(timelineCtx);
   const remotionTools = createRemotionCodeTools(remotionCtx);
   assert(timelineTools.length >= 10, "timeline tools present");
-  assert(remotionTools.length === 7, "remotion tools count");
+  assert(remotionTools.length === 9, "remotion tools count");
 
   const remotionNames = remotionTools.map((t) => t.name).sort();
   assert(
     remotionNames.join(",") ===
-      "compileRemotionCheck,getRemotionPackageInfo,listRemotionFiles,patchRemotionFile,readRemotionFile,registerCustomComponent,writeRemotionFile",
+      "compileRemotionCheck,getRemotionPackageInfo,listCustomComponents,listRemotionFiles,patchRemotionFile,readRemotionFile,registerCustomComponent,unregisterCustomComponent,writeRemotionFile",
     "remotion tool names"
   );
 
@@ -46,6 +46,7 @@ function main() {
   });
   assert(prompt.includes("Remotion 代码能力"), "system prompt includes remotion section");
   assert(prompt.includes("useCurrentFrame"), "system prompt includes remotion rules");
+  assert(prompt.includes("listCustomComponents"), "system prompt includes custom lifecycle rules");
 
   console.log("test-remotion-graph: passed");
 }

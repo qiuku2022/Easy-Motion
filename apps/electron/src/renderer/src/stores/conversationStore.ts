@@ -6,6 +6,7 @@ import { eventBus } from "@/lib/eventBus";
 import { findClipById } from "@/lib/timeline/findClipById";
 import { clipNeedsOverwriteConfirm } from "@/lib/timeline/userEditConflict";
 import { getEasyMotion } from "@/types/easyMotion";
+import type { PendingAgentUndoPayload } from "@/types/easyMotion";
 import { useTimelineStore } from "@/stores/timelineStore";
 import {
   createMessage,
@@ -34,6 +35,7 @@ interface ConversationState {
   isLoading: boolean;
   loadError: string | null;
   lastAgentUndoSnapshot: Timeline | null;
+  lastAgentUndoRemotionSnapshots: NonNullable<PendingAgentUndoPayload["remotionFilesBefore"]>;
   lastAgentUndoMessageId: string | null;
   creationMode: AgentCreationMode;
 
@@ -64,6 +66,7 @@ interface ConversationState {
     changeLog?: unknown[];
     remotionCodeUpdated?: boolean;
     remotionChangeLog?: unknown[];
+    remotionUndoSnapshots?: PendingAgentUndoPayload["remotionFilesBefore"];
     cancelled?: boolean;
     simplifiedMode?: boolean;
     systemNotice?: string;
@@ -109,7 +112,8 @@ function toConversationPayload(state: ConversationState): Conversation {
     ...(state.conversation?.lastAgentTaskId
       ? { lastAgentTaskId: state.conversation.lastAgentTaskId }
       : {}),
-    ...(state.lastAgentUndoMessageId && state.lastAgentUndoSnapshot
+    ...(state.lastAgentUndoMessageId &&
+    (state.lastAgentUndoSnapshot || state.lastAgentUndoRemotionSnapshots.length > 0)
       ? { pendingAgentUndo: { messageId: state.lastAgentUndoMessageId } }
       : {}),
   };
@@ -147,6 +151,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
   isLoading: false,
   loadError: null,
   lastAgentUndoSnapshot: null,
+  lastAgentUndoRemotionSnapshots: [],
   lastAgentUndoMessageId: null,
   creationMode: "free",
 
@@ -201,6 +206,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
       inputText: "",
       attachedImages: [],
       lastAgentUndoSnapshot: pendingAgentUndo?.timeline ?? null,
+      lastAgentUndoRemotionSnapshots: pendingAgentUndo?.remotionFilesBefore ?? [],
       lastAgentUndoMessageId: undoMessageId,
     });
   },
@@ -248,6 +254,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
       isStreaming: false,
       agentStatus: "idle",
       lastAgentUndoSnapshot: null,
+      lastAgentUndoRemotionSnapshots: [],
       lastAgentUndoMessageId: null,
     });
     return true;
@@ -370,6 +377,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
       agentStatus: "parsing",
       streamingMessageId: assistantMessage.id,
       lastAgentUndoSnapshot: undoSnapshot,
+      lastAgentUndoRemotionSnapshots: [],
       lastAgentUndoMessageId: assistantMessage.id,
     }));
 
@@ -398,6 +406,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
         agentStatus: "error",
         streamingMessageId: null,
         lastAgentUndoSnapshot: null,
+        lastAgentUndoRemotionSnapshots: [],
         lastAgentUndoMessageId: null,
       }));
       const { title, description } = describeConversationError(
@@ -451,6 +460,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
     changeLog,
     remotionCodeUpdated,
     remotionChangeLog,
+    remotionUndoSnapshots,
     cancelled,
     simplifiedMode: _simplifiedMode,
     systemNotice,
@@ -496,7 +506,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
                       },
                     }
                   : {}),
-                ...(timelineUpdated
+                ...(timelineUpdated || remotionCodeUpdated
                   ? {
                       actionButtons: [
                         {
@@ -523,13 +533,15 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
       });
 
       const { lastAgentUndoSnapshot, lastAgentUndoMessageId } = get();
-      if (lastAgentUndoSnapshot && lastAgentUndoMessageId) {
+      const snapshots = remotionUndoSnapshots ?? [];
+      if ((lastAgentUndoSnapshot || snapshots.length > 0) && lastAgentUndoMessageId) {
         const api = getEasyMotion()?.conversation;
         if (api?.saveAgentUndo) {
           const saved = await api.saveAgentUndo({
             subprojectPath: nextSubprojectPath,
             messageId: lastAgentUndoMessageId,
             timeline: lastAgentUndoSnapshot,
+            remotionFilesBefore: snapshots,
           });
           if (!saved.success) {
             toast.error("撤销快照保存失败", {
@@ -538,6 +550,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
           }
         }
       }
+      set({ lastAgentUndoRemotionSnapshots: snapshots });
     } else if (remotionCodeUpdated) {
       const nextSubprojectPath = subprojectPath ?? get().subprojectPath;
       if (previewReload) {
@@ -549,13 +562,29 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
         });
       }
       toast.success("Remotion 代码已更新");
-      set({
-        lastAgentUndoSnapshot: null,
-        lastAgentUndoMessageId: null,
-      });
+      const { lastAgentUndoSnapshot, lastAgentUndoMessageId } = get();
+      const snapshots = remotionUndoSnapshots ?? [];
+      if ((lastAgentUndoSnapshot || snapshots.length > 0) && lastAgentUndoMessageId) {
+        const api = getEasyMotion()?.conversation;
+        if (api?.saveAgentUndo) {
+          const saved = await api.saveAgentUndo({
+            subprojectPath: nextSubprojectPath,
+            messageId: lastAgentUndoMessageId,
+            timeline: lastAgentUndoSnapshot,
+            remotionFilesBefore: snapshots,
+          });
+          if (!saved.success) {
+            toast.error("撤销快照保存失败", {
+              description: saved.error?.message,
+            });
+          }
+        }
+      }
+      set({ lastAgentUndoRemotionSnapshots: snapshots });
     } else {
       set({
         lastAgentUndoSnapshot: null,
+        lastAgentUndoRemotionSnapshots: [],
         lastAgentUndoMessageId: null,
       });
       if (systemNotice) {
@@ -577,6 +606,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
       agentStatus: "error",
       streamingMessageId: null,
       lastAgentUndoSnapshot: null,
+      lastAgentUndoRemotionSnapshots: [],
       lastAgentUndoMessageId: null,
     });
     const { title, description } = describeConversationError(message);
@@ -601,6 +631,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
         agentStatus: "idle",
         streamingMessageId: null,
         lastAgentUndoSnapshot: null,
+        lastAgentUndoRemotionSnapshots: [],
         lastAgentUndoMessageId: null,
       };
     });
@@ -619,7 +650,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
     if (action !== "undo-agent") return;
 
     const { lastAgentUndoMessageId } = get();
-    let { lastAgentUndoSnapshot } = get();
+    let { lastAgentUndoSnapshot, lastAgentUndoRemotionSnapshots } = get();
 
     if (lastAgentUndoMessageId !== messageId) {
       toast.error("无法撤销", { description: "该修改已过期或已被撤销" });
@@ -630,16 +661,18 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
       const api = getEasyMotion()?.conversation;
       const reloaded = await api?.load({ subprojectPath: get().subprojectPath });
       const pending = reloaded?.data?.pendingAgentUndo;
-      if (pending?.timeline && pending.messageId === messageId) {
-        lastAgentUndoSnapshot = pending.timeline;
+      if (pending && pending.messageId === messageId) {
+        lastAgentUndoSnapshot = pending.timeline ?? null;
+        lastAgentUndoRemotionSnapshots = pending.remotionFilesBefore ?? [];
         set({
-          lastAgentUndoSnapshot: pending.timeline,
+          lastAgentUndoSnapshot,
+          lastAgentUndoRemotionSnapshots,
           lastAgentUndoMessageId: pending.messageId,
         });
       }
     }
 
-    if (!lastAgentUndoSnapshot) {
+    if (!lastAgentUndoSnapshot && lastAgentUndoRemotionSnapshots.length === 0) {
       toast.error("没有可撤销的修改", {
         description: "撤销快照可能已损坏或已被清除",
       });
@@ -650,21 +683,24 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
   },
 
   undoLastAgentChange: async () => {
-    const { lastAgentUndoSnapshot, lastAgentUndoMessageId, subprojectPath } = get();
-    if (!lastAgentUndoSnapshot) {
+    const {
+      lastAgentUndoSnapshot,
+      lastAgentUndoRemotionSnapshots,
+      lastAgentUndoMessageId,
+      subprojectPath,
+    } = get();
+    if (!lastAgentUndoSnapshot && lastAgentUndoRemotionSnapshots.length === 0) {
       toast.error("没有可撤销的修改");
       return;
     }
 
-    const api = getEasyMotion()?.timeline;
-    if (!api?.save) {
-      toast.error("时间线 API 不可用");
-      return;
-    }
-
-    const res = await api.save({ timeline: lastAgentUndoSnapshot, subprojectPath });
-    if (!res.success) {
-      toast.error("撤销失败", { description: res.error?.message });
+    const conversationApi = getEasyMotion()?.conversation;
+    const restored = await conversationApi?.restoreAgentUndo?.({
+      subprojectPath,
+      messageId: lastAgentUndoMessageId ?? undefined,
+    });
+    if (!restored?.success) {
+      toast.error("撤销失败", { description: restored?.error?.message });
       return;
     }
 
@@ -675,14 +711,18 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
     useTimelineStore.setState((state) => ({
       previewTimelineNonce: state.previewTimelineNonce + 1,
     }));
-
-    const conversationApi = getEasyMotion()?.conversation;
-    if (conversationApi?.clearAgentUndo) {
-      await conversationApi.clearAgentUndo({ subprojectPath });
+    if (restored.data?.previewReload) {
+      eventBus.emit("conversation.diffReady", {
+        subprojectPath,
+        diff: null,
+        timeline: restored.data.timeline ?? null,
+        previewReload: true,
+      });
     }
 
     set((state) => ({
       lastAgentUndoSnapshot: null,
+      lastAgentUndoRemotionSnapshots: [],
       lastAgentUndoMessageId: null,
       messages: state.messages.map((message) =>
         message.id === lastAgentUndoMessageId
@@ -716,6 +756,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
       isLoading: false,
       loadError: null,
       lastAgentUndoSnapshot: null,
+      lastAgentUndoRemotionSnapshots: [],
       lastAgentUndoMessageId: null,
     });
   },

@@ -5,6 +5,7 @@ import { Trash2, X } from "lucide-react";
 import { z } from "zod";
 import { ClipPropertyFields } from "@/components/properties/ClipPropertyFields";
 import { DataBindingPanel } from "@/components/properties/DataBindingPanel";
+import { EntranceAnimationFields } from "@/components/properties/EntranceAnimationFields";
 import { PresetParameterFields } from "@/components/properties/PresetParameterFields";
 import { PropertyCollapsibleSection } from "@/components/properties/PropertyCollapsibleSection";
 import {
@@ -191,12 +192,10 @@ export function PropertiesPanel() {
           />
         </PropertyCollapsibleSection>
         <PropertyCollapsibleSection title="入场动画" resetKey={contentClip.id}>
-          <ClipPropertyFields
-            clipType="animation"
+          <EntranceAnimationFields
             clip={contentClip}
             disabled={disabled}
             onPatch={(patch) => onPatch(contentClip.id, patch)}
-            mode="animation"
           />
         </PropertyCollapsibleSection>
       {preset.category === "data-chart" && (
@@ -261,12 +260,10 @@ export function PropertiesPanel() {
           />
         </PropertyCollapsibleSection>
         <PropertyCollapsibleSection title="入场动画" resetKey={contentClip.id}>
-          <ClipPropertyFields
-            clipType={contentType}
+          <EntranceAnimationFields
             clip={contentClip}
             disabled={disabled}
             onPatch={(patch) => onPatch(contentClip.id, patch)}
-            mode="animation"
           />
         </PropertyCollapsibleSection>
         {(contentType === "chart" || preset?.category === "data-chart") && (
@@ -399,6 +396,14 @@ function TextEditorPanel({
           disabled={disabled}
           onPatch={onPatch}
           mode="transform"
+        />
+      </PropertyCollapsibleSection>
+
+      <PropertyCollapsibleSection title="入场动画" resetKey={clip.id}>
+        <EntranceAnimationFields
+          clip={clip}
+          disabled={disabled}
+          onPatch={onPatch}
         />
       </PropertyCollapsibleSection>
 

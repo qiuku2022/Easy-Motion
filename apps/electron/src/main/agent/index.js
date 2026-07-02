@@ -127,6 +127,7 @@ async function runAgentAttempt({
 
   let visualAnalysis = null;
   let toolHints = [];
+  let layoutPlan = null;
   let visionNotice = null;
 
   if (imagePaths.length && projectPath) {
@@ -140,12 +141,15 @@ async function runAgentAttempt({
     });
     visualAnalysis = vision.visualAnalysis;
     toolHints = vision.toolHints;
+    layoutPlan = vision.layoutPlan;
+    ctx.meta.visualAnalysis = visualAnalysis;
+    ctx.meta.layoutPlan = layoutPlan;
     if (vision.failed) {
       visionNotice = vision.notice;
     }
   }
 
-  const { agent } = createHybridAgent(ctx, remotionCtx, { visualAnalysis, toolHints }, {
+  const { agent } = createHybridAgent(ctx, remotionCtx, { visualAnalysis, toolHints, layoutPlan }, {
     creationMode,
   });
   const messages = buildAgentMessages({
@@ -176,6 +180,9 @@ async function runAgentAttempt({
     changeLog: ctx.changeLog,
     remotionChanged: remotionCtx.changed,
     remotionChangeLog: remotionCtx.changeLog,
+    remotionUndoSnapshots: remotionCtx.changed
+      ? remotionCtx.getSnapshotsForUndo()
+      : [],
     remotionCtx,
     simplifiedMode: false,
     systemNotice: visionNotice,

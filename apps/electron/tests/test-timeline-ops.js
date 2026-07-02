@@ -100,8 +100,19 @@ function main() {
   });
   assert(query.bestMatch === clipResult.clip.id, "query should find clip");
 
+  let deleteConflictThrown = false;
+  try {
+    timelineOps.deleteClip(timeline, {
+      clipId: clipResult.clip.id,
+    });
+  } catch (error) {
+    deleteConflictThrown = error.message.includes("E2010");
+  }
+  assert(deleteConflictThrown, "deleteClip rejects recent user edits without confirmOverwrite");
+
   const deleted = timelineOps.deleteClip(timeline, {
     clipId: clipResult.clip.id,
+    confirmOverwrite: true,
   });
   timeline = deleted.timeline;
   assert(

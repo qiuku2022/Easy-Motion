@@ -41,6 +41,7 @@ function createAgentGraph(timelineCtx, remotionCtx, visionContext = {}, options 
   systemPrompt += buildVisionContextSection({
     visualAnalysis: visionContext.visualAnalysis,
     toolHints: visionContext.toolHints,
+    layoutPlan: visionContext.layoutPlan,
   });
 
   const agent = createAgent({

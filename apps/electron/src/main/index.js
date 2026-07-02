@@ -1,4 +1,6 @@
 const { app, BrowserWindow, nativeTheme, screen } = require("electron");
+const fs = require("node:fs");
+const os = require("node:os");
 const path = require("node:path");
 const { loadEnv } = require("./utils/load-env");
 const { registerProjectHandlers } = require("./ipc-handlers/project");
@@ -22,6 +24,7 @@ const { installApplicationMenu } = require("./application-menu");
 const { getMainWindowChromeOptions } = require("./window-chrome");
 const { ensureDir } = require("./services/file-service");
 const { getConfigDir } = require("./utils/paths");
+const { spawnDetachedHidden } = require("./utils/process-utils");
 
 loadEnv();
 
@@ -29,6 +32,7 @@ loadEnv();
 nativeTheme.themeSource = "dark";
 
 const RENDERER_DEV_URL = process.env.ELECTRON_RENDERER_URL || "http://127.0.0.1:5173";
+const DEBUG_VITE_PID_FILE = path.join(os.tmpdir(), "easymotion-debug-vite.pid");
 
 /** @type {import("electron").BrowserWindow | null} */
 let mainWindow = null;
@@ -96,6 +100,52 @@ const createWindow = () => {
   }
 };
 
+async function isRendererDevServerUp(timeoutMs) {
+  const waitOn = require("wait-on");
+  try {
+    await waitOn({
+      resources: [RENDERER_DEV_URL.replace(/^http:\/\//, "http-get://")],
+      timeout: timeoutMs,
+      interval: 500,
+      validateStatus: (status) => status >= 200 && status < 500,
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function ensureRendererDevServer() {
+  if (app.isPackaged || process.env.EASY_MOTION_SKIP_DEV_RENDERER_PREPARE === "1") {
+    return;
+  }
+
+  if (await isRendererDevServerUp(1000)) {
+    return;
+  }
+
+  const electronDir = path.resolve(__dirname, "../..");
+  const viteBin = path.join(electronDir, "node_modules/vite/bin/vite.js");
+  console.log("[easymotion] starting renderer dev server");
+
+  const child = spawnDetachedHidden("node", [viteBin], {
+    cwd: electronDir,
+    env: process.env,
+  });
+  if (child.pid) {
+    fs.writeFileSync(DEBUG_VITE_PID_FILE, String(child.pid), "utf8");
+  }
+
+  const waitOn = require("wait-on");
+  await waitOn({
+    resources: [RENDERER_DEV_URL.replace(/^http:\/\//, "http-get://")],
+    timeout: 120000,
+    interval: 500,
+    validateStatus: (status) => status >= 200 && status < 500,
+  });
+  console.log("[easymotion] renderer dev server ready");
+}
+
 app.whenReady().then(async () => {
   installApplicationMenu();
   ensureDir(getConfigDir());
@@ -119,6 +169,7 @@ app.whenReady().then(async () => {
     }
   }
 
+  await ensureRendererDevServer();
   createWindow();
 
   app.on("activate", () => {

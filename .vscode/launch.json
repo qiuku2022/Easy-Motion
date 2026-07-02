@@ -6,16 +6,14 @@
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}/apps/electron",
-      "preLaunchTask": "debug: prepare",
-      "postDebugTask": "debug: cleanup",
       "runtimeExecutable": "${workspaceFolder}/apps/electron/node_modules/.bin/electron",
       "windows": {
-        "runtimeExecutable": "${workspaceFolder}/apps/electron/node_modules/.bin/electron.cmd"
+        "runtimeExecutable": "${workspaceFolder}/apps/electron/node_modules/electron/dist/electron.exe"
       },
       "program": "${workspaceFolder}/apps/electron/src/main/index.js",
       "args": ["--remote-debugging-port=9333"],
       "outputCapture": "std",
-      "console": "integratedTerminal",
+      "console": "internalConsole",
       "sourceMaps": true,
       "timeout": 120000,
       "skipFiles": [
@@ -35,16 +33,14 @@
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}/apps/electron",
-      "preLaunchTask": "debug: prepare",
-      "postDebugTask": "debug: cleanup",
       "runtimeExecutable": "${workspaceFolder}/apps/electron/node_modules/.bin/electron",
       "windows": {
-        "runtimeExecutable": "${workspaceFolder}/apps/electron/node_modules/.bin/electron.cmd"
+        "runtimeExecutable": "${workspaceFolder}/apps/electron/node_modules/electron/dist/electron.exe"
       },
       "program": "${workspaceFolder}/apps/electron/src/main/index.js",
       "args": ["--remote-debugging-port=9333"],
       "outputCapture": "std",
-      "console": "integratedTerminal",
+      "console": "internalConsole",
       "sourceMaps": true,
       "timeout": 120000,
       "skipFiles": [

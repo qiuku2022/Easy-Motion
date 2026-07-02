@@ -1,7 +1,7 @@
 const { createChatModel } = require("./llm-factory");
 const { buildVisionAnalysisPrompt } = require("./prompts/vision");
 const { buildMultimodalHumanMessage } = require("./multimodal");
-const { extractJsonFromText, layoutToToolHints } = require("./layout-mapper");
+const { extractJsonFromText, layoutToToolHints, layoutToPlan } = require("./layout-mapper");
 
 async function analyzeReferenceImages({
   projectPath,
@@ -11,7 +11,7 @@ async function analyzeReferenceImages({
   signal,
 }) {
   if (!imagePaths.length) {
-    return { visualAnalysis: null, toolHints: [], failed: false };
+    return { visualAnalysis: null, toolHints: [], layoutPlan: null, failed: false };
   }
 
   const model = createChatModel({ temperature: 0.2 });
@@ -37,13 +37,15 @@ async function analyzeReferenceImages({
     return {
       visualAnalysis: null,
       toolHints: [],
+      layoutPlan: null,
       failed: true,
       notice: "视觉解析失败，已切换为纯文字模式。请补充布局描述。",
     };
   }
 
   const toolHints = layoutToToolHints(visualAnalysis, timeline);
-  return { visualAnalysis, toolHints, failed: false };
+  const layoutPlan = layoutToPlan(visualAnalysis, timeline);
+  return { visualAnalysis, toolHints, layoutPlan, failed: false };
 }
 
 module.exports = { analyzeReferenceImages };

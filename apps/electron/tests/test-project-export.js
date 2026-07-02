@@ -90,11 +90,14 @@ async function main() {
   );
 
   const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "em-export-"));
+  const exportProject = path.join(tmpRoot, "default-project");
   const zipPath = path.join(tmpRoot, "demo-remotion.zip");
 
   try {
+    fs.cpSync(templateProject, exportProject, { recursive: true });
+
     const result = await exportRemotionProjectZip({
-      projectPath: templateProject,
+      projectPath: exportProject,
       subprojectPath: "subprojects/default",
       outputZipPath: zipPath,
       includeAssets: true,

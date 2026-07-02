@@ -4,7 +4,7 @@
 
 本文档定义基于 LangChain 构建的多模态对话 Agent 的详细设计，包括 Agent 工作流、Prompt 模板、工具调用定义和多模态输入处理流程。
 
-> **实施状态（2026-06-26）**：M5 + **M5.2** 已落地。Agent 通过 **17 个工具**（10 timeline + 7 Remotion code）修改 `subproject.json` / 自定义 TSX；预览由 **timeline JSON → 动态 MainSequence** 刷新，**非每次**触发 Generator。入口：`apps/electron/src/main/agent/graph.js`。
+> **实施状态（2026-07-02）**：M5 + **M5.2** + **M10** 已落地。Agent 通过 **30 个 timeline 工具**与 **9 个 Remotion Code 工具**修改 `subproject.json` / 自定义 TSX；M10 新增结构化读取、clip 移动与 timeline settings、素材/数据、批量/场景/视觉、Work Area/导出与 mixed undo。预览由 **timeline JSON → 动态 MainSequence** 刷新，**非每次**触发 Generator。入口：`apps/electron/src/main/agent/graph.js`。
 
 ---
 
@@ -305,7 +305,21 @@ interface AgentTask {
 
 Agent 通过 LangChain 的 Tool 机制调用以下工具。每个工具对应一个对时间线的原子操作。
 
-> **M5.2 更新（2026-06）**：除下列 timeline 工具外，Agent 还挂载 Remotion Code Tools（`listRemotionFiles`、`readRemotionFile`、`writeRemotionFile`、`patchRemotionFile`、`registerCustomComponent`、`compileRemotionCheck`、`getRemotionPackageInfo`），实现见 `apps/electron/src/main/agent/tools/remotion-code.js`。沙箱可写路径：`components/custom/**`、`presets/custom-registry.ts`。离线测试：`pnpm test:m5.2`。
+> **M5.2 更新（2026-06）**：除 timeline 工具外，Agent 还挂载 Remotion Code Tools（`listRemotionFiles`、`readRemotionFile`、`writeRemotionFile`、`patchRemotionFile`、`registerCustomComponent`、`compileRemotionCheck`、`getRemotionPackageInfo`），实现见 `apps/electron/src/main/agent/tools/remotion-code.js`。沙箱可写路径：`components/custom/**`、`presets/custom-registry.ts`。离线测试：`pnpm test:m5.2`。
+
+> **M10 更新（2026-07-02）**：timeline 工具扩展到 30 个，覆盖结构化读取、clip 移动、timeline settings、素材/数据、批量编辑、场景模板、视觉 layout、Work Area 与导出。Remotion Code Tools 扩展到 9 个，新增 `listCustomComponents` 与 `unregisterCustomComponent`。对话层新增 mixed undo bundle，支持一次 AI 修改同时撤销 timeline 与 Remotion 自定义文件。
+
+### M10 工具分组
+
+| 分组 | 工具 |
+| --- | --- |
+| 读取 | `listTimeline`、`getClipDetail`、`queryTimelineRange`、`queryElement` |
+| 基础写入 | `createTrack`、`createClip`、`updateClip`、`deleteClip`、`setAnimation`、`addKeyframe`、`listPresets`、`applyPreset` |
+| Timeline 元数据与移动 | `moveClip`、`updateTimelineSettings` |
+| 素材与数据 | `importAsset`、`listAssets`、`placeAsset`、`importDataFile`、`mapChartData`、`bindChartData` |
+| 批量与模板 | `batchUpdateClips`、`batchDeleteClips`、`batchShiftClips`、`applySceneTemplate`、`applyVisualLayout` |
+| 导出 | `getWorkArea`、`setWorkArea`、`exportVideo`、`getExportStatus`、`cancelExport` |
+| Remotion Code | `listRemotionFiles`、`readRemotionFile`、`writeRemotionFile`、`patchRemotionFile`、`registerCustomComponent`、`compileRemotionCheck`、`getRemotionPackageInfo`、`listCustomComponents`、`unregisterCustomComponent` |
 
 ### 工具列表
 

@@ -1,6 +1,10 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { readJsonFile, atomicWriteJson } = require("./file-service");
+const timelineService = require("./timeline-service");
+const previewService = require("./preview-service");
+const { resolveSrcFilePath } = require("../agent/remotion-sandbox");
+const { hashContent } = require("../agent/remotion-context");
 
 const CONVERSATION_VERSION = "1.0";
 const AGENT_UNDO_SNAPSHOT_FILE = "agent-undo-snapshot.json";
@@ -122,12 +126,16 @@ function loadAgentUndoSnapshot(projectRoot, subprojectRelativePath = "subproject
 
   try {
     const raw = readJsonFile(snapshotPath);
-    if (typeof raw?.messageId !== "string" || !raw?.timeline) {
+    const remotionFilesBefore = Array.isArray(raw?.remotionFilesBefore)
+      ? raw.remotionFilesBefore
+      : [];
+    if (typeof raw?.messageId !== "string" || (!raw?.timeline && remotionFilesBefore.length === 0)) {
       return null;
     }
     return {
       messageId: raw.messageId,
-      timeline: raw.timeline,
+      timeline: raw.timeline ?? null,
+      remotionFilesBefore,
       savedAt: typeof raw.savedAt === "number" ? raw.savedAt : undefined,
     };
   } catch {
@@ -138,9 +146,10 @@ function loadAgentUndoSnapshot(projectRoot, subprojectRelativePath = "subproject
 async function saveAgentUndoSnapshot(
   projectRoot,
   subprojectRelativePath = "subprojects/default",
-  { messageId, timeline }
+  { messageId, timeline, remotionFilesBefore }
 ) {
-  if (!messageId || !timeline) {
+  const files = Array.isArray(remotionFilesBefore) ? remotionFilesBefore : [];
+  if (!messageId || (!timeline && files.length === 0)) {
     throw new Error("E2002: 无效的撤销快照");
   }
 
@@ -149,6 +158,7 @@ async function saveAgentUndoSnapshot(
     messageId,
     savedAt: Date.now(),
     timeline,
+    remotionFilesBefore: files,
   });
 
   const conversation = loadConversation(projectRoot, subprojectRelativePath);
@@ -156,6 +166,81 @@ async function saveAgentUndoSnapshot(
   await saveConversation(projectRoot, conversation, subprojectRelativePath);
 
   return { saved: true, messageId };
+}
+
+function restoreRemotionFiles(projectRoot, subprojectRelativePath, snapshots) {
+  if (!Array.isArray(snapshots) || snapshots.length === 0) {
+    return { restoredFiles: [] };
+  }
+
+  const remotionDir = previewService.getRemotionDir(projectRoot, subprojectRelativePath);
+  const srcDir = path.join(remotionDir, "src");
+  const restoredFiles = [];
+
+  for (const snapshot of snapshots) {
+    const relativePath = snapshot.relativePath;
+    if (typeof relativePath !== "string") continue;
+    const { absolute, normalized } = resolveSrcFilePath(srcDir, relativePath);
+    const existsNow = fs.existsSync(absolute);
+    const currentContent = existsNow ? fs.readFileSync(absolute, "utf8") : null;
+    const currentHash = hashContent(currentContent);
+    if (currentHash !== (snapshot.hashAfter ?? null)) {
+      throw new Error(`E2010: Remotion 文件已被后续修改，无法安全撤销: ${normalized}`);
+    }
+  }
+
+  for (const snapshot of snapshots) {
+    const relativePath = snapshot.relativePath;
+    if (typeof relativePath !== "string") continue;
+    const { absolute, normalized } = resolveSrcFilePath(srcDir, relativePath);
+    if (snapshot.existedBefore) {
+      fs.mkdirSync(path.dirname(absolute), { recursive: true });
+      fs.writeFileSync(absolute, String(snapshot.contentBefore ?? ""), "utf8");
+    } else if (fs.existsSync(absolute)) {
+      fs.unlinkSync(absolute);
+    }
+    restoredFiles.push(normalized);
+  }
+
+  if (restoredFiles.length > 0) {
+    previewService.ensureCustomComponentSupport(remotionDir);
+    timelineService.refreshRemotionFingerprint(projectRoot, subprojectRelativePath);
+  }
+
+  return { restoredFiles };
+}
+
+async function restoreAgentUndoSnapshot(
+  projectRoot,
+  subprojectRelativePath = "subprojects/default",
+  { messageId } = {}
+) {
+  const snapshot = resolvePendingAgentUndo(projectRoot, subprojectRelativePath);
+  if (!snapshot) {
+    throw new Error("E2002: 没有可撤销的 AI 修改");
+  }
+  if (messageId && snapshot.messageId !== messageId) {
+    throw new Error("E2002: 撤销快照已过期");
+  }
+
+  if (snapshot.timeline) {
+    await timelineService.saveTimeline(projectRoot, snapshot.timeline, subprojectRelativePath);
+    timelineService.syncPreviewManifest(projectRoot, snapshot.timeline, subprojectRelativePath);
+  }
+  const remotion = restoreRemotionFiles(
+    projectRoot,
+    subprojectRelativePath,
+    snapshot.remotionFilesBefore
+  );
+  await clearAgentUndoSnapshot(projectRoot, subprojectRelativePath);
+  return {
+    restored: true,
+    messageId: snapshot.messageId,
+    timeline: snapshot.timeline ?? null,
+    restoredFiles: remotion.restoredFiles,
+    previewReload: remotion.restoredFiles.length > 0,
+    timelinePush: Boolean(snapshot.timeline),
+  };
 }
 
 async function clearAgentUndoSnapshot(
@@ -260,5 +345,6 @@ module.exports = {
   loadAgentUndoSnapshot,
   saveAgentUndoSnapshot,
   clearAgentUndoSnapshot,
+  restoreAgentUndoSnapshot,
   resolvePendingAgentUndo,
 };

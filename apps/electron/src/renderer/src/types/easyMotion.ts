@@ -4,7 +4,14 @@ import type { Conversation, AttachedImage } from "./conversation";
 
 export interface PendingAgentUndoPayload {
   messageId: string;
-  timeline: Timeline;
+  timeline?: Timeline | null;
+  remotionFilesBefore?: Array<{
+    relativePath: string;
+    existedBefore: boolean;
+    contentBefore: string | null;
+    existedAfter?: boolean;
+    hashAfter?: string | null;
+  }>;
   savedAt?: number;
 }
 
@@ -49,6 +56,7 @@ export interface ConversationCompletePayload {
   remotionChangeSummary?: string;
   changeLog?: unknown[];
   remotionChangeLog?: unknown[];
+  remotionUndoSnapshots?: PendingAgentUndoPayload["remotionFilesBefore"];
   cancelled?: boolean;
   simplifiedMode?: boolean;
   systemNotice?: string;
@@ -288,8 +296,23 @@ export interface EasyMotionApi {
       subprojectId?: string;
       subprojectPath?: string;
       messageId: string;
-      timeline: Timeline;
+      timeline?: Timeline | null;
+      remotionFilesBefore?: PendingAgentUndoPayload["remotionFilesBefore"];
     }) => Promise<IpcResult<{ saved: boolean; messageId: string }>>;
+    restoreAgentUndo: (payload?: {
+      subprojectId?: string;
+      subprojectPath?: string;
+      messageId?: string;
+    }) => Promise<
+      IpcResult<{
+        restored: boolean;
+        messageId: string;
+        timeline?: Timeline | null;
+        restoredFiles?: string[];
+        previewReload?: boolean;
+        timelinePush?: boolean;
+      }>
+    >;
     clearAgentUndo: (payload?: {
       subprojectId?: string;
       subprojectPath?: string;

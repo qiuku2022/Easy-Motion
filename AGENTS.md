@@ -107,7 +107,7 @@ EasyMotion 是用自然语言制作 Remotion 动画的 **Electron 桌面应用**
 | 任意 JS/TS | `pnpm lint` |
 | 主进程 / Agent / Generator | `pnpm test` |
 | 仅 Agent 相关 | `pnpm --filter @easymotion/electron test:m5` |
-| 预设 manifest / 参数 | `cd apps/electron && node scripts/test-preset-parameters.js` |
+| 预设 manifest / 参数 | `cd apps/electron && node tests/test-preset-parameters.js` |
 | 仅 UI（无逻辑） | `pnpm lint`；手动 `pnpm dev` 目视检查 |
 | 打包 / electron-builder / 安装包路径 | `pnpm build:win`（或 `pnpm --filter @easymotion/electron build:dir`）；手测 `release/win-unpacked/EasyMotion.exe` |
 | Python bundle / 打包态 Python 启动 | `pnpm build:python`；安装包内验证 FastAPI 子进程 |
@@ -176,7 +176,7 @@ pnpm skills:sync
 |------|------|
 | 在渲染进程 `require('fs')` 或调 Node API | 走 IPC / preload |
 | 手改生成物 `MainSequence.tsx` 而非 timeline JSON | 改 timeline + 动态预览路径；Generator 仅用于导出/legacy |
-| 新增预设未更新 manifest / 参数注册表 | 跑 `vendor:rve-presets` + `test-preset-parameters.js` |
+| 新增预设未更新 manifest / 参数注册表 | 跑 `vendor:rve-presets` + `tests/test-preset-parameters.js` |
 | Windows 上 Electron 连不上 Vite | 用 `127.0.0.1:5173`，不用 `localhost` |
 | 改 Agent tool 未改 Zod schema | tools 的 schema 与 `timeline-ops` 参数必须一致 |
 | 提交 `.env` 或 API Key | Key 存 `~/.easymotion/secrets.json`；仅提交 `.env.example` |

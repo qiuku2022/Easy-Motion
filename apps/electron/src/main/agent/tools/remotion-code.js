@@ -1,7 +1,11 @@
 const { tool } = require("langchain");
 const { z } = require("zod");
 const { getAllowedImportPrefixes } = require("../remotion-sandbox");
-const { registerCustomComponent } = require("../remotion-registry");
+const {
+  registerCustomComponent,
+  listCustomComponents,
+  unregisterCustomComponent,
+} = require("../remotion-registry");
 
 function toolResult(success, data, error) {
   return JSON.stringify({ success, data, error });
@@ -189,12 +193,85 @@ function createRemotionCodeTools(ctx, timelineCtx = null) {
     }
   );
 
+  const listCustomComponentsTool = tool(
+    async ({ includeTimelineUsage } = {}) => {
+      try {
+        if (!timelineCtx) {
+          return toolResult(false, undefined, "E2416: timeline 上下文不可用");
+        }
+        const data = listCustomComponents(ctx, timelineCtx, {
+          includeTimelineUsage,
+        });
+        return toolResult(true, data);
+      } catch (error) {
+        return toolResult(false, undefined, error.message);
+      }
+    },
+    {
+      name: "listCustomComponents",
+      description:
+        "列出已注册的自定义 Remotion 组件，可包含时间线引用。删除或修改自定义组件前先调用。",
+      schema: z.object({
+        includeTimelineUsage: z
+          .boolean()
+          .optional()
+          .describe("是否返回 timeline 中引用该组件的片段，默认 false"),
+      }),
+    }
+  );
+
+  const unregisterCustomComponentTool = tool(
+    async ({
+      componentName,
+      removeTimelineClips,
+      deleteFile,
+      confirmDeleteUsages,
+    }) => {
+      try {
+        if (!timelineCtx) {
+          return toolResult(false, undefined, "E2416: timeline 上下文不可用");
+        }
+        const data = unregisterCustomComponent(ctx, timelineCtx, {
+          componentName,
+          removeTimelineClips,
+          deleteFile,
+          confirmDeleteUsages,
+        });
+        return toolResult(true, data);
+      } catch (error) {
+        return toolResult(false, undefined, error.message);
+      }
+    },
+    {
+      name: "unregisterCustomComponent",
+      description:
+        "注销自定义 Remotion 组件；可选删除 TSX 文件和时间线引用片段。删除引用和文件必须用户明确确认。",
+      schema: z.object({
+        componentName: z.string().describe("PascalCase 组件名，如 ParticleBg"),
+        removeTimelineClips: z
+          .boolean()
+          .optional()
+          .describe("是否删除时间线中引用该组件的片段，默认 false"),
+        deleteFile: z
+          .boolean()
+          .optional()
+          .describe("是否删除 components/custom/{Name}.tsx，默认 false"),
+        confirmDeleteUsages: z
+          .boolean()
+          .optional()
+          .describe("确认删除时间线引用片段，默认 false"),
+      }),
+    }
+  );
+
   return [
     listRemotionFilesTool,
     readRemotionFileTool,
     writeRemotionFileTool,
     patchRemotionFileTool,
     registerCustomComponentTool,
+    listCustomComponentsTool,
+    unregisterCustomComponentTool,
     compileRemotionCheckTool,
     getRemotionPackageInfoTool,
   ];

@@ -40,7 +40,7 @@ function main() {
   });
 
   assert(createTimelineTools(timelineCtx).length >= 10, "timeline tools baseline");
-  assert(createRemotionCodeTools(remotionCtx, timelineCtx).length === 7, "remotion tools");
+  assert(createRemotionCodeTools(remotionCtx, timelineCtx).length === 9, "remotion tools");
   assert(
     resolveCreationMode("auto", "标题 Hello") === includesRemotionTools("quick") ? "quick" : "free",
     "auto resolves consistently"

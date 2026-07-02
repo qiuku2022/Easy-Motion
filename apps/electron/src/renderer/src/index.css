@@ -7,7 +7,7 @@
 
 @layer base {
   /*
-   * shadcn Neutral Dark（方案 A，见 .local/theme-refresh/）
+   * shadcn Neutral Dark（方案 A）
    * v1.0 仅 dark；:root 与 .dark 同步，html 恒为 class="dark"
    */
   :root,
@@ -53,7 +53,7 @@
     --sidebar-ring: oklch(0.556 0 0);
     /* 预览区「舞台」：比壳层更深的中性灰，无紫调（≈ #121212） */
     --preview-canvas: oklch(0.085 0 0);
-    /* 窗口壳层（TitleBar + Frame），见 .local/window-chrome-dev-plan.md */
+    /* 窗口壳层（TitleBar + Frame） */
     --shell-chrome-height: 32px;
     --shell-toolbar-height: 44px;
     --shell-titlebar: var(--card);

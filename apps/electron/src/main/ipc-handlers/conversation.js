@@ -80,7 +80,10 @@ function registerConversationHandlers() {
   ipcMain.handle(
     "main:conversation:saveAgentUndo",
     wrap(async (_event, payload) => {
-      if (!payload?.messageId || !payload?.timeline) {
+      const remotionFilesBefore = Array.isArray(payload?.remotionFilesBefore)
+        ? payload.remotionFilesBefore
+        : [];
+      if (!payload?.messageId || (!payload?.timeline && remotionFilesBefore.length === 0)) {
         throw new Error("E2002: 无效的撤销快照");
       }
       const { projectPath, subprojectPath } = getProjectContext(payload);
@@ -90,7 +93,20 @@ function registerConversationHandlers() {
         {
           messageId: payload.messageId,
           timeline: payload.timeline,
+          remotionFilesBefore,
         }
+      );
+    })
+  );
+
+  ipcMain.handle(
+    "main:conversation:restoreAgentUndo",
+    wrap(async (_event, payload) => {
+      const { projectPath, subprojectPath } = getProjectContext(payload);
+      return conversationService.restoreAgentUndoSnapshot(
+        projectPath,
+        subprojectPath,
+        { messageId: payload?.messageId }
       );
     })
   );

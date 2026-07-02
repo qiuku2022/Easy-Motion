@@ -6,8 +6,10 @@ const { TimelineContext } = require("../src/main/agent/timeline-context");
 const {
   buildRegistryContent,
   listRegisteredComponents,
+  listCustomComponents,
   upsertRegistryEntry,
   registerCustomComponent,
+  unregisterCustomComponent,
 } = require("../src/main/agent/remotion-registry");
 const { fingerprintRemotionSrc } = require("../src/main/importer/remotion-fingerprint");
 const { ensureCustomComponentSupport } = require("../src/main/services/preview-service");
@@ -113,6 +115,57 @@ function main() {
   const registry2 = fs.readFileSync(path.join(srcDir, "presets/custom-registry.ts"), "utf8");
   assert(registry2.includes("BlueBg"), "second component in registry");
   assert(registry2.includes("RedBg"), "first component retained");
+
+  const listedCustom = listCustomComponents(remotionCtx, timelineCtx, {
+    includeTimelineUsage: true,
+  });
+  const redListed = listedCustom.components.find((item) => item.componentName === "RedBg");
+  assert(redListed?.clipUsages?.length === 1, "listCustomComponents includes usage");
+  assert(redListed.fileExists, "listCustomComponents reports file exists");
+
+  let usageThrown = false;
+  try {
+    unregisterCustomComponent(remotionCtx, timelineCtx, {
+      componentName: "RedBg",
+    });
+  } catch (error) {
+    usageThrown = error.message.includes("仍被 1 个时间线片段引用");
+  }
+  assert(usageThrown, "unregisterCustomComponent rejects existing usages");
+
+  let confirmThrown = false;
+  try {
+    unregisterCustomComponent(remotionCtx, timelineCtx, {
+      componentName: "RedBg",
+      removeTimelineClips: true,
+    });
+  } catch (error) {
+    confirmThrown = error.message.includes("confirmDeleteUsages");
+  }
+  assert(confirmThrown, "unregisterCustomComponent requires delete confirmation");
+
+  const blueRemoved = unregisterCustomComponent(remotionCtx, timelineCtx, {
+    componentName: "BlueBg",
+  });
+  assert(blueRemoved.removedFromRegistry, "unregisterCustomComponent removes unused registry entry");
+  assert(!blueRemoved.deletedFile, "unregisterCustomComponent keeps file by default");
+
+  const redRemoved = unregisterCustomComponent(remotionCtx, timelineCtx, {
+    componentName: "RedBg",
+    removeTimelineClips: true,
+    confirmDeleteUsages: true,
+    deleteFile: true,
+  });
+  assert(redRemoved.removedFromRegistry, "unregisterCustomComponent removes registry entry");
+  assert(redRemoved.deletedFile, "unregisterCustomComponent deletes TSX file");
+  assert(redRemoved.removedClipIds.length === 1, "unregisterCustomComponent removes timeline clips");
+  assert(!fs.existsSync(path.join(srcDir, "components/custom/RedBg.tsx")), "RedBg file deleted");
+  assert(
+    !timelineCtx.timeline.tracks.some((track) =>
+      (track.clips ?? []).some((clip) => clip.source?.component === "RedBg")
+    ),
+    "RedBg timeline clip deleted"
+  );
 
   const beforeFp = fingerprintRemotionSrc(srcDir).fingerprint;
   fs.writeFileSync(

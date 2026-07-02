@@ -39,8 +39,8 @@ function buildVisionAnalysisPrompt(userText = "") {
   return VISION_ANALYSIS_PROMPT.replace("{userText}", userText);
 }
 
-function buildVisionContextSection({ visualAnalysis, toolHints }) {
-  if (!visualAnalysis && !toolHints?.length) return "";
+function buildVisionContextSection({ visualAnalysis, toolHints, layoutPlan }) {
+  if (!visualAnalysis && !toolHints?.length && !layoutPlan?.operations?.length) return "";
 
   let section = "\n\n参考图片视觉分析结果：\n";
   if (visualAnalysis) {
@@ -50,6 +50,11 @@ function buildVisionContextSection({ visualAnalysis, toolHints }) {
     section += `\n\n建议 createTrack/createClip 参数（按 zIndex 从低到高创建）：\n${JSON.stringify(toolHints, null, 2)}`;
     section +=
       "\n请根据以上分析创建轨道和片段，位置使用 transform.position，文字用 source.content，样式用 style。";
+  }
+  if (layoutPlan?.operations?.length) {
+    section += `\n\n可执行视觉布局计划（优先使用 applyVisualLayout 落盘）：\n${JSON.stringify(layoutPlan, null, 2)}`;
+    section +=
+      "\n如果用户要求照着参考图生成布局，优先调用 applyVisualLayout；需要先预览影响时设置 dryRun=true。";
   }
   return section;
 }

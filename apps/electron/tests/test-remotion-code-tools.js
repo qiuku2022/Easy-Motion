@@ -2,6 +2,7 @@ const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
 const { RemotionContext } = require("../src/main/agent/remotion-context");
+const { TimelineContext } = require("../src/main/agent/timeline-context");
 const { compileRemotionCheck } = require("../src/main/agent/remotion-compile-check");
 const { createRemotionCodeTools } = require("../src/main/agent/tools/remotion-code");
 
@@ -92,7 +93,18 @@ async function invokeTool(tools, name, args = {}) {
 async function main() {
   const { tmpRoot, projectPath, subprojectPath } = createFixtureRoot();
   const ctx = new RemotionContext({ projectPath, subprojectPath });
-  const tools = createRemotionCodeTools(ctx);
+  const timelineCtx = new TimelineContext({
+    version: "1.0",
+    fps: 30,
+    durationInFrames: 90,
+    width: 1280,
+    height: 720,
+    tracks: [],
+  }, {
+    projectPath,
+    subprojectPath,
+  });
+  const tools = createRemotionCodeTools(ctx, timelineCtx);
 
   const listed = await invokeTool(tools, "listRemotionFiles", { maxDepth: 4 });
   assert(listed.success, "listRemotionFiles success");
@@ -136,6 +148,41 @@ async function main() {
     "utf8"
   );
   assert(afterPatchRollback.includes("#ff0000"), "rollback restored pre-patch content");
+
+  const registered = await invokeTool(tools, "registerCustomComponent", {
+    componentName: "RedBg",
+    content: VALID_TSX,
+    parameters: { color: "#ff0000" },
+  });
+  assert(registered.success, registered.error ?? "registerCustomComponent");
+  assert(registered.data.clipId, "registerCustomComponent returns clip id");
+
+  const customList = await invokeTool(tools, "listCustomComponents", {
+    includeTimelineUsage: true,
+  });
+  assert(customList.success, customList.error ?? "listCustomComponents");
+  const red = customList.data.components.find((item) => item.componentName === "RedBg");
+  assert(red?.clipUsages?.length === 1, "listCustomComponents returns timeline usage");
+
+  const rejectedUnregister = await invokeTool(tools, "unregisterCustomComponent", {
+    componentName: "RedBg",
+    removeTimelineClips: true,
+  });
+  assert(!rejectedUnregister.success, "unregisterCustomComponent rejects missing confirmation");
+  assert(
+    rejectedUnregister.error.includes("confirmDeleteUsages"),
+    "unregisterCustomComponent explains confirmation"
+  );
+
+  const unregistered = await invokeTool(tools, "unregisterCustomComponent", {
+    componentName: "RedBg",
+    removeTimelineClips: true,
+    confirmDeleteUsages: true,
+    deleteFile: true,
+  });
+  assert(unregistered.success, unregistered.error ?? "unregisterCustomComponent");
+  assert(unregistered.data.deletedFile, "unregisterCustomComponent deletes file");
+  assert(unregistered.data.removedClipIds.length === 1, "unregisterCustomComponent removes usage clip");
 
   ctx.writeFile("components/custom/Temp.tsx", VALID_TSX);
   ctx.rollbackFile("components/custom/Temp.tsx");

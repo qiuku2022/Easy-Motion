@@ -234,6 +234,7 @@ function startConversationSend(webContents, payload) {
         remotionChangeSummary,
         changeLog: result.changeLog,
         remotionChangeLog: result.remotionChangeLog,
+        remotionUndoSnapshots: result.remotionUndoSnapshots,
         simplifiedMode: Boolean(result.simplifiedMode),
         systemNotice: result.systemNotice ?? undefined,
       });

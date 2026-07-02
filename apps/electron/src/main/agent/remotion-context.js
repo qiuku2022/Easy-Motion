@@ -1,5 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const crypto = require("node:crypto");
 const { assertTsxSecurity } = require("../generator/security-scan");
 const {
   resolveRemotionPaths,
@@ -58,6 +59,23 @@ class RemotionContext {
     for (const relativePath of [...this.fileSnapshots.keys()]) {
       this.rollbackFile(relativePath);
     }
+  }
+
+  getSnapshotsForUndo() {
+    const snapshots = [];
+    for (const [relativePath, contentBefore] of this.fileSnapshots.entries()) {
+      const { absolute, normalized } = resolveSrcFilePath(this.srcDir, relativePath);
+      const existsAfter = fs.existsSync(absolute);
+      const contentAfter = existsAfter ? fs.readFileSync(absolute, "utf8") : null;
+      snapshots.push({
+        relativePath: normalized,
+        existedBefore: contentBefore !== null,
+        contentBefore,
+        existedAfter: existsAfter,
+        hashAfter: hashContent(contentAfter),
+      });
+    }
+    return snapshots;
   }
 
   validateWritableContent(content) {
@@ -144,6 +162,24 @@ class RemotionContext {
     return { path: normalized, bytes: Buffer.byteLength(after, "utf8") };
   }
 
+  deleteFile(relativePath, { reason } = {}) {
+    const normalized = assertWritableRelativePath(relativePath);
+    const { absolute } = resolveSrcFilePath(this.srcDir, normalized);
+    if (!fs.existsSync(absolute)) {
+      return { path: normalized, deleted: false };
+    }
+
+    this.snapshotFile(normalized);
+    fs.unlinkSync(absolute);
+    this.markChanged();
+    this.logChange({
+      op: "deleteRemotionFile",
+      path: normalized,
+      reason: reason ?? null,
+    });
+    return { path: normalized, deleted: true };
+  }
+
   async runCompileCheck() {
     const result = await compileRemotionCheck(this.remotionDir);
     this.lastCompileResult = result;
@@ -154,6 +190,11 @@ class RemotionContext {
     });
     return result;
   }
+}
+
+function hashContent(content) {
+  if (content === null || content === undefined) return null;
+  return crypto.createHash("sha256").update(String(content)).digest("hex");
 }
 
 function formatRemotionChangeSummary(changeLog) {
@@ -169,10 +210,14 @@ function formatRemotionChangeSummary(changeLog) {
             : `更新 Remotion 文件 ${entry.path}`;
         case "patchRemotionFile":
           return `修改 Remotion 文件 ${entry.path}`;
+        case "deleteRemotionFile":
+          return `删除 Remotion 文件 ${entry.path}`;
         case "registerCustomComponent":
           return entry.appliedToTimeline
             ? `注册组件 ${entry.componentName} 并写入 ${entry.path}`
             : `注册组件 ${entry.componentName}`;
+        case "unregisterCustomComponent":
+          return `注销组件 ${entry.componentName}`;
         default:
           return entry.op;
       }
@@ -184,4 +229,5 @@ function formatRemotionChangeSummary(changeLog) {
 module.exports = {
   RemotionContext,
   formatRemotionChangeSummary,
+  hashContent,
 };

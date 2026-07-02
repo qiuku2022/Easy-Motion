@@ -15,6 +15,9 @@ ${remotionSrc}
 规则：
 - 新自定义动画组件写在 components/custom/，PascalCase 文件名与 export 一致
 - 用 registerCustomComponent 注册并（默认）添加到时间线 animation 轨道
+- 删除自定义组件前先 listCustomComponents(includeTimelineUsage=true)，确认 timeline 中是否有引用
+- unregisterCustomComponent 如果要删除 timeline 片段，必须用户明确确认后传 confirmDeleteUsages=true
+- deleteFile=true 会删除 components/custom/{Name}.tsx，必须用户明确要求删除源码文件
 - 修改已有 custom 组件用 readRemotionFile + patchRemotionFile 或 writeRemotionFile
 - 禁止修改：MainSequence.tsx、presets/registry.ts、layers/、lib/、Root.tsx
 - 分辨率/帧率/总时长：改 timeline 元数据，禁止直接改 Root.tsx

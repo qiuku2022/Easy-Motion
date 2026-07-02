@@ -88,6 +88,7 @@ contextBridge.exposeInMainWorld("easyMotion", {
     save: (payload) => invoke("main:conversation:save", payload),
     clear: (payload) => invoke("main:conversation:clear", payload),
     saveAgentUndo: (payload) => invoke("main:conversation:saveAgentUndo", payload),
+    restoreAgentUndo: (payload) => invoke("main:conversation:restoreAgentUndo", payload),
     clearAgentUndo: (payload) => invoke("main:conversation:clearAgentUndo", payload),
     pickAiRefs: (payload) => invoke("main:conversation:pickAiRefs", payload),
     readAiRefPreview: (payload) => invoke("main:conversation:readAiRefPreview", payload),
