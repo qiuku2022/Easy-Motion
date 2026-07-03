@@ -94,7 +94,7 @@ export function getRulerTickIntervals(
   durationInFrames?: number,
 ): RulerIntervals {
   const candidates = buildFrameCandidates(fps);
-  const labelFrames = pickLabelFrames(candidates, pxPerFrame);
+  let labelFrames = pickLabelFrames(candidates, pxPerFrame);
   let minorFrames = pickMinorFrames(candidates, labelFrames, pxPerFrame);
 
   if (durationInFrames != null && durationInFrames > 0) {
