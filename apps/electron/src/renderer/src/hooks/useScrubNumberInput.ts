@@ -46,7 +46,7 @@ export function useScrubNumberInput({
       onChange(formatted);
       onScrub?.(formatted);
     },
-    [max, min, onChange, onScrub, step],
+    [max, min, onChange, onScrub, step]
   );
 
   const onPointerDown = useCallback(
@@ -108,7 +108,7 @@ export function useScrubNumberInput({
       window.addEventListener("pointerup", onPointerUp);
       window.addEventListener("pointercancel", onPointerUp);
     },
-    [disabled, emitValue, inputRef, onCommit, onScrubbingChange, step, value],
+    [disabled, emitValue, inputRef, onCommit, onScrubbingChange, step, value]
   );
 
   return { onPointerDown };

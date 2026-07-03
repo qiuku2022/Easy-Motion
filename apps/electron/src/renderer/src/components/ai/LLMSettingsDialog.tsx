@@ -20,10 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { LlmProvider, LlmSettingsFormState } from "@/types/settings";
-import {
-  LLM_PROVIDER_OPTIONS,
-  LLM_PROVIDER_PRESETS,
-} from "@/types/settings";
+import { LLM_PROVIDER_OPTIONS, LLM_PROVIDER_PRESETS } from "@/types/settings";
 import { getEasyMotion } from "@/types/easyMotion";
 
 interface LLMSettingsDialogProps {
@@ -203,9 +200,7 @@ export function LLMSettingsDialog({
               <Label htmlFor="llm-provider">提供商</Label>
               <Select
                 value={form.provider}
-                onValueChange={(value) =>
-                  handleProviderChange(value as LlmProvider)
-                }
+                onValueChange={(value) => handleProviderChange(value as LlmProvider)}
               >
                 <SelectTrigger id="llm-provider" className="w-full">
                   <SelectValue />
@@ -274,9 +269,7 @@ export function LLMSettingsDialog({
                 id="llm-api-key"
                 type="password"
                 autoComplete="off"
-                placeholder={
-                  keyStored ? "已保存（留空则不修改）" : "输入 API Key"
-                }
+                placeholder={keyStored ? "已保存（留空则不修改）" : "输入 API Key"}
                 value={form.apiKey}
                 onChange={(event) => updateField("apiKey", event.target.value)}
               />
@@ -291,11 +284,7 @@ export function LLMSettingsDialog({
             disabled={!form || validating || saving}
             onClick={() => void handleValidate()}
           >
-            {validating ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              "验证 Key"
-            )}
+            {validating ? <Loader2 className="h-4 w-4 animate-spin" /> : "验证 Key"}
           </Button>
           <Button
             type="button"

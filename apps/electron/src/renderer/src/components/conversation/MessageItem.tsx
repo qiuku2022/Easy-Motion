@@ -22,9 +22,7 @@ export const MessageItem = memo(function MessageItem({
   actionsDisabled,
 }: MessageItemProps) {
   const showThinking =
-    message.role === "assistant" &&
-    isStreaming &&
-    !message.content.trim();
+    message.role === "assistant" && isStreaming && !message.content.trim();
 
   const isUser = message.role === "user";
   const isSystem = message.role === "system";

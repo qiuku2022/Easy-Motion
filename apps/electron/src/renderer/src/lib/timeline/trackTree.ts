@@ -21,7 +21,7 @@ export interface TimelineRow {
 export function effectiveTrackState(
   track: Track,
   parentGroup: Track | null,
-  timeline?: Timeline | null,
+  timeline?: Timeline | null
 ): { locked: boolean; visible: boolean; solo: boolean } {
   const parentLocked = parentGroup?.locked ?? false;
   const parentHidden = parentGroup ? !parentGroup.visible : false;
@@ -139,10 +139,7 @@ export function findTrackById(timeline: Timeline, trackId: string): Track | null
   return null;
 }
 
-export function findParentGroup(
-  timeline: Timeline,
-  trackId: string,
-): Track | null {
+export function findParentGroup(timeline: Timeline, trackId: string): Track | null {
   for (const track of timeline.tracks) {
     if (track.type !== "group" || !track.children) continue;
     if (track.children.some((c) => c.id === trackId)) return track;
@@ -152,7 +149,7 @@ export function findParentGroup(
 
 export function findLayerTrackForClip(
   timeline: Timeline,
-  clipId: string,
+  clipId: string
 ): { layerTrack: Track; clipTrack: Track; clip: Clip } | null {
   for (const layerTrack of timeline.tracks) {
     const direct = layerTrack.clips.find((c) => c.id === clipId);
@@ -194,14 +191,14 @@ export function collectLayerElements(layerTrack: Track): LayerElement[] {
 }
 
 export function pickDefaultContentElement(
-  elements: LayerElement[],
+  elements: LayerElement[]
 ): LayerElement | null {
   const editable = elements.filter(
-    (e) => resolveEditableClipType(e.clip, e.track.type) != null,
+    (e) => resolveEditableClipType(e.clip, e.track.type) != null
   );
   if (editable.length === 0) return null;
   const text = editable.find(
-    (e) => resolveEditableClipType(e.clip, e.track.type) === "text",
+    (e) => resolveEditableClipType(e.clip, e.track.type) === "text"
   );
   if (text) return text;
   return editable[0]!;
@@ -216,7 +213,7 @@ export function resolveLayerTransformClip(layerTrack: Track): Clip | null {
   }
   const elements = collectLayerElements(layerTrack);
   const editable = elements.filter(
-    (e) => resolveEditableClipType(e.clip, e.track.type) != null,
+    (e) => resolveEditableClipType(e.clip, e.track.type) != null
   );
   if (editable.length === 1) return editable[0]!.clip;
   return layerTrack.clips[0] ?? editable[0]?.clip ?? null;
@@ -224,7 +221,7 @@ export function resolveLayerTransformClip(layerTrack: Track): Clip | null {
 
 export function mapTracksInTimeline(
   timeline: Timeline,
-  mapper: (track: Track, parentGroup: Track | null) => Track,
+  mapper: (track: Track, parentGroup: Track | null) => Track
 ): Timeline {
   const tracks = timeline.tracks.map((track) => {
     if (track.type === "group" && track.children?.length) {

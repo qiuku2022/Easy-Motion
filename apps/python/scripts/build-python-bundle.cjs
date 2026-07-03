@@ -5,7 +5,11 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { spawnSync } = require("node:child_process");
-const { resolveHostPython, venvPythonPath, cleanHostPythonEnv } = require("./resolve-python.cjs");
+const {
+  resolveHostPython,
+  venvPythonPath,
+  cleanHostPythonEnv,
+} = require("./resolve-python.cjs");
 
 const PYTHON_ROOT = path.join(__dirname, "..");
 const BUILD_DIR = path.join(PYTHON_ROOT, ".build-bundle");
@@ -35,7 +39,7 @@ function runCapture(pythonExe, args) {
   });
   if (result.status !== 0) {
     throw new Error(
-      `${pythonExe} ${args.join(" ")} failed: ${result.stderr || result.stdout}`,
+      `${pythonExe} ${args.join(" ")} failed: ${result.stderr || result.stdout}`
     );
   }
   return String(result.stdout).trim();
@@ -66,14 +70,23 @@ function copyRuntimeFromBasePrefix(basePrefix, runtimeDir) {
   if (process.platform === "win32") {
     for (const entry of fs.readdirSync(basePrefix, { withFileTypes: true })) {
       if (entry.isFile() && /\.dll$/i.test(entry.name)) {
-        fs.copyFileSync(path.join(basePrefix, entry.name), path.join(runtimeDir, entry.name));
+        fs.copyFileSync(
+          path.join(basePrefix, entry.name),
+          path.join(runtimeDir, entry.name)
+        );
       }
     }
     for (const sub of ["Lib", "DLLs"]) {
       const src = path.join(basePrefix, sub);
       if (fs.existsSync(src)) {
         copyTree(src, path.join(runtimeDir, sub), {
-          skipDirNames: new Set(["__pycache__", "test", "tests", "idlelib", "turtledemo"]),
+          skipDirNames: new Set([
+            "__pycache__",
+            "test",
+            "tests",
+            "idlelib",
+            "turtledemo",
+          ]),
         });
       }
     }
@@ -107,20 +120,35 @@ function copyAppSource(appDir) {
 }
 
 function writeManifest(outDir, meta) {
-  fs.writeFileSync(path.join(outDir, "manifest.json"), `${JSON.stringify(meta, null, 2)}\n`, "utf8");
+  fs.writeFileSync(
+    path.join(outDir, "manifest.json"),
+    `${JSON.stringify(meta, null, 2)}\n`,
+    "utf8"
+  );
 }
 
 function main() {
-  const host = resolveHostPython();
+  let host;
+  try {
+    host = resolveHostPython();
+  } catch (error) {
+    console.error(error.message);
+    process.exit(1);
+  }
+
   if (!host) {
     console.error(
       "未找到 Python 3.10+。请先安装 Python，然后执行：\n" +
-        "  cd apps/python && python -m venv .venv && .venv\\Scripts\\pip install -r requirements.txt",
+        "  cd apps/python && python -m venv .venv && .venv\\Scripts\\pip install -r requirements.txt"
     );
     process.exit(1);
   }
 
-  console.log(`[build:python] 使用 ${host.command} ${host.extraArgs.join(" ")} (${host.version})`);
+  console.log(
+    `[build:python] 使用 ${host.command} ${host.extraArgs.join(" ")} (${host.version})${
+      host.source ? ` via ${host.source}` : ""
+    }`
+  );
 
   rimraf(BUILD_DIR);
   fs.mkdirSync(BUILD_DIR, { recursive: true });

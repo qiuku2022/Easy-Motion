@@ -30,7 +30,7 @@ export function KeyframeDiamondButton({
         "hover:bg-accent/60 disabled:pointer-events-none disabled:opacity-40",
         atPlayhead && "text-amber-400",
         !atPlayhead && animated && "text-sky-400/80",
-        !atPlayhead && !animated && "text-muted-foreground/45",
+        !atPlayhead && !animated && "text-muted-foreground/45"
       )}
       onClick={(e) => {
         e.preventDefault();

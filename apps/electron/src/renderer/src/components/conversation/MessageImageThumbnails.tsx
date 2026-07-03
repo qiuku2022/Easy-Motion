@@ -11,9 +11,7 @@ interface MessageImageThumbnailsProps {
 function pathToImageRef(path: string) {
   const name = path.split(/[/\\]/).pop();
   const isAbsolute = /^[a-zA-Z]:[\\/]/.test(path) || path.startsWith("/");
-  return isAbsolute
-    ? { path, name }
-    : { relativePath: path, path, name };
+  return isAbsolute ? { path, name } : { relativePath: path, path, name };
 }
 
 export const MessageImageThumbnails = memo(function MessageImageThumbnails({

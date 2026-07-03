@@ -46,7 +46,10 @@ export function AddTrackMenu({ disabled }: AddTrackMenuProps) {
         <Plus className="h-3.5 w-3.5" />
         轨道
         <ChevronDown
-          className={cn("h-3 w-3 opacity-60 transition-transform", open && "rotate-180")}
+          className={cn(
+            "h-3 w-3 opacity-60 transition-transform",
+            open && "rotate-180"
+          )}
         />
       </Button>
 

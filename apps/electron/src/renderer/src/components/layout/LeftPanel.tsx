@@ -27,7 +27,10 @@ export function LeftPanel() {
         </PanelTabContent>
       ) : (
         <ScrollArea className="min-h-0 flex-1">
-          <PanelTabContent tabKey={leftTab} className="p-3 text-sm text-muted-foreground">
+          <PanelTabContent
+            tabKey={leftTab}
+            className="p-3 text-sm text-muted-foreground"
+          >
             {leftTab === "project" && <ProjectPanel />}
             {leftTab === "assets" && <AssetsPanel />}
           </PanelTabContent>

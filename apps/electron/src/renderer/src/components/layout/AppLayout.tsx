@@ -35,7 +35,7 @@ function sidePanelStyle(
   pinned: boolean,
   width: number,
   min: number,
-  max: number,
+  max: number
 ): CSSProperties {
   return pinned
     ? { flex: `0 0 ${width}px`, minWidth: min, maxWidth: max }
@@ -77,7 +77,7 @@ export function AppLayout() {
       if (!leftPinned) setLeftPinned(true);
       setLeftPanelWidth(Math.min(LEFT_MAX, Math.max(LEFT_MIN, base + delta)));
     },
-    [leftPanelWidth, leftPinned, setLeftPanelWidth],
+    [leftPanelWidth, leftPinned, setLeftPanelWidth]
   );
 
   const onResizeRight = useCallback(
@@ -88,28 +88,27 @@ export function AppLayout() {
       if (!rightPinned) setRightPinned(true);
       setRightPanelWidth(Math.min(RIGHT_MAX, Math.max(RIGHT_MIN, base - delta)));
     },
-    [rightPanelWidth, rightPinned, setRightPanelWidth],
+    [rightPanelWidth, rightPinned, setRightPanelWidth]
   );
 
   const onResizeAi = useCallback(
     (delta: number) => {
       setAiPanelWidth(Math.min(AI_MAX, Math.max(AI_MIN, aiPanelWidth - delta)));
     },
-    [aiPanelWidth, setAiPanelWidth],
+    [aiPanelWidth, setAiPanelWidth]
   );
 
   const onResizeTimeline = useCallback(
     (delta: number) => {
       setTimelineHeight(
-        Math.min(TIMELINE_MAX, Math.max(TIMELINE_MIN, timelineHeight - delta)),
+        Math.min(TIMELINE_MAX, Math.max(TIMELINE_MIN, timelineHeight - delta))
       );
     },
-    [timelineHeight, setTimelineHeight],
+    [timelineHeight, setTimelineHeight]
   );
 
   const editorSideCount = (leftCollapsed ? 0 : 1) + (rightCollapsed ? 0 : 1);
-  const previewFlex =
-    editorSideCount === 0 ? "1 1 0" : `0 0 ${previewColumnWidth}px`;
+  const previewFlex = editorSideCount === 0 ? "1 1 0" : `0 0 ${previewColumnWidth}px`;
 
   return (
     <div className="flex min-h-0 flex-1 overflow-hidden">
@@ -138,7 +137,12 @@ export function AppLayout() {
               <PanelResizer axis="horizontal" onResize={onResizeRight} />
               <div
                 ref={rightRef}
-                style={sidePanelStyle(rightPinned, rightPanelWidth, RIGHT_MIN, RIGHT_MAX)}
+                style={sidePanelStyle(
+                  rightPinned,
+                  rightPanelWidth,
+                  RIGHT_MIN,
+                  RIGHT_MAX
+                )}
                 className="min-w-0 overflow-hidden"
               >
                 <RightPanel />

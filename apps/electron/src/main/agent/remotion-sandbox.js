@@ -4,15 +4,10 @@ const { getRemotionDir } = require("../services/remotion-project");
 
 const WRITABLE_PREFIXES = ["components/custom/", "presets/custom-registry.ts"];
 
-const READABLE_BLOCKED = [
-  /^node_modules\//,
-  /^\.git\//,
-];
+const READABLE_BLOCKED = [/^node_modules\//, /^\.git\//];
 
-const IMPORT_FROM_RE =
-  /\bfrom\s+['"]([^'"]+)['"]/g;
-const IMPORT_REQUIRE_RE =
-  /require\s*\(\s*['"]([^'"]+)['"]\s*\)/g;
+const IMPORT_FROM_RE = /\bfrom\s+['"]([^'"]+)['"]/g;
+const IMPORT_REQUIRE_RE = /require\s*\(\s*['"]([^'"]+)['"]\s*\)/g;
 
 function resolveRemotionPaths(projectPath, subprojectPath = "subprojects/default") {
   if (!projectPath) {
@@ -24,7 +19,9 @@ function resolveRemotionPaths(projectPath, subprojectPath = "subprojects/default
 }
 
 function normalizeRelativePath(relativePath) {
-  const raw = String(relativePath ?? "").trim().replace(/\\/g, "/");
+  const raw = String(relativePath ?? "")
+    .trim()
+    .replace(/\\/g, "/");
   if (!raw) {
     throw new Error("E2410: 路径不能为空");
   }
@@ -52,10 +49,13 @@ function assertReadableRelativePath(relativePath) {
 function assertWritableRelativePath(relativePath) {
   const normalized = normalizeRelativePath(relativePath);
   const allowed = WRITABLE_PREFIXES.some(
-    (prefix) => normalized === prefix.replace(/\/$/, "") || normalized.startsWith(prefix)
+    (prefix) =>
+      normalized === prefix.replace(/\/$/, "") || normalized.startsWith(prefix)
   );
   if (!allowed) {
-    throw new Error(`E2410: 不允许写入 ${relativePath}（仅 components/custom/** 与 presets/custom-registry.ts）`);
+    throw new Error(
+      `E2410: 不允许写入 ${relativePath}（仅 components/custom/** 与 presets/custom-registry.ts）`
+    );
   }
   return normalized;
 }

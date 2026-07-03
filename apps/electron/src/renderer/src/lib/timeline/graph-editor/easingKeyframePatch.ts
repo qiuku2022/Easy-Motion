@@ -13,7 +13,7 @@ export function easingKeyframePatch(
   easing: KeyframeEasing,
   prev: Keyframe | null,
   kf: Keyframe,
-  fps: number,
+  fps: number
 ): Partial<Keyframe> {
   if (easing === "spring") {
     return { easing: "spring", interpolation: "linear" };

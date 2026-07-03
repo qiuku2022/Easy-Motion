@@ -5,7 +5,7 @@ import { useSeekFrame } from "@/hooks/useSeekFrame";
 /** 在水平滚动内容区内拖拽播放头（无左侧轨道头偏移） */
 export function usePlayheadDrag(
   scrollRef: RefObject<HTMLElement | null>,
-  pxPerFrame: number,
+  pxPerFrame: number
 ) {
   const seekFrame = useSeekFrame();
 
@@ -32,6 +32,6 @@ export function usePlayheadDrag(
         altKeyHeld: e.altKey,
       });
     },
-    [pxPerFrame, scrollRef, seekFrame],
+    [pxPerFrame, scrollRef, seekFrame]
   );
 }

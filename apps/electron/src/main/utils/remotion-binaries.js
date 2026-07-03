@@ -3,11 +3,7 @@ const path = require("node:path");
 
 function getCompositorPackageId() {
   const libcSuffix =
-    process.platform === "win32"
-      ? "-msvc"
-      : process.platform === "linux"
-        ? "-gnu"
-        : "";
+    process.platform === "win32" ? "-msvc" : process.platform === "linux" ? "-gnu" : "";
   return `compositor-${process.platform}-${process.arch}${libcSuffix}`;
 }
 

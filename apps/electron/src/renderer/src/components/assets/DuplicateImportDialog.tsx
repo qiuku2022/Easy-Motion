@@ -8,10 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import {
-  DUPLICATE_ACTION_LABELS,
-  useAssetStore,
-} from "@/stores/assetStore";
+import { DUPLICATE_ACTION_LABELS, useAssetStore } from "@/stores/assetStore";
 import type { DuplicateAction, DuplicateResolution } from "@/types/asset";
 
 export function DuplicateImportDialog() {
@@ -95,7 +92,7 @@ export function DuplicateImportDialog() {
                       >
                         {DUPLICATE_ACTION_LABELS[action]}
                       </Button>
-                    ),
+                    )
                   )}
                 </div>
               </li>
@@ -107,11 +104,7 @@ export function DuplicateImportDialog() {
           <Button type="button" variant="outline" onClick={onCancel}>
             取消
           </Button>
-          <Button
-            type="button"
-            disabled={isImporting}
-            onClick={() => void onConfirm()}
-          >
+          <Button type="button" disabled={isImporting} onClick={() => void onConfirm()}>
             继续导入
           </Button>
         </DialogFooter>

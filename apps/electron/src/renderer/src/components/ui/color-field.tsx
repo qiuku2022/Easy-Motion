@@ -11,13 +11,7 @@ import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
-import {
-  clamp,
-  hexToHsv,
-  hsvToHex,
-  normalizeHex,
-  swatchStyle,
-} from "@/lib/colorUtils";
+import { clamp, hexToHsv, hsvToHex, normalizeHex, swatchStyle } from "@/lib/colorUtils";
 import { cn } from "@/lib/utils";
 
 const QUICK_COLORS = [
@@ -68,7 +62,7 @@ function SaturationValuePanel({
       const v = clamp(1 - (clientY - rect.top) / rect.height, 0, 1);
       onChange(s, v);
     },
-    [onChange],
+    [onChange]
   );
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -90,7 +84,7 @@ function SaturationValuePanel({
       ref={panelRef}
       className={cn(
         "relative h-[132px] w-full overflow-hidden rounded-[var(--radius-control)] ring-1 ring-border",
-        disabled ? "cursor-not-allowed opacity-60" : "cursor-crosshair",
+        disabled ? "cursor-not-allowed opacity-60" : "cursor-crosshair"
       )}
       style={{ backgroundColor: `hsl(${hue} 100% 50%)` }}
       onPointerDown={onPointerDown}
@@ -136,7 +130,7 @@ export const ColorField = forwardRef<HTMLDivElement, ColorFieldProps>(
       id,
       "aria-label": ariaLabel = "选择颜色",
     },
-    ref,
+    ref
   ) {
     const fallbackId = useId();
     const inputId = id ?? fallbackId;
@@ -210,7 +204,7 @@ export const ColorField = forwardRef<HTMLDivElement, ColorFieldProps>(
           onCommit?.(hex);
         }
       },
-      [onChange, onCommit, value],
+      [onChange, onCommit, value]
     );
 
     const previewHex = useCallback(
@@ -221,7 +215,7 @@ export const ColorField = forwardRef<HTMLDivElement, ColorFieldProps>(
         onChange(hex);
         onCommit?.(hex);
       },
-      [onChange, onCommit, value],
+      [onChange, onCommit, value]
     );
 
     const onHueChange = (values: number[]) => {
@@ -324,8 +318,7 @@ export const ColorField = forwardRef<HTMLDivElement, ColorFieldProps>(
                 aria-label={`使用 ${color}`}
                 className={cn(
                   "aspect-square rounded-[var(--radius-control)] ring-1 ring-inset ring-foreground/10 transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                  normalizeHex(hexInput) === color &&
-                    "ring-2 ring-foreground/70",
+                  normalizeHex(hexInput) === color && "ring-2 ring-foreground/70"
                 )}
                 style={{ backgroundColor: color }}
                 onClick={() => {
@@ -394,5 +387,5 @@ export const ColorField = forwardRef<HTMLDivElement, ColorFieldProps>(
           : null}
       </div>
     );
-  },
+  }
 );

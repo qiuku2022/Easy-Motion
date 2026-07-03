@@ -2,7 +2,7 @@ import type { Clip, Keyframe } from "@/types/timeline";
 import { KEYFRAME_ANIMATABLE_PROPERTIES } from "@/lib/timeline/keyframes";
 
 const ANIMATABLE_PATHS = new Set(
-  KEYFRAME_ANIMATABLE_PROPERTIES.map((item) => item.path),
+  KEYFRAME_ANIMATABLE_PROPERTIES.map((item) => item.path)
 );
 
 export function isAnimatableProperty(path: string): boolean {
@@ -16,10 +16,10 @@ export function clipHasKeyframesForProperty(clip: Clip, property: string): boole
 export function findKeyframeAtFrame(
   clip: Clip,
   property: string,
-  relativeFrame: number,
+  relativeFrame: number
 ): Keyframe | undefined {
   return (clip.keyframes ?? []).find(
-    (kf) => kf.property === property && kf.frame === relativeFrame,
+    (kf) => kf.property === property && kf.frame === relativeFrame
   );
 }
 

@@ -80,8 +80,7 @@ export function TimelinePanel() {
           <p>
             {remotionDrift?.tracksEmpty
               ? "时间线轨道为空，但 Remotion 项目有内容。"
-              : "Remotion 源码已变更，自动同步未成功。"}
-            {" "}
+              : "Remotion 源码已变更，自动同步未成功。"}{" "}
             可手动重试「从 Remotion 读取」。
           </p>
           <Button
@@ -121,7 +120,8 @@ export function TimelinePanel() {
         >
           <p className="text-foreground">开始你的动画创作</p>
           <p className="max-w-md text-xs">
-            点击上方「+ 轨道」添加文字或分组；若 Remotion 源码已有内容，可用「⋯」→「从 Remotion 读取」同步。
+            点击上方「+ 轨道」添加文字或分组；若 Remotion 源码已有内容，可用「⋯」→「从
+            Remotion 读取」同步。
           </p>
         </div>
       )}

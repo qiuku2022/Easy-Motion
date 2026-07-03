@@ -34,11 +34,7 @@ function extractTextFromInput(input) {
 /**
  * LLM 失败后的简化模式：createTrack(text) + createClip(Hello)。
  */
-function runSimplifiedFallback({
-  timeline,
-  subprojectName = "默认片段",
-  input = "",
-}) {
+function runSimplifiedFallback({ timeline, subprojectName = "默认片段", input = "" }) {
   const ctx = new TimelineContext(timeline, { subprojectName });
   const content = extractTextFromInput(input);
 

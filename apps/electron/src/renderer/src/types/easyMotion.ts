@@ -137,9 +137,7 @@ export interface EasyMotionApi {
     generate: (payload?: {
       subprojectPath?: string;
     }) => Promise<IpcResult<{ files: string[]; previewReload?: boolean }>>;
-    checkRemotionDrift: (payload?: {
-      subprojectPath?: string;
-    }) => Promise<
+    checkRemotionDrift: (payload?: { subprojectPath?: string }) => Promise<
       IpcResult<{
         drifted: boolean;
         suggestSync: boolean;
@@ -181,9 +179,9 @@ export interface EasyMotionApi {
     >;
   };
   preview: {
-    start: (payload?: unknown) => Promise<
-      IpcResult<{ url: string; remotionFingerprint?: string | null }>
-    >;
+    start: (
+      payload?: unknown
+    ) => Promise<IpcResult<{ url: string; remotionFingerprint?: string | null }>>;
     stop: () => Promise<IpcResult<unknown>>;
     getState: () => Promise<IpcResult<{ status: string; url?: string }>>;
     onLog: (callback: (data: { line?: string; phase?: string }) => void) => void;
@@ -194,18 +192,12 @@ export interface EasyMotionApi {
       filePaths: string[];
       subprojectPath?: string;
       fps?: number;
-      duplicateResolutions?: Record<
-        string,
-        import("./asset").DuplicateResolution
-      >;
+      duplicateResolutions?: Record<string, import("./asset").DuplicateResolution>;
     }) => Promise<IpcResult<import("./asset").AssetImportResult>>;
     pickAndImport: (payload?: {
       subprojectPath?: string;
       fps?: number;
-      duplicateResolutions?: Record<
-        string,
-        import("./asset").DuplicateResolution
-      >;
+      duplicateResolutions?: Record<string, import("./asset").DuplicateResolution>;
     }) => Promise<IpcResult<import("./asset").AssetImportResult>>;
     updateMeta: (payload: {
       assetId: string;
@@ -250,9 +242,7 @@ export interface EasyMotionApi {
     onChunk: (callback: (data: LlmChunkPayload) => void) => () => void;
   };
   settings: {
-    get: (payload?: {
-      keys?: string[];
-    }) => Promise<IpcResult<AppSettings>>;
+    get: (payload?: { keys?: string[] }) => Promise<IpcResult<AppSettings>>;
     update: (payload: {
       settings: Partial<AppSettings>;
     }) => Promise<IpcResult<{ updated: boolean; settings: AppSettings }>>;
@@ -268,10 +258,7 @@ export interface EasyMotionApi {
     }) => Promise<IpcResult<{ valid: boolean; error?: string }>>;
   };
   conversation: {
-    load: (payload?: {
-      subprojectId?: string;
-      subprojectPath?: string;
-    }) => Promise<
+    load: (payload?: { subprojectId?: string; subprojectPath?: string }) => Promise<
       IpcResult<{
         conversation: Conversation;
         subprojectPath?: string;
@@ -283,15 +270,11 @@ export interface EasyMotionApi {
       subprojectId?: string;
       subprojectPath?: string;
       conversation: Conversation;
-    }) => Promise<
-      IpcResult<{ saved: boolean; conversation: Conversation }>
-    >;
+    }) => Promise<IpcResult<{ saved: boolean; conversation: Conversation }>>;
     clear: (payload?: {
       subprojectId?: string;
       subprojectPath?: string;
-    }) => Promise<
-      IpcResult<{ saved: boolean; conversation: Conversation }>
-    >;
+    }) => Promise<IpcResult<{ saved: boolean; conversation: Conversation }>>;
     saveAgentUndo: (payload: {
       subprojectId?: string;
       subprojectPath?: string;
@@ -354,9 +337,7 @@ export interface EasyMotionApi {
       requestId: string;
     }) => Promise<IpcResult<{ cancelled: boolean }>>;
     onChunk: (callback: (data: ConversationChunkPayload) => void) => () => void;
-    onComplete: (
-      callback: (data: ConversationCompletePayload) => void
-    ) => () => void;
+    onComplete: (callback: (data: ConversationCompletePayload) => void) => () => void;
     onError: (
       callback: (data: { requestId: string; message: string }) => void
     ) => () => void;
@@ -372,12 +353,12 @@ export interface EasyMotionApi {
     }) => Promise<IpcResult<ProjectWorkspace>>;
   };
   export: {
-    start: (payload: import("./export").ExportStartRequest) => Promise<
-      IpcResult<{ exportId: string }>
-    >;
-    project: (payload: import("./export").ProjectExportStartRequest) => Promise<
-      IpcResult<{ exportId: string }>
-    >;
+    start: (
+      payload: import("./export").ExportStartRequest
+    ) => Promise<IpcResult<{ exportId: string }>>;
+    project: (
+      payload: import("./export").ProjectExportStartRequest
+    ) => Promise<IpcResult<{ exportId: string }>>;
     cancel: (exportId: string) => Promise<IpcResult<{ cancelled: boolean }>>;
     pickOutput: (payload: {
       defaultPath?: string;
@@ -390,13 +371,13 @@ export interface EasyMotionApi {
       IpcResult<{ exportId: string; kind?: import("./export").ExportKind } | null>
     >;
     onProgress: (
-      callback: (data: import("./export").ExportProgressPayload) => void,
+      callback: (data: import("./export").ExportProgressPayload) => void
     ) => () => void;
     onCompleted: (
-      callback: (data: import("./export").ExportCompletedPayload) => void,
+      callback: (data: import("./export").ExportCompletedPayload) => void
     ) => () => void;
     onError: (
-      callback: (data: import("./export").ExportErrorPayload) => void,
+      callback: (data: import("./export").ExportErrorPayload) => void
     ) => () => void;
   };
 }

@@ -3,12 +3,7 @@ import { getClipRange } from "@/lib/timeline/clipCollision";
 import { getMarkerFrames } from "@/lib/timeline/markers";
 import type { Clip } from "@/types/timeline";
 
-export type SnapTargetKind =
-  | "clip-start"
-  | "clip-end"
-  | "playhead"
-  | "grid"
-  | "marker";
+export type SnapTargetKind = "clip-start" | "clip-end" | "playhead" | "grid" | "marker";
 
 export interface SnapTarget {
   frame: number;
@@ -23,7 +18,7 @@ export const RESIZE_SNAP_THRESHOLD_PX = 5;
 function forEachTimelineClip(
   timeline: Timeline,
   visitor: (clip: Clip) => void,
-  excludeClipId?: string,
+  excludeClipId?: string
 ): void {
   for (const track of timeline.tracks) {
     for (const clip of track.clips) {
@@ -46,7 +41,7 @@ export function collectSnapTargets(
     excludeClipId?: string;
     gridInterval?: number;
     markers?: number[];
-  },
+  }
 ): SnapTarget[] {
   const targets: SnapTarget[] = [];
   const gridInterval = options.gridInterval ?? 1;
@@ -64,11 +59,15 @@ export function collectSnapTargets(
     }
   }
 
-  forEachTimelineClip(timeline, (clip) => {
-    const range = getClipRange(clip);
-    targets.push({ frame: range.start, kind: "clip-start" });
-    targets.push({ frame: range.end, kind: "clip-end" });
-  }, options.excludeClipId);
+  forEachTimelineClip(
+    timeline,
+    (clip) => {
+      const range = getClipRange(clip);
+      targets.push({ frame: range.start, kind: "clip-start" });
+      targets.push({ frame: range.end, kind: "clip-end" });
+    },
+    options.excludeClipId
+  );
 
   return targets;
 }
@@ -76,7 +75,7 @@ export function collectSnapTargets(
 export function findNearestSnap(
   frame: number,
   targets: SnapTarget[],
-  thresholdFrames: number,
+  thresholdFrames: number
 ): { frame: number; target: SnapTarget } | null {
   let best: { frame: number; target: SnapTarget; distance: number } | null = null;
 
@@ -101,13 +100,13 @@ export function snapFrame(
     thresholdPx?: number;
     excludeClipId?: string;
     gridInterval?: number;
-  },
+  }
 ): number {
   if (!options.enabled) return frame;
 
   const thresholdFrames = Math.max(
     1,
-    Math.round((options.thresholdPx ?? DEFAULT_SNAP_THRESHOLD_PX) / options.pxPerFrame),
+    Math.round((options.thresholdPx ?? DEFAULT_SNAP_THRESHOLD_PX) / options.pxPerFrame)
   );
 
   const targets = collectSnapTargets(timeline, {

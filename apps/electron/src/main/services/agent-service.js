@@ -92,10 +92,7 @@ function applyAgentTimelinePreview(ctx, timeline) {
     ctx.projectPath,
     ctx.subprojectPath
   );
-  const drift = timelineService.checkRemotionDrift(
-    ctx.projectPath,
-    ctx.subprojectPath
-  );
+  const drift = timelineService.checkRemotionDrift(ctx.projectPath, ctx.subprojectPath);
   const timelineDriven =
     drift.hasCustomRemotionCode || isTimelineDrivenPreview(remotionDir);
 
@@ -216,7 +213,9 @@ function startConversationSend(webContents, payload) {
 
       sendChunk(webContents, requestId, "", true);
       const timelineChangeSummary = formatChangeSummary(result.changeLog);
-      const remotionChangeSummary = formatRemotionChangeSummary(result.remotionChangeLog);
+      const remotionChangeSummary = formatRemotionChangeSummary(
+        result.remotionChangeLog
+      );
       const changeSummary = [timelineChangeSummary, remotionChangeSummary]
         .filter(Boolean)
         .join("\n");

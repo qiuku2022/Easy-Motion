@@ -50,7 +50,9 @@ export function SpringConfigEditor({
 
   return (
     <div className="space-y-2">
-      <p className="text-[10px] text-muted-foreground">Spring 物理参数（预览使用 Remotion 同款 spring）</p>
+      <p className="text-[10px] text-muted-foreground">
+        Spring 物理参数（预览使用 Remotion 同款 spring）
+      </p>
       <svg width={200} height={64} className="rounded border border-border bg-muted/30">
         <path d={path} fill="none" stroke="#2dd4bf" strokeWidth={2} />
       </svg>

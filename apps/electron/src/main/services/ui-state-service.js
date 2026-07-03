@@ -48,11 +48,11 @@ function normalizeMainWindowState(raw) {
 function clampBoundsToWorkArea(bounds, workArea, minWidth, minHeight) {
   const width = Math.max(
     minWidth,
-    Math.min(bounds.width, Math.max(minWidth, workArea.width)),
+    Math.min(bounds.width, Math.max(minWidth, workArea.width))
   );
   const height = Math.max(
     minHeight,
-    Math.min(bounds.height, Math.max(minHeight, workArea.height)),
+    Math.min(bounds.height, Math.max(minHeight, workArea.height))
   );
 
   const maxX = workArea.x + workArea.width - width;
@@ -99,8 +99,7 @@ function captureMainWindowState(win) {
 
   const maximized = win.isMaximized();
   const fullscreen = win.isFullScreen();
-  const bounds =
-    maximized || fullscreen ? win.getNormalBounds() : win.getBounds();
+  const bounds = maximized || fullscreen ? win.getNormalBounds() : win.getBounds();
 
   return {
     x: bounds.x,
@@ -116,12 +115,17 @@ function resolveMainWindowPlacement(saved, fallbackBounds) {
   const { screen } = require("electron");
   const { workArea } = screen.getPrimaryDisplay();
   const base = saved
-    ? clampBoundsToWorkArea(saved, workArea, MAIN_WINDOW_MIN_WIDTH, MAIN_WINDOW_MIN_HEIGHT)
+    ? clampBoundsToWorkArea(
+        saved,
+        workArea,
+        MAIN_WINDOW_MIN_WIDTH,
+        MAIN_WINDOW_MIN_HEIGHT
+      )
     : clampBoundsToWorkArea(
         fallbackBounds,
         workArea,
         MAIN_WINDOW_MIN_WIDTH,
-        MAIN_WINDOW_MIN_HEIGHT,
+        MAIN_WINDOW_MIN_HEIGHT
       );
 
   return {

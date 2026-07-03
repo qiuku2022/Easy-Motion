@@ -219,7 +219,9 @@ export function AIAssistantPanel() {
     <div className="flex min-h-0 min-w-0 flex-1 flex-col text-sm">
       <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-3 py-2">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="shrink-0 text-xs font-medium text-muted-foreground">AI 助手</span>
+          <span className="shrink-0 text-xs font-medium text-muted-foreground">
+            AI 助手
+          </span>
           <AgentCreationModeToggle
             value={creationMode}
             disabled={isStreaming}
@@ -263,7 +265,9 @@ export function AIAssistantPanel() {
             streamingMessageId={streamingMessageId}
             selectedClipId={selectedClipId}
             onExampleSelect={setInputText}
-            onAction={(action, messageId) => void handleMessageAction(action, messageId)}
+            onAction={(action, messageId) =>
+              void handleMessageAction(action, messageId)
+            }
             actionsDisabled={isStreaming}
           />
           <GenerationProgress status={agentStatus} isStreaming={isStreaming} />

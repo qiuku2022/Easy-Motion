@@ -23,7 +23,10 @@ import {
 } from "@/lib/timeline/trackTree";
 import { ClipBlock } from "@/components/timeline/ClipBlock";
 import { resolveClipContentType } from "@/lib/timeline/contentType";
-import type { ClipDragMode, ClipDragPreview } from "@/components/timeline/clipDragTypes";
+import type {
+  ClipDragMode,
+  ClipDragPreview,
+} from "@/components/timeline/clipDragTypes";
 import { Playhead } from "@/components/timeline/Playhead";
 import { ClipFloatingToolbar } from "@/components/timeline/ClipFloatingToolbar";
 import { BodyMarkerLines } from "@/components/timeline/TimelineMarkers";
@@ -94,7 +97,7 @@ export function TimelineBody({
   const sortedTrackIds = sortTracksForTimelineUi(tracks).map((t) => t.id);
   const { preview: trackReorderPreview, startReorder } = useTrackReorder(
     sortedTrackIds,
-    headerScrollRef,
+    headerScrollRef
   );
 
   const timeline = useTimelineStore((s) => s.timeline);
@@ -111,7 +114,7 @@ export function TimelineBody({
     (frame: number) => {
       seekFrame(frame);
     },
-    [seekFrame],
+    [seekFrame]
   );
 
   const syncHorizontalScroll = useCallback(
@@ -122,7 +125,7 @@ export function TimelineBody({
       syncingScrollRef.current = false;
       setTimelineScrollX(scrollLeft);
     },
-    [setTimelineScrollX],
+    [setTimelineScrollX]
   );
 
   const flushZoomWheel = useCallback(() => {
@@ -140,7 +143,7 @@ export function TimelineBody({
       pending.clientX,
       wheelDelta,
       durationInFrames,
-      currentPx,
+      currentPx
     );
     if (!result) return;
 
@@ -187,7 +190,7 @@ export function TimelineBody({
         altKeyHeld: e.altKey,
       });
     },
-    [seekFrame, pxPerFrame],
+    [seekFrame, pxPerFrame]
   );
 
   useEffect(() => {
@@ -266,15 +269,18 @@ export function TimelineBody({
     syncVerticalScroll,
   ]);
 
-  const { onDragOver: onTimelineDragOver, onDrop: onTimelineDrop } =
-    useTimelineDrop(bodyScrollRef, rows, pxPerFrame);
+  const { onDragOver: onTimelineDragOver, onDrop: onTimelineDrop } = useTimelineDrop(
+    bodyScrollRef,
+    rows,
+    pxPerFrame
+  );
 
   const handleSelectClip = useCallback(
     (clipId: string) => {
       if (consumeClick()) return;
       onSelectClip(clipId);
     },
-    [consumeClick, onSelectClip],
+    [consumeClick, onSelectClip]
   );
 
   return (
@@ -308,7 +314,10 @@ export function TimelineBody({
               parentGroup={row.parentGroup}
               isGroupHeader={row.isGroupHeader}
               className="border-b border-border"
-              selected={selectedTrackId === row.track.id || selectedTrackId === row.parentGroup?.id}
+              selected={
+                selectedTrackId === row.track.id ||
+                selectedTrackId === row.parentGroup?.id
+              }
               isDragging={trackReorderPreview?.trackId === row.track.id}
               showDropLineAbove={
                 row.depth === 0 && trackReorderPreview?.insertIndex === rowIndex
@@ -391,7 +400,9 @@ export function TimelineBody({
                 selectedClipId={selectedClipId}
                 dragPreview={dragPreview}
                 onSelectClip={handleSelectClip}
-                onDragStart={(e, clipId, mode) => startDrag(e, clipId, row.track.id, mode)}
+                onDragStart={(e, clipId, mode) =>
+                  startDrag(e, clipId, row.track.id, mode)
+                }
               />
             ))}
 
@@ -477,27 +488,27 @@ function TrackRow({
         locked && "bg-em-surface/20",
         isGroupHeader && "bg-em-surface/10",
         isDropTarget && "bg-em-teal/5",
-        hasSelectedClip && "bg-primary/[0.07]",
+        hasSelectedClip && "bg-primary/[0.07]"
       )}
       style={{ height: TRACK_ROW_HEIGHT }}
     >
       {!isGroupHeader &&
         track.clips.map((clip) => {
-        const render = resolveClipRender(clip, track.id, dragPreview);
-        if (!render.visible) return null;
-        return (
-          <ClipBlock
-            key={clip.id}
-            clip={render.clip}
-            contentType={resolveClipContentType(clip, track)}
-            pxPerFrame={pxPerFrame}
-            selected={clip.id === selectedClipId}
-            disabled={locked}
-            dragging={render.dragging}
-            onSelect={() => onSelectClip(clip.id)}
-            onDragStart={(e, mode) => onDragStart(e, clip.id, mode)}
-          />
-        );
+          const render = resolveClipRender(clip, track.id, dragPreview);
+          if (!render.visible) return null;
+          return (
+            <ClipBlock
+              key={clip.id}
+              clip={render.clip}
+              contentType={resolveClipContentType(clip, track)}
+              pxPerFrame={pxPerFrame}
+              selected={clip.id === selectedClipId}
+              disabled={locked}
+              dragging={render.dragging}
+              onSelect={() => onSelectClip(clip.id)}
+              onDragStart={(e, mode) => onDragStart(e, clip.id, mode)}
+            />
+          );
         })}
 
       {!isGroupHeader &&
@@ -520,16 +531,13 @@ function TrackRow({
 function resolveClipRender(
   clip: Clip,
   trackId: string,
-  dragPreview: ClipDragPreview | null,
+  dragPreview: ClipDragPreview | null
 ): { visible: boolean; clip: Clip; dragging: boolean } {
   if (!dragPreview || dragPreview.clipId !== clip.id) {
     return { visible: true, clip, dragging: false };
   }
 
-  if (
-    dragPreview.sourceTrackId === trackId &&
-    dragPreview.targetTrackId !== trackId
-  ) {
+  if (dragPreview.sourceTrackId === trackId && dragPreview.targetTrackId !== trackId) {
     return { visible: false, clip, dragging: false };
   }
 

@@ -31,12 +31,7 @@ function createRemotionCodeTools(ctx, timelineCtx = null) {
       description:
         "列出用户 Remotion 项目 remotion/src 下的文件树（只读）。用于了解现有组件与目录结构。",
       schema: z.object({
-        maxDepth: z
-          .number()
-          .min(1)
-          .max(8)
-          .optional()
-          .describe("目录深度，默认 4"),
+        maxDepth: z.number().min(1).max(8).optional().describe("目录深度，默认 4"),
       }),
     }
   );
@@ -182,13 +177,14 @@ function createRemotionCodeTools(ctx, timelineCtx = null) {
           .record(z.unknown())
           .optional()
           .describe("默认 props，写入 clip.source.props"),
-        startInFrames: z.number().min(0).optional().describe("时间线起始帧，默认当前播放头"),
+        startInFrames: z
+          .number()
+          .min(0)
+          .optional()
+          .describe("时间线起始帧，默认当前播放头"),
         durationInFrames: z.number().min(1).optional().describe("片段时长，默认整段"),
         trackId: z.string().optional().describe("目标 animation 轨道 id"),
-        applyToTimeline: z
-          .boolean()
-          .optional()
-          .describe("是否添加到时间线，默认 true"),
+        applyToTimeline: z.boolean().optional().describe("是否添加到时间线，默认 true"),
       }),
     }
   );
@@ -221,12 +217,7 @@ function createRemotionCodeTools(ctx, timelineCtx = null) {
   );
 
   const unregisterCustomComponentTool = tool(
-    async ({
-      componentName,
-      removeTimelineClips,
-      deleteFile,
-      confirmDeleteUsages,
-    }) => {
+    async ({ componentName, removeTimelineClips, deleteFile, confirmDeleteUsages }) => {
       try {
         if (!timelineCtx) {
           return toolResult(false, undefined, "E2416: timeline 上下文不可用");

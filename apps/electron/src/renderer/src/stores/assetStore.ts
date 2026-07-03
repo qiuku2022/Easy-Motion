@@ -28,13 +28,13 @@ interface AssetState {
   loadAssets: () => Promise<void>;
   importFilePaths: (
     paths: string[],
-    duplicateResolutions?: Record<string, DuplicateResolution>,
+    duplicateResolutions?: Record<string, DuplicateResolution>
   ) => Promise<"ok" | "needs_resolution" | "failed">;
   pickAndImport: (
-    duplicateResolutions?: Record<string, DuplicateResolution>,
+    duplicateResolutions?: Record<string, DuplicateResolution>
   ) => Promise<"ok" | "needs_resolution" | "failed">;
   resolveDuplicateImport: (
-    resolutions: Record<string, DuplicateResolution>,
+    resolutions: Record<string, DuplicateResolution>
   ) => Promise<boolean>;
   toggleFavorite: (assetId: string) => Promise<void>;
   recordUsage: (assetId: string) => Promise<void>;
@@ -43,7 +43,7 @@ interface AssetState {
 function applyImportResult(
   set: (partial: Partial<AssetState>) => void,
   get: () => AssetState,
-  data: AssetImportResult | undefined,
+  data: AssetImportResult | undefined
 ): "ok" | "needs_resolution" | "failed" {
   if (!data) {
     set({ error: "导入失败" });
@@ -107,8 +107,7 @@ export const useAssetStore = create<AssetState>((set, get) => ({
 
   setTypeFilter: (typeFilter) => set({ typeFilter }),
 
-  clearPendingDuplicates: () =>
-    set({ pendingDuplicates: [], pendingImportPaths: [] }),
+  clearPendingDuplicates: () => set({ pendingDuplicates: [], pendingImportPaths: [] }),
 
   getAssetById: (id) => get().assets.find((a) => a.id === id),
 
@@ -222,7 +221,7 @@ export const useAssetStore = create<AssetState>((set, get) => ({
 export function filterAssets(
   assets: ProjectAsset[],
   searchQuery: string,
-  typeFilter: AssetTypeFilter,
+  typeFilter: AssetTypeFilter
 ): ProjectAsset[] {
   const q = searchQuery.trim().toLowerCase();
   return assets.filter((asset) => {

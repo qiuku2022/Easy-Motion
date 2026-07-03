@@ -43,10 +43,7 @@ export function usePreviewBootstrap() {
 
     const onLog = ({ line }: { line?: string }) => {
       if (!line?.trim()) return;
-      setLogs((prev) => [
-        ...prev.slice(-(MAX_LOG_LINES - 1)),
-        stripAnsi(line.trim()),
-      ]);
+      setLogs((prev) => [...prev.slice(-(MAX_LOG_LINES - 1)), stripAnsi(line.trim())]);
     };
 
     api.preview.onLog(onLog);
@@ -151,12 +148,7 @@ export function usePreviewBootstrap() {
 
     bootstrappedFor.current = currentProject.path;
     void bootstrapPreview();
-  }, [
-    currentProject?.path,
-    timelineLoading,
-    timeline,
-    bootstrapPreview,
-  ]);
+  }, [currentProject?.path, timelineLoading, timeline, bootstrapPreview]);
 
   const retry = useCallback(() => {
     if (!currentProject?.path) return;

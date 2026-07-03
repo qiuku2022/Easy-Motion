@@ -38,10 +38,7 @@ export function PresetParameterFields({
   onPatch,
 }: PresetParameterFieldsProps) {
   const parameters = preset.parameters;
-  const values = useMemo(
-    () => resolvedClipPresetProps(clip, preset),
-    [clip, preset],
-  );
+  const values = useMemo(() => resolvedClipPresetProps(clip, preset), [clip, preset]);
 
   const schema = useMemo(() => {
     const shape: Record<string, z.ZodTypeAny> = {};
@@ -68,7 +65,7 @@ export function PresetParameterFields({
         values[param.key] === undefined || values[param.key] === null
           ? ""
           : String(values[param.key]),
-      ]),
+      ])
     ),
     mode: "onBlur",
   });
@@ -82,8 +79,8 @@ export function PresetParameterFields({
           nextValues[param.key] === undefined || nextValues[param.key] === null
             ? ""
             : String(nextValues[param.key]),
-        ]),
-      ),
+        ])
+      )
     );
     // 仅在切换片段/预设时重置，避免改色过程中表单被冲掉导致取色器关闭
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -96,15 +93,11 @@ export function PresetParameterFields({
 
       const raw = form.getValues(param.key);
       const parsed =
-        param.type === "number"
-          ? raw === ""
-            ? param.defaultValue
-            : Number(raw)
-          : raw;
+        param.type === "number" ? (raw === "" ? param.defaultValue : Number(raw)) : raw;
 
       onPatch(buildPresetPropsPatch(clip, preset, param.key, parsed));
     },
-    [clip, form, onPatch, preset],
+    [clip, form, onPatch, preset]
   );
 
   return (

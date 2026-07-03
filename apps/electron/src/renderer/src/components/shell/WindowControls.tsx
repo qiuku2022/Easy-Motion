@@ -23,7 +23,7 @@ export function WindowControls({
     "h-8 w-10 cursor-pointer rounded-none text-muted-foreground",
     "transition-colors duration-150 ease-out motion-reduce:transition-none",
     "hover:bg-muted hover:text-foreground",
-    "focus-visible:ring-3 focus-visible:ring-ring/50",
+    "focus-visible:ring-3 focus-visible:ring-ring/50"
   );
 
   return (
@@ -58,10 +58,7 @@ export function WindowControls({
         type="button"
         variant="ghost"
         size="icon"
-        className={cn(
-          controlClass,
-          "hover:bg-destructive/10 hover:text-destructive",
-        )}
+        className={cn(controlClass, "hover:bg-destructive/10 hover:text-destructive")}
         style={NO_DRAG}
         aria-label="关闭"
         onClick={onClose}

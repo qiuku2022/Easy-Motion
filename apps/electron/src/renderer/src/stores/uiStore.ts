@@ -1,8 +1,5 @@
 import { create } from "zustand";
-import {
-  DEFAULT_PX_PER_FRAME,
-  clampPxPerFrame,
-} from "@/lib/timeline/framePixels";
+import { DEFAULT_PX_PER_FRAME, clampPxPerFrame } from "@/lib/timeline/framePixels";
 import { scheduleKeyframePanelSave } from "@/lib/workspace/projectWorkspace";
 
 export type LeftTab = "project" | "assets" | "presets";
@@ -134,8 +131,7 @@ export const useUiStore = create<UiState>((set) => ({
 
   toggleTimelineTimeDisplay: () =>
     set((s) => ({
-      timelineTimeDisplay:
-        s.timelineTimeDisplay === "timecode" ? "frames" : "timecode",
+      timelineTimeDisplay: s.timelineTimeDisplay === "timecode" ? "frames" : "timecode",
     })),
 
   zoomTimelineBy: (delta) =>

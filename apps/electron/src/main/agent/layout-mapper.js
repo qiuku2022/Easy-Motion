@@ -93,8 +93,11 @@ function resolveSize(size = {}, timeline, elementType) {
 
 function resolveDuration(timeline, options = {}) {
   const start = Math.max(0, Math.round(Number(options.startInFrames ?? 0)));
-  const requested = Math.round(Number(options.durationInFrames ?? timeline.durationInFrames));
-  const duration = Number.isFinite(requested) && requested > 0 ? requested : timeline.durationInFrames;
+  const requested = Math.round(
+    Number(options.durationInFrames ?? timeline.durationInFrames)
+  );
+  const duration =
+    Number.isFinite(requested) && requested > 0 ? requested : timeline.durationInFrames;
   return { start, duration: Math.max(1, duration) };
 }
 
@@ -154,7 +157,8 @@ function normalizeElementType(type) {
 }
 
 function resolveShapeSource(element, size, timeline) {
-  const shape = element.shape === "circle" || element.style?.shape === "circle" ? "circle" : "rect";
+  const shape =
+    element.shape === "circle" || element.style?.shape === "circle" ? "circle" : "rect";
   if (shape === "circle") {
     return {
       kind: "inline",
@@ -225,17 +229,20 @@ function buildElementOperation(element, timeline, index, options = {}) {
           kind: "data",
           chartType: element.chartType === "bar" ? "bar" : "line",
           title: String(content),
-          data: Array.isArray(element.data) && element.data.length
-            ? element.data
-            : [
-                { label: "A", value: 40 },
-                { label: "B", value: 65 },
-                { label: "C", value: 50 },
-              ],
+          data:
+            Array.isArray(element.data) && element.data.length
+              ? element.data
+              : [
+                  { label: "A", value: 40 },
+                  { label: "B", value: 65 },
+                  { label: "C", value: 50 },
+                ],
         },
         transform: baseTransform,
         style: {
-          primaryColor: normalizeHex(element.style?.color || element.style?.primaryColor),
+          primaryColor: normalizeHex(
+            element.style?.color || element.style?.primaryColor
+          ),
           backgroundColor: normalizeHex(element.style?.backgroundColor || "#111827"),
         },
       },
@@ -252,7 +259,9 @@ function buildElementOperation(element, timeline, index, options = {}) {
       name: placeholderForImage ? "图片占位" : String(content).slice(0, 20),
     },
     args: {
-      name: placeholderForImage ? String(content || "图片占位").slice(0, 30) : String(content).slice(0, 30),
+      name: placeholderForImage
+        ? String(content || "图片占位").slice(0, 30)
+        : String(content).slice(0, 30),
       startInFrames: start,
       durationInFrames: duration,
       source: resolveShapeSource(element, size, timeline),

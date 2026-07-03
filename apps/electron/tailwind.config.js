@@ -71,7 +71,7 @@ module.exports = {
           text: "var(--foreground)",
           muted: "var(--muted-foreground)",
           accent: "var(--primary)",
-          "accent-hover": "oklch(0.488 0.215 25)", /* #BE123C */
+          "accent-hover": "oklch(0.488 0.215 25)" /* #BE123C */,
           teal: "var(--ring)",
           warning: "var(--warning)",
           error: "var(--destructive)",

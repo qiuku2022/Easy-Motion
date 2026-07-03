@@ -7,7 +7,9 @@ const {
   removeDirRecursive,
 } = require("../src/main/services/file-service");
 const { generateRemotionCode } = require("../src/main/generator");
-const { importTimelineFromRemotionAst } = require("../src/main/importer/remotion-to-timeline");
+const {
+  importTimelineFromRemotionAst,
+} = require("../src/main/importer/remotion-to-timeline");
 const { readTimelineManifest } = require("../src/main/importer/timeline-manifest");
 const { syncTimelineFromRemotion } = require("../src/main/importer/sync-from-remotion");
 
@@ -16,7 +18,7 @@ const remotionDir = path.join(tmpRoot, "remotion");
 const remotionSrcDir = path.join(remotionDir, "src");
 const templateLayers = path.join(
   __dirname,
-  "../resources/templates/default-project/subprojects/default/remotion/src/components/layers",
+  "../resources/templates/default-project/subprojects/default/remotion/src/components/layers"
 );
 
 function write(filePath, content) {
@@ -26,7 +28,7 @@ function write(filePath, content) {
 
 async function testGeneratorManifestRoundTrip() {
   const timeline = readJsonFile(
-    path.join(__dirname, "../../../packages/shared/fixtures/sample-timeline.json"),
+    path.join(__dirname, "../../../packages/shared/fixtures/sample-timeline.json")
   );
 
   fs.mkdirSync(path.join(remotionSrcDir, "components", "layers"), { recursive: true });
@@ -81,7 +83,7 @@ async function testAstFallback() {
 import { MainSequence } from "./components/MainSequence";
 export const RemotionRoot = () => (
   <Composition id="Main" component={MainSequence} durationInFrames={90} fps={30} width={1280} height={720} />
-);`,
+);`
   );
   write(
     path.join(remotionSrcDir, "components", "MainSequence.tsx"),
@@ -93,7 +95,7 @@ export const MainSequence = () => (
       <TextLayer clipId="clip-title" source={{ kind: "inline", content: "Hi" }} transform={{ position: { x: 0, y: 0 }, scale: 1, rotation: 0, opacity: 1 }} style={{}} />
     </Sequence>
   </AbsoluteFill>
-);`,
+);`
   );
   fs.mkdirSync(path.join(remotionSrcDir, "components", "layers"), { recursive: true });
   copyDirRecursive(templateLayers, path.join(remotionSrcDir, "components", "layers"));
@@ -133,7 +135,7 @@ export const MainSequence = () => (
 
 async function testCorruptManifestDurationRepair() {
   const timeline = readJsonFile(
-    path.join(__dirname, "../../../packages/shared/fixtures/sample-timeline.json"),
+    path.join(__dirname, "../../../packages/shared/fixtures/sample-timeline.json")
   );
   fs.mkdirSync(path.join(remotionSrcDir, "components", "layers"), { recursive: true });
   copyDirRecursive(templateLayers, path.join(remotionSrcDir, "components", "layers"));
@@ -158,7 +160,7 @@ async function testCorruptManifestDurationRepair() {
 
   if (imported.timeline.durationInFrames !== timeline.durationInFrames) {
     throw new Error(
-      `corrupt manifest should repair duration, got ${imported.timeline.durationInFrames}`,
+      `corrupt manifest should repair duration, got ${imported.timeline.durationInFrames}`
     );
   }
   if (imported.timeline.fps !== timeline.fps) {
@@ -174,7 +176,7 @@ async function testCorruptManifestDurationRepair() {
 async function testNewsletterTemplateFastSync() {
   const templateSrc = path.join(
     __dirname,
-    "../resources/templates/default-project/subprojects/default/remotion/src",
+    "../resources/templates/default-project/subprojects/default/remotion/src"
   );
   copyDirRecursive(templateSrc, remotionSrcDir);
 
@@ -193,7 +195,7 @@ async function testNewsletterTemplateFastSync() {
     throw new Error("newsletter template should import groups");
   }
   const hasText = imported.timeline.tracks.some((t) =>
-    (t.children ?? []).some((c) => c.type === "text" && c.clips?.length),
+    (t.children ?? []).some((c) => c.type === "text" && c.clips?.length)
   );
   if (!hasText) {
     throw new Error("newsletter template should import editable text tracks");

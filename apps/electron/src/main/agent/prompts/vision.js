@@ -40,7 +40,8 @@ function buildVisionAnalysisPrompt(userText = "") {
 }
 
 function buildVisionContextSection({ visualAnalysis, toolHints, layoutPlan }) {
-  if (!visualAnalysis && !toolHints?.length && !layoutPlan?.operations?.length) return "";
+  if (!visualAnalysis && !toolHints?.length && !layoutPlan?.operations?.length)
+    return "";
 
   let section = "\n\n参考图片视觉分析结果：\n";
   if (visualAnalysis) {

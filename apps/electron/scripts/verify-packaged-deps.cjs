@@ -14,11 +14,7 @@ const REQUIRED = [
 ];
 
 function asarContains(header, entry) {
-  const variants = [
-    entry,
-    entry.replace(/\//g, "\\"),
-    entry.replace(/\\/g, "/"),
-  ];
+  const variants = [entry, entry.replace(/\//g, "\\"), entry.replace(/\\/g, "/")];
   return variants.some((needle) => header.includes(needle));
 }
 

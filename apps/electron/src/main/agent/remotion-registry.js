@@ -30,17 +30,14 @@ function componentRelativePath(componentName) {
 
 function listRegisteredComponents(registryContent) {
   const names = new Set();
-  const importRe =
-    /import\s*\{\s*(\w+)\s*\}\s*from\s*"\.\.\/components\/custom\/\w+"/g;
+  const importRe = /import\s*\{\s*(\w+)\s*\}\s*from\s*"\.\.\/components\/custom\/\w+"/g;
   let match = importRe.exec(registryContent);
   while (match) {
     names.add(match[1]);
     match = importRe.exec(registryContent);
   }
 
-  const mapMatch = registryContent.match(
-    /CUSTOM_COMPONENT_MAP[^=]*=\s*\{([^}]*)\}/s
-  );
+  const mapMatch = registryContent.match(/CUSTOM_COMPONENT_MAP[^=]*=\s*\{([^}]*)\}/s);
   if (mapMatch) {
     for (const line of mapMatch[1].split("\n")) {
       const key = line.trim().replace(/,$/, "").trim();
@@ -170,7 +167,11 @@ function applyCustomComponentToTimeline(timelineCtx, params) {
     component: componentName,
   };
   const parameters = params.parameters;
-  if (parameters && typeof parameters === "object" && Object.keys(parameters).length > 0) {
+  if (
+    parameters &&
+    typeof parameters === "object" &&
+    Object.keys(parameters).length > 0
+  ) {
     source.props = parameters;
   }
 

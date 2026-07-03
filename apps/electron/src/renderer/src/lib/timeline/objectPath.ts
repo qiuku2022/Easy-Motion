@@ -13,7 +13,7 @@ export function getValueByPath(obj: Record<string, unknown>, path: string): unkn
 export function setValueByPath<T extends Record<string, unknown>>(
   obj: T,
   path: string,
-  value: unknown,
+  value: unknown
 ): T {
   const parts = path.split(".");
   const root = { ...obj } as Record<string, unknown>;

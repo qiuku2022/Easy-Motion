@@ -1,4 +1,7 @@
-const { scanTsxSecurity, assertTsxSecurity } = require("../src/main/generator/security-scan");
+const {
+  scanTsxSecurity,
+  assertTsxSecurity,
+} = require("../src/main/generator/security-scan");
 const { TimelineContext } = require("../src/main/agent/timeline-context");
 const { runSimplifiedFallback } = require("../src/main/agent/fallback-templates");
 const { isRetriableAgentError } = require("../src/main/agent/stream-timeout");
@@ -37,7 +40,10 @@ function main() {
   });
   assert(fallback.timelineChanged, "fallback should change timeline");
   assert(fallback.simplifiedMode, "fallback marks simplified mode");
-  assert(fallback.reply.includes("Demo") || fallback.reply.includes("简化"), "fallback reply");
+  assert(
+    fallback.reply.includes("Demo") || fallback.reply.includes("简化"),
+    "fallback reply"
+  );
 
   const ctx = new TimelineContext(
     {

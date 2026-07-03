@@ -80,13 +80,13 @@ function migrateClipPositionToBottomLeft(clip, height) {
 function migrateTrackPositionsToBottomLeft(track, height) {
   if (track.type === "group") {
     const children = (track.children ?? []).map((child) =>
-      migrateTrackPositionsToBottomLeft(child, height),
+      migrateTrackPositionsToBottomLeft(child, height)
     );
     return { ...track, children };
   }
 
   const clips = (track.clips ?? []).map((clip) =>
-    migrateClipPositionToBottomLeft(clip, height),
+    migrateClipPositionToBottomLeft(clip, height)
   );
   return { ...track, clips };
 }
@@ -99,7 +99,7 @@ function migrateTimelineToBottomLeft(timeline) {
 
   const height = Number(timeline?.height) || 1080;
   const tracks = (timeline.tracks ?? []).map((track) =>
-    migrateTrackPositionsToBottomLeft(track, height),
+    migrateTrackPositionsToBottomLeft(track, height)
   );
 
   return {

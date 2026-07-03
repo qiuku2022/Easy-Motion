@@ -68,7 +68,7 @@ const linearCp = temporalEasesToBezierCp(
   end,
   { speed: averageSpeed(prev, end, fps), influence: 0.1 },
   { speed: averageSpeed(prev, end, fps), influence: 0.1 },
-  fps,
+  fps
 );
 assert.ok(linearCp.x1 < 0.05, "linear outgoing influence near 0");
 assert.ok(linearCp.x2 > 0.95, "linear incoming influence near 0");

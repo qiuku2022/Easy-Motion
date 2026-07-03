@@ -23,18 +23,15 @@ const timeline = {
 
 assert.equal(
   getClipTimingForPreview("clip-title-main", timeline)?.durationInFrames,
-  40,
+  40
 );
 
 timeline.tracks[0].clips[0].durationInFrames = 25;
 assert.equal(
   getClipTimingForPreview("clip-title-main", timeline)?.durationInFrames,
-  25,
+  25
 );
-assert.equal(
-  getClipTimingForPreview("clip-title-main", timeline)?.startInFrames,
-  10,
-);
+assert.equal(getClipTimingForPreview("clip-title-main", timeline)?.startInFrames, 10);
 
 timeline.tracks[0].visible = false;
 assert.equal(isClipVisibleInPreview("clip-title-main", timeline), false);

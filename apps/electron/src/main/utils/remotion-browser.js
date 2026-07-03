@@ -11,15 +11,15 @@ function resolveBrowserExecutable() {
       ? [
           path.join(
             process.env.ProgramFiles || "C:\\Program Files",
-            "Google/Chrome/Application/chrome.exe",
+            "Google/Chrome/Application/chrome.exe"
           ),
           path.join(
             process.env["ProgramFiles(x86)"] || "C:\\Program Files (x86)",
-            "Google/Chrome/Application/chrome.exe",
+            "Google/Chrome/Application/chrome.exe"
           ),
           path.join(
             process.env.LOCALAPPDATA || "",
-            "Google/Chrome/Application/chrome.exe",
+            "Google/Chrome/Application/chrome.exe"
           ),
         ]
       : process.platform === "darwin"
@@ -27,11 +27,7 @@ function resolveBrowserExecutable() {
             "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
             "/Applications/Chromium.app/Contents/MacOS/Chromium",
           ]
-        : [
-            "/usr/bin/google-chrome",
-            "/usr/bin/chromium-browser",
-            "/usr/bin/chromium",
-          ];
+        : ["/usr/bin/google-chrome", "/usr/bin/chromium-browser", "/usr/bin/chromium"];
 
   for (const candidate of candidates) {
     if (candidate && fs.existsSync(candidate)) {
@@ -40,7 +36,7 @@ function resolveBrowserExecutable() {
   }
 
   throw new Error(
-    "E2600: Chrome not found. Install Google Chrome or set REMOTION_BROWSER_EXECUTABLE.",
+    "E2600: Chrome not found. Install Google Chrome or set REMOTION_BROWSER_EXECUTABLE."
   );
 }
 

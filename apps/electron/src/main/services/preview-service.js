@@ -148,7 +148,7 @@ function ensurePreviewEntry(remotionDir) {
     "default",
     "remotion",
     "src",
-    "preview-entry.tsx",
+    "preview-entry.tsx"
   );
   if (!fs.existsSync(templateEntry)) return;
 
@@ -165,7 +165,7 @@ function ensurePreviewSoloSupport(remotionDir) {
     "subprojects",
     "default",
     "remotion",
-    "src",
+    "src"
   );
   if (!fs.existsSync(templateSrc)) return updated;
 
@@ -196,7 +196,11 @@ function ensurePreviewSoloSupport(remotionDir) {
   }
 
   const destBgOverride = path.join(libDir, "background-style-override.ts");
-  const templateBgOverride = path.join(templateSrc, "lib", "background-style-override.ts");
+  const templateBgOverride = path.join(
+    templateSrc,
+    "lib",
+    "background-style-override.ts"
+  );
   if (fs.existsSync(templateBgOverride)) {
     const needsBgOverride =
       !fs.existsSync(destBgOverride) ||
@@ -209,7 +213,12 @@ function ensurePreviewSoloSupport(remotionDir) {
     }
   }
 
-  const newsletterDir = path.join(remotionDir, "src", "components", "newsletter-design");
+  const newsletterDir = path.join(
+    remotionDir,
+    "src",
+    "components",
+    "newsletter-design"
+  );
   for (const file of ["NewsletterBackground.tsx", "GradientBackground.tsx"]) {
     const dest = path.join(newsletterDir, file);
     const template = path.join(templateSrc, "components", "newsletter-design", file);
@@ -241,7 +250,11 @@ function ensurePreviewSoloSupport(remotionDir) {
 
   const componentsDir = path.join(remotionDir, "src", "components");
   const destClipSeq = path.join(componentsDir, "PreviewClipSequence.tsx");
-  const templateClipSeq = path.join(templateSrc, "components", "PreviewClipSequence.tsx");
+  const templateClipSeq = path.join(
+    templateSrc,
+    "components",
+    "PreviewClipSequence.tsx"
+  );
   if (fs.existsSync(templateClipSeq) && !fs.existsSync(destClipSeq)) {
     fs.mkdirSync(componentsDir, { recursive: true });
     fs.copyFileSync(templateClipSeq, destClipSeq);
@@ -259,14 +272,12 @@ function ensurePreviewSoloSupport(remotionDir) {
       !content.includes("isClipVisibleInPreview") &&
       !content.includes("flattenClipsForPreview");
     const needsPlayerPropsFix =
-      content.includes("isClipVisibleInPreview") &&
-      content.includes("getInputProps");
+      content.includes("isClipVisibleInPreview") && content.includes("getInputProps");
     const needsClipTiming =
       content.includes("isClipVisibleInPreview") &&
       !content.includes("PreviewClipSequence");
     const needsImageShapeLayers =
-      content.includes("flattenClipsForPreview") &&
-      !content.includes("ImageLayer");
+      content.includes("flattenClipsForPreview") && !content.includes("ImageLayer");
     const needsBackgroundStyleOverride =
       content.includes("NewsletterBackground") &&
       !content.includes("style={clip.style}");
@@ -291,14 +302,18 @@ function ensurePreviewSoloSupport(remotionDir) {
                 : needsPlayerPropsFix
                   ? "已修复 MainSequence（Player 预览 props）"
                   : "已更新 MainSequence（独奏/可见性过滤）",
-        "preview",
+        "preview"
       );
       updated = true;
     }
   }
 
   const destResolveMedia = path.join(libDir, "resolve-clip-media-src.ts");
-  const templateResolveMedia = path.join(templateSrc, "lib", "resolve-clip-media-src.ts");
+  const templateResolveMedia = path.join(
+    templateSrc,
+    "lib",
+    "resolve-clip-media-src.ts"
+  );
   if (fs.existsSync(templateResolveMedia) && !fs.existsSync(destResolveMedia)) {
     fs.mkdirSync(libDir, { recursive: true });
     fs.copyFileSync(templateResolveMedia, destResolveMedia);
@@ -306,8 +321,19 @@ function ensurePreviewSoloSupport(remotionDir) {
     updated = true;
   }
 
-  const destShape = path.join(remotionDir, "src", "components", "layers", "ShapeLayer.tsx");
-  const templateShape = path.join(templateSrc, "components", "layers", "ShapeLayer.tsx");
+  const destShape = path.join(
+    remotionDir,
+    "src",
+    "components",
+    "layers",
+    "ShapeLayer.tsx"
+  );
+  const templateShape = path.join(
+    templateSrc,
+    "components",
+    "layers",
+    "ShapeLayer.tsx"
+  );
   if (fs.existsSync(templateShape) && fs.existsSync(destShape)) {
     const shapeContent = fs.readFileSync(destShape, "utf8");
     if (!shapeContent.includes("style?.background")) {
@@ -332,7 +358,7 @@ function ensureCustomComponentSupport(remotionDir) {
     "subprojects",
     "default",
     "remotion",
-    "src",
+    "src"
   );
 
   const customDir = path.join(srcDir, "components", "custom");
@@ -387,7 +413,7 @@ function ensurePreviewCanvasTheme(remotionDir) {
     "default-project",
     "subprojects",
     "default",
-    "remotion",
+    "remotion"
   );
 
   const previewHtml = path.join(remotionDir, "preview.html");
@@ -419,12 +445,12 @@ function ensurePreviewCanvasTheme(remotionDir) {
     const before = content;
     content = content.replace(
       /backgroundColor:\s*["']#0[fF]0[fF]23["']/g,
-      `backgroundColor: "${PREVIEW_CANVAS_BG}"`,
+      `backgroundColor: "${PREVIEW_CANVAS_BG}"`
     );
     if (content.includes("<AbsoluteFill>") && !content.includes("backgroundColor")) {
       content = content.replace(
         /<AbsoluteFill>/g,
-        `<AbsoluteFill style={{ backgroundColor: "${PREVIEW_CANVAS_BG}" }}>`,
+        `<AbsoluteFill style={{ backgroundColor: "${PREVIEW_CANVAS_BG}" }}>`
       );
     }
     if (content !== before) {
@@ -444,7 +470,7 @@ function ensurePreviewCanvasTheme(remotionDir) {
     ) {
       content = content.replace(
         /style=\{\{\s*\n(\s*)width: "100%",/,
-        `style={{\n$1backgroundColor: "${PREVIEW_CANVAS_BG}",\n$1width: "100%",`,
+        `style={{\n$1backgroundColor: "${PREVIEW_CANVAS_BG}",\n$1width: "100%",`
       );
     }
     if (content !== before) {
@@ -472,7 +498,7 @@ function ensurePreviewLoopControl(remotionDir) {
     "default",
     "remotion",
     "src",
-    "preview-entry.tsx",
+    "preview-entry.tsx"
   );
   if (!fs.existsSync(templateEntry)) return false;
 
@@ -496,7 +522,7 @@ function ensurePreviewPlayheadPreserve(remotionDir) {
     "default",
     "remotion",
     "src",
-    "preview-entry.tsx",
+    "preview-entry.tsx"
   );
   if (!fs.existsSync(templateEntry)) return false;
 
@@ -520,7 +546,7 @@ function ensurePreviewPlaybackSync(remotionDir) {
     "default",
     "remotion",
     "src",
-    "preview-entry.tsx",
+    "preview-entry.tsx"
   );
   if (!fs.existsSync(templateEntry)) return false;
 
@@ -544,7 +570,7 @@ function ensurePreviewDynamicDuration(remotionDir) {
     "default",
     "remotion",
     "src",
-    "preview-entry.tsx",
+    "preview-entry.tsx"
   );
   if (!fs.existsSync(templateEntry)) return false;
 
@@ -584,7 +610,7 @@ async function startPreview(projectRoot, subprojectPath = "subprojects/default")
   ) {
     const refreshed = timelineService.refreshRemotionFingerprint(
       projectRoot,
-      subprojectPath,
+      subprojectPath
     );
     remotionFingerprint = refreshed?.fingerprint ?? null;
   }

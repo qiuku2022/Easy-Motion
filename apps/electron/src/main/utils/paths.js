@@ -49,7 +49,10 @@ function getPythonBundleDir() {
     : [path.join(getAppRootDir(), "resources/python")];
 
   for (const dir of candidates) {
-    if (fs.existsSync(path.join(dir, "venv")) && fs.existsSync(path.join(dir, "app", "main.py"))) {
+    if (
+      fs.existsSync(path.join(dir, "venv")) &&
+      fs.existsSync(path.join(dir, "app", "main.py"))
+    ) {
       return dir;
     }
   }

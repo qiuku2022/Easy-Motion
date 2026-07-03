@@ -2,7 +2,12 @@ const crypto = require("node:crypto");
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
-const { copyFile, ensureDir, readJsonFile, atomicWriteJson } = require("./file-service");
+const {
+  copyFile,
+  ensureDir,
+  readJsonFile,
+  atomicWriteJson,
+} = require("./file-service");
 const { getRemotionDir } = require("./remotion-project");
 const thumbnailService = require("./thumbnail-service");
 
@@ -34,7 +39,8 @@ const EXTENSION_MAP = {
 };
 
 const MAGIC_CHECKS = {
-  png: (buf) => buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47,
+  png: (buf) =>
+    buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47,
   jpg: (buf) => buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff,
   jpeg: (buf) => buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff,
   gif: (buf) =>
@@ -48,8 +54,10 @@ const MAGIC_CHECKS = {
     buf[9] === 0x45 &&
     buf[10] === 0x42 &&
     buf[11] === 0x50,
-  mp4: (buf) => buf[4] === 0x66 && buf[5] === 0x74 && buf[6] === 0x79 && buf[7] === 0x70,
-  mov: (buf) => buf[4] === 0x66 && buf[5] === 0x74 && buf[6] === 0x79 && buf[7] === 0x70,
+  mp4: (buf) =>
+    buf[4] === 0x66 && buf[5] === 0x74 && buf[6] === 0x79 && buf[7] === 0x70,
+  mov: (buf) =>
+    buf[4] === 0x66 && buf[5] === 0x74 && buf[6] === 0x79 && buf[7] === 0x70,
   webm: (buf) =>
     buf[0] === 0x1a && buf[1] === 0x45 && buf[2] === 0xdf && buf[3] === 0xa3,
   mp3: (buf) =>
@@ -60,14 +68,18 @@ const MAGIC_CHECKS = {
   aac: (buf) =>
     (buf[0] === 0xff && (buf[1] === 0xf1 || buf[1] === 0xf9)) ||
     (buf[0] === 0x41 && buf[1] === 0x44 && buf[2] === 0x49 && buf[3] === 0x46),
-  m4a: (buf) => buf[4] === 0x66 && buf[5] === 0x74 && buf[6] === 0x79 && buf[7] === 0x70,
+  m4a: (buf) =>
+    buf[4] === 0x66 && buf[5] === 0x74 && buf[6] === 0x79 && buf[7] === 0x70,
 };
 
 function getManifestPath(projectRoot) {
   return path.join(projectRoot, "assets", "manifest.json");
 }
 
-function getRemotionPublicDir(projectRoot, subprojectRelativePath = "subprojects/default") {
+function getRemotionPublicDir(
+  projectRoot,
+  subprojectRelativePath = "subprojects/default"
+) {
   return path.join(getRemotionDir(projectRoot, subprojectRelativePath), "public");
 }
 
@@ -90,7 +102,9 @@ function readFileHeader(filePath, length = 12) {
 function validateFileMagic(filePath, assetType) {
   const ext = path.extname(filePath).slice(1).toLowerCase();
   if (ext === "svg") {
-    const text = fs.readFileSync(filePath, { encoding: "utf8", flag: "r" }).slice(0, 256);
+    const text = fs
+      .readFileSync(filePath, { encoding: "utf8", flag: "r" })
+      .slice(0, 256);
     if (!/<svg[\s>]/i.test(text)) {
       return "文件内容与 SVG 格式不匹配";
     }
@@ -161,7 +175,7 @@ function findDuplicate(manifest, { originalName, contentHash }) {
     return { existing: byHash, reason: "hash" };
   }
   const byName = assets.find(
-    (a) => a.originalName === originalName || a.name === originalName,
+    (a) => a.originalName === originalName || a.name === originalName
   );
   if (byName) {
     return { existing: byName, reason: "name" };
@@ -184,7 +198,12 @@ function uniqueDisplayName(manifest, originalName) {
 
 function tryLoadParseMedia(remotionDir) {
   try {
-    const parserRoot = path.join(remotionDir, "node_modules", "@remotion", "media-parser");
+    const parserRoot = path.join(
+      remotionDir,
+      "node_modules",
+      "@remotion",
+      "media-parser"
+    );
     const { parseMedia } = require(parserRoot);
     const { nodeReader } = require(path.join(parserRoot, "node"));
     return { parseMedia, nodeReader };
@@ -273,12 +292,7 @@ async function scanImportDuplicates(projectRoot, filePaths) {
   return duplicates;
 }
 
-async function importSingleAsset(
-  projectRoot,
-  sourcePath,
-  manifest,
-  context,
-) {
+async function importSingleAsset(projectRoot, sourcePath, manifest, context) {
   const { fps, remotionDir, publicRoot, duplicateAction, existingId } = context;
 
   const assetType = detectAssetType(sourcePath);
@@ -303,7 +317,9 @@ async function importSingleAsset(
   const sizeBytes = fs.statSync(sourcePath).size;
 
   if (duplicate && duplicateAction === "overwrite") {
-    const existing = manifest.assets.find((a) => a.id === (existingId ?? duplicate.existing.id));
+    const existing = manifest.assets.find(
+      (a) => a.id === (existingId ?? duplicate.existing.id)
+    );
     if (!existing || existing.isDeleted) {
       throw new Error("要覆盖的素材不存在");
     }
@@ -320,7 +336,7 @@ async function importSingleAsset(
       projectRoot,
       existing.id,
       destPath,
-      assetType,
+      assetType
     );
 
     Object.assign(existing, {
@@ -358,7 +374,7 @@ async function importSingleAsset(
     projectRoot,
     id,
     destPath,
-    assetType,
+    assetType
   );
 
   const record = {
@@ -474,7 +490,10 @@ function guessExtFromUrl(urlString) {
 }
 
 function guessExtFromContentType(contentType) {
-  const type = String(contentType ?? "").split(";")[0].trim().toLowerCase();
+  const type = String(contentType ?? "")
+    .split(";")[0]
+    .trim()
+    .toLowerCase();
   const map = {
     "image/png": ".png",
     "image/jpeg": ".jpg",
@@ -532,11 +551,7 @@ async function resolveImportSourcePath(projectRoot, source) {
   throw new Error(`无法解析素材来源: ${trimmed}`);
 }
 
-async function importAssetSource(
-  projectRoot,
-  { source, type, name },
-  options = {},
-) {
+async function importAssetSource(projectRoot, { source, type, name }, options = {}) {
   const filePath = await resolveImportSourcePath(projectRoot, source);
   const detectedType = detectAssetType(filePath);
   const assetType = type ?? detectedType;

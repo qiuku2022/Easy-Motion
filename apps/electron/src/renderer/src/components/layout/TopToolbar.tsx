@@ -1,19 +1,7 @@
-import {
-  Bot,
-  Download,
-  Loader2,
-  Redo2,
-  Save,
-  Sparkles,
-  Undo2,
-} from "lucide-react";
+import { Bot, Download, Loader2, Redo2, Save, Sparkles, Undo2 } from "lucide-react";
 import { AppMenu } from "@/components/layout/AppMenu";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { PR_SHORTCUTS } from "@/lib/premiereShortcuts";
 import { useExportStore } from "@/stores/exportStore";
 import { useProjectStore } from "@/stores/projectStore";

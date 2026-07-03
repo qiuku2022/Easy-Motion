@@ -12,7 +12,7 @@ export interface ValueHandle {
 /** 值图空间贝塞尔控制点（段 prev → end） */
 export function valueHandlesForSegment(
   prev: Keyframe,
-  end: Keyframe,
+  end: Keyframe
 ): { incoming: ValueHandle; outgoing: ValueHandle } | null {
   if (end.interpolation !== "bezier") return null;
 
@@ -43,7 +43,7 @@ export function valueHandlesForSegment(
 export function valueHandlesForKeyframe(
   prev: Keyframe | null,
   kf: Keyframe,
-  next: Keyframe | null,
+  next: Keyframe | null
 ): { incoming?: ValueHandle; outgoing?: ValueHandle } | null {
   const handles: { incoming?: ValueHandle; outgoing?: ValueHandle } = {};
 
@@ -64,7 +64,7 @@ export function patchValueHandle(
   end: Keyframe,
   side: "incoming" | "outgoing",
   frame: number,
-  value: number,
+  value: number
 ): KeyframeBezierCp {
   const v0 = Number(prev.value);
   const v1 = Number(end.value);

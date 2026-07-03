@@ -48,7 +48,10 @@ function resolveImagePaths(projectPath, attachedImages = []) {
   return attachedImages
     .map((item) => {
       if (typeof item === "string") return resolveAiRefPath(projectPath, item);
-      return item?.path || (item?.relativePath && resolveAiRefPath(projectPath, item.relativePath));
+      return (
+        item?.path ||
+        (item?.relativePath && resolveAiRefPath(projectPath, item.relativePath))
+      );
     })
     .filter(Boolean)
     .slice(0, MAX_IMAGES);

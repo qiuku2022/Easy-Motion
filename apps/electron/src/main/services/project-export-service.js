@@ -101,7 +101,7 @@ async function buildProjectZipFileList({
     const { missing } = verifyProjectPaths(projectPath, referenced);
     if (missing.length > 0) {
       throw new Error(
-        `E2606: missing referenced files for export: ${missing.slice(0, 5).join(", ")}${missing.length > 5 ? "…" : ""}`,
+        `E2606: missing referenced files for export: ${missing.slice(0, 5).join(", ")}${missing.length > 5 ? "…" : ""}`
       );
     }
 
@@ -136,13 +136,13 @@ async function exportRemotionProjectZip(request, options = {}) {
   const subprojectPath = request.subprojectPath || "subprojects/default";
   const { remotionDir, timeline } = await prepareProjectForExport(
     request.projectPath,
-    subprojectPath,
+    subprojectPath
   );
 
   let projectName = path.basename(request.projectPath);
   try {
     const projectJson = JSON.parse(
-      fs.readFileSync(path.join(request.projectPath, "project.json"), "utf8"),
+      fs.readFileSync(path.join(request.projectPath, "project.json"), "utf8")
     );
     if (projectJson?.name) projectName = projectJson.name;
   } catch {

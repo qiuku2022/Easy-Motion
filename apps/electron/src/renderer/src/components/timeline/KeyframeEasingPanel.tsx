@@ -6,7 +6,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { bezierCpToTemporalEases, easyEaseBezierCp } from "@/lib/timeline/graph-editor/temporalEase";
+import {
+  bezierCpToTemporalEases,
+  easyEaseBezierCp,
+} from "@/lib/timeline/graph-editor/temporalEase";
 import { easingKeyframePatch } from "@/lib/timeline/graph-editor/easingKeyframePatch";
 import {
   VALID_KEYFRAME_EASING,
@@ -59,8 +62,7 @@ export function KeyframeEasingPanel({
                 onPatch({
                   interpolation: "bezier",
                   bezierCp:
-                    keyframe.bezierCp ??
-                    easyEaseBezierCp(prevKeyframe, keyframe, fps),
+                    keyframe.bezierCp ?? easyEaseBezierCp(prevKeyframe, keyframe, fps),
                 });
                 return;
               }
@@ -86,7 +88,7 @@ export function KeyframeEasingPanel({
             value={keyframe.easing ?? "ease-in-out"}
             onValueChange={(v) =>
               onPatch(
-                easingKeyframePatch(v as KeyframeEasing, prevKeyframe, keyframe, fps),
+                easingKeyframePatch(v as KeyframeEasing, prevKeyframe, keyframe, fps)
               )
             }
             disabled={disabled}
@@ -110,7 +112,8 @@ export function KeyframeEasingPanel({
         keyframe.easing !== "linear" &&
         keyframe.easing !== "spring" && (
           <p className="text-[10px] leading-snug text-amber-600/90 dark:text-amber-400/90">
-            当前为线性插值 + 多项式缓动，速度图呈折线三角。请选 bezier 插值或 Easy Ease 以获得平滑曲线。
+            当前为线性插值 + 多项式缓动，速度图呈折线三角。请选 bezier 插值或 Easy Ease
+            以获得平滑曲线。
           </p>
         )}
 

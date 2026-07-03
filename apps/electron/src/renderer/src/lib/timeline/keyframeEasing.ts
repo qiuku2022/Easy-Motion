@@ -1,4 +1,8 @@
-import type { Keyframe, KeyframeBezierCp, KeyframeSpringConfig } from "@/types/timeline";
+import type {
+  Keyframe,
+  KeyframeBezierCp,
+  KeyframeSpringConfig,
+} from "@/types/timeline";
 
 export const DEFAULT_BEZIER_CP: KeyframeBezierCp = {
   x1: 0.42,
@@ -19,7 +23,7 @@ export function cubicBezierEase(
   y1: number,
   x2: number,
   y2: number,
-  t: number,
+  t: number
 ): number {
   const cx = 3 * x1;
   const bx = 3 * (x2 - x1) - cx;
@@ -49,7 +53,7 @@ export function cubicBezierEaseDerivative(
   y1: number,
   x2: number,
   y2: number,
-  t: number,
+  t: number
 ): number {
   const cx = 3 * x1;
   const bx = 3 * (x2 - x1) - cx;
@@ -84,9 +88,7 @@ function applyNamedEasing(name: string | undefined, t: number): number {
     case "ease-out":
       return clamped * (2 - clamped);
     case "ease-in-out":
-      return clamped < 0.5
-        ? 2 * clamped * clamped
-        : -1 + (4 - 2 * clamped) * clamped;
+      return clamped < 0.5 ? 2 * clamped * clamped : -1 + (4 - 2 * clamped) * clamped;
     case "linear":
     default:
       return clamped;
@@ -117,7 +119,7 @@ export function springProgress(
   localFrame: number,
   durationInFrames: number,
   config: KeyframeSpringConfig,
-  fps: number,
+  fps: number
 ): number {
   const mass = config.mass ?? 1;
   const damping = config.damping ?? 12;
@@ -152,7 +154,7 @@ export function applySegmentEasing(
   end: Keyframe,
   segmentFrames: number,
   localFrame: number,
-  fps: number,
+  fps: number
 ): number {
   if (end.easing === "spring") {
     return springProgress(localFrame, segmentFrames, resolveSpringConfig(end), fps);
@@ -171,7 +173,7 @@ export function sampleEasingCurve(
   end: Keyframe,
   segmentFrames: number,
   fps: number,
-  steps = 24,
+  steps = 24
 ): Array<{ t: number; y: number }> {
   const points: Array<{ t: number; y: number }> = [];
   for (let i = 0; i <= steps; i += 1) {

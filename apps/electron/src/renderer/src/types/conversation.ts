@@ -69,7 +69,8 @@ export function createMessage(
   partial?: Partial<Message>
 ): Message {
   return {
-    id: partial?.id ?? `${role}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    id:
+      partial?.id ?? `${role}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     role,
     content,
     timestamp: partial?.timestamp ?? Date.now(),

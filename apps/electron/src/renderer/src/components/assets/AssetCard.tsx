@@ -53,7 +53,7 @@ export function AssetCard({
       className={cn(
         "group relative flex cursor-grab items-center gap-2 rounded-md border border-border bg-card text-xs text-foreground",
         "transition-colors duration-150 ease-out hover:border-em-teal/40 hover:bg-accent active:cursor-grabbing",
-        compact ? "px-2 py-1.5" : "px-2 py-2",
+        compact ? "px-2 py-1.5" : "px-2 py-2"
       )}
       title="拖到时间线创建片段"
     >
@@ -86,7 +86,7 @@ export function AssetCard({
           size="icon"
           className={cn(
             "h-7 w-7 shrink-0 opacity-0 transition-opacity group-hover:opacity-100",
-            asset.isFavorite && "opacity-100",
+            asset.isFavorite && "opacity-100"
           )}
           aria-label={asset.isFavorite ? "取消收藏" : "收藏"}
           onClick={(e) => {
@@ -99,7 +99,7 @@ export function AssetCard({
               "h-3.5 w-3.5",
               asset.isFavorite
                 ? "fill-amber-400 text-amber-400"
-                : "text-muted-foreground",
+                : "text-muted-foreground"
             )}
           />
         </Button>

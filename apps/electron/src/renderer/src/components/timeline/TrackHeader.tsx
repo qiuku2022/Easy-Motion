@@ -1,39 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 
 import {
-
   BarChart3,
-
   ChevronDown,
-
   ChevronRight,
-
   Eye,
-
   EyeOff,
-
   Folder,
-
   GripVertical,
-
   Image,
-
   Lock,
-
   Music,
-
   Shapes,
-
   Sparkles,
-
   Type,
-
   Video,
-
   VolumeX,
-
   Headphones,
-
 } from "lucide-react";
 
 import {
@@ -43,11 +26,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 import { TRACK_HEADER_WIDTH, TRACK_ROW_HEIGHT } from "@/lib/timeline/constants";
@@ -63,10 +42,7 @@ import type { Track, TrackType } from "@/types/timeline";
 import { effectiveTrackState } from "@/lib/timeline/trackTree";
 import { useTimelineStore } from "@/stores/timelineStore";
 
-
-
 const TRACK_ICONS: Record<TrackType, typeof Type> = {
-
   text: Type,
 
   image: Image,
@@ -82,7 +58,6 @@ const TRACK_ICONS: Record<TrackType, typeof Type> = {
   animation: Sparkles,
 
   group: Folder,
-
 };
 
 function TrackHeaderIconButton({
@@ -121,7 +96,6 @@ function TrackHeaderIconButton({
 }
 
 interface TrackHeaderProps {
-
   track: Track;
 
   rowIndex: number;
@@ -147,13 +121,9 @@ interface TrackHeaderProps {
   parentGroup?: Track | null;
 
   isGroupHeader?: boolean;
-
 }
 
-
-
 export function TrackHeader({
-
   track,
 
   rowIndex,
@@ -179,16 +149,12 @@ export function TrackHeader({
   parentGroup = null,
 
   isGroupHeader = false,
-
 }: TrackHeaderProps) {
-
   const [renaming, setRenaming] = useState(false);
 
   const [draft, setDraft] = useState(track.name);
 
   const inputRef = useRef<HTMLInputElement>(null);
-
-
 
   const toggleVisibility = useTimelineStore((s) => s.toggleTrackVisibility);
 
@@ -213,149 +179,101 @@ export function TrackHeader({
   const { locked: effectiveLocked, visible: effectiveVisible } = effectiveTrackState(
     track,
     parentGroup,
-    timeline,
+    timeline
   );
-
-
 
   const Icon = TRACK_ICONS[track.type] ?? Type;
 
-
-
   useEffect(() => {
-
     if (renaming) {
-
       inputRef.current?.focus();
 
       inputRef.current?.select();
-
     }
-
   }, [renaming]);
 
-
-
   useEffect(() => {
-
     if (!renaming) setDraft(track.name);
-
   }, [track.name, renaming]);
 
-
-
   const commitRename = () => {
-
     setRenaming(false);
 
     const trimmed = draft.trim();
 
     if (trimmed && trimmed !== track.name) {
-
       clearError();
 
       renameTrack(track.id, trimmed);
-
     } else {
-
       setDraft(track.name);
-
     }
-
   };
 
-
-
   const contextItems: ContextMenuItem[] = [
-
     ...(isGroupHeader
-
       ? ADD_TRACK_TYPES.map((type) => ({
-
           id: `add-child-${type}`,
 
           label: `添加子轨道：${TRACK_TYPE_LABELS[type]}`,
 
           onClick: () => {
-
             clearError();
 
             addChildTrack(track.id, type, defaultTrackName(type));
-
           },
-
         }))
-
       : []),
 
     {
-
       id: "rename",
 
       label: "重命名",
 
       onClick: () => setRenaming(true),
-
     },
 
     {
-
       id: "visibility",
 
       label: track.visible ? "隐藏轨道" : "显示轨道",
 
       onClick: () => toggleVisibility(track.id),
-
     },
 
     {
-
       id: "lock",
 
       label: track.locked ? "解锁轨道" : "锁定轨道",
 
       onClick: () => toggleLock(track.id),
-
     },
 
     ...(track.type === "audio"
-
       ? [
-
           {
-
             id: "mute",
 
             label: track.muted ? "取消静音" : "静音",
 
             onClick: () => toggleMuted(track.id),
-
           } satisfies ContextMenuItem,
-
         ]
-
       : []),
 
     ...(!isGroupHeader
-
       ? [
-
           {
-
             id: "solo",
 
             label: track.solo ? "取消独奏" : "独奏",
 
             onClick: () => toggleSolo(track.id),
-
           } satisfies ContextMenuItem,
-
         ]
-
       : []),
 
     {
-
       id: "delete",
 
       label: "删除轨道",
@@ -363,18 +281,12 @@ export function TrackHeader({
       danger: true,
 
       onClick: () => {
-
         clearError();
 
         confirmRemoveTrack(track.id);
-
       },
-
     },
-
   ];
-
-
 
   return (
     <ContextMenuWrapper items={contextItems} onOpen={() => onSelect?.()}>
@@ -390,7 +302,7 @@ export function TrackHeader({
           !effectiveVisible && "opacity-50",
           effectiveLocked && !selected && "bg-muted/25",
           isGroupHeader && !selected && "bg-muted/15",
-          className,
+          className
         )}
         style={{
           width: TRACK_HEADER_WIDTH,
@@ -443,141 +355,112 @@ export function TrackHeader({
           <span className="w-4 shrink-0" aria-hidden />
         )}
 
-
-
-          <TrackHeaderIconButton
-            label={track.visible ? "隐藏轨道" : "显示轨道"}
-            className="text-muted-foreground hover:text-foreground"
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleVisibility(track.id);
-            }}
-          >
-            {track.visible ? (
-              <Icon className="h-3.5 w-3.5 text-foreground/80" />
-            ) : (
-              <EyeOff className="h-3.5 w-3.5" />
-            )}
-          </TrackHeaderIconButton>
-
-
-
-          {renaming ? (
-
-            <Input
-              ref={inputRef}
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              onBlur={commitRename}
-              onClick={(e) => e.stopPropagation()}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") commitRename();
-                if (e.key === "Escape") {
-                  setDraft(track.name);
-                  setRenaming(false);
-                }
-              }}
-              className="h-6 min-w-0 flex-1 rounded-sm px-1 py-0.5 text-xs"
-            />
-
+        <TrackHeaderIconButton
+          label={track.visible ? "隐藏轨道" : "显示轨道"}
+          className="text-muted-foreground hover:text-foreground"
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleVisibility(track.id);
+          }}
+        >
+          {track.visible ? (
+            <Icon className="h-3.5 w-3.5 text-foreground/80" />
           ) : (
-
-            <button
-
-              type="button"
-
-              title="双击重命名"
-
-              onDoubleClick={(e) => {
-
-                e.stopPropagation();
-
-                setRenaming(true);
-
-              }}
-
-              className={cn(
-                "min-w-0 flex-1 cursor-pointer truncate rounded-md px-1 py-0.5 text-left text-xs leading-tight hover:bg-muted",
-                selected ? "font-medium text-foreground" : "text-muted-foreground hover:text-foreground",
-              )}
-
-            >
-
-              {track.name}
-
-            </button>
-
+            <EyeOff className="h-3.5 w-3.5" />
           )}
+        </TrackHeaderIconButton>
 
+        {renaming ? (
+          <Input
+            ref={inputRef}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onBlur={commitRename}
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") commitRename();
+              if (e.key === "Escape") {
+                setDraft(track.name);
+                setRenaming(false);
+              }
+            }}
+            className="h-6 min-w-0 flex-1 rounded-sm px-1 py-0.5 text-xs"
+          />
+        ) : (
+          <button
+            type="button"
+            title="双击重命名"
+            onDoubleClick={(e) => {
+              e.stopPropagation();
 
-
-          <div
+              setRenaming(true);
+            }}
             className={cn(
-              "flex shrink-0 items-center gap-0 transition-opacity duration-150",
-              !track.solo &&
-                !track.muted &&
-                !track.locked &&
-                !selected &&
-                "opacity-0 group-hover/track:opacity-100 group-focus-within/track:opacity-100",
+              "min-w-0 flex-1 cursor-pointer truncate rounded-md px-1 py-0.5 text-left text-xs leading-tight hover:bg-muted",
+              selected
+                ? "font-medium text-foreground"
+                : "text-muted-foreground hover:text-foreground"
             )}
           >
-            {!isGroupHeader && (
-              <TrackHeaderIconButton
-                label={
-                  track.solo
-                    ? "取消独奏"
-                    : "独奏（Alt+点击：仅独奏此轨道）"
-                }
-                className={cn(
-                  track.solo ? "text-amber-400" : "text-muted-foreground",
-                )}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  clearError();
-                  toggleSolo(track.id, e.altKey);
-                }}
-              >
-                <Headphones className="h-3 w-3" />
-              </TrackHeaderIconButton>
-            )}
+            {track.name}
+          </button>
+        )}
 
-            {track.type === "audio" && (
-              <TrackHeaderIconButton
-                label={track.muted ? "取消静音" : "静音"}
-                className={cn(
-                  track.muted ? "text-warning" : "text-muted-foreground",
-                )}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleMuted(track.id);
-                }}
-              >
-                <VolumeX className="h-3.5 w-3.5" />
-              </TrackHeaderIconButton>
-            )}
-
+        <div
+          className={cn(
+            "flex shrink-0 items-center gap-0 transition-opacity duration-150",
+            !track.solo &&
+              !track.muted &&
+              !track.locked &&
+              !selected &&
+              "opacity-0 group-hover/track:opacity-100 group-focus-within/track:opacity-100"
+          )}
+        >
+          {!isGroupHeader && (
             <TrackHeaderIconButton
-              label={track.locked ? "解锁轨道" : "锁定轨道"}
-              className={cn(
-                track.locked ? "text-muted-foreground" : "text-muted-foreground",
-              )}
+              label={track.solo ? "取消独奏" : "独奏（Alt+点击：仅独奏此轨道）"}
+              className={cn(track.solo ? "text-amber-400" : "text-muted-foreground")}
               onClick={(e) => {
                 e.stopPropagation();
-                toggleLock(track.id);
+                clearError();
+                toggleSolo(track.id, e.altKey);
               }}
             >
-              <Lock className="h-3 w-3" />
+              <Headphones className="h-3 w-3" />
             </TrackHeaderIconButton>
-          </div>
-
-
-
-          {!track.visible && (
-            <Eye className="h-3 w-3 shrink-0 text-muted-foreground" aria-hidden />
           )}
+
+          {track.type === "audio" && (
+            <TrackHeaderIconButton
+              label={track.muted ? "取消静音" : "静音"}
+              className={cn(track.muted ? "text-warning" : "text-muted-foreground")}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleMuted(track.id);
+              }}
+            >
+              <VolumeX className="h-3.5 w-3.5" />
+            </TrackHeaderIconButton>
+          )}
+
+          <TrackHeaderIconButton
+            label={track.locked ? "解锁轨道" : "锁定轨道"}
+            className={cn(
+              track.locked ? "text-muted-foreground" : "text-muted-foreground"
+            )}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleLock(track.id);
+            }}
+          >
+            <Lock className="h-3 w-3" />
+          </TrackHeaderIconButton>
+        </div>
+
+        {!track.visible && (
+          <Eye className="h-3 w-3 shrink-0 text-muted-foreground" aria-hidden />
+        )}
       </div>
     </ContextMenuWrapper>
   );
-
 }
-

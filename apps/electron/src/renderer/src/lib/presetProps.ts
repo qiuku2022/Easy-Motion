@@ -3,7 +3,7 @@ import type { ClipPatch } from "@/lib/timeline/mutations";
 import type { PresetDefinition, PresetParameter } from "@/types/preset";
 
 export function defaultPropsFromPreset(
-  preset: PresetDefinition,
+  preset: PresetDefinition
 ): Record<string, unknown> {
   const props: Record<string, unknown> = {};
   for (const param of preset.parameters) {
@@ -14,7 +14,7 @@ export function defaultPropsFromPreset(
 
 export function resolvedClipPresetProps(
   clip: Clip,
-  preset: PresetDefinition,
+  preset: PresetDefinition
 ): Record<string, unknown> {
   const stored =
     clip.source?.props && typeof clip.source.props === "object"
@@ -27,7 +27,7 @@ export function buildPresetPropsPatch(
   clip: Clip,
   preset: PresetDefinition,
   key: string,
-  value: unknown,
+  value: unknown
 ): ClipPatch {
   const props = { ...resolvedClipPresetProps(clip, preset), [key]: value };
   return {
@@ -46,7 +46,7 @@ export function isPresetPropsOnlyPatch(patch: ClipPatch): boolean {
   return sourceKeys.length === 1 && sourceKeys[0] === "props";
 }
 export function presetParameterToFieldType(
-  param: PresetParameter,
+  param: PresetParameter
 ): "text" | "multiline" | "number" | "color" | "url" {
   if (param.type === "number") return "number";
   if (param.type === "color") return "color";

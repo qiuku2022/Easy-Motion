@@ -71,22 +71,19 @@ async function main() {
 
   const templateProject = path.join(
     __dirname,
-    "../resources/templates/default-project",
+    "../resources/templates/default-project"
   );
-  const remotionDir = path.join(
-    templateProject,
-    "subprojects/default/remotion",
-  );
+  const remotionDir = path.join(templateProject, "subprojects/default/remotion");
   assert(fs.existsSync(remotionDir), "template remotion exists");
 
   const remotionFiles = listFilesRecursive(remotionDir);
   assert(
     remotionFiles.some((f) => f.archivePath === "package.json"),
-    "package.json in remotion tree",
+    "package.json in remotion tree"
   );
   assert(
     !remotionFiles.some((f) => f.archivePath.includes("node_modules")),
-    "node_modules excluded",
+    "node_modules excluded"
   );
 
   const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "em-export-"));

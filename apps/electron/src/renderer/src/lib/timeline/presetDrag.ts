@@ -4,20 +4,21 @@ import { PRESET_DRAG_MIME } from "@/types/preset";
 export function setPresetDragData(
   dataTransfer: DataTransfer,
   preset: PresetDefinition,
-  dragImageEl?: HTMLElement | null,
+  dragImageEl?: HTMLElement | null
 ) {
-  dataTransfer.setData(
-    PRESET_DRAG_MIME,
-    JSON.stringify({ presetId: preset.id }),
-  );
+  dataTransfer.setData(PRESET_DRAG_MIME, JSON.stringify({ presetId: preset.id }));
   dataTransfer.effectAllowed = "copy";
   if (dragImageEl) {
-    dataTransfer.setDragImage(dragImageEl, dragImageEl.offsetWidth / 2, dragImageEl.offsetHeight / 2);
+    dataTransfer.setDragImage(
+      dragImageEl,
+      dragImageEl.offsetWidth / 2,
+      dragImageEl.offsetHeight / 2
+    );
   }
 }
 
 export function readPresetDragData(
-  dataTransfer: DataTransfer,
+  dataTransfer: DataTransfer
 ): { presetId: string } | null {
   const raw = dataTransfer.getData(PRESET_DRAG_MIME);
   if (!raw) return null;

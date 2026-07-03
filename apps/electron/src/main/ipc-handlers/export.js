@@ -38,7 +38,7 @@ function registerExportHandlers() {
         quality: payload?.quality ?? "medium",
         outputPath: payload?.outputPath,
       });
-    }),
+    })
   );
 
   ipcMain.handle(
@@ -48,7 +48,7 @@ function registerExportHandlers() {
         throw new Error("E2602: export id required");
       }
       return exportService.cancelExport(payload.exportId);
-    }),
+    })
   );
 
   ipcMain.handle(
@@ -69,7 +69,7 @@ function registerExportHandlers() {
         filePath = `${filePath}.${ext}`;
       }
       return { path: filePath };
-    }),
+    })
   );
 
   ipcMain.handle(
@@ -82,7 +82,7 @@ function registerExportHandlers() {
         outputZipPath: payload?.outputZipPath,
         includeAssets: payload?.includeAssets !== false,
       });
-    }),
+    })
   );
 
   ipcMain.handle(
@@ -102,12 +102,12 @@ function registerExportHandlers() {
         filePath = `${filePath}.zip`;
       }
       return { path: filePath };
-    }),
+    })
   );
 
   ipcMain.handle(
     "main:export:getActive",
-    wrap(() => exportService.getActiveExport()),
+    wrap(() => exportService.getActiveExport())
   );
 }
 

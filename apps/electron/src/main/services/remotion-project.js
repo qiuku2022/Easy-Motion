@@ -24,7 +24,7 @@ function copyTemplateFile(templateRelativePath, destPath) {
     "subprojects",
     "default",
     "remotion",
-    templateRelativePath,
+    templateRelativePath
   );
   if (!fs.existsSync(templatePath)) return false;
   fs.mkdirSync(path.dirname(destPath), { recursive: true });
@@ -71,7 +71,7 @@ function isRemotionPackageInstalled(remotionDir, packageName) {
 
 function getMissingRemotionDeps(remotionDir) {
   return Object.keys(REQUIRED_DEPS).filter(
-    (name) => !isRemotionPackageInstalled(remotionDir, name),
+    (name) => !isRemotionPackageInstalled(remotionDir, name)
   );
 }
 
@@ -108,7 +108,7 @@ function installRemotionDeps(remotionDir) {
   return new Promise((resolve, reject) => {
     const child = createNpmProcess(
       ["install", "--no-fund", "--loglevel=error"],
-      remotionDir,
+      remotionDir
     );
     child.on("error", reject);
     child.on("exit", (code) => {
@@ -201,7 +201,7 @@ function syncTemplateFile(templateRelativePath, destPath) {
     "subprojects",
     "default",
     "remotion",
-    templateRelativePath,
+    templateRelativePath
   );
   if (!fs.existsSync(templatePath)) return false;
   const next = fs.readFileSync(templatePath, "utf8");
@@ -220,8 +220,7 @@ function ensureLayerKeyframesImport(remotionDir) {
   let patched = false;
 
   const keyframesDest = path.join(remotionDir, "src", "lib", "apply-keyframes.ts");
-  patched =
-    syncTemplateFile("src/lib/apply-keyframes.ts", keyframesDest) || patched;
+  patched = syncTemplateFile("src/lib/apply-keyframes.ts", keyframesDest) || patched;
 
   for (const libFile of [
     "src/lib/timeline-coordinates.ts",
@@ -229,11 +228,7 @@ function ensureLayerKeyframesImport(remotionDir) {
     "src/lib/layer-anchor-style.ts",
     "src/lib/clip-motion-wrapper.ts",
   ]) {
-    patched =
-      syncTemplateFile(
-        libFile,
-        path.join(remotionDir, libFile),
-      ) || patched;
+    patched = syncTemplateFile(libFile, path.join(remotionDir, libFile)) || patched;
   }
 
   for (const file of LAYER_FILES) {
@@ -247,7 +242,7 @@ function ensureLayerKeyframesImport(remotionDir) {
       "src",
       "components",
       "layers",
-      file,
+      file
     );
     if (!fs.existsSync(templatePath)) continue;
 
@@ -286,7 +281,7 @@ function ensureLayerKeyframesImport(remotionDir) {
     "remotion",
     "src",
     "components",
-    "MainSequence.tsx",
+    "MainSequence.tsx"
   );
   if (fs.existsSync(mainSeq) && fs.existsSync(templateMain)) {
     const content = fs.readFileSync(mainSeq, "utf8");
@@ -308,7 +303,7 @@ function ensurePresetBundle(remotionDir) {
     "default",
     "remotion",
     "src",
-    "presets",
+    "presets"
   );
   const destPresetsDir = path.join(remotionDir, "src", "presets");
   if (!fs.existsSync(templatePresetsDir)) return false;
@@ -319,7 +314,13 @@ function ensurePresetBundle(remotionDir) {
     copyDirRecursive(templateRve, destRve);
   }
 
-  for (const file of ["registry.ts", "rve/index.ts", "ThumbnailComposition.tsx", "ThumbnailRoot.tsx", "thumbnail-entry.tsx"]) {
+  for (const file of [
+    "registry.ts",
+    "rve/index.ts",
+    "ThumbnailComposition.tsx",
+    "ThumbnailRoot.tsx",
+    "thumbnail-entry.tsx",
+  ]) {
     const src = path.join(templatePresetsDir, file);
     const dest = path.join(destPresetsDir, file);
     if (fs.existsSync(src)) {
@@ -336,7 +337,7 @@ function ensurePresetBundle(remotionDir) {
     "remotion",
     "src",
     "components",
-    "MainSequence.tsx",
+    "MainSequence.tsx"
   );
   const destMain = path.join(remotionDir, "src", "components", "MainSequence.tsx");
   if (fs.existsSync(templateMain) && fs.existsSync(destMain)) {
@@ -357,7 +358,7 @@ async function prepareRemotionForNativeSync(remotionDir) {
     const stillMissing = getMissingRemotionDeps(remotionDir);
     if (stillMissing.length > 0) {
       throw new Error(
-        `E2503: Remotion 依赖未安装完整（缺少 ${stillMissing.join(", ")}）。请在 ${remotionDir} 目录执行 npm install。`,
+        `E2503: Remotion 依赖未安装完整（缺少 ${stillMissing.join(", ")}）。请在 ${remotionDir} 目录执行 npm install。`
       );
     }
   }

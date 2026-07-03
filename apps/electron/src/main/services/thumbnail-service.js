@@ -40,17 +40,8 @@ function tryFfmpegFrame(sourcePath, destPath) {
     ensureDir(path.dirname(destPath));
     execFileSync(
       "ffmpeg",
-      [
-        "-y",
-        "-i",
-        sourcePath,
-        "-frames:v",
-        "1",
-        "-q:v",
-        "3",
-        destPath,
-      ],
-      { stdio: "ignore", timeout: 60_000 },
+      ["-y", "-i", sourcePath, "-frames:v", "1", "-q:v", "3", destPath],
+      { stdio: "ignore", timeout: 60_000 }
     );
     return fs.existsSync(destPath) && fs.statSync(destPath).size > 0;
   } catch {

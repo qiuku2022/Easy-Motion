@@ -36,16 +36,16 @@ export function EntranceAnimationFields({
       width: timeline?.width ?? 1920,
       height: timeline?.height ?? 1080,
     }),
-    [timeline?.height, timeline?.width],
+    [timeline?.height, timeline?.width]
   );
 
   const selectedPreset = getEntranceAnimationPreset(clip);
   const selectedMeta = ENTRANCE_ANIMATION_PRESETS.find(
-    (preset) => preset.id === selectedPreset,
+    (preset) => preset.id === selectedPreset
   );
   const duration = clampEntranceAnimationDuration(
     clip,
-    getEntranceAnimationDuration(clip),
+    getEntranceAnimationDuration(clip)
   );
   const [durationValue, setDurationValue] = useState(String(duration));
 
@@ -55,7 +55,7 @@ export function EntranceAnimationFields({
 
   const applyPreset = (
     presetId: EntranceAnimationPresetId,
-    rawDuration = durationValue,
+    rawDuration = durationValue
   ) => {
     const parsed = Number(rawDuration);
     const nextDuration = clampEntranceAnimationDuration(clip, parsed);
@@ -70,14 +70,10 @@ export function EntranceAnimationFields({
   return (
     <div className="space-y-2">
       <div className="grid grid-cols-[88px_1fr] items-center gap-2">
-        <label className="text-xs font-normal text-muted-foreground">
-          入场预设
-        </label>
+        <label className="text-xs font-normal text-muted-foreground">入场预设</label>
         <Select
           value={selectedPreset}
-          onValueChange={(value) =>
-            applyPreset(value as EntranceAnimationPresetId)
-          }
+          onValueChange={(value) => applyPreset(value as EntranceAnimationPresetId)}
           disabled={disabled}
         >
           <SelectTrigger className="h-8 w-full text-xs">
@@ -124,4 +120,3 @@ export function EntranceAnimationFields({
     </div>
   );
 }
-

@@ -1,4 +1,9 @@
-import type { Clip, Keyframe, KeyframeEasing, KeyframeInterpolation } from "@/types/timeline";
+import type {
+  Clip,
+  Keyframe,
+  KeyframeEasing,
+  KeyframeInterpolation,
+} from "@/types/timeline";
 import { getValueByPath } from "@/lib/timeline/objectPath";
 import { newId } from "@/lib/timeline/mutations";
 import { applySegmentEasing } from "@/lib/timeline/keyframeEasing";
@@ -27,7 +32,7 @@ export const KEYFRAME_ANIMATABLE_PROPERTIES = [
 function setValueByPath(
   obj: Record<string, unknown>,
   path: string,
-  value: unknown,
+  value: unknown
 ): Record<string, unknown> {
   const parts = path.split(".");
   const root = { ...obj };
@@ -59,7 +64,7 @@ export function interpolateKeyframeProperty(
   property: string,
   frame: number,
   baseValue: unknown,
-  fps = 30,
+  fps = 30
 ) {
   const resolvedBase = resolveBaseValue(property, baseValue);
   const sorted = keyframes
@@ -106,14 +111,14 @@ export function applyKeyframesToClip(clip: Clip, relativeFrame: number, fps = 30
   for (const property of properties) {
     const baseValue = resolveBaseValue(
       property,
-      getValueByPath(clip as Record<string, unknown>, property),
+      getValueByPath(clip as Record<string, unknown>, property)
     );
     const value = interpolateKeyframeProperty(
       keyframes,
       property,
       relativeFrame,
       baseValue,
-      fps,
+      fps
     );
     result = setValueByPath(result, property, value);
   }
@@ -131,7 +136,7 @@ export function listKeyframeProperties(keyframes: Keyframe[]) {
 export function getClipRelativeFrame(globalFrame: number, clip: Clip): number {
   return Math.max(
     0,
-    Math.min(globalFrame - clip.startInFrames, clip.durationInFrames - 1),
+    Math.min(globalFrame - clip.startInFrames, clip.durationInFrames - 1)
   );
 }
 
@@ -143,18 +148,18 @@ export function getPropertyValueAtFrame(
   clip: Clip,
   property: string,
   relativeFrame: number,
-  fps = 30,
+  fps = 30
 ): unknown {
   const base = resolveBaseValue(
     property,
-    getValueByPath(clip as Record<string, unknown>, property),
+    getValueByPath(clip as Record<string, unknown>, property)
   );
   return interpolateKeyframeProperty(
     clip.keyframes ?? [],
     property,
     relativeFrame,
     base,
-    fps,
+    fps
   );
 }
 
@@ -166,7 +171,7 @@ export function addClipKeyframe(
     value?: unknown;
     easing?: KeyframeEasing;
     interpolation?: KeyframeInterpolation;
-  },
+  }
 ): Clip {
   const frame = Math.round(input.frame);
   if (frame < 0 || frame >= clip.durationInFrames) {
@@ -190,7 +195,7 @@ export function addClipKeyframe(
 
   const keyframes = [...(clip.keyframes ?? [])];
   const existingIndex = keyframes.findIndex(
-    (item) => item.property === keyframe.property && item.frame === frame,
+    (item) => item.property === keyframe.property && item.frame === frame
   );
   if (existingIndex >= 0) {
     keyframes[existingIndex] = {
@@ -225,7 +230,7 @@ export function removeClipKeyframe(clip: Clip, keyframeId: string): Clip {
 export function moveClipKeyframe(
   clip: Clip,
   keyframeId: string,
-  newFrame: number,
+  newFrame: number
 ): Clip {
   const frame = Math.round(newFrame);
   if (frame < 0 || frame >= clip.durationInFrames) {
@@ -233,17 +238,14 @@ export function moveClipKeyframe(
   }
 
   const keyframes = (clip.keyframes ?? []).map((kf) =>
-    kf.id === keyframeId ? { ...kf, frame } : kf,
+    kf.id === keyframeId ? { ...kf, frame } : kf
   );
 
   const moved = keyframes.find((kf) => kf.id === keyframeId);
   if (!moved) throw new Error("关键帧不存在");
 
   const conflict = keyframes.some(
-    (kf) =>
-      kf.id !== keyframeId &&
-      kf.property === moved.property &&
-      kf.frame === frame,
+    (kf) => kf.id !== keyframeId && kf.property === moved.property && kf.frame === frame
   );
   if (conflict) throw new Error("该帧已有同属性关键帧");
 
@@ -261,11 +263,8 @@ export function updateClipKeyframe(
   clip: Clip,
   keyframeId: string,
   patch: Partial<
-    Pick<
-      Keyframe,
-      "value" | "easing" | "interpolation" | "bezierCp" | "springConfig"
-    >
-  >,
+    Pick<Keyframe, "value" | "easing" | "interpolation" | "bezierCp" | "springConfig">
+  >
 ): Clip {
   const keyframes = (clip.keyframes ?? []).map((kf) => {
     if (kf.id !== keyframeId) return kf;
@@ -273,7 +272,7 @@ export function updateClipKeyframe(
     if (patch.value !== undefined) {
       next.value = normalizeKeyframePropertyValue(
         kf.property,
-        patch.value,
+        patch.value
       ) as Keyframe["value"];
     }
     return next;

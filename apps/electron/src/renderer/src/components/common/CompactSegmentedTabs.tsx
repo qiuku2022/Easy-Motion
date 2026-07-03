@@ -31,7 +31,7 @@ export function CompactSegmentedTabs<T extends string>({
       <div ref={listRef} className="relative w-fit">
         <TabsList
           className={cn(
-            "relative h-auto w-fit gap-0 rounded-md border border-border/60 bg-background/50 p-0.5 text-xs shadow-none",
+            "relative h-auto w-fit gap-0 rounded-md border border-border/60 bg-background/50 p-0.5 text-xs shadow-none"
           )}
         >
           <span
@@ -50,7 +50,7 @@ export function CompactSegmentedTabs<T extends string>({
                 "data-active:!bg-transparent dark:data-active:!bg-transparent",
                 "data-active:!text-primary-foreground dark:data-active:!text-primary-foreground",
                 "data-active:font-medium data-active:shadow-none dark:data-active:shadow-none",
-                "after:hidden",
+                "after:hidden"
               )}
             >
               {tab.label}

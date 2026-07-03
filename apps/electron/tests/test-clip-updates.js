@@ -30,7 +30,10 @@ function main() {
   assert(smaller["style.fontSize"] === 77, "96 * 0.8 = 77");
 
   const wrongLlm = resolveRelativeClipUpdates(clip, "字体大一点", { fontSize: 72 });
-  assert(wrongLlm["style.fontSize"] === 115, "override wrong LLM fontSize with relative");
+  assert(
+    wrongLlm["style.fontSize"] === 115,
+    "override wrong LLM fontSize with relative"
+  );
 
   console.log("clip-updates tests passed");
 }

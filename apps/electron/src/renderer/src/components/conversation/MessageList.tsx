@@ -64,8 +64,7 @@ export function MessageList({
         </div>
       )}
       {messages.map((message) => {
-        const isActiveStream =
-          isStreaming && message.id === streamingMessageId;
+        const isActiveStream = isStreaming && message.id === streamingMessageId;
 
         return (
           <MessageItem

@@ -60,7 +60,7 @@ function usePropertyTarget() {
         timeline.tracks.find(
           (t) =>
             t.id === selectedTrackId ||
-            t.children?.some((c) => c.id === selectedTrackId),
+            t.children?.some((c) => c.id === selectedTrackId)
         ) ?? findTrackById(timeline, selectedTrackId);
     }
 
@@ -114,7 +114,7 @@ export function PropertiesPanel() {
       ? resolved.contentClip.source.presetId
       : undefined;
   const preset = usePresetStore((s) =>
-    presetId ? s.getPresetById(presetId) : undefined,
+    presetId ? s.getPresetById(presetId) : undefined
   );
 
   const debouncedPatch = useMemo(
@@ -123,7 +123,7 @@ export function PropertiesPanel() {
         updateClip(clipId, patch);
         void flushPreviewPropsSync();
       }, PREVIEW_PROPS_DEBOUNCE_MS),
-    [flushPreviewPropsSync, updateClip],
+    [flushPreviewPropsSync, updateClip]
   );
 
   useEffect(() => () => debouncedPatch.cancel(), [debouncedPatch]);
@@ -138,7 +138,7 @@ export function PropertiesPanel() {
         updateClip(clipId, patch);
       }
     },
-    [debouncedPatch, updateClip],
+    [debouncedPatch, updateClip]
   );
 
   if (!resolved) {
@@ -160,9 +160,7 @@ export function PropertiesPanel() {
             <p className="truncate text-sm font-medium text-foreground">
               {layerTrack.name}
             </p>
-            <p className="text-xs text-muted-foreground">
-              {preset.name} · 预设参数
-            </p>
+            <p className="text-xs text-muted-foreground">{preset.name} · 预设参数</p>
           </div>
           <Button
             type="button"
@@ -198,13 +196,13 @@ export function PropertiesPanel() {
             onPatch={(patch) => onPatch(contentClip.id, patch)}
           />
         </PropertyCollapsibleSection>
-      {preset.category === "data-chart" && (
-        <DataBindingPanel
-          clip={contentClip}
-          disabled={disabled}
-          onPatch={(patch) => onPatch(contentClip.id, patch)}
-        />
-      )}
+        {preset.category === "data-chart" && (
+          <DataBindingPanel
+            clip={contentClip}
+            disabled={disabled}
+            onPatch={(patch) => onPatch(contentClip.id, patch)}
+          />
+        )}
       </div>
     );
   }
@@ -366,7 +364,9 @@ function TextEditorPanel({
                       placeholder="点击此处输入文字…"
                       onChange={(e) => {
                         field.onChange(e);
-                        onPatch({ source: { kind: "inline", content: e.target.value } });
+                        onPatch({
+                          source: { kind: "inline", content: e.target.value },
+                        });
                       }}
                     />
                   </FormControl>
@@ -400,11 +400,7 @@ function TextEditorPanel({
       </PropertyCollapsibleSection>
 
       <PropertyCollapsibleSection title="入场动画" resetKey={clip.id}>
-        <EntranceAnimationFields
-          clip={clip}
-          disabled={disabled}
-          onPatch={onPatch}
-        />
+        <EntranceAnimationFields clip={clip} disabled={disabled} onPatch={onPatch} />
       </PropertyCollapsibleSection>
 
       <p className="text-[11px] text-muted-foreground">

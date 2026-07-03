@@ -25,6 +25,6 @@ export function useSeekFrame() {
 
       seekTo(frame);
     },
-    [seekTo],
+    [seekTo]
   );
 }

@@ -33,7 +33,7 @@ export function PropertyCollapsibleSection({
         <ChevronDown
           className={cn(
             "h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none",
-            !open && "-rotate-90",
+            !open && "-rotate-90"
           )}
           aria-hidden
         />
@@ -42,16 +42,20 @@ export function PropertyCollapsibleSection({
       <div
         className={cn(
           "grid overflow-hidden transition-[grid-template-rows] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none",
-          open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+          open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
         )}
       >
         <div
           className={cn(
             "min-h-0 transition-opacity duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none",
-            open ? "overflow-visible opacity-100" : "overflow-hidden opacity-0 pointer-events-none",
+            open
+              ? "overflow-visible opacity-100"
+              : "overflow-hidden opacity-0 pointer-events-none"
           )}
         >
-          <div className="mt-2 space-y-2 border-t border-border px-px pt-2 pb-2">{children}</div>
+          <div className="mt-2 space-y-2 border-t border-border px-px pt-2 pb-2">
+            {children}
+          </div>
         </div>
       </div>
     </div>

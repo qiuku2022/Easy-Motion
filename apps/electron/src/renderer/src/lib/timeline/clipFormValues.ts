@@ -31,11 +31,11 @@ export type ClipFormValues = Record<string, string>;
 export function resolveClipPropertyFields(
   clipType: TrackType,
   mode: "quick" | "transform" | "animation" | "all",
-  excludePaths: string[] = [],
+  excludePaths: string[] = []
 ): ClipPropertyField[] {
   const excluded = new Set(excludePaths);
   const contentFields = getFieldsForClipType(clipType).filter(
-    (f) => !excluded.has(f.path),
+    (f) => !excluded.has(f.path)
   );
   if (mode === "quick") {
     return contentFields.filter((f) => f.quick);
@@ -48,16 +48,14 @@ export function resolveClipPropertyFields(
   }
   return [
     ...contentFields,
-    ...TRANSFORM_FIELDS.filter(
-      (t) => !contentFields.some((c) => c.path === t.path),
-    ),
+    ...TRANSFORM_FIELDS.filter((t) => !contentFields.some((c) => c.path === t.path)),
   ];
 }
 
 export function clipToFormValues(
   clip: Clip,
   fields: ClipPropertyField[],
-  options?: { relativeFrame?: number; fps?: number },
+  options?: { relativeFrame?: number; fps?: number }
 ): ClipFormValues {
   const relativeFrame = options?.relativeFrame;
   const fps = options?.fps ?? 30;
@@ -93,10 +91,9 @@ function zodFieldSchema(field: ClipPropertyField): z.ZodString {
   }
   return z
     .string()
-    .refine(
-      (val) => val === "" || Number.isFinite(Number(val)),
-      { message: "请输入有效数字" },
-    )
+    .refine((val) => val === "" || Number.isFinite(Number(val)), {
+      message: "请输入有效数字",
+    })
     .refine(
       (val) => {
         if (val === "") return true;
@@ -113,7 +110,7 @@ function zodFieldSchema(field: ClipPropertyField): z.ZodString {
             : field.min !== undefined
               ? `不能小于 ${field.min}`
               : `不能大于 ${field.max}`,
-      },
+      }
     );
 }
 
@@ -128,7 +125,7 @@ export function buildClipPropertyFormSchema(fields: ClipPropertyField[]) {
 export function areClipPropertyValuesEqual(
   field: ClipPropertyField,
   a: unknown,
-  b: unknown,
+  b: unknown
 ): boolean {
   if (isOpacityProperty(field.path)) {
     return (
@@ -159,7 +156,7 @@ export function areClipPropertyValuesEqual(
 
 export function parseFieldValue(
   field: ClipPropertyField,
-  value: string,
+  value: string
 ): unknown | null {
   if (field.type === "number") {
     const parsed = Number(value);

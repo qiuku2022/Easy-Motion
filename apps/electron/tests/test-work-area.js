@@ -19,7 +19,7 @@ function assert(condition, message) {
 
 function main() {
   const timeline = readJsonFile(
-    path.join(__dirname, "../../../packages/shared/fixtures/sample-timeline.json"),
+    path.join(__dirname, "../../../packages/shared/fixtures/sample-timeline.json")
   );
 
   const contentEnd = getContentEndInclusive(timeline);
@@ -27,10 +27,13 @@ function main() {
   assert(getContentEndExclusive(timeline) === 90, "content end exclusive");
 
   const padded = fitTimelineDuration({ ...timeline, durationInFrames: 300 });
-  assert(padded.durationInFrames === 150, `expected fitted duration 150 (5s min), got ${padded.durationInFrames}`);
+  assert(
+    padded.durationInFrames === 150,
+    `expected fitted duration 150 (5s min), got ${padded.durationInFrames}`
+  );
   assert(
     resolveTimelineViewportDuration({ ...timeline, durationInFrames: 300 }) === 150,
-    "viewport duration",
+    "viewport duration"
   );
 
   const autoRange = resolveExportFrameRange(timeline);

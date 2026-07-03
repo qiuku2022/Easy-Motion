@@ -1,7 +1,4 @@
-import {
-  formatFrameCount,
-  formatSmpteTimecode,
-} from "@/lib/timecode";
+import { formatFrameCount, formatSmpteTimecode } from "@/lib/timecode";
 
 /** 细刻度最小像素间距（PR 缩放后仍可见的短 tick） */
 const MIN_MINOR_PX = 8;
@@ -54,11 +51,9 @@ function pickLabelFrames(candidates: number[], pxPerFrame: number): number {
 function pickMinorFrames(
   candidates: number[],
   labelFrames: number,
-  pxPerFrame: number,
+  pxPerFrame: number
 ): number {
-  const divisors = candidates.filter(
-    (c) => c < labelFrames && labelFrames % c === 0,
-  );
+  const divisors = candidates.filter((c) => c < labelFrames && labelFrames % c === 0);
   for (let i = divisors.length - 1; i >= 0; i -= 1) {
     const c = divisors[i];
     if (c * pxPerFrame >= MIN_MINOR_PX) {
@@ -71,10 +66,7 @@ function pickMinorFrames(
   return 1;
 }
 
-function capMinorFrames(
-  minorFrames: number,
-  durationInFrames: number,
-): number {
+function capMinorFrames(minorFrames: number, durationInFrames: number): number {
   if (durationInFrames <= 0) return minorFrames;
   if (durationInFrames / minorFrames <= MAX_TICKS) {
     return minorFrames;
@@ -91,7 +83,7 @@ function capMinorFrames(
 export function getRulerTickIntervals(
   pxPerFrame: number,
   fps: number,
-  durationInFrames?: number,
+  durationInFrames?: number
 ): RulerIntervals {
   const candidates = buildFrameCandidates(fps);
   let labelFrames = pickLabelFrames(candidates, pxPerFrame);
@@ -118,7 +110,7 @@ export function getRulerTickIntervals(
 export function getRulerMajorFrames(
   pxPerFrame: number,
   fps: number,
-  durationInFrames?: number,
+  durationInFrames?: number
 ): number {
   return getRulerTickIntervals(pxPerFrame, fps, durationInFrames).labelFrames;
 }
@@ -127,12 +119,12 @@ export function getRulerMajorFrames(
 export function buildRulerTicks(
   durationInFrames: number,
   pxPerFrame: number,
-  fps: number,
+  fps: number
 ): RulerTick[] {
   const { labelFrames, minorFrames } = getRulerTickIntervals(
     pxPerFrame,
     fps,
-    durationInFrames,
+    durationInFrames
   );
 
   const items: RulerTick[] = [];
@@ -150,7 +142,7 @@ export function buildRulerTicks(
 export function formatRulerLabel(
   frame: number,
   fps: number,
-  displayMode: RulerDisplayMode = "timecode",
+  displayMode: RulerDisplayMode = "timecode"
 ): string {
   if (displayMode === "frames") {
     return formatFrameCount(frame);

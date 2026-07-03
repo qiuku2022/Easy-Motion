@@ -53,7 +53,7 @@ export function AssetsPanel() {
 
   const filtered = useMemo(
     () => filterAssets(assets, searchQuery, typeFilter),
-    [assets, searchQuery, typeFilter],
+    [assets, searchQuery, typeFilter]
   );
 
   const grouped = useMemo(() => groupAssetsByType(filtered), [filtered]);
@@ -76,7 +76,7 @@ export function AssetsPanel() {
         toast.success(`已导入 ${paths.length} 个文件`);
       }
     },
-    [clearError, importFilePaths],
+    [clearError, importFilePaths]
   );
 
   const onDrop = useCallback(
@@ -86,7 +86,7 @@ export function AssetsPanel() {
         void importFromFileList(e.dataTransfer.files);
       }
     },
-    [importFromFileList],
+    [importFromFileList]
   );
 
   return (
@@ -178,7 +178,12 @@ export function AssetsPanel() {
                 ) : (
                   <ul className="flex flex-col gap-1">
                     {favorites.map((asset) => (
-                      <AssetCard key={asset.id} asset={asset} compact showMeta={false} />
+                      <AssetCard
+                        key={asset.id}
+                        asset={asset}
+                        compact
+                        showMeta={false}
+                      />
                     ))}
                   </ul>
                 )}

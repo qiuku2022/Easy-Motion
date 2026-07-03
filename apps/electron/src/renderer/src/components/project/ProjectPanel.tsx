@@ -106,7 +106,10 @@ export function ProjectPanel() {
           <div className="min-w-0">
             <p className="text-xs font-medium text-foreground">本地项目</p>
             {localScanRoot ? (
-              <p className="truncate text-[11px] text-muted-foreground" title={localScanRoot}>
+              <p
+                className="truncate text-[11px] text-muted-foreground"
+                title={localScanRoot}
+              >
                 扫描：{localScanRoot}
               </p>
             ) : null}
@@ -170,7 +173,9 @@ export function ProjectPanel() {
                           void openProjectByPath(project.path);
                         }}
                       >
-                        <p className="truncate font-medium text-foreground">{project.name}</p>
+                        <p className="truncate font-medium text-foreground">
+                          {project.name}
+                        </p>
                         <p
                           className="mt-0.5 truncate text-[11px] text-muted-foreground"
                           title={project.path}

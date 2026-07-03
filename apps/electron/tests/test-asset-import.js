@@ -9,12 +9,7 @@ function assert(condition, message) {
 
 async function main() {
   const projectRoot = fs.mkdtempSync(path.join(os.tmpdir(), "em-asset-import-"));
-  const remotionDir = path.join(
-    projectRoot,
-    "subprojects",
-    "default",
-    "remotion",
-  );
+  const remotionDir = path.join(projectRoot, "subprojects", "default", "remotion");
   fs.mkdirSync(path.join(remotionDir, "public"), { recursive: true });
   fs.mkdirSync(path.join(projectRoot, "assets", "image"), { recursive: true });
 
@@ -31,7 +26,7 @@ async function main() {
       type: "image",
       name: "测试图",
     },
-    { subprojectPath: "subprojects/default", fps: 30 },
+    { subprojectPath: "subprojects/default", fps: 30 }
   );
 
   assert(asset.id, "asset should have id");
@@ -51,19 +46,18 @@ async function main() {
     subprojectPath: "subprojects/default",
     fps: 30,
   });
-  assert(blocked.needsDuplicateResolution, "import should ask for duplicate resolution");
-
-  const skipped = await assetService.importAssetFiles(
-    projectRoot,
-    [sourceFile],
-    {
-      subprojectPath: "subprojects/default",
-      fps: 30,
-      duplicateResolutions: {
-        [sourceFile]: { action: "skip", existingId: asset.id },
-      },
-    },
+  assert(
+    blocked.needsDuplicateResolution,
+    "import should ask for duplicate resolution"
   );
+
+  const skipped = await assetService.importAssetFiles(projectRoot, [sourceFile], {
+    subprojectPath: "subprojects/default",
+    fps: 30,
+    duplicateResolutions: {
+      [sourceFile]: { action: "skip", existingId: asset.id },
+    },
+  });
   assert(skipped.skipped?.length === 1, "skip duplicate should not import again");
   assert(skipped.imported.length === 0, "no new import on skip");
 

@@ -17,7 +17,7 @@ function cloneTimeline(timeline: Timeline): Timeline {
 
 export function pushHistory(
   history: TimelineHistory,
-  previous: Timeline,
+  previous: Timeline
 ): TimelineHistory {
   const past = [...history.past, cloneTimeline(previous)];
   if (past.length > MAX_HISTORY_STEPS) {
@@ -36,7 +36,7 @@ export function canRedo(history: TimelineHistory): boolean {
 
 export function undoHistory(
   history: TimelineHistory,
-  current: Timeline,
+  current: Timeline
 ): { history: TimelineHistory; timeline: Timeline } | null {
   if (!canUndo(history)) return null;
 
@@ -52,7 +52,7 @@ export function undoHistory(
 
 export function redoHistory(
   history: TimelineHistory,
-  current: Timeline,
+  current: Timeline
 ): { history: TimelineHistory; timeline: Timeline } | null {
   if (!canRedo(history)) return null;
 

@@ -1,7 +1,11 @@
 const { createChatModel } = require("./llm-factory");
 const { buildVisionAnalysisPrompt } = require("./prompts/vision");
 const { buildMultimodalHumanMessage } = require("./multimodal");
-const { extractJsonFromText, layoutToToolHints, layoutToPlan } = require("./layout-mapper");
+const {
+  extractJsonFromText,
+  layoutToToolHints,
+  layoutToPlan,
+} = require("./layout-mapper");
 
 async function analyzeReferenceImages({
   projectPath,

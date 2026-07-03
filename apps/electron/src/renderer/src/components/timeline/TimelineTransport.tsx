@@ -10,11 +10,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { formatFrameCount, formatSmpteTimecode } from "@/lib/timecode";
 import { resolveWorkAreaDisplayRange } from "@/lib/timeline/workArea";
 import { PR_SHORTCUTS } from "@/lib/premiereShortcuts";
@@ -207,7 +203,7 @@ export function TimelineTransport() {
         disabled={!hasTimeline}
         className={cn(
           "ml-2 flex cursor-pointer flex-col gap-0.5 rounded px-1 py-0.5 text-left font-mono text-[10px] leading-tight tabular-nums text-foreground",
-          "hover:bg-muted/60 disabled:cursor-default disabled:opacity-50",
+          "hover:bg-muted/60 disabled:cursor-default disabled:opacity-50"
         )}
         onClick={(e) => {
           if (e.ctrlKey || e.metaKey) {

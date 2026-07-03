@@ -1,10 +1,7 @@
 const { ChatAnthropic } = require("@langchain/anthropic");
 const { ChatOpenAI } = require("@langchain/openai");
 const { HumanMessage } = require("langchain");
-const {
-  resolveLlmConfig,
-  assertLlmConfig,
-} = require("../services/llm-service");
+const { resolveLlmConfig, assertLlmConfig } = require("../services/llm-service");
 
 /**
  * Build a LangChain ChatModel from settings / secrets / .env (via resolveLlmConfig).

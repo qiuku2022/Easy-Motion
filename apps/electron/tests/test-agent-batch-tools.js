@@ -105,7 +105,10 @@ function main() {
   assert(dryRun.matchedCount === 3, "batchUpdateClips matches by type");
   assert(dryRun.updatedCount === 0, "batchUpdateClips dryRun does not update");
   assert(!ctx.changed, "batchUpdateClips dryRun does not mark changed");
-  assert(findClip(ctx.timeline, "clip-title").style.color === "#ffffff", "dryRun keeps timeline");
+  assert(
+    findClip(ctx.timeline, "clip-title").style.color === "#ffffff",
+    "dryRun keeps timeline"
+  );
 
   const textMatch = ctx.batchUpdateClips({
     selector: { textIncludes: "自然语言" },
@@ -114,7 +117,7 @@ function main() {
   assert(textMatch.updatedCount === 1, "batchUpdateClips matches textIncludes");
   assert(
     findClip(ctx.timeline, "clip-subtitle").style.color === "#f97316",
-    "batchUpdateClips applies updates",
+    "batchUpdateClips applies updates"
   );
 
   const componentMatch = ctx.batchUpdateClips({
@@ -124,7 +127,7 @@ function main() {
   assert(componentMatch.updatedCount === 1, "batchUpdateClips matches sourceComponent");
   assert(
     findClip(ctx.timeline, "clip-chart").source.props.primaryColor === "#22c55e",
-    "batchUpdateClips updates preset props",
+    "batchUpdateClips updates preset props"
   );
 
   const limited = ctx.batchUpdateClips({
@@ -132,7 +135,10 @@ function main() {
     updates: { "style.fontSize": 50 },
     maxMatches: 1,
   });
-  assert(limited.requiresConfirmation, "batchUpdateClips requires confirmation over maxMatches");
+  assert(
+    limited.requiresConfirmation,
+    "batchUpdateClips requires confirmation over maxMatches"
+  );
   assert(limited.matchedCount === 3, "batchUpdateClips reports over-limit matches");
 
   const conflictTimeline = buildTimeline();
@@ -144,7 +150,10 @@ function main() {
     updates: { "style.color": "#000000" },
   });
   assert(conflict.requiresConfirmation, "batchUpdateClips reports E2010 conflicts");
-  assert(conflict.conflictClips.length === 1, "batchUpdateClips returns conflict clips");
+  assert(
+    conflict.conflictClips.length === 1,
+    "batchUpdateClips returns conflict clips"
+  );
   assert(!conflictCtx.changed, "batchUpdateClips conflict keeps timeline unchanged");
 
   let sourceReplaceThrown = false;
@@ -165,40 +174,64 @@ function main() {
     dryRun: true,
   });
   assert(dryRun.matchedCount === 2, "batchShiftClips matches timeRange");
-  assert(findClip(shiftCtx.timeline, "clip-title").startInFrames === 0, "shift dryRun keeps timeline");
+  assert(
+    findClip(shiftCtx.timeline, "clip-title").startInFrames === 0,
+    "shift dryRun keeps timeline"
+  );
 
   const shifted = shiftCtx.batchShiftClips({
     selector: { type: "text", timeRange: { startInFrames: 0, endInFrames: 60 } },
     offsetInFrames: 30,
   });
   assert(shifted.shiftedCount === 2, "batchShiftClips shifts matched clips");
-  assert(findClip(shiftCtx.timeline, "clip-title").startInFrames === 30, "batchShiftClips shifts first");
+  assert(
+    findClip(shiftCtx.timeline, "clip-title").startInFrames === 30,
+    "batchShiftClips shifts first"
+  );
   assert(
     findClip(shiftCtx.timeline, "clip-subtitle").startInFrames === 60,
-    "batchShiftClips shifts second without false overlap",
+    "batchShiftClips shifts second without false overlap"
   );
 
   const deleteCtx = new TimelineContext(buildTimeline());
   dryRun = deleteCtx.batchDeleteClips({
     selector: { type: "text" },
   });
-  assert(dryRun.requiresConfirmation, "batchDeleteClips asks confirmation for multiple clips");
-  assert(deleteCtx.timeline.tracks[0].clips.length === 3, "batchDeleteClips default dryRun keeps clips");
+  assert(
+    dryRun.requiresConfirmation,
+    "batchDeleteClips asks confirmation for multiple clips"
+  );
+  assert(
+    deleteCtx.timeline.tracks[0].clips.length === 3,
+    "batchDeleteClips default dryRun keeps clips"
+  );
 
   const deletedOne = deleteCtx.batchDeleteClips({
     selector: { nameIncludes: "结尾" },
     dryRun: false,
   });
-  assert(deletedOne.deletedCount === 1, "batchDeleteClips deletes single clip without confirmDelete");
-  assert(!findClip(deleteCtx.timeline, "clip-ending"), "batchDeleteClips removes single clip");
+  assert(
+    deletedOne.deletedCount === 1,
+    "batchDeleteClips deletes single clip without confirmDelete"
+  );
+  assert(
+    !findClip(deleteCtx.timeline, "clip-ending"),
+    "batchDeleteClips removes single clip"
+  );
 
   const deletedMany = deleteCtx.batchDeleteClips({
     selector: { type: "text" },
     dryRun: false,
     confirmDelete: true,
   });
-  assert(deletedMany.deletedCount === 2, "batchDeleteClips deletes multiple with confirmation");
-  assert(deleteCtx.timeline.tracks[0].clips.length === 0, "batchDeleteClips removes remaining text clips");
+  assert(
+    deletedMany.deletedCount === 2,
+    "batchDeleteClips deletes multiple with confirmation"
+  );
+  assert(
+    deleteCtx.timeline.tracks[0].clips.length === 0,
+    "batchDeleteClips removes remaining text clips"
+  );
 
   console.log("test-agent-batch-tools: passed");
 }

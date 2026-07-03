@@ -10,7 +10,7 @@ function flattenTracksForCompile(tracks) {
     if (track.type === "group") {
       if (!track.visible) return;
       const children = [...(track.children ?? [])].sort(
-        (a, b) => (a.order ?? 0) - (b.order ?? 0),
+        (a, b) => (a.order ?? 0) - (b.order ?? 0)
       );
       children.forEach((child, childIndex) => {
         if (!isTrackIncludedInPreview(child, track, tracks)) return;

@@ -100,18 +100,27 @@ function main() {
   assert(size.height === 270, "decimal height");
 
   const layoutPlan = layoutToPlan(analysis, timeline);
-  assert(layoutPlan.operations.length === 8, "layout plan creates track+clip per element");
   assert(
-    layoutPlan.operations.some((op) => op.op === "createClip" && op.args.source?.shape === "rect"),
-    "layout plan maps shape to shape clip",
+    layoutPlan.operations.length === 8,
+    "layout plan creates track+clip per element"
   );
   assert(
-    layoutPlan.operations.some((op) => op.op === "createClip" && op.args.source?.kind === "data"),
-    "layout plan maps chart to data clip",
+    layoutPlan.operations.some(
+      (op) => op.op === "createClip" && op.args.source?.shape === "rect"
+    ),
+    "layout plan maps shape to shape clip"
   );
   assert(
-    layoutPlan.operations.some((op) => op.op === "createTrack" && op.args.name === "图片占位"),
-    "layout plan maps image to visible placeholder",
+    layoutPlan.operations.some(
+      (op) => op.op === "createClip" && op.args.source?.kind === "data"
+    ),
+    "layout plan maps chart to data clip"
+  );
+  assert(
+    layoutPlan.operations.some(
+      (op) => op.op === "createTrack" && op.args.name === "图片占位"
+    ),
+    "layout plan maps image to visible placeholder"
   );
 
   const ctx = new TimelineContext(timeline, { layoutPlan });
@@ -123,8 +132,10 @@ function main() {
   assert(ctx.changed, "applyVisualLayout marks changed");
   assert(ctx.timeline.tracks.length === 4, "applyVisualLayout creates tracks");
   assert(
-    ctx.timeline.tracks.some((track) => track.type === "chart" && track.clips[0]?.source?.data?.length),
-    "applyVisualLayout creates chart track",
+    ctx.timeline.tracks.some(
+      (track) => track.type === "chart" && track.clips[0]?.source?.data?.length
+    ),
+    "applyVisualLayout creates chart track"
   );
 
   const section = buildVisionContextSection({
@@ -132,7 +143,10 @@ function main() {
     toolHints: hints,
     layoutPlan,
   });
-  assert(section.includes("applyVisualLayout"), "vision context section mentions layout tool");
+  assert(
+    section.includes("applyVisualLayout"),
+    "vision context section mentions layout tool"
+  );
 
   void withTempProject(async (root) => {
     const src = path.join(root, "ref.png");

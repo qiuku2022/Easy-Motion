@@ -108,7 +108,10 @@ function main() {
   } catch (error) {
     deleteConflictThrown = error.message.includes("E2010");
   }
-  assert(deleteConflictThrown, "deleteClip rejects recent user edits without confirmOverwrite");
+  assert(
+    deleteConflictThrown,
+    "deleteClip rejects recent user edits without confirmOverwrite"
+  );
 
   const deleted = timelineOps.deleteClip(timeline, {
     clipId: clipResult.clip.id,

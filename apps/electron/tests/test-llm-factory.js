@@ -1,5 +1,8 @@
 const { loadEnv } = require("../src/main/utils/load-env");
-const { resolveLlmConfig, assertLlmConfig } = require("../src/main/services/llm-service");
+const {
+  resolveLlmConfig,
+  assertLlmConfig,
+} = require("../src/main/services/llm-service");
 const { createChatModel, invokeChatModel } = require("../src/main/agent/llm-factory");
 
 function assert(condition, message) {
@@ -33,10 +36,7 @@ async function main() {
     "E2804"
   );
 
-  assertThrows(
-    () => assertLlmConfig({ apiKey: "test-key", baseUrl: "" }),
-    "E2800"
-  );
+  assertThrows(() => assertLlmConfig({ apiKey: "test-key", baseUrl: "" }), "E2800");
 
   const config = resolveLlmConfig();
   if (!config.apiKey) {
@@ -49,7 +49,10 @@ async function main() {
   assert(model, "createChatModel should return a ChatModel instance");
 
   const reply = await invokeChatModel("你好，请用一句话回复。");
-  assert(typeof reply === "string" && reply.trim().length > 0, "invoke should return non-empty text");
+  assert(
+    typeof reply === "string" && reply.trim().length > 0,
+    "invoke should return non-empty text"
+  );
   console.log("test-llm-factory: live invoke ok, reply length =", reply.trim().length);
   console.log("test-llm-factory: all checks passed");
 }

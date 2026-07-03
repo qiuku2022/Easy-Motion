@@ -81,7 +81,10 @@ async function main() {
   let workArea = ctx.getWorkArea();
   assert(workArea.workArea === null, "getWorkArea returns null custom area");
   assert(workArea.exportRange.inFrame === 0, "getWorkArea default export starts at 0");
-  assert(workArea.exportRange.outFrame === 119, "getWorkArea default export ends at content end");
+  assert(
+    workArea.exportRange.outFrame === 119,
+    "getWorkArea default export ends at content end"
+  );
 
   workArea = ctx.setWorkArea({ inFrame: 90, outFrame: 239 });
   assert(ctx.changed, "setWorkArea marks timeline changed");
@@ -108,7 +111,10 @@ async function main() {
     missingPathThrown = error.message.includes("outputPath");
   }
   assert(missingPathThrown, "exportVideo rejects missing outputPath");
-  assert(fakeExportService.calls.length === 0, "exportVideo missing path does not start export");
+  assert(
+    fakeExportService.calls.length === 0,
+    "exportVideo missing path does not start export"
+  );
 
   const started = await ctx.exportVideo({
     outputPath: "D:/Temp/demo.mp4",
@@ -119,11 +125,20 @@ async function main() {
   assert(started.exportId === "exp-test", "exportVideo returns export id");
   assert(started.outputPath === "D:/Temp/demo.mp4", "exportVideo returns output path");
   assert(fakeExportService.calls.length === 1, "exportVideo calls service once");
-  assert(fakeExportService.calls[0].projectPath === "D:/Project", "exportVideo passes project path");
-  assert(fakeExportService.calls[0].resolution === "720p", "exportVideo passes resolution");
+  assert(
+    fakeExportService.calls[0].projectPath === "D:/Project",
+    "exportVideo passes project path"
+  );
+  assert(
+    fakeExportService.calls[0].resolution === "720p",
+    "exportVideo passes resolution"
+  );
 
   let status = ctx.getExportStatus();
-  assert(status.active && status.exportId === "exp-test", "getExportStatus returns active export");
+  assert(
+    status.active && status.exportId === "exp-test",
+    "getExportStatus returns active export"
+  );
 
   let activeThrown = false;
   try {

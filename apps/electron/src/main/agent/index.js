@@ -4,7 +4,11 @@ const { RemotionContext } = require("./remotion-context");
 const { createHybridAgent } = require("./graph");
 const { AgentState } = require("./state");
 const { findClipLocation } = require("./timeline-ops");
-const { resolveRelativeClipUpdates, resolvePresetClipUpdates, findPresetClipForInput } = require("./clip-updates");
+const {
+  resolveRelativeClipUpdates,
+  resolvePresetClipUpdates,
+  findPresetClipForInput,
+} = require("./clip-updates");
 const { streamAgentWithTimeouts, isRetriableAgentError } = require("./stream-timeout");
 const { runSimplifiedFallback } = require("./fallback-templates");
 const { buildMultimodalHumanMessage } = require("./multimodal");
@@ -26,12 +30,7 @@ function isAiMessage(message) {
   return type === "ai" || type.startsWith("AIMessage");
 }
 
-function buildAgentMessages({
-  history = [],
-  input,
-  imagePaths = [],
-  projectPath,
-}) {
+function buildAgentMessages({ history = [], input, imagePaths = [], projectPath }) {
   const messages = [];
 
   for (const item of history) {
@@ -60,12 +59,7 @@ function buildAgentMessages({
 }
 
 function applySelectedElementFallback(ctx, selectedElement, input) {
-  if (
-    !ctx.changed &&
-    selectedElement?.type === "clip" &&
-    selectedElement.id &&
-    input
-  ) {
+  if (!ctx.changed && selectedElement?.type === "clip" && selectedElement.id && input) {
     const located = findClipLocation(ctx.timeline.tracks, selectedElement.id);
     if (located) {
       const presetUpdates = resolvePresetClipUpdates(located.clip, input);
@@ -149,9 +143,14 @@ async function runAgentAttempt({
     }
   }
 
-  const { agent } = createHybridAgent(ctx, remotionCtx, { visualAnalysis, toolHints, layoutPlan }, {
-    creationMode,
-  });
+  const { agent } = createHybridAgent(
+    ctx,
+    remotionCtx,
+    { visualAnalysis, toolHints, layoutPlan },
+    {
+      creationMode,
+    }
+  );
   const messages = buildAgentMessages({
     history,
     input,
@@ -180,9 +179,7 @@ async function runAgentAttempt({
     changeLog: ctx.changeLog,
     remotionChanged: remotionCtx.changed,
     remotionChangeLog: remotionCtx.changeLog,
-    remotionUndoSnapshots: remotionCtx.changed
-      ? remotionCtx.getSnapshotsForUndo()
-      : [],
+    remotionUndoSnapshots: remotionCtx.changed ? remotionCtx.getSnapshotsForUndo() : [],
     remotionCtx,
     simplifiedMode: false,
     systemNotice: visionNotice,
@@ -193,7 +190,10 @@ function formatCompileErrors(compileResult) {
   if (Array.isArray(compileResult?.errors) && compileResult.errors.length) {
     return compileResult.errors.slice(0, 8).join("\n");
   }
-  return String(compileResult?.output ?? compileResult?.message ?? "编译失败").slice(0, 2000);
+  return String(compileResult?.output ?? compileResult?.message ?? "编译失败").slice(
+    0,
+    2000
+  );
 }
 
 async function ensureRemotionCompileOrRollback(remotionCtx) {
@@ -306,9 +306,7 @@ async function runAgent(options) {
     input: options.input,
   });
 
-  options.onChunk?.(
-    fallback.reply || "已切换至简化生成模式，已创建基础文字动画。"
-  );
+  options.onChunk?.(fallback.reply || "已切换至简化生成模式，已创建基础文字动画。");
 
   return fallback;
 }

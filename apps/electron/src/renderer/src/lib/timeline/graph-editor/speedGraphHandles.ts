@@ -22,7 +22,7 @@ export function speedHandlesForKeyframe(
   prev: Keyframe | null,
   kf: Keyframe,
   next: Keyframe | null,
-  fps: number,
+  fps: number
 ): { incoming?: SpeedHandle; outgoing?: SpeedHandle } | null {
   const handles: { incoming?: SpeedHandle; outgoing?: SpeedHandle } = {};
 
@@ -56,7 +56,7 @@ export function speedHandleDisplay(
   handle: SpeedHandle,
   frameToX: (frame: number) => number,
   speedToY: (speed: number) => number,
-  anchorY: number,
+  anchorY: number
 ): { influenceX: number; dotY: number } {
   const influenceX = frameToX(handle.frame);
   const rawDotY = speedToY(handle.speed);
@@ -69,7 +69,7 @@ export function pointerInfluenceFromFrame(
   keyframeFrame: number,
   neighborFrame: number,
   pointerFrame: number,
-  side: SpeedHandleSide,
+  side: SpeedHandleSide
 ): number {
   const span = Math.abs(keyframeFrame - neighborFrame);
   if (span <= 0) return MIN_INFLUENCE_FALLBACK;
@@ -92,7 +92,7 @@ export function pointerToTemporalEase(
   neighborFrame: number,
   pointerFrame: number,
   pointerSpeed: number,
-  side: SpeedHandleSide,
+  side: SpeedHandleSide
 ): KeyframeTemporalEase {
   return {
     speed: pointerSpeed,
@@ -100,7 +100,7 @@ export function pointerToTemporalEase(
       keyframeFrame,
       neighborFrame,
       pointerFrame,
-      side,
+      side
     ),
   };
 }
@@ -112,7 +112,7 @@ export function patchIncomingHandle(
   prev: Keyframe,
   end: Keyframe,
   incoming: KeyframeTemporalEase,
-  fps: number,
+  fps: number
 ): KeyframeBezierCp {
   const { outgoing } = bezierCpToTemporalEases(prev, end, fps);
   return temporalEasesToBezierCp(prev, end, outgoing, incoming, fps);
@@ -123,7 +123,7 @@ export function patchOutgoingHandle(
   kf: Keyframe,
   next: Keyframe,
   outgoing: KeyframeTemporalEase,
-  fps: number,
+  fps: number
 ): KeyframeBezierCp {
   const { incoming } = bezierCpToTemporalEases(kf, next, fps);
   return temporalEasesToBezierCp(kf, next, outgoing, incoming, fps);

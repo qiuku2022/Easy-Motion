@@ -83,19 +83,18 @@ function registerConversationHandlers() {
       const remotionFilesBefore = Array.isArray(payload?.remotionFilesBefore)
         ? payload.remotionFilesBefore
         : [];
-      if (!payload?.messageId || (!payload?.timeline && remotionFilesBefore.length === 0)) {
+      if (
+        !payload?.messageId ||
+        (!payload?.timeline && remotionFilesBefore.length === 0)
+      ) {
         throw new Error("E2002: 无效的撤销快照");
       }
       const { projectPath, subprojectPath } = getProjectContext(payload);
-      return conversationService.saveAgentUndoSnapshot(
-        projectPath,
-        subprojectPath,
-        {
-          messageId: payload.messageId,
-          timeline: payload.timeline,
-          remotionFilesBefore,
-        }
-      );
+      return conversationService.saveAgentUndoSnapshot(projectPath, subprojectPath, {
+        messageId: payload.messageId,
+        timeline: payload.timeline,
+        remotionFilesBefore,
+      });
     })
   );
 
@@ -103,11 +102,9 @@ function registerConversationHandlers() {
     "main:conversation:restoreAgentUndo",
     wrap(async (_event, payload) => {
       const { projectPath, subprojectPath } = getProjectContext(payload);
-      return conversationService.restoreAgentUndoSnapshot(
-        projectPath,
-        subprojectPath,
-        { messageId: payload?.messageId }
-      );
+      return conversationService.restoreAgentUndoSnapshot(projectPath, subprojectPath, {
+        messageId: payload?.messageId,
+      });
     })
   );
 
@@ -137,10 +134,7 @@ function registerConversationHandlers() {
         return { success: true, data: { images: [] } };
       }
 
-      const data = await aiRefService.importAiRefFiles(
-        projectPath,
-        result.filePaths
-      );
+      const data = await aiRefService.importAiRefFiles(projectPath, result.filePaths);
       data.images = data.images.map((image) => ({
         ...image,
         previewUrl: aiRefService.readAiRefAsDataUrl(projectPath, image.path),
@@ -177,9 +171,7 @@ function registerConversationHandlers() {
 
   ipcMain.handle(
     "main:conversation:cancel",
-    wrap((_event, payload) =>
-      agentService.cancelConversationSend(payload?.requestId)
-    )
+    wrap((_event, payload) => agentService.cancelConversationSend(payload?.requestId))
   );
 }
 

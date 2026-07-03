@@ -56,7 +56,7 @@ const CLIP_BAR_VARIANTS: Record<string, ClipBarVariant> = {
 
 export function clipBarClassName(
   contentType: string,
-  state: { selected: boolean; disabled: boolean; dragging?: boolean },
+  state: { selected: boolean; disabled: boolean; dragging?: boolean }
 ): string {
   const variant = CLIP_BAR_VARIANTS[contentType] ?? CLIP_BAR_VARIANTS.default;
 
@@ -67,19 +67,14 @@ export function clipBarClassName(
       ? cn(variant.disabled, "cursor-not-allowed")
       : state.selected
         ? cn(variant.selected, "cursor-grab shadow-sm active:cursor-grabbing")
-        : cn(
-            variant.idle,
-            "cursor-grab hover:brightness-105 active:cursor-grabbing",
-          ),
-    state.dragging && !state.disabled && "opacity-95 ring-2 ring-white/20",
+        : cn(variant.idle, "cursor-grab hover:brightness-105 active:cursor-grabbing"),
+    state.dragging && !state.disabled && "opacity-95 ring-2 ring-white/20"
   );
 }
 
 export function clipBarHandleClassName(selected: boolean): string {
   return cn(
     "absolute bottom-0 top-0 z-10 w-1.5 cursor-ew-resize",
-    selected
-      ? "bg-white/55 hover:bg-white/75"
-      : "bg-black/20 hover:bg-black/30",
+    selected ? "bg-white/55 hover:bg-white/75" : "bg-black/20 hover:bg-black/30"
   );
 }

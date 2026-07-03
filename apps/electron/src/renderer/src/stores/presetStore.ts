@@ -52,9 +52,7 @@ export const usePresetStore = create<PresetState>((set, get) => ({
 
   getPresetById: (id) => get().presets.find((p) => p.id === id),
 
-  openApplyDialog: (preset) =>
-    set({ pendingPreset: preset, applyDialogOpen: true }),
+  openApplyDialog: (preset) => set({ pendingPreset: preset, applyDialogOpen: true }),
 
-  closeApplyDialog: () =>
-    set({ pendingPreset: null, applyDialogOpen: false }),
+  closeApplyDialog: () => set({ pendingPreset: null, applyDialogOpen: false }),
 }));

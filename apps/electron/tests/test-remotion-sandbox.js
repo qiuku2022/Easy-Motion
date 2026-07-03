@@ -25,8 +25,14 @@ function expectThrows(fn, pattern) {
 }
 
 function main() {
-  assert(assertWritableRelativePath("components/custom/Foo.tsx") === "components/custom/Foo.tsx");
-  assert(assertWritableRelativePath("presets/custom-registry.ts") === "presets/custom-registry.ts");
+  assert(
+    assertWritableRelativePath("components/custom/Foo.tsx") ===
+      "components/custom/Foo.tsx"
+  );
+  assert(
+    assertWritableRelativePath("presets/custom-registry.ts") ===
+      "presets/custom-registry.ts"
+  );
 
   expectThrows(
     () => assertWritableRelativePath("components/MainSequence.tsx"),
@@ -35,7 +41,10 @@ function main() {
   expectThrows(() => assertWritableRelativePath("../outside.tsx"), /E2410/);
   expectThrows(() => assertWritableRelativePath("/abs.tsx"), /E2410/);
 
-  assert(assertReadableRelativePath("components/MainSequence.tsx") === "components/MainSequence.tsx");
+  assert(
+    assertReadableRelativePath("components/MainSequence.tsx") ===
+      "components/MainSequence.tsx"
+  );
 
   const tmpRoot = fs.mkdtempSync(path.join(os.tmpdir(), "em-sandbox-"));
   const projectPath = path.join(tmpRoot, "Demo.em");
@@ -54,7 +63,10 @@ function main() {
   assert(paths.srcDir === path.join(remotionDir, "src"), "resolveRemotionPaths srcDir");
 
   const files = listSrcFiles(paths.srcDir, { maxDepth: 4 });
-  assert(files.some((f) => f.path === "components/custom/Sample.tsx"), "listSrcFiles");
+  assert(
+    files.some((f) => f.path === "components/custom/Sample.tsx"),
+    "listSrcFiles"
+  );
 
   const safeCode = `import React from "react";\nimport { AbsoluteFill, useCurrentFrame } from "remotion";\nexport const X = () => <AbsoluteFill />;`;
   assert(scanTsxSecurity(safeCode).valid, "security scan safe");

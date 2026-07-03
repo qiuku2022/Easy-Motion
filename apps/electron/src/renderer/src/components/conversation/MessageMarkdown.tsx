@@ -112,14 +112,21 @@ function buildComponents(variant: MessageMarkdownVariant): Components {
         <table className="w-full min-w-max border-collapse text-xs">{children}</table>
       </HorizontalScrollRegion>
     ),
-    thead: ({ children }) => <thead className={cn("bg-background/30", !isUser && "")}>{children}</thead>,
+    thead: ({ children }) => (
+      <thead className={cn("bg-background/30", !isUser && "")}>{children}</thead>
+    ),
     th: ({ children }) => (
       <th className={cn("border px-2 py-1 text-left font-medium", borderColor)}>
         {children}
       </th>
     ),
     td: ({ children }) => (
-      <td className={cn("border px-2 py-1 align-top [overflow-wrap:anywhere]", borderColor)}>
+      <td
+        className={cn(
+          "border px-2 py-1 align-top [overflow-wrap:anywhere]",
+          borderColor
+        )}
+      >
         {children}
       </td>
     ),
@@ -146,7 +153,10 @@ export function MessageMarkdown({
         className
       )}
     >
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={MARKDOWN_COMPONENTS[variant]}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={MARKDOWN_COMPONENTS[variant]}
+      >
         {content}
       </ReactMarkdown>
     </div>

@@ -90,8 +90,7 @@ function ensureTimelineFitsClip(timeline, startInFrames, durationInFrames) {
 function fitTimelineDuration(timeline, options = {}) {
   if (!isObject(timeline)) return timeline;
 
-  const tail =
-    options.tailPaddingFrames ?? resolveTailPaddingFrames(timeline);
+  const tail = options.tailPaddingFrames ?? resolveTailPaddingFrames(timeline);
   const minFrames =
     options.minDurationFrames ?? resolveDefaultMinDurationFrames(timeline);
   const contentEndExclusive = getContentEndExclusive(timeline);
@@ -107,13 +106,9 @@ function fitTimelineDuration(timeline, options = {}) {
     const rawIn = Number(next.workArea.inFrame);
     const outFrame = Math.min(
       Number.isFinite(rawOut) ? rawOut : contentEndInclusive,
-      maxFrame,
+      maxFrame
     );
-    const inFrame = Math.min(
-      Number.isFinite(rawIn) ? rawIn : 0,
-      outFrame,
-      maxFrame,
-    );
+    const inFrame = Math.min(Number.isFinite(rawIn) ? rawIn : 0, outFrame, maxFrame);
     next = {
       ...next,
       workArea: normalizeWorkArea(next, inFrame, outFrame),
@@ -140,7 +135,13 @@ function resolveTimelineViewportDuration(timeline) {
 
 function resolveExportFrameRange(timeline) {
   if (!isObject(timeline)) {
-    return { inFrame: 0, outFrame: 0, frameCount: 1, contentEndInclusive: 0, custom: false };
+    return {
+      inFrame: 0,
+      outFrame: 0,
+      frameCount: 1,
+      contentEndInclusive: 0,
+      custom: false,
+    };
   }
 
   const maxFrame = Math.max(0, Number(timeline.durationInFrames) - 1);
@@ -148,9 +149,7 @@ function resolveExportFrameRange(timeline) {
   const custom = isObject(timeline.workArea);
 
   let inFrame = custom ? Number(timeline.workArea.inFrame) : 0;
-  let outFrame = custom
-    ? Number(timeline.workArea.outFrame)
-    : contentEndInclusive;
+  let outFrame = custom ? Number(timeline.workArea.outFrame) : contentEndInclusive;
 
   if (!Number.isFinite(inFrame)) inFrame = 0;
   if (!Number.isFinite(outFrame)) outFrame = contentEndInclusive;

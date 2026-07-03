@@ -39,7 +39,10 @@ import {
   canResetTransformProperty,
   getDefaultTransformPropertyValue,
 } from "@/lib/timeline/transformReset";
-import { getClipRelativeFrame, getPropertyValueAtFrame } from "@/lib/timeline/keyframes";
+import {
+  getClipRelativeFrame,
+  getPropertyValueAtFrame,
+} from "@/lib/timeline/keyframes";
 import {
   clipHasKeyframesForProperty,
   findKeyframeAtFrame,
@@ -75,9 +78,9 @@ export function ClipPropertyFields(props: ClipPropertyFieldsProps) {
       resolveClipPropertyFields(
         props.clipType,
         props.mode ?? "quick",
-        props.excludePaths ?? [],
+        props.excludePaths ?? []
       ),
-    [props.clipType, props.mode, props.excludePaths],
+    [props.clipType, props.mode, props.excludePaths]
   );
 
   if (fields.length === 0) {
@@ -112,23 +115,21 @@ function ClipPropertyForm({
   const currentFrame = useTimelineStore((s) => s.currentFrame);
   const fps = useTimelineStore((s) => s.timeline?.fps ?? 30);
   const canvas = useMemo(
-    () =>
-      timeline
-        ? { width: timeline.width, height: timeline.height }
-        : undefined,
-    [timeline],
+    () => (timeline ? { width: timeline.width, height: timeline.height } : undefined),
+    [timeline]
   );
   const toggleKeyframeAtPlayhead = useTimelineStore((s) => s.toggleKeyframeAtPlayhead);
-  const setPropertyValueAtPlayhead = useTimelineStore((s) => s.setPropertyValueAtPlayhead);
+  const setPropertyValueAtPlayhead = useTimelineStore(
+    (s) => s.setPropertyValueAtPlayhead
+  );
   const setSelectedProperty = useUiStore((s) => s.setSelectedKeyframeProperty);
 
   const relativeFrame = getClipRelativeFrame(currentFrame, clip);
-  const keyframesRevision = (clip.keyframes ?? []).map((kf) => `${kf.id}:${kf.frame}:${String(kf.value)}`).join("|");
+  const keyframesRevision = (clip.keyframes ?? [])
+    .map((kf) => `${kf.id}:${kf.frame}:${String(kf.value)}`)
+    .join("|");
 
-  const schema = useMemo(
-    () => buildClipPropertyFormSchema(fields),
-    [fields],
-  );
+  const schema = useMemo(() => buildClipPropertyFormSchema(fields), [fields]);
 
   const form = useForm<ClipFormValues>({
     resolver: zodResolver(schema),
@@ -155,7 +156,7 @@ function ClipPropertyForm({
           clip,
           field.path,
           relativeFrame,
-          fps,
+          fps
         );
         if (areClipPropertyValuesEqual(field, parsed, currentValue)) return;
         setPropertyValueAtPlayhead(clip.id, field.path, parsed);
@@ -166,7 +167,7 @@ function ClipPropertyForm({
       if (areClipPropertyValuesEqual(field, parsed, currentValue)) return;
       onPatch(buildPatchFromPropertyPath(field.path, parsed));
     },
-    [clip, fps, form, onPatch, relativeFrame, setPropertyValueAtPlayhead],
+    [clip, fps, form, onPatch, relativeFrame, setPropertyValueAtPlayhead]
   );
 
   const handleDiamondClick = useCallback(
@@ -184,7 +185,7 @@ function ClipPropertyForm({
         clip,
         field.path,
         relativeFrame,
-        fps,
+        fps
       );
       const valueChanged = !areClipPropertyValuesEqual(field, parsed, currentValue);
       const animated = clipHasKeyframesForProperty(clip, field.path);
@@ -210,14 +211,14 @@ function ClipPropertyForm({
       setPropertyValueAtPlayhead,
       setSelectedProperty,
       toggleKeyframeAtPlayhead,
-    ],
+    ]
   );
 
   const resetTransformField = useCallback(
     (field: ClipPropertyField) => {
       onPatch(buildResetTransformPropertyPatch(clip, field.path, canvas));
     },
-    [canvas, clip, onPatch],
+    [canvas, clip, onPatch]
   );
 
   const resetAllTransform = useCallback(() => {
@@ -234,17 +235,14 @@ function ClipPropertyForm({
         onPatch(buildPatchFromPropertyPath(field.path, parsed));
       }
     },
-    [clip.id, onPatch, setPropertyValueAtPlayhead],
+    [clip.id, onPatch, setPropertyValueAtPlayhead]
   );
 
   const canResetAll = showTransformReset && canResetAnyTransformProperty(clip, canvas);
 
   return (
     <Form {...form}>
-      <form
-        className="space-y-2"
-        onSubmit={(e) => e.preventDefault()}
-      >
+      <form className="space-y-2" onSubmit={(e) => e.preventDefault()}>
         {showTransformReset ? (
           <div className="flex justify-end pb-1">
             <Button
@@ -278,10 +276,8 @@ function ClipPropertyForm({
                 <FormItem
                   className={cn(
                     "grid items-center gap-2 space-y-0",
-                    animatable
-                      ? "grid-cols-[24px_88px_1fr]"
-                      : "grid-cols-[88px_1fr]",
-                    field.type === "multiline" && "items-start",
+                    animatable ? "grid-cols-[24px_88px_1fr]" : "grid-cols-[88px_1fr]",
+                    field.type === "multiline" && "items-start"
                   )}
                 >
                   {animatable ? (
@@ -335,7 +331,7 @@ function ClipPropertyForm({
                               <ScrubNumberInput
                                 className={cn(
                                   "h-8 text-xs",
-                                  atPlayhead && KEYFRAME_AT_PLAYHEAD_INPUT_CLASS,
+                                  atPlayhead && KEYFRAME_AT_PLAYHEAD_INPUT_CLASS
                                 )}
                                 disabled={disabled}
                                 min={field.min}
@@ -361,7 +357,7 @@ function ClipPropertyForm({
                                 type="text"
                                 className={cn(
                                   "h-8 text-xs font-sans",
-                                  atPlayhead && KEYFRAME_AT_PLAYHEAD_INPUT_CLASS,
+                                  atPlayhead && KEYFRAME_AT_PLAYHEAD_INPUT_CLASS
                                 )}
                                 disabled={disabled}
                                 {...rf}
@@ -457,7 +453,7 @@ function ClipColorField({
 
 function formatTransformResetHint(
   path: string,
-  canvas?: { width: number; height: number },
+  canvas?: { width: number; height: number }
 ): string {
   const value = getDefaultTransformPropertyValue(path, canvas);
   if (path === "transform.opacity") {

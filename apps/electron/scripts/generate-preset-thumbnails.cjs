@@ -15,17 +15,17 @@ const { RVE_PRESET_CATALOG } = require("./rve-preset-catalog.cjs");
 const ELECTRON_ROOT = path.resolve(__dirname, "..");
 const REMOTION_DIR = path.join(
   ELECTRON_ROOT,
-  "resources/templates/default-project/subprojects/default/remotion",
+  "resources/templates/default-project/subprojects/default/remotion"
 );
 const THUMB_RESOURCES_DIR = path.join(ELECTRON_ROOT, "resources/presets/thumbnails");
 const THUMB_PUBLIC_DIR = path.join(
   ELECTRON_ROOT,
-  "src/renderer/public/presets/thumbnails",
+  "src/renderer/public/presets/thumbnails"
 );
 const MANIFEST_PATH = path.join(ELECTRON_ROOT, "resources/presets/manifest.json");
 const MANIFEST_RENDERER_PATH = path.join(
   ELECTRON_ROOT,
-  "src/renderer/src/data/presets/manifest.json",
+  "src/renderer/src/data/presets/manifest.json"
 );
 
 const ENTRY = path.join(REMOTION_DIR, "src/presets/thumbnail-entry.tsx");
@@ -51,12 +51,18 @@ function resolveBrowserExecutable() {
   const candidates =
     process.platform === "win32"
       ? [
-          path.join(process.env.ProgramFiles || "C:\\Program Files", "Google/Chrome/Application/chrome.exe"),
+          path.join(
+            process.env.ProgramFiles || "C:\\Program Files",
+            "Google/Chrome/Application/chrome.exe"
+          ),
           path.join(
             process.env["ProgramFiles(x86)"] || "C:\\Program Files (x86)",
-            "Google/Chrome/Application/chrome.exe",
+            "Google/Chrome/Application/chrome.exe"
           ),
-          path.join(process.env.LOCALAPPDATA || "", "Google/Chrome/Application/chrome.exe"),
+          path.join(
+            process.env.LOCALAPPDATA || "",
+            "Google/Chrome/Application/chrome.exe"
+          ),
         ]
       : process.platform === "darwin"
         ? [
@@ -72,7 +78,7 @@ function resolveBrowserExecutable() {
   }
 
   throw new Error(
-    "Chrome not found. Install Google Chrome or set REMOTION_BROWSER_EXECUTABLE.",
+    "Chrome not found. Install Google Chrome or set REMOTION_BROWSER_EXECUTABLE."
   );
 }
 
@@ -89,7 +95,7 @@ function framesToWebp(frameDir, outputWebp) {
   const pattern = path.join(frameDir, "frame%03d.png");
   execSync(
     `ffmpeg -y -framerate ${FPS} -i "${pattern}" -vcodec libwebp -lossless 0 -q:v 78 -loop 0 -an "${outputWebp}"`,
-    { stdio: "pipe", shell: true },
+    { stdio: "pipe", shell: true }
   );
 }
 
@@ -206,7 +212,7 @@ async function main() {
   }
 
   console.log(
-    `Rendering ${catalog.length} presets → WebP (${WIDTH}×${HEIGHT}, ${FRAMES} frames @ ${FPS}fps)\n`,
+    `Rendering ${catalog.length} presets → WebP (${WIDTH}×${HEIGHT}, ${FRAMES} frames @ ${FPS}fps)\n`
   );
 
   for (let i = 0; i < catalog.length; i++) {
@@ -215,7 +221,11 @@ async function main() {
     const outResources = path.join(THUMB_RESOURCES_DIR, webpName);
     const outPublic = path.join(THUMB_PUBLIC_DIR, webpName);
 
-    if (skipExisting && fs.existsSync(outResources) && fs.statSync(outResources).size > 0) {
+    if (
+      skipExisting &&
+      fs.existsSync(outResources) &&
+      fs.statSync(outResources).size > 0
+    ) {
       fs.copyFileSync(outResources, outPublic);
       thumbnailById[item.id] = webpName;
       console.log(`[${i + 1}/${catalog.length}] ${item.name} … skipped`);

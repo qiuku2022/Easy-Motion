@@ -3,7 +3,7 @@ const PRESET_PARAMETER_ENTRIES = require("./preset-parameters-data.json");
 
 /** @type {Record<string, import('./preset-parameters-data.json')[0]['parameters']>} */
 const PRESET_PARAMETERS_BY_ID = Object.fromEntries(
-  PRESET_PARAMETER_ENTRIES.map((entry) => [entry.id, entry.parameters]),
+  PRESET_PARAMETER_ENTRIES.map((entry) => [entry.id, entry.parameters])
 );
 
 /** Map manifest parameter keys to local variable names inside components. */
@@ -20,13 +20,8 @@ const EXTRA_PROPS_LINES = {
     "  const translateX = -50;",
     "  const translateY = -30;",
   ],
-  "rve-zoom-pulse": [
-    "  const duration = 4;",
-    "  const minScale = 1;",
-  ],
-  "rve-parallax-pan": [
-    "  const duration = 15;",
-  ],
+  "rve-zoom-pulse": ["  const duration = 4;", "  const minScale = 1;"],
+  "rve-parallax-pan": ["  const duration = 15;"],
 };
 
 module.exports = {

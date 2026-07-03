@@ -64,9 +64,7 @@ async function main() {
       if (await hasDebuggableTarget()) {
         const list = await fetchJson("/json/list");
         const pages = list.filter((t) => t.type === "page");
-        console.log(
-          `[wait-cdp] ready: ${pages.length} page target(s) on port ${port}`
-        );
+        console.log(`[wait-cdp] ready: ${pages.length} page target(s) on port ${port}`);
         for (const p of pages) {
           console.log(`  - ${p.title || "(no title)"} ${p.url || ""}`);
         }
@@ -79,9 +77,7 @@ async function main() {
     await sleep(intervalMs);
   }
 
-  throw new Error(
-    `[wait-cdp] timed out after ${timeoutMs}ms (${lastError})`
-  );
+  throw new Error(`[wait-cdp] timed out after ${timeoutMs}ms (${lastError})`);
 }
 
 main()

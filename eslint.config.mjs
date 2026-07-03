@@ -14,7 +14,9 @@ export default tseslint.config(
       "**/out/**",
       "**/release/**",
       "**/.venv/**",
+      "**/.build-bundle/**",
       "**/coverage/**",
+      "apps/electron/resources/python/**",
       "apps/electron/resources/templates/**",
       ".cursor/**",
     ],
@@ -35,6 +37,21 @@ export default tseslint.config(
     },
     rules: {
       "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+    },
+  },
+  ...tseslint.configs.recommended.map((config) => ({
+    ...config,
+    files: ["apps/electron/*.mts"],
+  })),
+  {
+    files: ["apps/electron/*.mts"],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: "module",
+      globals: globals.node,
+    },
+    rules: {
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
     },
   },
   ...tseslint.configs.recommended.map((config) => ({

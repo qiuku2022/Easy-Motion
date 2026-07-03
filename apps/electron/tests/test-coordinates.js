@@ -29,7 +29,9 @@ const legacy = {
         {
           id: "c1",
           transform: { position: { x: 960, y: 100 } },
-          keyframes: [{ id: "kf1", property: "transform.position.y", frame: 0, value: 200 }],
+          keyframes: [
+            { id: "kf1", property: "transform.position.y", frame: 0, value: 200 },
+          ],
         },
       ],
     },

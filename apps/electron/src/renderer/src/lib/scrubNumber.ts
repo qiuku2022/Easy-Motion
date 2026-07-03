@@ -9,7 +9,7 @@ export function applyScrubDelta(
   startValue: number,
   dx: number,
   step: number,
-  modifiers: { shift?: boolean; alt?: boolean },
+  modifiers: { shift?: boolean; alt?: boolean }
 ): number {
   return startValue + dx * scrubStepSize(step, !!modifiers.shift, !!modifiers.alt);
 }

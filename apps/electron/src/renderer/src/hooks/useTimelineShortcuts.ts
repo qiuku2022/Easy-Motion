@@ -14,8 +14,7 @@ const PR_STEP_MANY_FRAMES = 5;
 
 function isEditableTarget(target: EventTarget | null): boolean {
   return (
-    isEditableElement(target as Element) ||
-    isEditableElement(document.activeElement)
+    isEditableElement(target as Element) || isEditableElement(document.activeElement)
   );
 }
 
@@ -30,7 +29,7 @@ function seekByDelta(delta: number) {
   const max = Math.max(0, timeline.durationInFrames - 1);
   const next = Math.min(
     max,
-    Math.max(0, useTimelineStore.getState().currentFrame + delta),
+    Math.max(0, useTimelineStore.getState().currentFrame + delta)
   );
   usePlaybackStore.getState().seekTo(next);
 }

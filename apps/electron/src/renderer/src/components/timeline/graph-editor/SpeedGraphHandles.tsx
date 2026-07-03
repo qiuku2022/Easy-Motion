@@ -77,7 +77,7 @@ export function SpeedHandleArm({
         r={4}
         className={cn(
           "fill-amber-400 stroke-amber-200/80 stroke-[1.5]",
-          !disabled && "cursor-grab",
+          !disabled && "cursor-grab"
         )}
         onPointerDown={onPointerDown}
       />
@@ -115,14 +115,14 @@ export function SpeedGraphHandles({
     (clientX: number, clientY: number) => {
       onDragIncoming?.(clientX, clientY);
     },
-    [onDragIncoming],
+    [onDragIncoming]
   );
 
   const dragOutgoing = useCallback(
     (clientX: number, clientY: number) => {
       onDragOutgoing?.(clientX, clientY);
     },
-    [onDragOutgoing],
+    [onDragOutgoing]
   );
 
   return (
@@ -216,7 +216,7 @@ export function GraphHandleDot({
         className={cn(
           "fill-amber-400 stroke-amber-200",
           !disabled && "cursor-grab",
-          side === "incoming" ? "stroke-[1.5]" : "stroke",
+          side === "incoming" ? "stroke-[1.5]" : "stroke"
         )}
         onPointerDown={onPointerDown}
       />

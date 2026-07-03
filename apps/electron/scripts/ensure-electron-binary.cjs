@@ -12,7 +12,7 @@ const ELECTRON_APP = path.join(__dirname, "..");
 
 function getElectronDir() {
   const pkgJson = createRequire(path.join(ELECTRON_APP, "package.json")).resolve(
-    "electron/package.json",
+    "electron/package.json"
   );
   return path.dirname(pkgJson);
 }
@@ -72,7 +72,7 @@ async function main() {
   } catch (err) {
     console.error("[ensure-electron] auto download failed:", err.message || err);
     console.error(
-      "Run from repo root: pnpm approve-builds (select electron) && pnpm install",
+      "Run from repo root: pnpm approve-builds (select electron) && pnpm install"
     );
     process.exit(1);
   }

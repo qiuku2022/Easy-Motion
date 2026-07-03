@@ -21,13 +21,13 @@ function getSubprojectDir(projectRoot, subprojectRelativePath = "subprojects/def
 function getSubprojectJsonPath(projectRoot, subprojectRelativePath) {
   return path.join(
     getSubprojectDir(projectRoot, subprojectRelativePath),
-    "subproject.json",
+    "subproject.json"
   );
 }
 
 function getRemotionSrcDirForProject(
   projectRoot,
-  subprojectRelativePath = "subprojects/default",
+  subprojectRelativePath = "subprojects/default"
 ) {
   return getRemotionSrcDir(getRemotionDir(projectRoot, subprojectRelativePath));
 }
@@ -50,14 +50,14 @@ function writePreviewConfig(remotionSrcDir, timeline) {
   fs.writeFileSync(
     previewConfigPath,
     `${JSON.stringify(previewConfig, null, 2)}\n`,
-    "utf8",
+    "utf8"
   );
 }
 
 async function saveTimeline(
   projectRoot,
   timeline,
-  subprojectRelativePath = "subprojects/default",
+  subprojectRelativePath = "subprojects/default"
 ) {
   const fitted = fitTimelineDuration(timeline);
   validateTimeline(fitted);
@@ -70,11 +70,11 @@ async function saveTimeline(
 
 function applySampleTimeline(
   projectRoot,
-  subprojectRelativePath = "subprojects/default",
+  subprojectRelativePath = "subprojects/default"
 ) {
   const samplePath = path.join(
     __dirname,
-    "../../../../../packages/shared/fixtures/sample-timeline.json",
+    "../../../../../packages/shared/fixtures/sample-timeline.json"
   );
   const timeline = readJsonFile(samplePath);
   const subprojectPath = getSubprojectJsonPath(projectRoot, subprojectRelativePath);
@@ -87,9 +87,12 @@ function applySampleTimeline(
 function syncPreviewManifest(
   projectRoot,
   timeline,
-  subprojectRelativePath = "subprojects/default",
+  subprojectRelativePath = "subprojects/default"
 ) {
-  const remotionSrcDir = getRemotionSrcDirForProject(projectRoot, subprojectRelativePath);
+  const remotionSrcDir = getRemotionSrcDirForProject(
+    projectRoot,
+    subprojectRelativePath
+  );
   if (!fs.existsSync(remotionSrcDir)) {
     throw new Error("E2201: remotion/src directory not found");
   }
@@ -116,9 +119,12 @@ function syncPreviewManifest(
 /** 仅刷新指纹（预览工具链自动修补 Remotion 源码后，避免误报漂移） */
 function refreshRemotionFingerprint(
   projectRoot,
-  subprojectRelativePath = "subprojects/default",
+  subprojectRelativePath = "subprojects/default"
 ) {
-  const remotionSrcDir = getRemotionSrcDirForProject(projectRoot, subprojectRelativePath);
+  const remotionSrcDir = getRemotionSrcDirForProject(
+    projectRoot,
+    subprojectRelativePath
+  );
   if (!fs.existsSync(remotionSrcDir)) {
     return null;
   }
@@ -138,17 +144,18 @@ function refreshRemotionFingerprint(
 
 function generateForSubproject(
   projectRoot,
-  subprojectRelativePath = "subprojects/default",
+  subprojectRelativePath = "subprojects/default"
 ) {
   const timeline = loadTimeline(projectRoot, subprojectRelativePath);
-  const remotionSrcDir = getRemotionSrcDirForProject(projectRoot, subprojectRelativePath);
+  const remotionSrcDir = getRemotionSrcDirForProject(
+    projectRoot,
+    subprojectRelativePath
+  );
   if (!fs.existsSync(remotionSrcDir)) {
     throw new Error("E2201: remotion/src directory not found");
   }
   const { ensurePreviewPlayheadPreserve } = require("./preview-service");
-  ensurePreviewPlayheadPreserve(
-    getRemotionDir(projectRoot, subprojectRelativePath),
-  );
+  ensurePreviewPlayheadPreserve(getRemotionDir(projectRoot, subprojectRelativePath));
   const result = generateRemotionCode({ remotionSrcDir, timeline });
   const { fingerprint } = fingerprintRemotionSrc(remotionSrcDir);
   timeline.remotionFingerprint = fingerprint;
@@ -163,9 +170,12 @@ function generateForSubproject(
 
 function checkRemotionDrift(
   projectRoot,
-  subprojectRelativePath = "subprojects/default",
+  subprojectRelativePath = "subprojects/default"
 ) {
-  const remotionSrcDir = getRemotionSrcDirForProject(projectRoot, subprojectRelativePath);
+  const remotionSrcDir = getRemotionSrcDirForProject(
+    projectRoot,
+    subprojectRelativePath
+  );
   if (!fs.existsSync(remotionSrcDir)) {
     return { drifted: false, reason: "missing-remotion-src" };
   }
@@ -195,7 +205,7 @@ function checkRemotionDrift(
 async function syncTimelineFromRemotionProject(
   projectRoot,
   subprojectRelativePath = "subprojects/default",
-  options = {},
+  options = {}
 ) {
   const remotionDir = getRemotionDir(projectRoot, subprojectRelativePath);
   const remotionSrcDir = getRemotionSrcDir(remotionDir);

@@ -1,7 +1,4 @@
-import {
-  clampPxPerFrame,
-  pxToFrame,
-} from "@/lib/timeline/framePixels";
+import { clampPxPerFrame, pxToFrame } from "@/lib/timeline/framePixels";
 
 const ZOOM_STEP = 0.5;
 /** 触控板一次手势可能连发多帧 wheel；合并后按步进换算缩放 */
@@ -16,7 +13,7 @@ export function zoomTimelineAtPointer(
   clientX: number,
   deltaY: number,
   durationInFrames: number,
-  currentPxPerFrame: number,
+  currentPxPerFrame: number
 ): { pxPerFrame: number; scrollLeft: number } | null {
   if (deltaY === 0) return null;
   const steps =

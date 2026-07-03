@@ -1,4 +1,7 @@
-const { getPresetById, defaultPropsFromPreset } = require("../src/main/agent/preset-catalog");
+const {
+  getPresetById,
+  defaultPropsFromPreset,
+} = require("../src/main/agent/preset-catalog");
 const { placePresetOnTimeline } = require("../src/main/agent/place-preset");
 
 function assert(condition, message) {
@@ -17,19 +20,28 @@ const BASE_TIMELINE = {
 function main() {
   const popping = getPresetById("rve-popping-text");
   assert(popping?.parameters?.length >= 1, "title preset has parameters");
-  assert(popping.parameters.some((p) => p.key === "text"), "text param");
+  assert(
+    popping.parameters.some((p) => p.key === "text"),
+    "text param"
+  );
 
   const lowerThird = getPresetById("rve-lower-third");
   assert(lowerThird?.parameters?.length === 4, "lower-third has 4 params");
 
   const stat = getPresetById("rve-stat-counter");
-  assert(stat?.parameters?.some((p) => p.key === "value"), "stat has value");
+  assert(
+    stat?.parameters?.some((p) => p.key === "value"),
+    "stat has value"
+  );
 
   const ken = getPresetById("rve-ken-burns");
-  assert(ken?.parameters?.some((p) => p.type === "image"), "ken-burns has imageUrl");
+  assert(
+    ken?.parameters?.some((p) => p.type === "image"),
+    "ken-burns has imageUrl"
+  );
 
   const manifestCount = require("../resources/presets/manifest.json").filter(
-    (item) => Array.isArray(item.parameters) && item.parameters.length > 0,
+    (item) => Array.isArray(item.parameters) && item.parameters.length > 0
   ).length;
   assert(manifestCount === 81, `all 81 presets parameterized, got ${manifestCount}`);
 
@@ -43,10 +55,14 @@ function main() {
   const clip = result.timeline.tracks[0].clips[0];
   assert(clip.source.props.text === "EasyMotion", "override text");
 
-  const chart = placePresetOnTimeline(BASE_TIMELINE, getPresetById("rve-stat-counter"), {
-    startInFrames: 0,
-    parameters: { value: 9999, title: "Downloads" },
-  });
+  const chart = placePresetOnTimeline(
+    BASE_TIMELINE,
+    getPresetById("rve-stat-counter"),
+    {
+      startInFrames: 0,
+      parameters: { value: 9999, title: "Downloads" },
+    }
+  );
   const chartClip = chart.timeline.tracks[0].clips[0];
   assert(chartClip.source.props.value === 9999, "override numeric value");
   assert(chartClip.source.props.title === "Downloads", "override title");

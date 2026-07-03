@@ -47,7 +47,7 @@ export const ENTRANCE_ANIMATION_PRESETS: EntranceAnimationPreset[] = [
 ];
 
 const PRESET_IDS = new Set<EntranceAnimationPresetId>(
-  ENTRANCE_ANIMATION_PRESETS.map((preset) => preset.id),
+  ENTRANCE_ANIMATION_PRESETS.map((preset) => preset.id)
 );
 
 function finiteNumber(value: unknown, fallback: number): number {
@@ -57,7 +57,7 @@ function finiteNumber(value: unknown, fallback: number): number {
 function generatedKeyframeId(
   presetId: EntranceAnimationPresetId,
   property: string,
-  frame: number,
+  frame: number
 ): string {
   const safeProperty = property.replaceAll(".", "-");
   return `${GENERATED_KEYFRAME_PREFIX}${presetId}-${safeProperty}-${frame}-${crypto.randomUUID()}`;
@@ -68,7 +68,7 @@ function keyframe(
   property: string,
   frame: number,
   value: number,
-  easing: Keyframe["easing"] = "ease-out",
+  easing: Keyframe["easing"] = "ease-out"
 ): Keyframe {
   return {
     id: generatedKeyframeId(presetId, property, frame),
@@ -81,7 +81,9 @@ function keyframe(
 }
 
 function isEntrancePresetId(value: unknown): value is EntranceAnimationPresetId {
-  return typeof value === "string" && PRESET_IDS.has(value as EntranceAnimationPresetId);
+  return (
+    typeof value === "string" && PRESET_IDS.has(value as EntranceAnimationPresetId)
+  );
 }
 
 function readStoredDuration(clip: Clip): number | null {
@@ -90,9 +92,7 @@ function readStoredDuration(clip: Clip): number | null {
   return null;
 }
 
-export function getEntranceAnimationPreset(
-  clip: Clip,
-): EntranceAnimationPresetId {
+export function getEntranceAnimationPreset(clip: Clip): EntranceAnimationPresetId {
   const stored = clip.source?.entranceAnimationPresetId;
   if (isEntrancePresetId(stored)) return stored;
 
@@ -113,7 +113,7 @@ export function getEntranceAnimationDuration(clip: Clip): number {
   return Math.round(
     readStoredDuration(clip) ??
       clip.animations?.in?.durationInFrames ??
-      DEFAULT_DURATION,
+      DEFAULT_DURATION
   );
 }
 
@@ -145,7 +145,7 @@ function resolveBaseTransform(clip: Clip, canvas: CanvasSize): BaseTransform {
 function buildPresetKeyframes(
   presetId: EntranceAnimationPresetId,
   base: BaseTransform,
-  duration: number,
+  duration: number
 ): Keyframe[] {
   if (presetId === "none" || duration <= 0) return [];
 
@@ -205,7 +205,7 @@ function buildPresetKeyframes(
           "transform.scale",
           overshootFrame,
           base.scale * 1.06,
-          "ease-out",
+          "ease-out"
         ),
         keyframe(presetId, "transform.scale", end, base.scale, "ease-in-out"),
       ];
@@ -235,7 +235,7 @@ export function buildEntranceAnimationPatch(
   clip: Clip,
   presetId: EntranceAnimationPresetId,
   durationInFrames: number,
-  canvas: CanvasSize,
+  canvas: CanvasSize
 ): ClipPatch {
   const duration = clampEntranceAnimationDuration(clip, durationInFrames);
   const endFrame = Math.min(duration, Math.max(0, clip.durationInFrames - 1));
@@ -243,7 +243,8 @@ export function buildEntranceAnimationPatch(
   const nextEntranceKeyframes = buildPresetKeyframes(presetId, base, endFrame);
   const replacedSlots = new Set(nextEntranceKeyframes.map(keyframeSlot));
   const existingKeyframes = (clip.keyframes ?? []).filter(
-    (item) => !isGeneratedEntranceKeyframe(item) && !replacedSlots.has(keyframeSlot(item)),
+    (item) =>
+      !isGeneratedEntranceKeyframe(item) && !replacedSlots.has(keyframeSlot(item))
   );
 
   return {
@@ -258,8 +259,7 @@ export function buildEntranceAnimationPatch(
       },
     },
     keyframes: [...existingKeyframes, ...nextEntranceKeyframes].sort(
-      (a, b) => a.frame - b.frame || a.property.localeCompare(b.property),
+      (a, b) => a.frame - b.frame || a.property.localeCompare(b.property)
     ),
   };
 }
-

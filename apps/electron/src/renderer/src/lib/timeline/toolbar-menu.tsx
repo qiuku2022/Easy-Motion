@@ -26,7 +26,7 @@ export function TimelineMenuPanel({
       className={cn(
         TIMELINE_MENU_PANEL_CLASS,
         align === "end" ? "right-0" : "left-0",
-        className,
+        className
       )}
     >
       {children}
@@ -52,5 +52,7 @@ export function TimelineMenuItem({
 }
 
 export function TimelineMenuSeparator() {
-  return <div role="separator" className="pointer-events-none -mx-1 my-1 h-px bg-border" />;
+  return (
+    <div role="separator" className="pointer-events-none -mx-1 my-1 h-px bg-border" />
+  );
 }

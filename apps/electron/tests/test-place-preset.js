@@ -39,22 +39,24 @@ function main() {
   const shortClip = onShort.timeline.tracks[0].clips[0];
   assert(
     shortClip.durationInFrames === preset.durationInFrames,
-    "preset not truncated on short timeline",
+    "preset not truncated on short timeline"
   );
   assert(
     onShort.timeline.durationInFrames >= preset.durationInFrames,
-    "timeline extended for preset",
+    "timeline extended for preset"
   );
 
   const occupied = placePresetOnTimeline(BASE_TIMELINE, preset, { startInFrames: 0 });
-  const stacked = placePresetOnTimeline(occupied.timeline, preset, { startInFrames: 0 });
+  const stacked = placePresetOnTimeline(occupied.timeline, preset, {
+    startInFrames: 0,
+  });
   assert(
     stacked.timeline.tracks.filter((track) => track.type === "animation").length === 2,
-    "overlap creates a new animation track",
+    "overlap creates a new animation track"
   );
   assert(
     stacked.timeline.tracks[1].clips[0].startInFrames === 0,
-    "stacked preset keeps playhead start",
+    "stacked preset keeps playhead start"
   );
 
   console.log("test-place-preset: passed");

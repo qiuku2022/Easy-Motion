@@ -31,7 +31,7 @@ function registerWorkspaceHandlers() {
     wrap((payload) => {
       const projectPath = getProjectRoot(payload);
       return workspaceService.loadWorkspace(projectPath, payload?.subprojectPath);
-    }),
+    })
   );
 
   ipcMain.handle(
@@ -41,9 +41,9 @@ function registerWorkspaceHandlers() {
       return workspaceService.saveWorkspace(
         projectPath,
         payload?.subprojectPath,
-        payload?.patch ?? {},
+        payload?.patch ?? {}
       );
-    }),
+    })
   );
 }
 

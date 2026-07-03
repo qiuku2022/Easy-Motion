@@ -13,21 +13,21 @@ const templateLib = path.join(
   "remotion",
   "src",
   "lib",
-  "clip-motion-wrapper.ts",
+  "clip-motion-wrapper.ts"
 );
 
 const source = fs.readFileSync(templateLib, "utf8");
 assert.ok(
   source.includes("shouldWrapClipMotion"),
-  "clip-motion-wrapper.ts should export shouldWrapClipMotion",
+  "clip-motion-wrapper.ts should export shouldWrapClipMotion"
 );
 assert.ok(
   source.includes("resolveFillLayoutOffset"),
-  "clip-motion-wrapper.ts should export resolveFillLayoutOffset",
+  "clip-motion-wrapper.ts should export resolveFillLayoutOffset"
 );
 assert.ok(
   !source.includes('"positioned"'),
-  "clip-motion-wrapper should not switch to positioned layout",
+  "clip-motion-wrapper should not switch to positioned layout"
 );
 
 const wrapperPath = path.join(
@@ -42,16 +42,16 @@ const wrapperPath = path.join(
   "src",
   "components",
   "layers",
-  "ClipTransformWrapper.tsx",
+  "ClipTransformWrapper.tsx"
 );
 const wrapperSource = fs.readFileSync(wrapperPath, "utf8");
 assert.ok(
   wrapperSource.includes("resolveFillLayoutOffset"),
-  "ClipTransformWrapper should pan via resolveFillLayoutOffset",
+  "ClipTransformWrapper should pan via resolveFillLayoutOffset"
 );
 assert.ok(
   !wrapperSource.includes('layout === "positioned"'),
-  "ClipTransformWrapper should not use positioned layout branch",
+  "ClipTransformWrapper should not use positioned layout branch"
 );
 
 const mainSeq = path.join(
@@ -65,16 +65,16 @@ const mainSeq = path.join(
   "remotion",
   "src",
   "components",
-  "MainSequence.tsx",
+  "MainSequence.tsx"
 );
 const mainSource = fs.readFileSync(mainSeq, "utf8");
 assert.ok(
   mainSource.includes("shouldWrapClipMotion"),
-  "MainSequence should use shouldWrapClipMotion for preset clips",
+  "MainSequence should use shouldWrapClipMotion for preset clips"
 );
 assert.ok(
   !mainSource.includes("clip.transform != null"),
-  "MainSequence should not treat default transform as motion",
+  "MainSequence should not treat default transform as motion"
 );
 
 function timelineYToCssTop(y, compositionHeight) {
@@ -95,7 +95,7 @@ function resolveFillLayoutOffset(position, canvas) {
   const center = resolveLayerScreenPosition(
     canvas.width / 2,
     canvas.height / 2,
-    canvas.height,
+    canvas.height
   );
   return {
     x: screen.left - center.left,
@@ -104,17 +104,14 @@ function resolveFillLayoutOffset(position, canvas) {
 }
 
 const canvas = { width: 1920, height: 1080 };
-assert.deepEqual(
-  resolveFillLayoutOffset({ x: 960, y: 540 }, canvas),
-  { x: 0, y: 0 },
-);
-assert.deepEqual(
-  resolveFillLayoutOffset({ x: 1060, y: 540 }, canvas),
-  { x: 100, y: 0 },
-);
-assert.deepEqual(
-  resolveFillLayoutOffset({ x: 960, y: 640 }, canvas),
-  { x: 0, y: -100 },
-);
+assert.deepEqual(resolveFillLayoutOffset({ x: 960, y: 540 }, canvas), { x: 0, y: 0 });
+assert.deepEqual(resolveFillLayoutOffset({ x: 1060, y: 540 }, canvas), {
+  x: 100,
+  y: 0,
+});
+assert.deepEqual(resolveFillLayoutOffset({ x: 960, y: 640 }, canvas), {
+  x: 0,
+  y: -100,
+});
 
 console.log("test-clip-motion-wrapper: ok");

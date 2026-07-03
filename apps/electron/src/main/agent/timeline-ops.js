@@ -131,7 +131,10 @@ function findFirstTrackByType(tracks, type) {
 }
 
 function createTrack(timeline, { name, type, order }) {
-  const maxOrder = timeline.tracks.reduce((max, track) => Math.max(max, track.order), -1);
+  const maxOrder = timeline.tracks.reduce(
+    (max, track) => Math.max(max, track.order),
+    -1
+  );
   const track = {
     id: newId("track"),
     name,
@@ -221,7 +224,10 @@ function createClip(timeline, params) {
   return { timeline: next, clip };
 }
 
-function setAnimation(timeline, { clipId, animationType, config, confirmOverwrite = false }) {
+function setAnimation(
+  timeline,
+  { clipId, animationType, config, confirmOverwrite = false }
+) {
   const located = findClipLocation(timeline.tracks, clipId);
   if (!located) {
     throw new Error(`片段不存在: ${clipId}`);
@@ -251,7 +257,9 @@ function setAnimation(timeline, { clipId, animationType, config, confirmOverwrit
 
 function scoreMatch(text, query) {
   const hay = String(text ?? "").toLowerCase();
-  const needle = String(query ?? "").toLowerCase().trim();
+  const needle = String(query ?? "")
+    .toLowerCase()
+    .trim();
   if (!needle) return 0;
   if (hay === needle) return 1;
   if (hay.includes(needle)) return 0.85;
@@ -508,7 +516,10 @@ function queryTimelineRange(
     }
   }
 
-  matches.sort((a, b) => a.startInFrames - b.startInFrames || a.trackName.localeCompare(b.trackName));
+  matches.sort(
+    (a, b) =>
+      a.startInFrames - b.startInFrames || a.trackName.localeCompare(b.trackName)
+  );
   return { matches, count: matches.length };
 }
 
@@ -554,9 +565,7 @@ function updateClip(timeline, { clipId, updates, confirmOverwrite = false }) {
   const next = patchTrack(timeline, located.track.id, (track) => ({
     ...track,
     clips: track.clips.map((clip) =>
-      clip.id === clipId
-        ? markClipAiModified(applyClipUpdates(clip, updates))
-        : clip
+      clip.id === clipId ? markClipAiModified(applyClipUpdates(clip, updates)) : clip
     ),
   }));
 
@@ -607,9 +616,7 @@ function moveClip(
   }
 
   const nextStart = Math.round(
-    hasRelative
-      ? located.clip.startInFrames + relativeOffsetInFrames
-      : startInFrames
+    hasRelative ? located.clip.startInFrames + relativeOffsetInFrames : startInFrames
   );
   if (!Number.isFinite(nextStart) || nextStart < 0) {
     throw new Error("移动后的起始帧必须是非负整数");
@@ -619,7 +626,9 @@ function moveClip(
   const nextEnd = nextStart + located.clip.durationInFrames;
   if (nextEnd > nextDuration) {
     if (!extendTimeline) {
-      throw new Error("移动后片段会超出时间线总时长；如需扩展请设置 extendTimeline=true");
+      throw new Error(
+        "移动后片段会超出时间线总时长；如需扩展请设置 extendTimeline=true"
+      );
     }
     nextDuration = nextEnd;
   }
@@ -786,7 +795,10 @@ function updateTimelineSettings(
   }
 
   let scaledPositions = false;
-  if (scalePositions && (next.width !== timeline.width || next.height !== timeline.height)) {
+  if (
+    scalePositions &&
+    (next.width !== timeline.width || next.height !== timeline.height)
+  ) {
     next.tracks = scaleTracksForTimeline(next.tracks ?? [], {
       scaleX: next.width / timeline.width,
       scaleY: next.height / timeline.height,
@@ -838,14 +850,13 @@ function placeAsset(timeline, asset, params = {}) {
   }
 
   const startInFrames =
-    typeof params.startInFrames === "number"
-      ? Math.round(params.startInFrames)
-      : 0;
+    typeof params.startInFrames === "number" ? Math.round(params.startInFrames) : 0;
   if (!Number.isFinite(startInFrames) || startInFrames < 0) {
     throw new Error("素材起始帧必须是非负整数");
   }
 
-  const fallbackDuration = trackType === "image" ? nextTimeline.fps * 3 : nextTimeline.fps * 5;
+  const fallbackDuration =
+    trackType === "image" ? nextTimeline.fps * 3 : nextTimeline.fps * 5;
   const durationInFrames = Math.max(
     1,
     Math.round(
@@ -926,7 +937,15 @@ function placeAsset(timeline, asset, params = {}) {
 
 function addKeyframe(
   timeline,
-  { clipId, property, frame, value, easing = "linear", interpolation = "linear", confirmOverwrite = false }
+  {
+    clipId,
+    property,
+    frame,
+    value,
+    easing = "linear",
+    interpolation = "linear",
+    confirmOverwrite = false,
+  }
 ) {
   const located = findClipLocation(timeline.tracks, clipId);
   if (!located) {
@@ -976,11 +995,17 @@ function addKeyframe(
         (item) => item.property === prop && item.frame === frameNumber
       );
       if (existingIndex >= 0) {
-        keyframes[existingIndex] = { ...keyframes[existingIndex], ...keyframe, id: keyframes[existingIndex].id };
+        keyframes[existingIndex] = {
+          ...keyframes[existingIndex],
+          ...keyframe,
+          id: keyframes[existingIndex].id,
+        };
       } else {
         keyframes.push(keyframe);
       }
-      keyframes.sort((a, b) => a.frame - b.frame || a.property.localeCompare(b.property));
+      keyframes.sort(
+        (a, b) => a.frame - b.frame || a.property.localeCompare(b.property)
+      );
       return markClipAiModified({
         ...clip,
         keyframes,

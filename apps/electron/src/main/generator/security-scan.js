@@ -35,9 +35,7 @@ function scanTsxSecurity(code) {
 function assertTsxSecurity(code) {
   const result = scanTsxSecurity(code);
   if (result.valid) return result;
-  throw new Error(
-    `E2408: 生成代码包含安全违规 (${result.violations.join(", ")})`
-  );
+  throw new Error(`E2408: 生成代码包含安全违规 (${result.violations.join(", ")})`);
 }
 
 module.exports = {

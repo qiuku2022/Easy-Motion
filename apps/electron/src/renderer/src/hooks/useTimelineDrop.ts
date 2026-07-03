@@ -11,7 +11,7 @@ import { useTimelineStore } from "@/stores/timelineStore";
 export function useTimelineDrop(
   bodyScrollRef: React.RefObject<HTMLElement | null>,
   rows: TimelineRow[],
-  pxPerFrame: number,
+  pxPerFrame: number
 ) {
   const placeAssetAtFrame = useTimelineStore((s) => s.placeAssetAtFrame);
   const placePresetAtFrame = useTimelineStore((s) => s.placePresetAtFrame);
@@ -46,22 +46,13 @@ export function useTimelineDrop(
       clearError();
       const ok = placePresetAtFrame(presetPayload.presetId, frame, trackId);
       if (ok) {
-        const preset = usePresetStore
-          .getState()
-          .getPresetById(presetPayload.presetId);
+        const preset = usePresetStore.getState().getPresetById(presetPayload.presetId);
         if (preset) {
           toast.success(`已添加预设：${preset.name}`);
         }
       }
     },
-    [
-      bodyScrollRef,
-      clearError,
-      placeAssetAtFrame,
-      placePresetAtFrame,
-      pxPerFrame,
-      rows,
-    ],
+    [bodyScrollRef, clearError, placeAssetAtFrame, placePresetAtFrame, pxPerFrame, rows]
   );
 
   return { onDragOver, onDrop };

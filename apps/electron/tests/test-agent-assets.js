@@ -15,7 +15,7 @@ function writeManifest(projectRoot, assets) {
   fs.writeFileSync(
     manifestPath,
     JSON.stringify({ version: 1, assets }, null, 2),
-    "utf8",
+    "utf8"
   );
 }
 
@@ -95,18 +95,30 @@ async function main() {
   assert(images.count === 2, "listAssets filters type");
 
   const favorites = ctx.listAssets({ favoriteOnly: true });
-  assert(favorites.count === 1 && favorites.assets[0].id === "logo", "listAssets filters favorites");
+  assert(
+    favorites.count === 1 && favorites.assets[0].id === "logo",
+    "listAssets filters favorites"
+  );
 
   const queried = ctx.listAssets({ query: "prod" });
-  assert(queried.count === 1 && queried.assets[0].id === "product", "listAssets filters query");
+  assert(
+    queried.count === 1 && queried.assets[0].id === "product",
+    "listAssets filters query"
+  );
 
   let placed = await ctx.placeAsset({ assetId: "logo" });
   assert(placed.createdTrack, "placeAsset creates image track");
   assert(placed.startInFrames === 12, "placeAsset defaults to currentFrame");
   let located = findClip(ctx.timeline, placed.clipId);
-  assert(located.track.type === "image", "placeAsset creates image clip on image track");
+  assert(
+    located.track.type === "image",
+    "placeAsset creates image clip on image track"
+  );
   assert(located.clip.source.assetId === "logo", "placeAsset writes asset source");
-  assert(located.clip.style.objectFit === "contain", "placeAsset defaults objectFit contain");
+  assert(
+    located.clip.style.objectFit === "contain",
+    "placeAsset defaults objectFit contain"
+  );
   assert(located.clip.lastModifiedBy === "ai", "placeAsset marks ai modified");
 
   const usedLogo = assetService.getAssetById(projectRoot, "logo");
@@ -176,7 +188,7 @@ async function main() {
         },
       ],
     },
-    { projectPath: projectRoot },
+    { projectPath: projectRoot }
   );
   let lockedThrown = false;
   try {
@@ -213,7 +225,7 @@ async function main() {
         },
       ],
     },
-    { projectPath: projectRoot },
+    { projectPath: projectRoot }
   );
   let overlapThrown = false;
   try {

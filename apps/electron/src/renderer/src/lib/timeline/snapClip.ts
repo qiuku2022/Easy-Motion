@@ -24,14 +24,21 @@ interface ReferenceFrame {
   label?: string;
 }
 
-function thresholdFrames(pxPerFrame: number, thresholdPx = DEFAULT_SNAP_THRESHOLD_PX): number {
+function thresholdFrames(
+  pxPerFrame: number,
+  thresholdPx = DEFAULT_SNAP_THRESHOLD_PX
+): number {
   return Math.max(1, Math.round(thresholdPx / pxPerFrame));
 }
 
 function forEachSnapClip(
   timeline: Timeline,
   excludeClipId: string | undefined,
-  visitor: (clip: { id: string; startInFrames: number; durationInFrames: number }) => void,
+  visitor: (clip: {
+    id: string;
+    startInFrames: number;
+    durationInFrames: number;
+  }) => void
 ): void {
   for (const track of timeline.tracks) {
     for (const clip of track.clips) {
@@ -50,7 +57,7 @@ function forEachSnapClip(
 function collectReferenceFrames(
   timeline: Timeline,
   excludeClipId: string | undefined,
-  currentFrame: number,
+  currentFrame: number
 ): ReferenceFrame[] {
   const refs: ReferenceFrame[] = [
     { frame: 0 },
@@ -76,7 +83,7 @@ function collectReferenceFrames(
 /** 修剪时仅参考其它图层的头、尾（每次从最新 timeline 读取） */
 function collectClipHeadTailFrames(
   timeline: Timeline,
-  excludeClipId: string,
+  excludeClipId: string
 ): ReferenceFrame[] {
   const refs: ReferenceFrame[] = [];
 
@@ -96,7 +103,7 @@ function collectClipHeadTailFrames(
 function findTrimGuides(
   activeEdgeFrame: number,
   refs: ReferenceFrame[],
-  threshold: number,
+  threshold: number
 ): SnapGuide[] {
   const guides: SnapGuide[] = [];
   const seen = new Set<number>();
@@ -119,7 +126,11 @@ function clipEdges(start: number, duration: number): Record<ClipEdge, number> {
   };
 }
 
-function startFromEdgeSnap(edge: ClipEdge, targetFrame: number, duration: number): number {
+function startFromEdgeSnap(
+  edge: ClipEdge,
+  targetFrame: number,
+  duration: number
+): number {
   if (edge === "start") return targetFrame;
   if (edge === "end") return targetFrame - duration;
   return targetFrame - Math.round(duration / 2);
@@ -129,7 +140,7 @@ function findGuidesAtPosition(
   start: number,
   duration: number,
   refs: ReferenceFrame[],
-  threshold: number,
+  threshold: number
 ): SnapGuide[] {
   const edges = clipEdges(start, duration);
   const guides: SnapGuide[] = [];
@@ -158,14 +169,14 @@ export interface SnapClipMoveResult {
 export function snapClipMove(
   rawStart: number,
   duration: number,
-  options: SnapEditOptions & { excludeClipId: string },
+  options: SnapEditOptions & { excludeClipId: string }
 ): SnapClipMoveResult {
   const start = Math.round(rawStart);
   const threshold = thresholdFrames(options.pxPerFrame);
   const refs = collectReferenceFrames(
     options.timeline,
     options.excludeClipId,
-    options.currentFrame,
+    options.currentFrame
   );
 
   const showGuides = options.snapEnabled || options.altKeyHeld;
@@ -225,7 +236,7 @@ export function snapClipEdge(
   pointerFrame: number,
   originStart: number,
   originEnd: number,
-  options: SnapEditOptions & { excludeClipId: string },
+  options: SnapEditOptions & { excludeClipId: string }
 ): SnapClipEdgeResult {
   const threshold = thresholdFrames(options.pxPerFrame, RESIZE_SNAP_THRESHOLD_PX);
   const refs = collectClipHeadTailFrames(options.timeline, options.excludeClipId);
@@ -249,11 +260,9 @@ export function snapClipEdge(
     const { startInFrames, durationInFrames } = clampResizeLeft(
       start,
       originEnd,
-      timelineDuration,
+      timelineDuration
     );
-    const guides = showGuides
-      ? findTrimGuides(startInFrames, refs, threshold)
-      : [];
+    const guides = showGuides ? findTrimGuides(startInFrames, refs, threshold) : [];
 
     return { startInFrames, durationInFrames, guides };
   }
@@ -274,7 +283,7 @@ export function snapClipEdge(
   const { startInFrames, durationInFrames } = clampResizeRight(
     start,
     end,
-    timelineDuration,
+    timelineDuration
   );
   const guides = showGuides
     ? findTrimGuides(startInFrames + durationInFrames, refs, threshold)

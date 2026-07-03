@@ -23,6 +23,7 @@ extraResources:
 asar: true
 
 win:
+  icon: build/icon.ico
   target:
     - nsis
   artifactName: "${productName}-Setup-${version}.${ext}"
@@ -30,5 +31,7 @@ win:
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
   createDesktopShortcut: always
   createStartMenuShortcut: true

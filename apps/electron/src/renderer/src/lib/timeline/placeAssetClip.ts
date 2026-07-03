@@ -18,7 +18,11 @@ export interface PlaceAssetResult {
   trackId: string;
 }
 
-function defaultDuration(asset: ProjectAsset, timeline: Timeline, start: number): number {
+function defaultDuration(
+  asset: ProjectAsset,
+  timeline: Timeline,
+  start: number
+): number {
   const fromAsset = asset.durationInFrames;
   if (fromAsset && fromAsset > 0) {
     return Math.min(fromAsset, timeline.durationInFrames - start);
@@ -27,7 +31,11 @@ function defaultDuration(asset: ProjectAsset, timeline: Timeline, start: number)
   return Math.min(Math.max(1, fallback), timeline.durationInFrames - start);
 }
 
-function buildClipFromAsset(asset: ProjectAsset, timeline: Timeline, start: number): Clip {
+function buildClipFromAsset(
+  asset: ProjectAsset,
+  timeline: Timeline,
+  start: number
+): Clip {
   const trackType = assetTrackType(asset.type);
   const durationInFrames = defaultDuration(asset, timeline, start);
 
@@ -63,7 +71,7 @@ function buildClipFromAsset(asset: ProjectAsset, timeline: Timeline, start: numb
 function resolveTargetTrack(
   timeline: Timeline,
   trackType: TrackType,
-  preferredTrackId?: string | null,
+  preferredTrackId?: string | null
 ): { timeline: Timeline; trackId: string } {
   if (preferredTrackId) {
     const preferred = timeline.tracks.find((t) => t.id === preferredTrackId);
@@ -72,9 +80,7 @@ function resolveTargetTrack(
     }
   }
 
-  const existing = timeline.tracks.find(
-    (t) => t.type === trackType && !t.locked,
-  );
+  const existing = timeline.tracks.find((t) => t.type === trackType && !t.locked);
   if (existing) return { timeline, trackId: existing.id };
 
   const next = addTrack(timeline, trackType, defaultTrackName(trackType));
@@ -87,18 +93,18 @@ function resolveTargetTrack(
 export function placeAssetOnTimeline(
   timeline: Timeline,
   asset: ProjectAsset,
-  options: PlaceAssetOptions,
+  options: PlaceAssetOptions
 ): PlaceAssetResult {
   const trackType = assetTrackType(asset.type);
   const { timeline: withTrack, trackId } = resolveTargetTrack(
     timeline,
     trackType,
-    options.trackId,
+    options.trackId
   );
 
   let startInFrames = Math.max(
     0,
-    Math.min(options.startInFrames, withTrack.durationInFrames - 1),
+    Math.min(options.startInFrames, withTrack.durationInFrames - 1)
   );
   const clipDraft = buildClipFromAsset(asset, withTrack, startInFrames);
 

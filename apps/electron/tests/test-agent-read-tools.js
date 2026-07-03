@@ -122,18 +122,24 @@ function main() {
 
   const summary = ctx.listTimeline();
   assert(summary.timeline.width === 1280, "summary includes width");
-  assert(summary.timeline.clipCount === 3, "summary counts clips including group children");
+  assert(
+    summary.timeline.clipCount === 3,
+    "summary counts clips including group children"
+  );
   assert(summary.tracks.length === 4, "summary flattens group children");
   assert(
     summary.tracks.find((track) => track.id === "track-child-shape")?.parentGroupId ===
       "track-group",
-    "summary includes child track parentGroupId",
+    "summary includes child track parentGroupId"
   );
   assert(
     summary.tracks[0].clips[0].sourceSummary.includes('text:"Hello"'),
-    "summary includes text source summary",
+    "summary includes text source summary"
   );
-  assert(summary.tracks[0].clips[0].keyframeCount === 1, "summary includes keyframe count");
+  assert(
+    summary.tracks[0].clips[0].keyframeCount === 1,
+    "summary includes keyframe count"
+  );
   assert(!summary.tracks[0].clips[0].style, "summary omits style by default");
 
   const detailedSummary = ctx.listTimeline({
@@ -142,15 +148,18 @@ function main() {
   });
   assert(
     detailedSummary.tracks[0].clips[0].keyframes.length === 1,
-    "includeKeyframes returns keyframes",
+    "includeKeyframes returns keyframes"
   );
   assert(
     detailedSummary.tracks[0].clips[0].style.fontSize === 72,
-    "includeStyles returns style",
+    "includeStyles returns style"
   );
 
   const detail = ctx.getClipDetail({ clipId: "clip-chart" });
-  assert(detail.clip.source.component === "LineChart", "getClipDetail returns full clip");
+  assert(
+    detail.clip.source.component === "LineChart",
+    "getClipDetail returns full clip"
+  );
   assert(detail.track.id === "track-animation", "getClipDetail returns track shell");
 
   let missingThrown = false;
@@ -180,7 +189,10 @@ function main() {
     type: "animation",
   });
   assert(animationOnly.count === 1, "range query filters by type");
-  assert(animationOnly.matches[0].clipId === "clip-chart", "range query returns clip id");
+  assert(
+    animationOnly.matches[0].clipId === "clip-chart",
+    "range query returns clip id"
+  );
 
   const childTrackOnly = timelineOps.queryTimelineRange(timeline, {
     startInFrames: 0,

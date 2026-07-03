@@ -84,7 +84,7 @@ export function PresetPanel() {
         toast.success(`已添加预设：${preset.name}`);
       }
     },
-    [placePresetAtPlayhead],
+    [placePresetAtPlayhead]
   );
 
   return (
@@ -186,7 +186,7 @@ function CategoryChip({
       size="sm"
       className={cn(
         "h-7 shrink-0 gap-1 px-2 text-[11px]",
-        active && "border-border bg-accent text-accent-foreground",
+        active && "border-border bg-accent text-accent-foreground"
       )}
       onClick={onClick}
     >
@@ -212,7 +212,7 @@ function PresetPreviewThumb({
         ref={dragImageRef}
         className={cn(
           "relative flex items-center justify-center overflow-hidden rounded-lg border border-border bg-preview-canvas",
-          className,
+          className
         )}
       >
         <img
@@ -227,15 +227,14 @@ function PresetPreviewThumb({
     );
   }
 
-  const accent =
-    CATEGORY_ACCENT[preset.category] ?? "from-muted/40 to-muted/20";
+  const accent = CATEGORY_ACCENT[preset.category] ?? "from-muted/40 to-muted/20";
   return (
     <div
       ref={dragImageRef}
       className={cn(
         "relative overflow-hidden rounded-lg border border-border bg-gradient-to-br",
         accent,
-        className,
+        className
       )}
     >
       <div className="absolute inset-0 flex items-center justify-center p-2">
@@ -300,7 +299,7 @@ function PresetCard({
       onDragEnd={handleDragEnd}
       className={cn(
         "group flex cursor-grab flex-col gap-1.5 rounded-lg border border-border bg-card p-1.5 text-left",
-        "transition-colors duration-150 ease-out hover:border-ring/40 hover:bg-accent active:cursor-grabbing",
+        "transition-colors duration-150 ease-out hover:border-ring/40 hover:bg-accent active:cursor-grabbing"
       )}
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}

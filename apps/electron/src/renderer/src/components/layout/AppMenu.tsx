@@ -131,7 +131,7 @@ export function AppMenu() {
         <DropdownMenuTrigger
           className={cn(
             buttonVariants({ variant: "ghost", size: "icon" }),
-            "h-8 w-8 cursor-pointer",
+            "h-8 w-8 cursor-pointer"
           )}
           aria-label="应用菜单"
         >
@@ -265,12 +265,13 @@ export function AppMenu() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>新建项目</DialogTitle>
-            <DialogDescription>
-              项目将保存在默认项目目录下。
-            </DialogDescription>
+            <DialogDescription>项目将保存在默认项目目录下。</DialogDescription>
           </DialogHeader>
           <div className="space-y-1.5">
-            <Label htmlFor="app-menu-project-name" className="text-xs text-muted-foreground">
+            <Label
+              htmlFor="app-menu-project-name"
+              className="text-xs text-muted-foreground"
+            >
               项目名称
             </Label>
             <Input
@@ -323,10 +324,7 @@ export function AppMenu() {
         </DialogContent>
       </Dialog>
 
-      <LLMSettingsDialog
-        open={llmSettingsOpen}
-        onOpenChange={setLlmSettingsOpen}
-      />
+      <LLMSettingsDialog open={llmSettingsOpen} onOpenChange={setLlmSettingsOpen} />
     </>
   );
 }

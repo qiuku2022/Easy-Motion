@@ -19,14 +19,16 @@ const SYNC_SOURCE_LABELS: Record<string, string> = {
   generate: "时间线生成",
 };
 
-export function formatRemotionSyncSource(syncSource?: Timeline["remotionSyncSource"]): string {
+export function formatRemotionSyncSource(
+  syncSource?: Timeline["remotionSyncSource"]
+): string {
   if (!syncSource) return "未知";
   return SYNC_SOURCE_LABELS[syncSource] ?? syncSource;
 }
 
 export function formatRemotionSyncSummary(stats: RemotionSyncStats): string {
   const source = formatRemotionSyncSource(
-    stats.syncSource as Timeline["remotionSyncSource"],
+    stats.syncSource as Timeline["remotionSyncSource"]
   );
   const meta = stats.compositionResolved
     ? "已读取 Composition 元数据"

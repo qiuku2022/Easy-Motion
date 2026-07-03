@@ -64,8 +64,7 @@ function normalizeConversation(raw) {
           : `msg-${index}-${Date.now()}`,
       role,
       content: message.content,
-      timestamp:
-        typeof message.timestamp === "number" ? message.timestamp : Date.now(),
+      timestamp: typeof message.timestamp === "number" ? message.timestamp : Date.now(),
       ...(Array.isArray(message.attachedImages)
         ? { attachedImages: message.attachedImages }
         : {}),
@@ -120,7 +119,10 @@ function loadConversation(projectRoot, subprojectRelativePath = "subprojects/def
   return { ...EMPTY_CONVERSATION };
 }
 
-function loadAgentUndoSnapshot(projectRoot, subprojectRelativePath = "subprojects/default") {
+function loadAgentUndoSnapshot(
+  projectRoot,
+  subprojectRelativePath = "subprojects/default"
+) {
   const snapshotPath = getAgentUndoSnapshotPath(projectRoot, subprojectRelativePath);
   if (!fs.existsSync(snapshotPath)) return null;
 
@@ -129,7 +131,10 @@ function loadAgentUndoSnapshot(projectRoot, subprojectRelativePath = "subproject
     const remotionFilesBefore = Array.isArray(raw?.remotionFilesBefore)
       ? raw.remotionFilesBefore
       : [];
-    if (typeof raw?.messageId !== "string" || (!raw?.timeline && remotionFilesBefore.length === 0)) {
+    if (
+      typeof raw?.messageId !== "string" ||
+      (!raw?.timeline && remotionFilesBefore.length === 0)
+    ) {
       return null;
     }
     return {
@@ -173,7 +178,10 @@ function restoreRemotionFiles(projectRoot, subprojectRelativePath, snapshots) {
     return { restoredFiles: [] };
   }
 
-  const remotionDir = previewService.getRemotionDir(projectRoot, subprojectRelativePath);
+  const remotionDir = previewService.getRemotionDir(
+    projectRoot,
+    subprojectRelativePath
+  );
   const srcDir = path.join(remotionDir, "src");
   const restoredFiles = [];
 
@@ -224,8 +232,16 @@ async function restoreAgentUndoSnapshot(
   }
 
   if (snapshot.timeline) {
-    await timelineService.saveTimeline(projectRoot, snapshot.timeline, subprojectRelativePath);
-    timelineService.syncPreviewManifest(projectRoot, snapshot.timeline, subprojectRelativePath);
+    await timelineService.saveTimeline(
+      projectRoot,
+      snapshot.timeline,
+      subprojectRelativePath
+    );
+    timelineService.syncPreviewManifest(
+      projectRoot,
+      snapshot.timeline,
+      subprojectRelativePath
+    );
   }
   const remotion = restoreRemotionFiles(
     projectRoot,
@@ -318,7 +334,11 @@ async function clearConversation(
   subprojectRelativePath = "subprojects/default"
 ) {
   await clearAgentUndoSnapshot(projectRoot, subprojectRelativePath);
-  return saveConversation(projectRoot, { ...EMPTY_CONVERSATION }, subprojectRelativePath);
+  return saveConversation(
+    projectRoot,
+    { ...EMPTY_CONVERSATION },
+    subprojectRelativePath
+  );
 }
 
 function resolveSubprojectPath(project, options = {}) {

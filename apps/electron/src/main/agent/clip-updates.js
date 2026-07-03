@@ -22,7 +22,10 @@ function hasUpdatePath(updates, path) {
 function normalizeClipUpdates(updates = {}) {
   const normalized = { ...updates };
 
-  if (normalized.fontSize !== undefined && !hasUpdatePath(normalized, "style.fontSize")) {
+  if (
+    normalized.fontSize !== undefined &&
+    !hasUpdatePath(normalized, "style.fontSize")
+  ) {
     normalized["style.fontSize"] = normalized.fontSize;
     delete normalized.fontSize;
   }
@@ -51,7 +54,10 @@ function normalizeClipUpdates(updates = {}) {
   }
 
   for (const key of ["primaryColor", "secondaryColor", "backgroundColor"]) {
-    if (normalized[key] !== undefined && !hasUpdatePath(normalized, `source.props.${key}`)) {
+    if (
+      normalized[key] !== undefined &&
+      !hasUpdatePath(normalized, `source.props.${key}`)
+    ) {
       normalized[`source.props.${key}`] = normalized[key];
       delete normalized[key];
     }
@@ -165,14 +171,21 @@ function resolvePresetClipUpdates(clip, userInput) {
   const mentionsChart = /折线图|饼图|环形图|面积图|柱状图|图表|对比图/.test(text);
   const isChartComponent = /Chart|Counter|Stat/i.test(clip.source?.component ?? "");
 
-  if (!mentionsChart && !mentionsLine && !mentionsPoint && !mentionsBg && !isChartComponent) {
+  if (
+    !mentionsChart &&
+    !mentionsLine &&
+    !mentionsPoint &&
+    !mentionsBg &&
+    !isChartComponent
+  ) {
     return {};
   }
 
   const palette = wantsDark ? DARK_PRESET_PALETTE : LIGHT_PRESET_PALETTE;
   const result = {};
   const applyPrimary = mentionsLine || mentionsChart || (!mentionsPoint && !mentionsBg);
-  const applySecondary = mentionsPoint || mentionsChart || (!mentionsLine && !mentionsBg);
+  const applySecondary =
+    mentionsPoint || mentionsChart || (!mentionsLine && !mentionsBg);
   const applyBg = mentionsBg;
 
   if (applyPrimary) result["source.props.primaryColor"] = palette.primaryColor;

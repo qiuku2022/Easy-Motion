@@ -25,7 +25,7 @@ export function ImageAttachment({
   const { preview, startReorder } = useImageReorder(
     imageIds,
     containerRef,
-    onReorder ?? (() => {}),
+    onReorder ?? (() => {})
   );
 
   if (!images.length) return null;
@@ -39,9 +39,7 @@ export function ImageAttachment({
       {images.map((image, index) => {
         const isDragging = preview?.imageId === image.id;
         const showInsertBefore =
-          preview &&
-          preview.insertIndex === index &&
-          preview.imageId !== image.id;
+          preview && preview.insertIndex === index && preview.imageId !== image.id;
 
         return (
           <div key={image.id} className="relative flex items-center">
@@ -54,13 +52,11 @@ export function ImageAttachment({
             <div
               data-image-reorder-id={image.id}
               onPointerDown={
-                reorderable
-                  ? (event) => startReorder(event, image.id)
-                  : undefined
+                reorderable ? (event) => startReorder(event, image.id) : undefined
               }
               className={cn(
                 reorderable && "cursor-grab touch-none active:cursor-grabbing",
-                isDragging && "z-20 opacity-70 ring-2 ring-primary/50",
+                isDragging && "z-20 opacity-70 ring-2 ring-primary/50"
               )}
             >
               <AiRefThumbnail
@@ -73,10 +69,7 @@ export function ImageAttachment({
         );
       })}
       {preview && preview.insertIndex >= images.length ? (
-        <span
-          className="h-8 w-0.5 shrink-0 rounded-full bg-primary"
-          aria-hidden
-        />
+        <span className="h-8 w-0.5 shrink-0 rounded-full bg-primary" aria-hidden />
       ) : null}
     </div>
   );

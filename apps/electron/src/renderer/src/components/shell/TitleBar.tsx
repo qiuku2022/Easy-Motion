@@ -41,14 +41,13 @@ export function TitleBar() {
     onToggleMaximize();
   }, [onToggleMaximize]);
 
-  const showWindowControls =
-    shell?.customWindowControls && !windowState.fullscreen;
+  const showWindowControls = shell?.customWindowControls && !windowState.fullscreen;
 
   return (
     <header
       className={cn(
         "z-50 flex h-8 shrink-0 items-stretch overflow-hidden border-b border-border bg-card select-none",
-        shell?.trafficLightInset && "pl-[4.5rem]",
+        shell?.trafficLightInset && "pl-[4.5rem]"
       )}
     >
       <div
@@ -66,9 +65,7 @@ export function TitleBar() {
           >
             E
           </span>
-          <span className="text-xs font-medium text-foreground/80">
-            EasyMotion
-          </span>
+          <span className="text-xs font-medium text-foreground/80">EasyMotion</span>
         </div>
         {projectName ? (
           <span className="min-w-0 max-w-[40%] truncate px-2 text-xs text-muted-foreground">

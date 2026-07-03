@@ -101,22 +101,14 @@ async function startBundledPython() {
 
   pythonProcess = spawn(
     pythonExe,
-    [
-      "-m",
-      "uvicorn",
-      "main:app",
-      "--host",
-      "127.0.0.1",
-      "--port",
-      String(port),
-    ],
+    ["-m", "uvicorn", "main:app", "--host", "127.0.0.1", "--port", String(port)],
     {
       cwd: appDir,
       env,
       stdio: ["ignore", "pipe", "pipe"],
       windowsHide: true,
       ...WIN_SPAWN_HIDDEN,
-    },
+    }
   );
 
   pythonProcess.stdout?.on("data", (chunk) => {

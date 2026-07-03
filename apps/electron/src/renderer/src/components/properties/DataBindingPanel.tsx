@@ -25,11 +25,7 @@ interface DataBindingPanelProps {
   onPatch: (patch: ClipPatch) => void;
 }
 
-export function DataBindingPanel({
-  clip,
-  disabled,
-  onPatch,
-}: DataBindingPanelProps) {
+export function DataBindingPanel({ clip, disabled, onPatch }: DataBindingPanelProps) {
   const [parsed, setParsed] = useState<ParsedData | null>(null);
   const [xField, setXField] = useState("");
   const [yField, setYField] = useState("");

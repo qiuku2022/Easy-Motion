@@ -35,7 +35,9 @@ interface ConversationState {
   isLoading: boolean;
   loadError: string | null;
   lastAgentUndoSnapshot: Timeline | null;
-  lastAgentUndoRemotionSnapshots: NonNullable<PendingAgentUndoPayload["remotionFilesBefore"]>;
+  lastAgentUndoRemotionSnapshots: NonNullable<
+    PendingAgentUndoPayload["remotionFilesBefore"]
+  >;
   lastAgentUndoMessageId: string | null;
   creationMode: AgentCreationMode;
 
@@ -124,7 +126,9 @@ function reconcileUndoButtons(
   undoMessageId: string | null
 ): Message[] {
   return messages.map((message) => {
-    const hasUndo = message.actionButtons?.some((button) => button.action === "undo-agent");
+    const hasUndo = message.actionButtons?.some(
+      (button) => button.action === "undo-agent"
+    );
     if (!hasUndo) return message;
     if (undoMessageId && message.id === undoMessageId) return message;
     return {
@@ -356,9 +360,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
     );
 
     const userMessage = createMessage("user", content, {
-      ...(imagePathsForMessage.length
-        ? { attachedImages: imagePathsForMessage }
-        : {}),
+      ...(imagePathsForMessage.length ? { attachedImages: imagePathsForMessage } : {}),
     });
     const assistantMessage = createMessage("assistant", "");
     const history = [...get().messages, userMessage]
@@ -400,7 +402,9 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
     if (!result.success) {
       setActiveConversationStreamRequestId(null);
       set((state) => ({
-        messages: state.messages.filter((message) => message.id !== assistantMessage.id),
+        messages: state.messages.filter(
+          (message) => message.id !== assistantMessage.id
+        ),
         isStreaming: false,
         isInputDisabled: false,
         agentStatus: "error",
@@ -410,7 +414,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
         lastAgentUndoMessageId: null,
       }));
       const { title, description } = describeConversationError(
-        result.error?.message ?? "E2700: 消息发送失败",
+        result.error?.message ?? "E2700: 消息发送失败"
       );
       toast.error(title, { description });
     }

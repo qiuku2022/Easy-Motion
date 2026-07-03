@@ -21,7 +21,9 @@ function loadManifest() {
 
 function scoreMatch(text, query) {
   const hay = String(text ?? "").toLowerCase();
-  const needle = String(query ?? "").toLowerCase().trim();
+  const needle = String(query ?? "")
+    .toLowerCase()
+    .trim();
   if (!needle) return 0;
   if (hay === needle) return 1;
   if (hay.includes(needle)) return 0.85;

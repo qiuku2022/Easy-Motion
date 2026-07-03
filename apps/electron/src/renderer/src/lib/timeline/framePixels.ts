@@ -11,7 +11,7 @@ export function clampPxPerFrame(pxPerFrame: number): number {
 /** 让整段 duration 铺满可视宽度（Premiere「适配窗口」） */
 export function fitPxPerFrameToWidth(
   viewportWidthPx: number,
-  durationInFrames: number,
+  durationInFrames: number
 ): number {
   if (durationInFrames <= 0 || viewportWidthPx <= 0) {
     return DEFAULT_PX_PER_FRAME;
@@ -27,17 +27,13 @@ export function frameToPx(frame: number, pxPerFrame: number): number {
 export function frameBoundaryPx(
   frame: number,
   pxPerFrame: number,
-  side: "start" | "end",
+  side: "start" | "end"
 ): number {
   return side === "start" ? frame * pxPerFrame : (frame + 1) * pxPerFrame;
 }
 
 /** 内容区 X（不含轨道头）→ 帧号 */
-export function pxToFrame(
-  contentPx: number,
-  pxPerFrame: number,
-  scrollX = 0,
-): number {
+export function pxToFrame(contentPx: number, pxPerFrame: number, scrollX = 0): number {
   const totalPx = contentPx + scrollX;
   return Math.round(totalPx / pxPerFrame);
 }
@@ -48,6 +44,9 @@ export function clampFrame(frame: number, durationInFrames: number): number {
 }
 
 /** 吸附阈值：UI 像素 → 帧（随缩放变化） */
-export function snapThresholdPxToFrames(thresholdPx: number, pxPerFrame: number): number {
+export function snapThresholdPxToFrames(
+  thresholdPx: number,
+  pxPerFrame: number
+): number {
   return Math.max(1, Math.round(thresholdPx / pxPerFrame));
 }

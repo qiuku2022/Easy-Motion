@@ -6,7 +6,7 @@ export function frameFromPointer(
   clientX: number,
   scrollContainer: HTMLElement,
   pxPerFrame: number,
-  headerWidth = TRACK_HEADER_WIDTH,
+  headerWidth = TRACK_HEADER_WIDTH
 ): number {
   const rect = scrollContainer.getBoundingClientRect();
   const x = clientX - rect.left + scrollContainer.scrollLeft - headerWidth;

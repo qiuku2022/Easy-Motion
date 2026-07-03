@@ -93,17 +93,20 @@ async function invokeTool(tools, name, args = {}) {
 async function main() {
   const { tmpRoot, projectPath, subprojectPath } = createFixtureRoot();
   const ctx = new RemotionContext({ projectPath, subprojectPath });
-  const timelineCtx = new TimelineContext({
-    version: "1.0",
-    fps: 30,
-    durationInFrames: 90,
-    width: 1280,
-    height: 720,
-    tracks: [],
-  }, {
-    projectPath,
-    subprojectPath,
-  });
+  const timelineCtx = new TimelineContext(
+    {
+      version: "1.0",
+      fps: 30,
+      durationInFrames: 90,
+      width: 1280,
+      height: 720,
+      tracks: [],
+    },
+    {
+      projectPath,
+      subprojectPath,
+    }
+  );
   const tools = createRemotionCodeTools(ctx, timelineCtx);
 
   const listed = await invokeTool(tools, "listRemotionFiles", { maxDepth: 4 });
@@ -137,10 +140,7 @@ async function main() {
   });
   assert(patched.success, patched.error ?? "patchRemotionFile");
 
-  expectThrows(
-    () => ctx.writeFile("components/MainSequence.tsx", VALID_TSX),
-    /E2410/
-  );
+  expectThrows(() => ctx.writeFile("components/MainSequence.tsx", VALID_TSX), /E2410/);
 
   ctx.rollbackFile("components/custom/RedBg.tsx");
   const afterPatchRollback = fs.readFileSync(
@@ -168,7 +168,10 @@ async function main() {
     componentName: "RedBg",
     removeTimelineClips: true,
   });
-  assert(!rejectedUnregister.success, "unregisterCustomComponent rejects missing confirmation");
+  assert(
+    !rejectedUnregister.success,
+    "unregisterCustomComponent rejects missing confirmation"
+  );
   assert(
     rejectedUnregister.error.includes("confirmDeleteUsages"),
     "unregisterCustomComponent explains confirmation"
@@ -182,7 +185,10 @@ async function main() {
   });
   assert(unregistered.success, unregistered.error ?? "unregisterCustomComponent");
   assert(unregistered.data.deletedFile, "unregisterCustomComponent deletes file");
-  assert(unregistered.data.removedClipIds.length === 1, "unregisterCustomComponent removes usage clip");
+  assert(
+    unregistered.data.removedClipIds.length === 1,
+    "unregisterCustomComponent removes usage clip"
+  );
 
   ctx.writeFile("components/custom/Temp.tsx", VALID_TSX);
   ctx.rollbackFile("components/custom/Temp.tsx");

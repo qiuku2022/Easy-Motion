@@ -68,6 +68,6 @@ export function AssetHoverPreview({ asset, anchor }: AssetHoverPreviewProps) {
       )}
       <p className="truncate px-2 py-1.5 text-xs text-foreground">{asset.name}</p>
     </div>,
-    document.body,
+    document.body
   );
 }

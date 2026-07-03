@@ -62,10 +62,8 @@ export function AiRefThumbnail({
     <div
       className={cn(
         "group relative size-10 shrink-0 overflow-hidden rounded-md border bg-muted/50",
-        variant === "on-primary"
-          ? "border-primary-foreground/25"
-          : "border-border/80",
-        className,
+        variant === "on-primary" ? "border-primary-foreground/25" : "border-border/80",
+        className
       )}
     >
       {src && !failed ? (

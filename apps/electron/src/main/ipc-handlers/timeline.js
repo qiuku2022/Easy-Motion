@@ -61,7 +61,7 @@ function registerTimelineHandlers() {
     wrap((payload) => {
       const projectPath = getProjectRoot(payload);
       return timelineService.checkRemotionDrift(projectPath, payload?.subprojectPath);
-    }),
+    })
   );
 
   ipcMain.handle(
@@ -71,9 +71,9 @@ function registerTimelineHandlers() {
       return timelineService.syncTimelineFromRemotion(
         projectPath,
         payload?.subprojectPath,
-        { preserveTracks: payload?.preserveTracks },
+        { preserveTracks: payload?.preserveTracks }
       );
-    }),
+    })
   );
 
   ipcMain.handle(
@@ -87,7 +87,7 @@ function registerTimelineHandlers() {
       const result = timelineService.syncPreviewManifest(
         projectPath,
         payload.timeline,
-        subprojectPath,
+        subprojectPath
       );
       const state = previewService.getPreviewState();
       if (state.status === "running") {
@@ -99,7 +99,7 @@ function registerTimelineHandlers() {
         };
       }
       return result;
-    }),
+    })
   );
 
   ipcMain.handle(
@@ -107,10 +107,7 @@ function registerTimelineHandlers() {
     wrap(async (payload) => {
       const projectPath = getProjectRoot(payload);
       const subprojectPath = payload?.subprojectPath;
-      const result = timelineService.generateForSubproject(
-        projectPath,
-        subprojectPath,
-      );
+      const result = timelineService.generateForSubproject(projectPath, subprojectPath);
       const remotionDir = previewService.getRemotionDir(projectPath, subprojectPath);
       const entryPatched = previewService.ensurePreviewEntry(remotionDir);
       const soloPatched = previewService.ensurePreviewSoloSupport(remotionDir);
@@ -118,7 +115,7 @@ function registerTimelineHandlers() {
       if (entryPatched || soloPatched) {
         refreshed = timelineService.refreshRemotionFingerprint(
           projectPath,
-          subprojectPath,
+          subprojectPath
         );
       }
       const state = previewService.getPreviewState();

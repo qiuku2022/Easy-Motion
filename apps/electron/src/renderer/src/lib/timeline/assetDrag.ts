@@ -6,7 +6,9 @@ export function setAssetDragData(dataTransfer: DataTransfer, asset: ProjectAsset
   dataTransfer.effectAllowed = "copy";
 }
 
-export function readAssetDragData(dataTransfer: DataTransfer): { assetId: string } | null {
+export function readAssetDragData(
+  dataTransfer: DataTransfer
+): { assetId: string } | null {
   const raw = dataTransfer.getData(ASSET_DRAG_MIME);
   if (!raw) return null;
   try {

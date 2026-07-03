@@ -38,7 +38,7 @@ function cleanupViteStartedByDebug() {
   const remaining = killPortListeners(RENDERER_PORT);
   if (remaining > 0) {
     console.log(
-      `[debug-cleanup] freed renderer port ${RENDERER_PORT} (${remaining} pid)`,
+      `[debug-cleanup] freed renderer port ${RENDERER_PORT} (${remaining} pid)`
     );
   }
 }
@@ -67,8 +67,8 @@ function cleanupWaitCdpScripts() {
   let out = "";
   try {
     out = execSync(
-      'powershell -NoProfile -Command "Get-CimInstance Win32_Process -Filter \\"Name = \'node.exe\'\\" | Where-Object { $_.CommandLine -like \'*wait-cdp.cjs*\' } | Select-Object -ExpandProperty ProcessId"',
-      { encoding: "utf8", stdio: ["pipe", "pipe", "ignore"], windowsHide: true },
+      "powershell -NoProfile -Command \"Get-CimInstance Win32_Process -Filter \\\"Name = 'node.exe'\\\" | Where-Object { $_.CommandLine -like '*wait-cdp.cjs*' } | Select-Object -ExpandProperty ProcessId\"",
+      { encoding: "utf8", stdio: ["pipe", "pipe", "ignore"], windowsHide: true }
     );
   } catch {
     return;

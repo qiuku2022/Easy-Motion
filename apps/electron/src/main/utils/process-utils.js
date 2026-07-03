@@ -34,7 +34,7 @@ function execFileHiddenSync(command, args, options = {}) {
   if (result.error) throw result.error;
   if (result.status !== 0) {
     const err = new Error(
-      `${command} ${args.join(" ")} exited with code ${result.status}`,
+      `${command} ${args.join(" ")} exited with code ${result.status}`
     );
     err.status = result.status;
     throw err;

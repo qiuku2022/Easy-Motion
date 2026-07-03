@@ -13,11 +13,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { TRACK_ROW_HEIGHT } from "@/lib/timeline/constants";
 import { frameToPx } from "@/lib/timeline/framePixels";
@@ -50,11 +46,11 @@ export function ClipFloatingToolbar({
 }: ClipFloatingToolbarProps) {
   const timeline = useTimelineStore((s) => s.timeline);
   const splitSelectedClipAtPlayhead = useTimelineStore(
-    (s) => s.splitSelectedClipAtPlayhead,
+    (s) => s.splitSelectedClipAtPlayhead
   );
   const deleteSelectedClip = useTimelineStore((s) => s.deleteSelectedClip);
   const alignSelectedClipHorizontalCenter = useTimelineStore(
-    (s) => s.alignSelectedClipHorizontalCenter,
+    (s) => s.alignSelectedClipHorizontalCenter
   );
   const clearError = useTimelineStore((s) => s.clearError);
 
@@ -66,7 +62,7 @@ export function ClipFloatingToolbar({
     if (!located) return null;
 
     const rowIndex = rows.findIndex(
-      (row) => row.track.id === located.clipTrack.id && !row.isGroupHeader,
+      (row) => row.track.id === located.clipTrack.id && !row.isGroupHeader
     );
     if (rowIndex < 0) return null;
 
@@ -105,7 +101,7 @@ export function ClipFloatingToolbar({
     <div
       className={cn(
         "clip-floating-toolbar pointer-events-auto absolute z-[60] flex items-center gap-0.5 rounded-md border border-border bg-popover px-1 py-0.5 shadow-lg shadow-black/30",
-        placeBelow ? "clip-floating-toolbar-below" : "clip-floating-toolbar-above",
+        placeBelow ? "clip-floating-toolbar-below" : "clip-floating-toolbar-above"
       )}
       style={
         placeBelow
@@ -225,7 +221,7 @@ function ToolbarButton({
             "h-7 gap-1 px-2 text-[11px]",
             danger
               ? "text-destructive hover:bg-destructive/15 hover:text-destructive"
-              : "text-foreground",
+              : "text-foreground"
           )}
         >
           {icon}

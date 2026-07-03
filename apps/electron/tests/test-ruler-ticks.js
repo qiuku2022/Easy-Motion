@@ -48,9 +48,7 @@ function getRulerTickIntervals(pxPerFrame, fps, durationInFrames) {
       break;
     }
   }
-  const divisors = candidates.filter(
-    (c) => c < labelFrames && labelFrames % c === 0,
-  );
+  const divisors = candidates.filter((c) => c < labelFrames && labelFrames % c === 0);
   let minorFrames = 1;
   for (let i = divisors.length - 1; i >= 0; i -= 1) {
     const c = divisors[i];
@@ -81,7 +79,7 @@ function buildRulerTicks(durationInFrames, pxPerFrame, fps) {
   const { labelFrames, minorFrames } = getRulerTickIntervals(
     pxPerFrame,
     fps,
-    durationInFrames,
+    durationInFrames
   );
   const items = [];
   for (let frame = 0; frame <= durationInFrames; frame += minorFrames) {
@@ -109,7 +107,10 @@ function main() {
   const ticks = buildRulerTicks(300, 4, 30);
   assert.ok(ticks.length <= MAX_TICKS + 1);
   assert.equal(ticks[0].kind, "labeled");
-  assert.ok(ticks.some((t) => t.kind === "minor"), "应有细刻度");
+  assert.ok(
+    ticks.some((t) => t.kind === "minor"),
+    "应有细刻度"
+  );
 
   const labels = ticks.filter((t) => t.kind === "labeled");
   for (const { frame } of labels) {

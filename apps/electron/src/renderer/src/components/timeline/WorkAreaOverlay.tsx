@@ -8,7 +8,7 @@ const SHADE_CLASS = "bg-zinc-950/55";
 function useWorkAreaBounds(
   timeline: Timeline,
   durationInFrames: number,
-  pxPerFrame: number,
+  pxPerFrame: number
 ) {
   const { inFrame, outFrame, custom } = resolveWorkAreaDisplayRange(timeline);
   const width = frameToPx(durationInFrames, pxPerFrame);
@@ -85,13 +85,7 @@ function BoundaryLine({
   );
 }
 
-function BoundaryBadge({
-  left,
-  label,
-}: {
-  left: number;
-  label: "I" | "O";
-}) {
+function BoundaryBadge({ left, label }: { left: number; label: "I" | "O" }) {
   return (
     <div className="pointer-events-none absolute top-0 z-[23]" style={{ left }}>
       <span className="absolute top-0 -translate-x-1/2 rounded bg-amber-500/90 px-1 font-mono text-[9px] font-semibold text-black">
@@ -136,18 +130,10 @@ export function WorkAreaOverlay({
       ) : null}
 
       {custom ? (
-        <BoundaryLine
-          left={inPx}
-          height={height}
-          title={`入点 f${inFrame}`}
-        />
+        <BoundaryLine left={inPx} height={height} title={`入点 f${inFrame}`} />
       ) : null}
       {custom || outEndPx < width ? (
-        <BoundaryLine
-          left={outEndPx}
-          height={height}
-          title={`出点 f${outFrame}`}
-        />
+        <BoundaryLine left={outEndPx} height={height} title={`出点 f${outFrame}`} />
       ) : null}
     </div>
   );
@@ -168,19 +154,14 @@ export function WorkAreaRulerShade({
   const { width, inPx, outEndPx, hasShade } = useWorkAreaBounds(
     timeline,
     durationInFrames,
-    pxPerFrame,
+    pxPerFrame
   );
 
   if (!hasShade) return null;
 
   return (
     <div className="pointer-events-none absolute inset-0 z-[10]" aria-hidden>
-      <WorkAreaShadeMask
-        inPx={inPx}
-        outEndPx={outEndPx}
-        width={width}
-        height="100%"
-      />
+      <WorkAreaShadeMask inPx={inPx} outEndPx={outEndPx} width={width} height="100%" />
     </div>
   );
 }
@@ -190,7 +171,10 @@ interface WorkAreaRulerMarkersProps {
   pxPerFrame: number;
 }
 
-export function WorkAreaRulerMarkers({ timeline, pxPerFrame }: WorkAreaRulerMarkersProps) {
+export function WorkAreaRulerMarkers({
+  timeline,
+  pxPerFrame,
+}: WorkAreaRulerMarkersProps) {
   const { inFrame, outFrame, custom } = resolveWorkAreaDisplayRange(timeline);
   const maxFrame = Math.max(0, timeline.durationInFrames - 1);
   const inPx = frameBoundaryPx(inFrame, pxPerFrame, "start");

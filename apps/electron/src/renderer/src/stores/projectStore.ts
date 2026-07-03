@@ -235,7 +235,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
 
     if (useTimelineStore.getState().hasUnsavedChanges) {
       const confirmed = window.confirm(
-        "当前项目有未保存的更改。\n关闭项目将丢弃这些更改，是否继续？",
+        "当前项目有未保存的更改。\n关闭项目将丢弃这些更改，是否继续？"
       );
       if (!confirmed) return false;
     }
@@ -265,7 +265,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
     }
 
     const confirmed = window.confirm(
-      `确认删除项目？\n${projectPath}\n\n此操作不可恢复。`,
+      `确认删除项目？\n${projectPath}\n\n此操作不可恢复。`
     );
     if (!confirmed) return false;
 

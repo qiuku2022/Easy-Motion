@@ -53,7 +53,7 @@ const createWindow = () => {
   const saved = uiStateService.getMainWindowState();
   const { bounds, maximized, fullscreen } = uiStateService.resolveMainWindowPlacement(
     saved,
-    getInitialWindowBounds(),
+    getInitialWindowBounds()
   );
 
   const win = new BrowserWindow({

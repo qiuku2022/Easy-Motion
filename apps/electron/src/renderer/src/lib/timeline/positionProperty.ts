@@ -24,7 +24,7 @@ export function positionInternalToFormValue(value: unknown): string {
 
 export function normalizeKeyframePropertyValue(
   property: string,
-  value: unknown,
+  value: unknown
 ): unknown {
   if (!isPositionProperty(property)) return value;
   return snapPositionValue(value);

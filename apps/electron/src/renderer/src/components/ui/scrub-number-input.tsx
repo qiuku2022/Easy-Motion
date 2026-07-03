@@ -10,8 +10,10 @@ function filterNumericInput(raw: string): string | null {
   return NUMERIC_INPUT_PATTERN.test(raw) ? raw : null;
 }
 
-interface ScrubNumberInputProps
-  extends Omit<ComponentProps<typeof Input>, "type" | "value" | "onChange" | "inputMode"> {
+interface ScrubNumberInputProps extends Omit<
+  ComponentProps<typeof Input>,
+  "type" | "value" | "onChange" | "inputMode"
+> {
   value: string;
   onChange: (value: string) => void;
   onScrub?: (value: string) => void;
@@ -68,7 +70,7 @@ export function ScrubNumberInput({
       className={cn(
         "font-mono cursor-ew-resize focus:cursor-text",
         scrubbing && "select-none",
-        className,
+        className
       )}
       onChange={handleChange}
       onPointerDown={onPointerDown}

@@ -27,7 +27,7 @@ function assertNoOverlapOnTrack(track: Track): void {
     const curr = sorted[i];
     if (prev.startInFrames + prev.durationInFrames > curr.startInFrames) {
       throw new TimelineValidationError(
-        `track ${track.id}: clips ${prev.id} and ${curr.id} overlap`,
+        `track ${track.id}: clips ${prev.id} and ${curr.id} overlap`
       );
     }
   }

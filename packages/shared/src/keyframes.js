@@ -39,9 +39,7 @@ function applyEasing(name, t) {
     case "ease-out":
       return clamped * (2 - clamped);
     case "ease-in-out":
-      return clamped < 0.5
-        ? 2 * clamped * clamped
-        : -1 + (4 - 2 * clamped) * clamped;
+      return clamped < 0.5 ? 2 * clamped * clamped : -1 + (4 - 2 * clamped) * clamped;
     case "spring":
       return 1 - Math.cos(clamped * Math.PI * 0.5);
     case "linear":
@@ -131,7 +129,7 @@ function applyKeyframesToClip(clip, relativeFrame) {
       keyframes,
       property,
       relativeFrame,
-      baseValue,
+      baseValue
     );
     result = setValueByPath(result, property, value);
   }

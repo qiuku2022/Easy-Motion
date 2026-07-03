@@ -8,7 +8,10 @@ import {
   postPreview,
   PREVIEW_CHANNEL,
 } from "@/lib/preview-messages";
-import { usePreviewAspectFit, PREVIEW_DISPLAY_ASPECT } from "@/hooks/usePreviewAspectFit";
+import {
+  usePreviewAspectFit,
+  PREVIEW_DISPLAY_ASPECT,
+} from "@/hooks/usePreviewAspectFit";
 import { usePreviewBootstrap } from "@/hooks/usePreviewBootstrap";
 import { usePlaybackStore } from "@/stores/playbackStore";
 import { useTimelineStore } from "@/stores/timelineStore";
@@ -49,9 +52,7 @@ export function PreviewWindow() {
   previewUrlRef.current = previewUrl;
 
   /** Ignore spurious frame-0 updates while preview remounts after reload. */
-  const preservePlayheadRef = useRef<{ frame: number; until: number } | null>(
-    null,
-  );
+  const preservePlayheadRef = useRef<{ frame: number; until: number } | null>(null);
 
   const markPreservePlayhead = useCallback(() => {
     const frame = useTimelineStore.getState().currentFrame;
@@ -59,18 +60,15 @@ export function PreviewWindow() {
     return frame;
   }, []);
 
-  const restorePlayheadToPreview = useCallback(
-    (frame: number, delayMs = 0) => {
-      window.setTimeout(() => {
-        useTimelineStore.getState().setCurrentFrame(frame);
-        const win = iframeRef.current?.contentWindow;
-        if (win) {
-          postPreview(win, { channel: PREVIEW_CHANNEL, type: "SEEK", frame });
-        }
-      }, delayMs);
-    },
-    [],
-  );
+  const restorePlayheadToPreview = useCallback((frame: number, delayMs = 0) => {
+    window.setTimeout(() => {
+      useTimelineStore.getState().setCurrentFrame(frame);
+      const win = iframeRef.current?.contentWindow;
+      if (win) {
+        postPreview(win, { channel: PREVIEW_CHANNEL, type: "SEEK", frame });
+      }
+    }, delayMs);
+  }, []);
 
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
@@ -190,7 +188,12 @@ export function PreviewWindow() {
     }, 100);
 
     return () => window.clearInterval(timer);
-  }, [previewTimelineNonce, pushTimelineToPreview, markPreservePlayhead, restorePlayheadToPreview]);
+  }, [
+    previewTimelineNonce,
+    pushTimelineToPreview,
+    markPreservePlayhead,
+    restorePlayheadToPreview,
+  ]);
 
   const pushLoopToPreview = useCallback(() => {
     const win = iframeRef.current?.contentWindow;

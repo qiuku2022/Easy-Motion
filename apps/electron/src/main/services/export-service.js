@@ -70,9 +70,7 @@ function buildInputProps(remotionSrcDir) {
 
 async function prepareTimelineForExport(projectPath, subprojectPath, timeline) {
   timelineService.syncPreviewManifest(projectPath, timeline, subprojectPath);
-  const remotionSrcDir = getRemotionSrcDir(
-    getRemotionDir(projectPath, subprojectPath),
-  );
+  const remotionSrcDir = getRemotionSrcDir(getRemotionDir(projectPath, subprojectPath));
   if (!isTimelineDrivenPreview(remotionSrcDir)) {
     timelineService.generateForSubproject(projectPath, subprojectPath);
   }
@@ -108,15 +106,17 @@ async function runVideoExport(request, exportId, cancelSignal) {
 
     const fittedTimeline = timelineService.loadTimeline(
       request.projectPath,
-      subprojectPath,
+      subprojectPath
     );
     const exportRange = resolveExportFrameRange(fittedTimeline);
     const frameRange = [exportRange.inFrame, exportRange.outFrame];
 
     const inputProps = buildInputProps(remotionSrcDir);
     const { bundle } = requireFromRemotion(remotionDir, "@remotion/bundler");
-    const { selectComposition, renderMedia } =
-      requireFromRemotion(remotionDir, "@remotion/renderer");
+    const { selectComposition, renderMedia } = requireFromRemotion(
+      remotionDir,
+      "@remotion/renderer"
+    );
 
     fs.mkdirSync(bundleDir, { recursive: true });
     const entryPoint = path.join(remotionDir, "src", REMOTION_ENTRY);
@@ -258,7 +258,10 @@ async function runVideoExport(request, exportId, cancelSignal) {
       fps: 0,
       estimatedRemainingSeconds: 0,
     });
-    emitError(exportId, formatExportError(message.startsWith("E26") ? message : `E2600: ${message}`));
+    emitError(
+      exportId,
+      formatExportError(message.startsWith("E26") ? message : `E2600: ${message}`)
+    );
   } finally {
     await removePath(bundleDir);
   }
@@ -376,10 +379,7 @@ async function runProjectExport(request, exportId) {
       fps: 0,
       estimatedRemainingSeconds: 0,
     });
-    emitError(
-      exportId,
-      message.startsWith("E26") ? message : `E2606: ${message}`,
-    );
+    emitError(exportId, message.startsWith("E26") ? message : `E2606: ${message}`);
   }
 }
 

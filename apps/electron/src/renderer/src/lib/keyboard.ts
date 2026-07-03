@@ -3,10 +3,7 @@ export function isEditableElement(el: Element | null | undefined): boolean {
   if (!(el instanceof HTMLElement)) return false;
   const tag = el.tagName;
   return (
-    tag === "INPUT" ||
-    tag === "TEXTAREA" ||
-    tag === "SELECT" ||
-    el.isContentEditable
+    tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || el.isContentEditable
   );
 }
 

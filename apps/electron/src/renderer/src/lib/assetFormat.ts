@@ -5,18 +5,12 @@ export function formatAssetSize(bytes?: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export function formatAssetDimensions(
-  width?: number,
-  height?: number,
-): string {
+export function formatAssetDimensions(width?: number, height?: number): string {
   if (!width || !height) return "—";
   return `${width}×${height}`;
 }
 
-export function formatAssetDuration(
-  durationInFrames?: number,
-  fps = 30,
-): string {
+export function formatAssetDuration(durationInFrames?: number, fps = 30): string {
   if (!durationInFrames || durationInFrames <= 0) return "—";
   const totalSeconds = durationInFrames / fps;
   if (totalSeconds < 60) {

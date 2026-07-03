@@ -5,7 +5,7 @@ import type { TimelineRow } from "@/lib/timeline/trackTree";
 export function trackIdFromPointer(
   clientY: number,
   container: HTMLElement,
-  rows: TimelineRow[],
+  rows: TimelineRow[]
 ): string | null {
   const rect = container.getBoundingClientRect();
   const y = clientY - rect.top + container.scrollTop;

@@ -32,7 +32,7 @@ export function cssTopToTimelineY(cssTop: number, compositionHeight: number): nu
 export function resolveLayerScreenPosition(
   x: number,
   y: number,
-  compositionHeight: number,
+  compositionHeight: number
 ): { left: number; top: number } {
   return {
     left: snapAxis(x),
@@ -44,7 +44,7 @@ export function clampTimelinePosition(
   x: number,
   y: number,
   width: number,
-  height: number,
+  height: number
 ): { x: number; y: number } {
   return {
     x: clampAxis(x, width),
@@ -88,13 +88,13 @@ function migrateClipPositionToBottomLeft(clip: Clip, canvasHeight: number): Clip
 function migrateTrackPositionsToBottomLeft(track: Track, canvasHeight: number): Track {
   if (track.type === "group") {
     const children = (track.children ?? []).map((child) =>
-      migrateTrackPositionsToBottomLeft(child, canvasHeight),
+      migrateTrackPositionsToBottomLeft(child, canvasHeight)
     );
     return { ...track, children };
   }
 
   const clips = (track.clips ?? []).map((clip) =>
-    migrateClipPositionToBottomLeft(clip, canvasHeight),
+    migrateClipPositionToBottomLeft(clip, canvasHeight)
   );
   return { ...track, clips };
 }
@@ -110,7 +110,7 @@ export function migrateTimelineToBottomLeft(timeline: Timeline): {
 
   const height = Number(timeline.height) || 1080;
   const tracks = timeline.tracks.map((track) =>
-    migrateTrackPositionsToBottomLeft(track, height),
+    migrateTrackPositionsToBottomLeft(track, height)
   );
 
   return {

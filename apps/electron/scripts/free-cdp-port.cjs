@@ -51,9 +51,7 @@ async function main() {
     return;
   }
 
-  console.log(
-    `[free-cdp-port] port ${port} in use (pid ${pids.join(", ")}), freeing…`
-  );
+  console.log(`[free-cdp-port] port ${port} in use (pid ${pids.join(", ")}), freeing…`);
   for (const pid of pids) killPid(pid);
 
   for (let i = 0; i < 20; i++) {

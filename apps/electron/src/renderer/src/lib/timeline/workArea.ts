@@ -10,7 +10,10 @@ function clampInt(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, n));
 }
 
-function forEachTimelineClip(timeline: Timeline | null | undefined, visit: (clip: Clip) => void) {
+function forEachTimelineClip(
+  timeline: Timeline | null | undefined,
+  visit: (clip: Clip) => void
+) {
   if (!timeline?.tracks?.length) return;
 
   for (const track of timeline.tracks) {
@@ -53,12 +56,16 @@ export function getContentEndInclusive(timeline: Timeline | null | undefined): n
   return Math.max(0, capped - 1);
 }
 
-export function resolveTailPaddingFrames(timeline: Timeline | null | undefined): number {
+export function resolveTailPaddingFrames(
+  timeline: Timeline | null | undefined
+): number {
   const fps = Math.max(1, Number(timeline?.fps) || 30);
   return Math.max(15, Math.round(fps));
 }
 
-export function resolveDefaultMinDurationFrames(timeline: Timeline | null | undefined): number {
+export function resolveDefaultMinDurationFrames(
+  timeline: Timeline | null | undefined
+): number {
   const fps = Math.max(1, Number(timeline?.fps) || 30);
   return fps * 5;
 }
@@ -67,7 +74,7 @@ export function resolveDefaultMinDurationFrames(timeline: Timeline | null | unde
 export function ensureTimelineFitsClip(
   timeline: Timeline,
   startInFrames: number,
-  durationInFrames: number,
+  durationInFrames: number
 ): Timeline {
   const start = Math.max(0, Math.round(startInFrames));
   const duration = Math.max(1, Math.round(durationInFrames));
@@ -80,7 +87,7 @@ export function ensureTimelineFitsClip(
 /** Shrink or grow duration to content end + tail padding (~1s). */
 export function fitTimelineDuration(
   timeline: Timeline,
-  options: { tailPaddingFrames?: number; minDurationFrames?: number } = {},
+  options: { tailPaddingFrames?: number; minDurationFrames?: number } = {}
 ): Timeline {
   const tail = options.tailPaddingFrames ?? resolveTailPaddingFrames(timeline);
   const minFrames =
@@ -98,13 +105,9 @@ export function fitTimelineDuration(
     const rawIn = Number(next.workArea.inFrame);
     const outFrame = Math.min(
       Number.isFinite(rawOut) ? rawOut : contentEndInclusive,
-      maxFrame,
+      maxFrame
     );
-    const inFrame = Math.min(
-      Number.isFinite(rawIn) ? rawIn : 0,
-      outFrame,
-      maxFrame,
-    );
+    const inFrame = Math.min(Number.isFinite(rawIn) ? rawIn : 0, outFrame, maxFrame);
     next = {
       ...next,
       workArea: normalizeWorkArea(next, inFrame, outFrame),
@@ -123,7 +126,9 @@ export function fitTimelineDuration(
   return next;
 }
 
-export function resolveTimelineViewportDuration(timeline: Timeline | null | undefined): number {
+export function resolveTimelineViewportDuration(
+  timeline: Timeline | null | undefined
+): number {
   if (!timeline) return 1;
   return fitTimelineDuration(timeline).durationInFrames;
 }
@@ -138,10 +143,16 @@ export interface ExportFrameRange {
 
 /** Resolve export in/out (inclusive) for renderMedia frameRange. */
 export function resolveExportFrameRange(
-  timeline: Timeline | null | undefined,
+  timeline: Timeline | null | undefined
 ): ExportFrameRange {
   if (!isObject(timeline)) {
-    return { inFrame: 0, outFrame: 0, frameCount: 1, contentEndInclusive: 0, custom: false };
+    return {
+      inFrame: 0,
+      outFrame: 0,
+      frameCount: 1,
+      contentEndInclusive: 0,
+      custom: false,
+    };
   }
 
   const maxFrame = Math.max(0, Number(timeline.durationInFrames) - 1);
@@ -185,7 +196,7 @@ export interface WorkAreaDisplayRange {
 
 /** UI I/O：按用户设置的入出点显示，不压到内容末尾 */
 export function resolveWorkAreaDisplayRange(
-  timeline: Timeline | null | undefined,
+  timeline: Timeline | null | undefined
 ): WorkAreaDisplayRange {
   if (!isObject(timeline)) {
     return { inFrame: 0, outFrame: 0, custom: false, contentEndInclusive: 0 };

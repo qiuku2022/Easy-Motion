@@ -45,7 +45,7 @@ export function ValueGraphHandlesLayer({
                 onDragIncoming(
                   item.keyframeId,
                   frameFromClientX(cx),
-                  valueFromClientY(cy),
+                  valueFromClientY(cy)
                 )
               }
             />
@@ -61,7 +61,7 @@ export function ValueGraphHandlesLayer({
                 onDragOutgoing(
                   item.keyframeId,
                   frameFromClientX(cx),
-                  valueFromClientY(cy),
+                  valueFromClientY(cy)
                 )
               }
             />

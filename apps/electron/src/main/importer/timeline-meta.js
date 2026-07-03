@@ -52,7 +52,7 @@ function resolveTimelineMeta({
         composition?.fps,
         manifestTimeline?.fps,
         existingTimeline?.fps,
-        previewConfig?.fps,
+        previewConfig?.fps
       ) ?? 30,
     durationInFrames:
       pickTimelineNumber(
@@ -60,21 +60,21 @@ function resolveTimelineMeta({
         manifestTimeline?.durationInFrames,
         existingTimeline?.durationInFrames,
         previewConfig?.durationInFrames,
-        fromTracks,
+        fromTracks
       ) ?? 300,
     width:
       pickTimelineNumber(
         composition?.width,
         manifestTimeline?.width,
         existingTimeline?.width,
-        previewConfig?.width,
+        previewConfig?.width
       ) ?? 1920,
     height:
       pickTimelineNumber(
         composition?.height,
         manifestTimeline?.height,
         existingTimeline?.height,
-        previewConfig?.height,
+        previewConfig?.height
       ) ?? 1080,
   };
 }

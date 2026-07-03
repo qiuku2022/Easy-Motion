@@ -12,7 +12,7 @@ export interface ValueGraphHandleBinding {
 export function buildValueGraphHandleBindings(
   keyframes: Keyframe[],
   frameToX: (frame: number) => number,
-  valueToY: (value: number) => number,
+  valueToY: (value: number) => number
 ): ValueGraphHandleBinding[] {
   const bindings: ValueGraphHandleBinding[] = [];
   for (let i = 0; i < keyframes.length; i += 1) {

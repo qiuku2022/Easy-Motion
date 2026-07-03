@@ -44,7 +44,10 @@ async function main() {
   });
 
   console.log("test-agent-live: timelineChanged =", result.timelineChanged);
-  console.log("test-agent-live: changeLog =", JSON.stringify(result.changeLog, null, 2));
+  console.log(
+    "test-agent-live: changeLog =",
+    JSON.stringify(result.changeLog, null, 2)
+  );
   console.log("test-agent-live: reply preview =", result.reply?.slice(0, 200));
 
   const trackCountAfter = result.timeline.tracks.length;

@@ -98,7 +98,8 @@ async function compileRemotionCheck(remotionDir, options = {}) {
       success: false,
       skipped: true,
       reason: "missing-node-modules",
-      errors: "remotion 项目尚未安装依赖（node_modules），请先打开预览或运行 npm install",
+      errors:
+        "remotion 项目尚未安装依赖（node_modules），请先打开预览或运行 npm install",
     };
   }
 

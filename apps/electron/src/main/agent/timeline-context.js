@@ -46,12 +46,7 @@ function filterAssets(assets, params = {}) {
     if (params.favoriteOnly && !asset.isFavorite) return false;
     if (params.query) {
       const query = String(params.query).toLowerCase();
-      const haystack = [
-        asset.name,
-        asset.originalName,
-        asset.path,
-        asset.publicPath,
-      ]
+      const haystack = [asset.name, asset.originalName, asset.path, asset.publicPath]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
@@ -132,7 +127,11 @@ class TimelineContext {
     const result = timelineOps.createTrack(this.timeline, params);
     this.timeline = result.timeline;
     this.markChanged();
-    this.logChange({ op: "createTrack", trackId: result.track.id, name: result.track.name });
+    this.logChange({
+      op: "createTrack",
+      trackId: result.track.id,
+      name: result.track.name,
+    });
     return result.track;
   }
 
@@ -154,7 +153,11 @@ class TimelineContext {
     const result = timelineOps.createClip(this.timeline, clipParams);
     this.timeline = result.timeline;
     this.markChanged();
-    this.logChange({ op: "createClip", clipId: result.clip.id, name: result.clip.name });
+    this.logChange({
+      op: "createClip",
+      clipId: result.clip.id,
+      name: result.clip.name,
+    });
     return result.clip;
   }
 
@@ -183,8 +186,7 @@ class TimelineContext {
     const clip = located.clip;
     const isBackgroundLike =
       clip.type === "shape" ||
-      (clip.type === "animation" &&
-        /background/i.test(clip.source?.component ?? ""));
+      (clip.type === "animation" && /background/i.test(clip.source?.component ?? ""));
 
     if (isBackgroundLike) {
       const style = { ...(updates.style ?? {}) };
@@ -324,14 +326,10 @@ class TimelineContext {
       throw new Error("当前没有打开的项目，无法导入素材");
     }
 
-    const asset = await assetService.importAssetSource(
-      projectPath,
-      params,
-      {
-        subprojectPath: this.meta.subprojectPath,
-        fps: this.timeline.fps,
-      }
-    );
+    const asset = await assetService.importAssetSource(projectPath, params, {
+      subprojectPath: this.meta.subprojectPath,
+      fps: this.timeline.fps,
+    });
 
     this.logChange({
       op: "importAsset",

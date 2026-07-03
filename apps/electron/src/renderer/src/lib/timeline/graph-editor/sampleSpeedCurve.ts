@@ -18,7 +18,7 @@ export function segmentSpeedAtT(
   prev: Keyframe,
   end: Keyframe,
   t: number,
-  fps: number,
+  fps: number
 ): number {
   const segmentFrames = end.frame - prev.frame;
   if (segmentFrames <= 0) return 0;
@@ -56,7 +56,7 @@ export function sampleSpeedCurve(
   prev: Keyframe,
   end: Keyframe,
   fps: number,
-  steps = 48,
+  steps = 48
 ): SpeedSample[] {
   const segmentFrames = end.frame - prev.frame;
   if (segmentFrames <= 0) return [];
@@ -82,7 +82,7 @@ export function speedSamplesToSvgPath(
   pxPerFrame: number,
   graphHeight: number,
   speedMin: number,
-  speedMax: number,
+  speedMax: number
 ): string {
   if (samples.length === 0 || segFrames <= 0) return "";
   const span = speedMax - speedMin || 1;
@@ -100,7 +100,7 @@ export function speedSamplesToSvgPath(
 export function speedAtKeyframe(
   keyframes: Keyframe[],
   index: number,
-  fps: number,
+  fps: number
 ): number {
   if (index > 0) {
     return segmentSpeedAtT(keyframes[index - 1]!, keyframes[index]!, 1, fps);
@@ -116,7 +116,7 @@ export function speedAtKeyframe(
  */
 export function speedRangeForSegments(
   keyframes: Keyframe[],
-  fps: number,
+  fps: number
 ): { min: number; max: number } {
   if (keyframes.length < 2) return { min: 0, max: 1 };
 

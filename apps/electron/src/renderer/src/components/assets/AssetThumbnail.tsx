@@ -53,7 +53,7 @@ export function AssetThumbnail({
     <div
       className={cn(
         "relative flex shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted/60",
-        className,
+        className
       )}
     >
       {src && !failed ? (

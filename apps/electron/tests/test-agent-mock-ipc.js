@@ -28,7 +28,7 @@ class MockWebContents {
         const complete = this.events.find(
           (event) =>
             event.channel === "renderer:conversation:complete" &&
-            event.payload.requestId === requestId,
+            event.payload.requestId === requestId
         );
         if (complete) {
           resolve(complete.payload);
@@ -37,7 +37,7 @@ class MockWebContents {
         const errorEvent = this.events.find(
           (event) =>
             event.channel === "renderer:conversation:error" &&
-            event.payload.requestId === requestId,
+            event.payload.requestId === requestId
         );
         if (errorEvent) {
           reject(new Error(errorEvent.payload.message));
@@ -105,7 +105,7 @@ async function main() {
   const timelineService = require("../src/main/services/timeline-service");
   const baseTimeline = timelineService.loadTimeline(
     created.path,
-    "subprojects/default",
+    "subprojects/default"
   );
   const updatedTimeline = buildHelloTimeline(baseTimeline);
 
@@ -133,22 +133,18 @@ async function main() {
     throw new Error(`expected timelineUpdated, got ${JSON.stringify(complete)}`);
   }
 
-  const onDisk = timelineService.loadTimeline(
-    created.path,
-    "subprojects/default",
-  );
+  const onDisk = timelineService.loadTimeline(created.path, "subprojects/default");
   const hasHello = onDisk.tracks.some((track) =>
     (track.clips ?? []).some(
-      (clip) =>
-        clip.source?.content?.includes("Hello") || clip.name?.includes("Hello"),
-    ),
+      (clip) => clip.source?.content?.includes("Hello") || clip.name?.includes("Hello")
+    )
   );
   if (!hasHello) {
     throw new Error("timeline on disk missing Hello clip after mock IPC flow");
   }
 
   const statusEvents = webContents.events.filter(
-    (event) => event.channel === "renderer:conversation:status",
+    (event) => event.channel === "renderer:conversation:status"
   );
   if (!statusEvents.some((event) => event.payload.status === "parsing")) {
     throw new Error("expected parsing status event");

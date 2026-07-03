@@ -6,6 +6,8 @@ coverage
 pnpm-lock.yaml
 *.min.js
 apps/electron/resources/templates
+apps/electron/resources/python
+apps/python/.build-bundle
 design-system/**/pages
 .cursor
 docs/

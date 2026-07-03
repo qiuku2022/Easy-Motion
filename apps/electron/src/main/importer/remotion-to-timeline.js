@@ -53,8 +53,7 @@ function resolveImportPath(fromFile, importPath) {
 
 function collectImports(content) {
   const imports = new Map();
-  const importRegex =
-    /import\s+(?:\{([^}]+)\}|(\w+))\s+from\s+["']([^"']+)["']/g;
+  const importRegex = /import\s+(?:\{([^}]+)\}|(\w+))\s+from\s+["']([^"']+)["']/g;
 
   let match;
   while ((match = importRegex.exec(content)) !== null) {
@@ -244,8 +243,7 @@ function parseSequencesInFile(filePath, constants, fallbackDuration) {
     .replace(/\\/g, "/")
     .replace(/\.tsx?$/, "");
 
-  const sequenceRegex =
-    /<Sequence\b([^>]*)>([\s\S]*?)<\/Sequence>/g;
+  const sequenceRegex = /<Sequence\b([^>]*)>([\s\S]*?)<\/Sequence>/g;
 
   let match;
   while ((match = sequenceRegex.exec(content)) !== null) {
@@ -258,11 +256,11 @@ function parseSequencesInFile(filePath, constants, fallbackDuration) {
     const startInFrames = evalFrameExpression(
       fromMatch[1],
       constants,
-      fallbackDuration,
+      fallbackDuration
     );
     const durationInFrames = Math.max(
       1,
-      evalFrameExpression(durationMatch[1], constants, fallbackDuration),
+      evalFrameExpression(durationMatch[1], constants, fallbackDuration)
     );
 
     const childMatch = inner.match(/<([A-Z][A-Za-z0-9]*)\b([^/>]*)(?:\/>|>)/);
@@ -273,12 +271,7 @@ function parseSequencesInFile(filePath, constants, fallbackDuration) {
 
     if (LAYER_COMPONENT_MAP[componentName]) {
       sequences.push(
-        parseLayerClip(
-          componentName,
-          childMatch[0],
-          startInFrames,
-          durationInFrames,
-        ),
+        parseLayerClip(componentName, childMatch[0], startInFrames, durationInFrames)
       );
       continue;
     }
@@ -338,11 +331,7 @@ function parseSequencesInFile(filePath, constants, fallbackDuration) {
 }
 
 function collectTimelineItems(remotionSrcDir, constants, meta) {
-  const mainSequencePath = path.join(
-    remotionSrcDir,
-    "components",
-    "MainSequence.tsx",
-  );
+  const mainSequencePath = path.join(remotionSrcDir, "components", "MainSequence.tsx");
   if (!fs.existsSync(mainSequencePath)) {
     throw new Error("E2501: MainSequence.tsx not found");
   }
@@ -358,7 +347,7 @@ function collectTimelineItems(remotionSrcDir, constants, meta) {
     const { sequences, overlays, imports, content } = parseSequencesInFile(
       normalized,
       constants,
-      meta.durationInFrames,
+      meta.durationInFrames
     );
 
     for (const item of sequences) {
@@ -474,15 +463,13 @@ function readCompositionMetaFromRoot(remotionSrcDir, compositionId = "Main") {
   if (rootContent.includes("easymotion-timeline.manifest.json")) {
     const manifest = readTimelineManifest(remotionSrcDir);
     const tl = manifest?.timeline;
-    const fps =
-      [tl?.fps, previewConfig?.fps].find(isValidTimelineNumber) ?? null;
+    const fps = [tl?.fps, previewConfig?.fps].find(isValidTimelineNumber) ?? null;
     const fromTracks = deriveDurationFromTracks(tl?.tracks);
     const durationInFrames =
       [tl?.durationInFrames, previewConfig?.durationInFrames, fromTracks].find(
-        isValidTimelineNumber,
+        isValidTimelineNumber
       ) ?? null;
-    const width =
-      [tl?.width, previewConfig?.width].find(isValidTimelineNumber) ?? null;
+    const width = [tl?.width, previewConfig?.width].find(isValidTimelineNumber) ?? null;
     const height =
       [tl?.height, previewConfig?.height].find(isValidTimelineNumber) ?? null;
 

@@ -22,8 +22,8 @@ function withLlmMeta(settings) {
   const keyStored = secretsService.hasLlmApiKey(provider);
   const envConfigured = Boolean(
     process.env.ANTHROPIC_API_KEY ||
-      process.env.OPENAI_API_KEY ||
-      process.env.LLM_API_KEY
+    process.env.OPENAI_API_KEY ||
+    process.env.LLM_API_KEY
   );
 
   return {

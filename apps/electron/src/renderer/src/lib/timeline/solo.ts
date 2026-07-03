@@ -22,7 +22,7 @@ export function hasActiveSolo(timeline: Timeline | null | undefined): boolean {
 export function isTrackIncludedInPreview(
   track: Track,
   parentGroup: Track | null,
-  tracks: Track[],
+  tracks: Track[]
 ): boolean {
   if (!track.visible) return false;
   if (parentGroup && !parentGroup.visible) return false;

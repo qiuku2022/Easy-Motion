@@ -70,7 +70,10 @@ async function main() {
     );
 
     const reloaded = conversationService.loadConversation(root);
-    assert(reloaded.messages.length === 1, "reloaded conversation should have one message");
+    assert(
+      reloaded.messages.length === 1,
+      "reloaded conversation should have one message"
+    );
     assert(reloaded.messages[0].content === "hello", "message content should match");
 
     const timeline = {

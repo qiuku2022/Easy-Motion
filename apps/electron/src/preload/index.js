@@ -9,8 +9,7 @@ contextBridge.exposeInMainWorld("easyMotion", {
   shell: {
     platform: process.platform,
     trafficLightInset: process.platform === "darwin",
-    customWindowControls:
-      process.platform === "win32" || process.platform === "linux",
+    customWindowControls: process.platform === "win32" || process.platform === "linux",
   },
   window: {
     minimize: () => invoke("main:window:minimize"),
@@ -20,8 +19,7 @@ contextBridge.exposeInMainWorld("easyMotion", {
     onStateChanged: (callback) => {
       const listener = (_event, data) => callback(data);
       ipcRenderer.on("renderer:window:stateChanged", listener);
-      return () =>
-        ipcRenderer.removeListener("renderer:window:stateChanged", listener);
+      return () => ipcRenderer.removeListener("renderer:window:stateChanged", listener);
     },
   },
   project: {
@@ -43,8 +41,7 @@ contextBridge.exposeInMainWorld("easyMotion", {
     generate: (payload) => invoke("main:timeline:generate", payload),
     checkRemotionDrift: (payload) =>
       invoke("main:timeline:checkRemotionDrift", payload),
-    syncFromRemotion: (payload) =>
-      invoke("main:timeline:syncFromRemotion", payload),
+    syncFromRemotion: (payload) => invoke("main:timeline:syncFromRemotion", payload),
     syncPreviewManifest: (payload) =>
       invoke("main:timeline:syncPreviewManifest", payload),
   },
@@ -88,10 +85,12 @@ contextBridge.exposeInMainWorld("easyMotion", {
     save: (payload) => invoke("main:conversation:save", payload),
     clear: (payload) => invoke("main:conversation:clear", payload),
     saveAgentUndo: (payload) => invoke("main:conversation:saveAgentUndo", payload),
-    restoreAgentUndo: (payload) => invoke("main:conversation:restoreAgentUndo", payload),
+    restoreAgentUndo: (payload) =>
+      invoke("main:conversation:restoreAgentUndo", payload),
     clearAgentUndo: (payload) => invoke("main:conversation:clearAgentUndo", payload),
     pickAiRefs: (payload) => invoke("main:conversation:pickAiRefs", payload),
-    readAiRefPreview: (payload) => invoke("main:conversation:readAiRefPreview", payload),
+    readAiRefPreview: (payload) =>
+      invoke("main:conversation:readAiRefPreview", payload),
     send: (payload) => invoke("main:conversation:send", payload),
     cancel: (payload) => invoke("main:conversation:cancel", payload),
     onChunk: (callback) => {
@@ -102,7 +101,8 @@ contextBridge.exposeInMainWorld("easyMotion", {
     onComplete: (callback) => {
       const listener = (_event, data) => callback(data);
       ipcRenderer.on("renderer:conversation:complete", listener);
-      return () => ipcRenderer.removeListener("renderer:conversation:complete", listener);
+      return () =>
+        ipcRenderer.removeListener("renderer:conversation:complete", listener);
     },
     onError: (callback) => {
       const listener = (_event, data) => callback(data);

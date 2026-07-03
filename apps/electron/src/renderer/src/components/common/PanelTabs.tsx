@@ -42,7 +42,7 @@ export function PanelTabs<T extends string>({
                 "transition-colors duration-150 ease-out",
                 "hover:text-foreground",
                 "data-active:bg-transparent data-active:font-medium data-active:text-foreground",
-                "after:hidden",
+                "after:hidden"
               )}
             >
               <span className="truncate">{tab.label}</span>

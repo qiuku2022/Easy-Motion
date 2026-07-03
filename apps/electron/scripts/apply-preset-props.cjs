@@ -13,7 +13,7 @@ const {
 const ROOT = path.resolve(__dirname, "..");
 const RVE_DIR = path.join(
   ROOT,
-  "resources/templates/default-project/subprojects/default/remotion/src/presets/rve",
+  "resources/templates/default-project/subprojects/default/remotion/src/presets/rve"
 );
 
 function escapeRegExp(value) {
@@ -68,12 +68,9 @@ function ensureSharedImport(code, helpers) {
   if (code.includes('from "./shared"')) {
     code = code.replace(
       /import \{ type RveBaseProps, [^}]+\} from "\.\/shared";\s*\n?/,
-      "",
+      ""
     );
-    code = code.replace(
-      /import \{ type RveBaseProps \} from "\.\/shared";\s*\n?/,
-      "",
-    );
+    code = code.replace(/import \{ type RveBaseProps \} from "\.\/shared";\s*\n?/, "");
   }
   const remotionImports = [...code.matchAll(/^import .+ from "remotion";/gm)];
   if (remotionImports.length > 0) {
@@ -90,15 +87,15 @@ function normalizeExportSignature(code, component) {
   if (code.includes(`export const ${component}: React.FC`)) {
     code = code.replace(
       new RegExp(
-        `export const ${component}: React\\.FC<[^>]+> = \\(\\{[\\s\\S]*?\\}\\) => \\{`,
+        `export const ${component}: React\\.FC<[^>]+> = \\(\\{[\\s\\S]*?\\}\\) => \\{`
       ),
-      `export function ${component}(props: RveBaseProps = {}) {`,
+      `export function ${component}(props: RveBaseProps = {}) {`
     );
   }
 
   code = code.replace(
     new RegExp(`export function ${component}\\([^)]*\\)`),
-    `export function ${component}(props: RveBaseProps = {})`,
+    `export function ${component}(props: RveBaseProps = {})`
   );
 
   return code;
@@ -113,7 +110,7 @@ function injectPropsBlock(code, component, block) {
   if (code.includes('pText(props, "') || code.includes('pNum(props, "')) {
     code = code.replace(
       /  const \w+ = p(?:Text|Num|Color|Image|Csv)\(props[\s\S]*?(?=\n  const frame|\n  const \{ fps|\n  return)/,
-      `${block}\n`,
+      `${block}\n`
     );
     return code;
   }
@@ -158,11 +155,11 @@ function replaceBackgroundColorProp(code, hex, varName) {
   const esc = escapeRegExp(hex);
   code = code.replace(
     new RegExp(`(backgroundColor:\\s*)"${esc}"`, "g"),
-    `$1${varName}`,
+    `$1${varName}`
   );
   code = code.replace(
     new RegExp(`(backgroundColor:\\s*)'${esc}'`, "g"),
-    `$1${varName}`,
+    `$1${varName}`
   );
   return code;
 }
@@ -185,14 +182,8 @@ function replaceSvgFill(code, hex, varName) {
 
 function replacePrimaryColorUsages(code, hex, varName) {
   const esc = escapeRegExp(hex);
-  code = code.replace(
-    new RegExp(`(stopColor=)${esc}`, "g"),
-    `$1{${varName}}`,
-  );
-  code = code.replace(
-    new RegExp(`(fill=)${esc}`, "g"),
-    `$1{${varName}}`,
-  );
+  code = code.replace(new RegExp(`(stopColor=)${esc}`, "g"), `$1{${varName}}`);
+  code = code.replace(new RegExp(`(fill=)${esc}`, "g"), `$1{${varName}}`);
   code = code.replace(new RegExp(`"${esc}"`, "g"), (match, offset, full) => {
     const before = full.slice(Math.max(0, offset - 40), offset);
     if (before.includes("pColor(") || before.includes("pText(")) return match;
@@ -208,26 +199,11 @@ function replaceNumberTargets(code, entry) {
   for (const param of entry.parameters.filter((p) => p.type === "number")) {
     const varName = aliases[param.key] ?? param.key;
     const num = param.defaultValue;
-    code = code.replace(
-      new RegExp(`\\[0, ${num}\\]`, "g"),
-      `[0, ${varName}]`,
-    );
-    code = code.replace(
-      new RegExp(`\\[1, ${num}\\]`, "g"),
-      `[1, ${varName}]`,
-    );
-    code = code.replace(
-      new RegExp(`\\], \\[0, ${num}\\]`, "g"),
-      `], [0, ${varName}]`,
-    );
-    code = code.replace(
-      new RegExp(`= ${num};`, "g"),
-      `= ${varName};`,
-    );
-    code = code.replace(
-      new RegExp(`= ${num},`, "g"),
-      `= ${varName},`,
-    );
+    code = code.replace(new RegExp(`\\[0, ${num}\\]`, "g"), `[0, ${varName}]`);
+    code = code.replace(new RegExp(`\\[1, ${num}\\]`, "g"), `[1, ${varName}]`);
+    code = code.replace(new RegExp(`\\], \\[0, ${num}\\]`, "g"), `], [0, ${varName}]`);
+    code = code.replace(new RegExp(`= ${num};`, "g"), `= ${varName};`);
+    code = code.replace(new RegExp(`= ${num},`, "g"), `= ${varName},`);
   }
   return code;
 }
@@ -272,7 +248,10 @@ function applyReplacements(code, entry) {
     code = replaceBackgroundColorProp(code, hex, "backgroundColor");
     code = replaceBackgroundGradient(code, hex, "backgroundColor");
     if (hex === "#000000") {
-      code = code.replace(/backgroundColor:\s*"black"/g, "backgroundColor: backgroundColor");
+      code = code.replace(
+        /backgroundColor:\s*"black"/g,
+        "backgroundColor: backgroundColor"
+      );
     }
   }
 
@@ -319,7 +298,9 @@ function main() {
   for (const entry of PRESET_PARAMETER_ENTRIES) {
     if (patchFile(entry)) patched += 1;
   }
-  console.log(`apply-preset-props: patched ${patched}/${PRESET_PARAMETER_ENTRIES.length} components`);
+  console.log(
+    `apply-preset-props: patched ${patched}/${PRESET_PARAMETER_ENTRIES.length} components`
+  );
 }
 
 main();

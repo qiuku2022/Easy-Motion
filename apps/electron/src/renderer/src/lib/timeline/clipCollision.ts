@@ -25,7 +25,7 @@ export function clipsOverlap(a: Clip, b: Clip): boolean {
 export function hasOverlapOnTrack(
   track: Track,
   candidate: ClipRange,
-  excludeClipId?: string,
+  excludeClipId?: string
 ): boolean {
   for (const clip of track.clips) {
     if (excludeClipId && clip.id === excludeClipId) continue;
@@ -36,7 +36,7 @@ export function hasOverlapOnTrack(
 
 export function findClipTrack(
   timeline: Timeline,
-  clipId: string,
+  clipId: string
 ): { track: Track; clip: Clip; trackIndex: number } | null {
   const located = findLayerTrackForClip(timeline, clipId);
   if (!located) return null;
@@ -51,7 +51,7 @@ export function findClipTrack(
 export function clampClipStart(
   startInFrames: number,
   durationInFrames: number,
-  durationInFramesTotal: number,
+  durationInFramesTotal: number
 ): number {
   const maxStart = Math.max(0, durationInFramesTotal - durationInFrames);
   return Math.min(maxStart, Math.max(0, startInFrames));
@@ -60,7 +60,7 @@ export function clampClipStart(
 export function clampClipDuration(
   durationInFrames: number,
   startInFrames: number,
-  durationInFramesTotal: number,
+  durationInFramesTotal: number
 ): number {
   const maxDuration = durationInFramesTotal - startInFrames;
   return Math.min(maxDuration, Math.max(1, durationInFrames));
@@ -70,7 +70,7 @@ export function clampClipDuration(
 export function clampMoveStart(
   startInFrames: number,
   durationInFrames: number,
-  timelineDuration: number,
+  timelineDuration: number
 ): number {
   const duration = Math.max(1, Math.round(durationInFrames));
   const maxStart = Math.max(0, timelineDuration - duration);
@@ -81,7 +81,7 @@ export function clampMoveStart(
 export function clampResizeLeft(
   startInFrames: number,
   fixedEndFrame: number,
-  timelineDuration: number,
+  timelineDuration: number
 ): { startInFrames: number; durationInFrames: number } {
   const end = Math.min(Math.round(fixedEndFrame), timelineDuration);
   let start = Math.max(0, Math.round(startInFrames));
@@ -94,11 +94,11 @@ export function clampResizeLeft(
 export function clampResizeRight(
   fixedStartFrame: number,
   endFrame: number,
-  timelineDuration: number,
+  timelineDuration: number
 ): { startInFrames: number; durationInFrames: number } {
   const start = Math.min(
     Math.max(0, Math.round(fixedStartFrame)),
-    Math.max(0, timelineDuration - 1),
+    Math.max(0, timelineDuration - 1)
   );
   let end = Math.round(endFrame);
   end = Math.min(timelineDuration, Math.max(start + 1, end));

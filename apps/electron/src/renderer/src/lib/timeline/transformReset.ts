@@ -13,7 +13,7 @@ export const TRANSFORM_PROPERTY_PATHS = TRANSFORM_FIELDS.map((f) => f.path);
 
 export function getDefaultTransformPropertyValue(
   path: string,
-  canvas?: { width: number; height: number },
+  canvas?: { width: number; height: number }
 ): unknown {
   const defaults = ensureTransform(undefined, canvas);
   if (path === "transform.position.x") return defaults.position.x;
@@ -27,7 +27,7 @@ export function getDefaultTransformPropertyValue(
 export function canResetTransformProperty(
   clip: Clip,
   path: string,
-  canvas?: { width: number; height: number },
+  canvas?: { width: number; height: number }
 ): boolean {
   if (!TRANSFORM_PROPERTY_PATHS.includes(path)) return false;
   if (clipHasKeyframesForProperty(clip, path)) return true;
@@ -45,17 +45,17 @@ export function canResetTransformProperty(
 
 export function canResetAnyTransformProperty(
   clip: Clip,
-  canvas?: { width: number; height: number },
+  canvas?: { width: number; height: number }
 ): boolean {
   return TRANSFORM_PROPERTY_PATHS.some((path) =>
-    canResetTransformProperty(clip, path, canvas),
+    canResetTransformProperty(clip, path, canvas)
   );
 }
 
 export function buildResetTransformPropertyPatch(
   clip: Clip,
   path: string,
-  canvas?: { width: number; height: number },
+  canvas?: { width: number; height: number }
 ): ClipPatch {
   const defaultValue = getDefaultTransformPropertyValue(path, canvas);
   const keyframes = (clip.keyframes ?? []).filter((kf) => kf.property !== path);
@@ -67,12 +67,12 @@ export function buildResetTransformPropertyPatch(
 
 export function buildResetAllTransformPatch(
   clip: Clip,
-  canvas?: { width: number; height: number },
+  canvas?: { width: number; height: number }
 ): ClipPatch {
   const defaults = ensureTransform(undefined, canvas);
   const transformPaths = new Set(TRANSFORM_PROPERTY_PATHS);
   const keyframes = (clip.keyframes ?? []).filter(
-    (kf) => !transformPaths.has(kf.property),
+    (kf) => !transformPaths.has(kf.property)
   );
   return {
     transform: {

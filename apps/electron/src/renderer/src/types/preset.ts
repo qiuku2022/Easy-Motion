@@ -14,12 +14,7 @@ export type PresetCategory = (typeof PRESET_CATEGORIES)[number];
 
 export type PresetKind = "component" | "timeline";
 
-export type PresetParameterType =
-  | "text"
-  | "number"
-  | "color"
-  | "select"
-  | "image";
+export type PresetParameterType = "text" | "number" | "color" | "select" | "image";
 
 export interface PresetParameter {
   key: string;

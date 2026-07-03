@@ -18,7 +18,7 @@ function main() {
   if (webps.length === 0) {
     console.error(
       "[sync-preset-thumbnails] 未找到 WebP 缩略图。\n" +
-        "  请先运行: cd apps/electron && pnpm generate:preset-thumbnails",
+        "  请先运行: cd apps/electron && pnpm generate:preset-thumbnails"
     );
     process.exit(1);
   }
@@ -29,7 +29,9 @@ function main() {
     copied += 1;
   }
 
-  console.log(`[sync-preset-thumbnails] 已同步 ${copied} 个缩略图 → public/presets/thumbnails/`);
+  console.log(
+    `[sync-preset-thumbnails] 已同步 ${copied} 个缩略图 → public/presets/thumbnails/`
+  );
 }
 
 main();

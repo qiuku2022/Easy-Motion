@@ -36,8 +36,14 @@ function main() {
     primaryColor: "#abcdef",
     secondaryColor: "#fedcba",
   });
-  assert(normalized["source.props.primaryColor"] === "#abcdef", "normalize primaryColor");
-  assert(normalized["source.props.secondaryColor"] === "#fedcba", "normalize secondaryColor");
+  assert(
+    normalized["source.props.primaryColor"] === "#abcdef",
+    "normalize primaryColor"
+  );
+  assert(
+    normalized["source.props.secondaryColor"] === "#fedcba",
+    "normalize secondaryColor"
+  );
 
   const applied = updateClip(placed.timeline, {
     clipId: clip.id,

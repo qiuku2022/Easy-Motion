@@ -37,7 +37,10 @@ function raceWithTimeout(promise, ms, errorMessage, signal) {
 /**
  * Consume LangChain agent message stream with first-response and idle timeouts.
  */
-async function consumeAgentMessageStream(stream, { signal, onChunk, onStatus, isAiMessage, getMessageText }) {
+async function consumeAgentMessageStream(
+  stream,
+  { signal, onChunk, onStatus, isAiMessage, getMessageText }
+) {
   let streamed = "";
 
   for await (const [message] of stream) {
@@ -46,7 +49,10 @@ async function consumeAgentMessageStream(stream, { signal, onChunk, onStatus, is
     }
 
     if (!isAiMessage(message)) {
-      if (message?._getType?.() === "tool" || message?.constructor?.name === "ToolMessage") {
+      if (
+        message?._getType?.() === "tool" ||
+        message?.constructor?.name === "ToolMessage"
+      ) {
         onStatus?.("executing");
       }
       continue;
@@ -101,7 +107,10 @@ async function streamAgentWithTimeouts(agent, messages, options) {
 
     const [message] = result.value;
     if (!isAiMessage(message)) {
-      if (message?._getType?.() === "tool" || message?.constructor?.name === "ToolMessage") {
+      if (
+        message?._getType?.() === "tool" ||
+        message?.constructor?.name === "ToolMessage"
+      ) {
         onStatus?.("executing");
       }
       continue;

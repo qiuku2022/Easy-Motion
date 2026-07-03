@@ -52,7 +52,7 @@ export function ClipBlock({
         "absolute inset-y-0.5 z-[15]",
         selected && !disabled && "z-20",
         dragging && "z-50",
-        disabled && "pointer-events-none opacity-60",
+        disabled && "pointer-events-none opacity-60"
       )}
       style={{ left, width }}
     >
@@ -116,7 +116,7 @@ export function ClipBlock({
                   "absolute bottom-0.5 z-30 h-2 w-2 -translate-x-1/2 rotate-45 border shadow hover:scale-125",
                   selectedKeyframeId === kf.id
                     ? "border-primary bg-primary"
-                    : "border-amber-200 bg-amber-400",
+                    : "border-amber-200 bg-amber-400"
                 )}
                 style={{ left: kfLeft }}
                 title={`关键帧 ${kf.property} @${kf.frame}`}
@@ -133,7 +133,7 @@ export function ClipBlock({
                     const delta = Math.round((ev.clientX - startX) / pxPerFrame);
                     const next = Math.max(
                       0,
-                      Math.min(clip.durationInFrames - 1, startFrame + delta),
+                      Math.min(clip.durationInFrames - 1, startFrame + delta)
                     );
                     moveKeyframe(clip.id, kf.id, next);
                   };

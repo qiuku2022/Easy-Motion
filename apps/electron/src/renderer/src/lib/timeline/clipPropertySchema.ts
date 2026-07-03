@@ -30,21 +30,56 @@ export interface ClipPropertyField {
 export const CLIP_PROPERTY_FIELDS: Record<string, ClipPropertyField[]> = {
   text: [
     { path: "source.content", label: "文字内容", type: "multiline", quick: true },
-    { path: "style.fontSize", label: "字体大小", type: "number", min: 1, suffix: "px", quick: true },
+    {
+      path: "style.fontSize",
+      label: "字体大小",
+      type: "number",
+      min: 1,
+      suffix: "px",
+      quick: true,
+    },
     { path: "style.color", label: "颜色", type: "color", quick: true },
     { path: "style.fontFamily", label: "字体", type: "text" },
-    { path: "transform.position.x", label: "X 坐标", type: "number", step: 1, quick: true },
-    { path: "transform.position.y", label: "Y 坐标", type: "number", step: 1, quick: true },
+    {
+      path: "transform.position.x",
+      label: "X 坐标",
+      type: "number",
+      step: 1,
+      quick: true,
+    },
+    {
+      path: "transform.position.y",
+      label: "Y 坐标",
+      type: "number",
+      step: 1,
+      quick: true,
+    },
   ],
   image: [
     { path: "source.publicPath", label: "资源路径", type: "text", quick: true },
     { path: "source.path", label: "路径", type: "text" },
-    { path: "transform.scale", label: "缩放", type: "number", step: 1, suffix: "%", suffixOnLabel: true, quick: true },
+    {
+      path: "transform.scale",
+      label: "缩放",
+      type: "number",
+      step: 1,
+      suffix: "%",
+      suffixOnLabel: true,
+      quick: true,
+    },
   ],
   video: [
     { path: "source.publicPath", label: "资源路径", type: "text", quick: true },
     { path: "source.path", label: "路径", type: "text" },
-    { path: "transform.scale", label: "缩放", type: "number", step: 1, suffix: "%", suffixOnLabel: true, quick: true },
+    {
+      path: "transform.scale",
+      label: "缩放",
+      type: "number",
+      step: 1,
+      suffix: "%",
+      suffixOnLabel: true,
+      quick: true,
+    },
   ],
   audio: [
     { path: "source.publicPath", label: "资源路径", type: "text", quick: true },
@@ -66,9 +101,31 @@ export const CLIP_PROPERTY_FIELDS: Record<string, ClipPropertyField[]> = {
 export const TRANSFORM_FIELDS: ClipPropertyField[] = [
   { path: "transform.position.x", label: "X 坐标", type: "number", step: 1 },
   { path: "transform.position.y", label: "Y 坐标", type: "number", step: 1 },
-  { path: "transform.scale", label: "缩放", type: "number", step: 1, suffix: "%", suffixOnLabel: true },
-  { path: "transform.rotation", label: "旋转", type: "number", suffix: "°", suffixOnLabel: true },
-  { path: "transform.opacity", label: "透明度", type: "number", min: 0, max: 100, step: 1, suffix: "%", suffixOnLabel: true },
+  {
+    path: "transform.scale",
+    label: "缩放",
+    type: "number",
+    step: 1,
+    suffix: "%",
+    suffixOnLabel: true,
+  },
+  {
+    path: "transform.rotation",
+    label: "旋转",
+    type: "number",
+    suffix: "°",
+    suffixOnLabel: true,
+  },
+  {
+    path: "transform.opacity",
+    label: "透明度",
+    type: "number",
+    min: 0,
+    max: 100,
+    step: 1,
+    suffix: "%",
+    suffixOnLabel: true,
+  },
 ];
 
 export const ANIMATION_FIELDS: ClipPropertyField[] = [
@@ -89,7 +146,10 @@ export const ANIMATION_FIELDS: ClipPropertyField[] = [
 ];
 
 /** 推断用于属性面板的 clip 内容类型（clip.type 优先，其次 source 结构） */
-export function resolveEditableClipType(clip: Clip, trackType: TrackType): TrackType | null {
+export function resolveEditableClipType(
+  clip: Clip,
+  trackType: TrackType
+): TrackType | null {
   if (isKnownTrackType(clip.type) && clip.type !== "group") {
     return clip.type;
   }

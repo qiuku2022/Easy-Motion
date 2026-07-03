@@ -18,16 +18,12 @@ function wrap(handler) {
 function registerLlmHandlers() {
   ipcMain.handle(
     "main:llm:stream",
-    wrap((event, payload) =>
-      llmService.startStream(event.sender, payload)
-    )
+    wrap((event, payload) => llmService.startStream(event.sender, payload))
   );
 
   ipcMain.handle(
     "main:llm:cancel",
-    wrap((_event, payload) =>
-      llmService.cancelStream(payload?.requestId)
-    )
+    wrap((_event, payload) => llmService.cancelStream(payload?.requestId))
   );
 }
 

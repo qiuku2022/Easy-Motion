@@ -8,7 +8,7 @@ export interface ImageReorderPreview {
 function reorderImageIds(
   imageIds: string[],
   imageId: string,
-  insertBeforeIndex: number,
+  insertBeforeIndex: number
 ): string[] {
   const from = imageIds.indexOf(imageId);
   if (from < 0) return imageIds;
@@ -26,7 +26,7 @@ function reorderImageIds(
 export function useImageReorder(
   imageIds: string[],
   containerRef: RefObject<HTMLElement | null>,
-  onReorder: (imageIds: string[]) => void,
+  onReorder: (imageIds: string[]) => void
 ) {
   const [preview, setPreview] = useState<ImageReorderPreview | null>(null);
   const onReorderRef = useRef(onReorder);
@@ -37,9 +37,7 @@ export function useImageReorder(
       const el = containerRef.current;
       if (!el) return 0;
 
-      const items = [
-        ...el.querySelectorAll<HTMLElement>("[data-image-reorder-id]"),
-      ];
+      const items = [...el.querySelectorAll<HTMLElement>("[data-image-reorder-id]")];
       if (items.length === 0) return 0;
 
       let insertIndex = items.length;
@@ -53,7 +51,7 @@ export function useImageReorder(
       }
       return insertIndex;
     },
-    [containerRef],
+    [containerRef]
   );
 
   const startReorder = useCallback(
@@ -99,7 +97,7 @@ export function useImageReorder(
       window.addEventListener("pointermove", onMove);
       window.addEventListener("pointerup", onUp);
     },
-    [imageIds, computeInsertIndex],
+    [imageIds, computeInsertIndex]
   );
 
   return { preview, startReorder };

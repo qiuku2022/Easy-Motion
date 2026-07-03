@@ -56,7 +56,10 @@ const CLIP_SELECTOR_SCHEMA = z.object({
     .object({
       startInFrames: z.number().describe("起始帧，包含"),
       endInFrames: z.number().describe("结束帧，不包含"),
-      includePartialOverlap: z.boolean().optional().describe("是否包含部分重叠，默认 true"),
+      includePartialOverlap: z
+        .boolean()
+        .optional()
+        .describe("是否包含部分重叠，默认 true"),
     })
     .optional()
     .describe("按全局时间范围过滤"),
@@ -87,10 +90,26 @@ function createTimelineTools(ctx) {
         "读取当前时间线的结构化摘要（轨道、片段、时间范围、素材/组件摘要）。复杂修改、批量修改或删除前应先调用。",
       schema: z.object({
         includeClips: z.boolean().optional().describe("是否包含片段摘要，默认 true"),
-        includeKeyframes: z.boolean().optional().describe("是否包含关键帧详情，默认 false"),
-        includeStyles: z.boolean().optional().describe("是否包含 style 对象，默认 false"),
-        maxClipsPerTrack: z.number().min(0).max(100).optional().describe("每条轨道最多返回片段数，默认 20"),
-        maxTracks: z.number().min(1).max(200).optional().describe("最多返回轨道数，默认 50"),
+        includeKeyframes: z
+          .boolean()
+          .optional()
+          .describe("是否包含关键帧详情，默认 false"),
+        includeStyles: z
+          .boolean()
+          .optional()
+          .describe("是否包含 style 对象，默认 false"),
+        maxClipsPerTrack: z
+          .number()
+          .min(0)
+          .max(100)
+          .optional()
+          .describe("每条轨道最多返回片段数，默认 20"),
+        maxTracks: z
+          .number()
+          .min(1)
+          .max(200)
+          .optional()
+          .describe("最多返回轨道数，默认 50"),
       }),
     }
   );
@@ -132,7 +151,10 @@ function createTimelineTools(ctx) {
         endInFrames: z.number().describe("查询结束帧（全局帧，不包含）"),
         type: z.enum(CLIP_TYPES).optional().describe("可选片段类型过滤"),
         trackId: z.string().optional().describe("可选轨道 ID 过滤"),
-        includePartialOverlap: z.boolean().optional().describe("是否包含部分重叠片段，默认 true"),
+        includePartialOverlap: z
+          .boolean()
+          .optional()
+          .describe("是否包含部分重叠片段，默认 true"),
       }),
     }
   );
@@ -141,7 +163,11 @@ function createTimelineTools(ctx) {
     async ({ name, type, order }) => {
       try {
         const track = ctx.createTrack({ name, type, order });
-        return toolResult(true, { trackId: track.id, name: track.name, type: track.type });
+        return toolResult(true, {
+          trackId: track.id,
+          name: track.name,
+          type: track.type,
+        });
       } catch (error) {
         return toolResult(false, undefined, error.message);
       }
@@ -183,14 +209,23 @@ function createTimelineTools(ctx) {
           .object({
             kind: z.enum(["inline", "asset", "data", "component"]).optional(),
             content: z.string().optional().describe("内联文字内容"),
-            shape: z.enum(["rect", "circle"]).optional().describe("shape 轨道：矩形或圆形"),
+            shape: z
+              .enum(["rect", "circle"])
+              .optional()
+              .describe("shape 轨道：矩形或圆形"),
             width: z.number().optional().describe("shape 宽度（像素）"),
             height: z.number().optional().describe("shape 高度（像素）"),
             radius: z.number().optional().describe("圆形半径（像素）"),
             component: z.string().optional().describe("animation 轨道组件名"),
             assetId: z.string().optional().describe("素材库 ID（importAsset 返回）"),
-            path: z.string().optional().describe("素材相对路径，如 assets/image/xxx.png"),
-            publicPath: z.string().optional().describe("Remotion public 路径，如 /assets/image/xxx.png"),
+            path: z
+              .string()
+              .optional()
+              .describe("素材相对路径，如 assets/image/xxx.png"),
+            publicPath: z
+              .string()
+              .optional()
+              .describe("Remotion public 路径，如 /assets/image/xxx.png"),
           })
           .optional(),
         transform: z
@@ -276,14 +311,17 @@ function createTimelineTools(ctx) {
       description:
         "移动片段到新的全局起始帧，或按相对帧数前后移动；可跨同类型轨道。用于「往后挪 2 秒」「移到第 90 帧」「放到另一个文字轨道」。",
       schema: z.object({
-        clipId: z
-          .string()
-          .optional()
-          .describe("片段 ID；用户已选中片段时可省略"),
+        clipId: z.string().optional().describe("片段 ID；用户已选中片段时可省略"),
         targetTrackId: z.string().optional().describe("目标轨道 ID；省略则留在原轨道"),
         startInFrames: z.number().optional().describe("目标全局起始帧"),
-        relativeOffsetInFrames: z.number().optional().describe("相对当前起始帧移动的帧数，可为负数"),
-        extendTimeline: z.boolean().optional().describe("移动后超出总时长时是否自动延长时间线，默认 false"),
+        relativeOffsetInFrames: z
+          .number()
+          .optional()
+          .describe("相对当前起始帧移动的帧数，可为负数"),
+        extendTimeline: z
+          .boolean()
+          .optional()
+          .describe("移动后超出总时长时是否自动延长时间线，默认 false"),
       }),
     }
   );
@@ -340,8 +378,15 @@ function createTimelineTools(ctx) {
         selector: CLIP_SELECTOR_SCHEMA.describe("片段选择器"),
         updates: z
           .record(z.string(), z.unknown())
-          .describe("要批量更新的属性，支持点路径如 style.color、source.props.primaryColor"),
-        maxMatches: z.number().min(1).max(100).optional().describe("最大匹配数量，默认 20"),
+          .describe(
+            "要批量更新的属性，支持点路径如 style.color、source.props.primaryColor"
+          ),
+        maxMatches: z
+          .number()
+          .min(1)
+          .max(100)
+          .optional()
+          .describe("最大匹配数量，默认 20"),
         dryRun: z.boolean().optional().describe("仅预览影响范围，不修改时间线"),
         allowSourceReplace: z
           .boolean()
@@ -366,7 +411,12 @@ function createTimelineTools(ctx) {
         "批量删除符合 selector 的片段。默认 dryRun=true；删除多个片段必须 confirmDelete=true。",
       schema: z.object({
         selector: CLIP_SELECTOR_SCHEMA.describe("片段选择器"),
-        maxMatches: z.number().min(1).max(100).optional().describe("最大匹配数量，默认 20"),
+        maxMatches: z
+          .number()
+          .min(1)
+          .max(100)
+          .optional()
+          .describe("最大匹配数量，默认 20"),
         dryRun: z.boolean().optional().describe("仅预览影响范围，默认 true"),
         confirmDelete: z.boolean().optional().describe("确认删除多个片段，默认 false"),
       }),
@@ -389,9 +439,17 @@ function createTimelineTools(ctx) {
       schema: z.object({
         selector: CLIP_SELECTOR_SCHEMA.describe("片段选择器"),
         offsetInFrames: z.number().describe("平移帧数；正数向后，负数向前"),
-        maxMatches: z.number().min(1).max(100).optional().describe("最大匹配数量，默认 20"),
+        maxMatches: z
+          .number()
+          .min(1)
+          .max(100)
+          .optional()
+          .describe("最大匹配数量，默认 20"),
         dryRun: z.boolean().optional().describe("仅预览影响范围，不修改时间线"),
-        extendTimeline: z.boolean().optional().describe("超出总时长时是否扩展时间线，默认 false"),
+        extendTimeline: z
+          .boolean()
+          .optional()
+          .describe("超出总时长时是否扩展时间线，默认 false"),
       }),
     }
   );
@@ -412,7 +470,11 @@ function createTimelineTools(ctx) {
       schema: z.object({
         templateId: z.enum(SCENE_TEMPLATE_IDS).describe("场景模板 ID"),
         startInFrames: z.number().optional().describe("模板起始帧，默认 0"),
-        durationInFrames: z.number().min(1).optional().describe("模板总时长，默认随模板"),
+        durationInFrames: z
+          .number()
+          .min(1)
+          .optional()
+          .describe("模板总时长，默认随模板"),
         parameters: z
           .record(z.string(), z.unknown())
           .optional()
@@ -438,10 +500,23 @@ function createTimelineTools(ctx) {
       description:
         "将参考图视觉分析得到的 layoutPlan 落到时间线。图片会话中可不传 visualAnalysis，默认使用当前参考图计划。",
       schema: z.object({
-        visualAnalysis: z.record(z.string(), z.unknown()).optional().describe("视觉分析 JSON；省略则使用当前图片会话结果"),
-        layoutPlan: z.record(z.string(), z.unknown()).optional().describe("可执行 layoutPlan；省略时由 visualAnalysis 或当前图片会话生成"),
-        startInFrames: z.number().optional().describe("从 visualAnalysis 生成计划时的起始帧"),
-        durationInFrames: z.number().min(1).optional().describe("从 visualAnalysis 生成计划时的片段时长"),
+        visualAnalysis: z
+          .record(z.string(), z.unknown())
+          .optional()
+          .describe("视觉分析 JSON；省略则使用当前图片会话结果"),
+        layoutPlan: z
+          .record(z.string(), z.unknown())
+          .optional()
+          .describe("可执行 layoutPlan；省略时由 visualAnalysis 或当前图片会话生成"),
+        startInFrames: z
+          .number()
+          .optional()
+          .describe("从 visualAnalysis 生成计划时的起始帧"),
+        durationInFrames: z
+          .number()
+          .min(1)
+          .optional()
+          .describe("从 visualAnalysis 生成计划时的片段时长"),
         dryRun: z.boolean().optional().describe("仅返回计划，不修改时间线"),
       }),
     }
@@ -501,7 +576,10 @@ function createTimelineTools(ctx) {
       schema: z.object({
         outputPath: z.string().describe("导出文件绝对路径，必须由用户明确提供"),
         format: z.enum(EXPORT_FORMATS).optional().describe("导出格式，默认 mp4"),
-        resolution: z.enum(EXPORT_RESOLUTIONS).optional().describe("导出分辨率，默认 original"),
+        resolution: z
+          .enum(EXPORT_RESOLUTIONS)
+          .optional()
+          .describe("导出分辨率，默认 original"),
         quality: z.enum(EXPORT_QUALITIES).optional().describe("导出质量，默认 medium"),
       }),
     }
@@ -534,8 +612,7 @@ function createTimelineTools(ctx) {
     },
     {
       name: "cancelExport",
-      description:
-        "取消当前视频导出；exportId 可省略，省略时取消当前 active export。",
+      description: "取消当前视频导出；exportId 可省略，省略时取消当前 active export。",
       schema: z.object({
         exportId: z.string().optional().describe("导出任务 ID，省略则取消当前任务"),
       }),
@@ -597,10 +674,7 @@ function createTimelineTools(ctx) {
       name: "deleteClip",
       description: "删除指定片段。用户已选中片段时 clipId 可省略。",
       schema: z.object({
-        clipId: z
-          .string()
-          .optional()
-          .describe("片段 ID；用户已选中片段时可省略"),
+        clipId: z.string().optional().describe("片段 ID；用户已选中片段时可省略"),
       }),
     }
   );
@@ -629,13 +703,12 @@ function createTimelineTools(ctx) {
       description:
         "为片段属性添加关键帧。frame 为片段内相对帧号（0 为片段起点）。适合位移动画、透明度渐变等。",
       schema: z.object({
-        clipId: z
-          .string()
-          .optional()
-          .describe("片段 ID；用户已选中片段时可省略"),
+        clipId: z.string().optional().describe("片段 ID；用户已选中片段时可省略"),
         property: z
           .string()
-          .describe("属性路径，如 transform.opacity、transform.position.x、style.fontSize"),
+          .describe(
+            "属性路径，如 transform.opacity、transform.position.x、style.fontSize"
+          ),
         frame: z.number().describe("片段内帧号，从 0 开始"),
         value: z
           .union([
@@ -735,9 +808,19 @@ function createTimelineTools(ctx) {
           .optional()
           .describe("素材中心位置；省略则居中"),
         scale: z.number().optional().describe("缩放，默认 1"),
-        objectFit: z.enum(["contain", "cover", "fill"]).optional().describe("图片/视频填充方式，默认 contain"),
-        durationInFrames: z.number().min(1).optional().describe("片段时长；省略则使用素材元数据或默认时长"),
-        extendTimeline: z.boolean().optional().describe("素材超出总时长时是否扩展时间线，默认 false"),
+        objectFit: z
+          .enum(["contain", "cover", "fill"])
+          .optional()
+          .describe("图片/视频填充方式，默认 contain"),
+        durationInFrames: z
+          .number()
+          .min(1)
+          .optional()
+          .describe("片段时长；省略则使用素材元数据或默认时长"),
+        extendTimeline: z
+          .boolean()
+          .optional()
+          .describe("素材超出总时长时是否扩展时间线，默认 false"),
       }),
     }
   );
@@ -761,7 +844,9 @@ function createTimelineTools(ctx) {
       description:
         "导入 CSV/JSON 数据文件到当前项目 data/ 目录，并返回字段名、行数和预览行。用于后续 bindChartData。",
       schema: z.object({
-        source: z.string().describe("数据文件路径：本地绝对路径或项目相对路径，仅支持 CSV/JSON"),
+        source: z
+          .string()
+          .describe("数据文件路径：本地绝对路径或项目相对路径，仅支持 CSV/JSON"),
       }),
     }
   );
@@ -804,11 +889,20 @@ function createTimelineTools(ctx) {
         clipId: z.string().optional().describe("目标图表片段 ID"),
         query: z.string().optional().describe("未指定 clipId 时用于查询目标图表片段"),
         source: z.string().optional().describe("要导入并绑定的数据文件路径"),
-        dataFile: z.string().optional().describe("项目内已导入的数据文件相对路径，如 data/demo.csv"),
-        rows: z.array(z.record(z.string(), z.unknown())).optional().describe("直接提供的数据行"),
+        dataFile: z
+          .string()
+          .optional()
+          .describe("项目内已导入的数据文件相对路径，如 data/demo.csv"),
+        rows: z
+          .array(z.record(z.string(), z.unknown()))
+          .optional()
+          .describe("直接提供的数据行"),
         xField: z.string().describe("X 轴/label 字段名"),
         yField: z.string().describe("Y 轴/value 字段名"),
-        chartType: z.enum(CHART_TYPES).optional().describe("chart 轨道图表类型或预设参数"),
+        chartType: z
+          .enum(CHART_TYPES)
+          .optional()
+          .describe("chart 轨道图表类型或预设参数"),
         title: z.string().optional().describe("图表标题"),
       }),
     }
@@ -829,10 +923,7 @@ function createTimelineTools(ctx) {
         "搜索内置 Remotion 动画预设（81 个）。按名称、描述或分类查询，返回 presetId 供 applyPreset 使用。",
       schema: z.object({
         query: z.string().describe("搜索词，如「柱状图」「标题淡入」「片头」"),
-        category: z
-          .enum(PRESET_CATEGORIES)
-          .optional()
-          .describe("可选分类过滤"),
+        category: z.enum(PRESET_CATEGORIES).optional().describe("可选分类过滤"),
         limit: z.number().min(1).max(20).optional().describe("返回条数，默认 10"),
       }),
     }
@@ -858,23 +949,17 @@ function createTimelineTools(ctx) {
       description:
         "将内置 Remotion 预设应用到时间线 animation 轨道。优先用 listPresets 查 presetId；也可用 presetName 模糊匹配。默认落在当前播放头位置。",
       schema: z.object({
-        presetId: z
-          .string()
-          .optional()
-          .describe("预设 ID，如 rve-popping-text"),
+        presetId: z.string().optional().describe("预设 ID，如 rve-popping-text"),
         presetName: z
           .string()
           .optional()
           .describe("预设中文名或关键词，如「缩放弹出」「柱状图」"),
-        startInFrames: z
-          .number()
-          .optional()
-          .describe("起始帧；省略则使用当前播放头"),
+        startInFrames: z.number().optional().describe("起始帧；省略则使用当前播放头"),
         trackId: z.string().optional().describe("目标 animation 轨道 ID"),
         parameters: z
           .record(z.string(), z.unknown())
           .optional()
-          .describe("预设参数（如 { text: \"标题\" }），写入 clip.source.props"),
+          .describe('预设参数（如 { text: "标题" }），写入 clip.source.props'),
       }),
     }
   );

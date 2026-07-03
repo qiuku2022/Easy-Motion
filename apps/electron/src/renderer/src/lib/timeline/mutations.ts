@@ -8,7 +8,11 @@ import {
   getClipRange,
   hasOverlapOnTrack,
 } from "@/lib/timeline/clipCollision";
-import { findLayerTrackForClip, findParentGroup, findTrackById } from "@/lib/timeline/trackTree";
+import {
+  findLayerTrackForClip,
+  findParentGroup,
+  findTrackById,
+} from "@/lib/timeline/trackTree";
 import {
   defaultClipForTrackType,
   trackTypeNeedsDefaultClip,
@@ -21,7 +25,13 @@ import {
   normalizeMarkers,
 } from "@/lib/timeline/markers";
 import { assertValidTimeline } from "@/lib/timeline/validate";
-import type { Clip, Timeline, TimelineMarker, Track, TrackType } from "@/types/timeline";
+import type {
+  Clip,
+  Timeline,
+  TimelineMarker,
+  Track,
+  TrackType,
+} from "@/types/timeline";
 
 export function cloneTimeline(timeline: Timeline): Timeline {
   return structuredClone(timeline);
@@ -40,11 +50,7 @@ function withValidated(timeline: Timeline): Timeline {
   return timeline;
 }
 
-export function addTrack(
-  timeline: Timeline,
-  type: TrackType,
-  name?: string,
-): Timeline {
+export function addTrack(timeline: Timeline, type: TrackType, name?: string): Timeline {
   const maxOrder = timeline.tracks.reduce((max, t) => Math.max(max, t.order), -1);
   const track: Track = {
     id: newId("track"),
@@ -58,9 +64,7 @@ export function addTrack(
     clips: trackTypeNeedsDefaultClip(type)
       ? [defaultClipForTrackType(timeline, type)]
       : [],
-    ...(type === "group"
-      ? { children: [] as Track[], collapsed: false }
-      : {}),
+    ...(type === "group" ? { children: [] as Track[], collapsed: false } : {}),
   };
   return withValidated({
     ...timeline,
@@ -71,7 +75,7 @@ export function addTrack(
 function mapTrackById(
   tracks: Track[],
   trackId: string,
-  updater: (track: Track) => Track,
+  updater: (track: Track) => Track
 ): { tracks: Track[]; changed: boolean } {
   let changed = false;
   const next = tracks.map((track) => {
@@ -100,7 +104,7 @@ export function addChildTrack(
   timeline: Timeline,
   groupId: string,
   type: TrackType,
-  name?: string,
+  name?: string
 ): Timeline {
   const group = findTrackById(timeline, groupId);
   if (!group || group.type !== "group") {
@@ -131,10 +135,7 @@ export function addChildTrack(
   }));
 }
 
-export function toggleGroupCollapsed(
-  timeline: Timeline,
-  groupId: string,
-): Timeline {
+export function toggleGroupCollapsed(timeline: Timeline, groupId: string): Timeline {
   return patchTrack(timeline, groupId, (t) => {
     if (t.type !== "group") return t;
     return { ...t, collapsed: !t.collapsed };
@@ -158,7 +159,10 @@ export function removeTrack(timeline: Timeline, trackId: string): Timeline {
 }
 
 /** @param trackIdsTopToBottom 时间线从上到下（前景→背景）的顶层轨道 id */
-export function reorderTracks(timeline: Timeline, trackIdsTopToBottom: string[]): Timeline {
+export function reorderTracks(
+  timeline: Timeline,
+  trackIdsTopToBottom: string[]
+): Timeline {
   const byId = new Map(timeline.tracks.map((t) => [t.id, t]));
   const tracks: Track[] = [];
   const n = trackIdsTopToBottom.length;
@@ -209,7 +213,7 @@ export function toggleTrackMuted(timeline: Timeline, trackId: string): Timeline 
 export function toggleTrackSolo(
   timeline: Timeline,
   trackId: string,
-  exclusive = false,
+  exclusive = false
 ): Timeline {
   const target = findTrackById(timeline, trackId);
   if (!target) throw new Error("轨道不存在");
@@ -221,19 +225,13 @@ export function toggleTrackSolo(
     if (track.type === "group") {
       const children = (track.children ?? []).map((child) => ({
         ...child,
-        solo:
-          child.id === trackId
-            ? nextSolo
-            : exclusive
-              ? false
-              : child.solo,
+        solo: child.id === trackId ? nextSolo : exclusive ? false : child.solo,
       }));
       return { ...track, children };
     }
     return {
       ...track,
-      solo:
-        track.id === trackId ? nextSolo : exclusive ? false : track.solo,
+      solo: track.id === trackId ? nextSolo : exclusive ? false : track.solo,
     };
   });
 
@@ -243,7 +241,7 @@ export function toggleTrackSolo(
 function patchTrack(
   timeline: Timeline,
   trackId: string,
-  patch: (track: Track) => Track,
+  patch: (track: Track) => Track
 ): Timeline {
   const { tracks, changed } = mapTrackById(timeline.tracks, trackId, patch);
   if (!changed) return timeline;
@@ -256,7 +254,7 @@ export function addClip(timeline: Timeline, trackId: string, clip: Clip): Timeli
     const start = clampClipStart(
       clip.startInFrames,
       clip.durationInFrames,
-      timeline.durationInFrames,
+      timeline.durationInFrames
     );
     const normalized: Clip = {
       ...clip,
@@ -264,7 +262,7 @@ export function addClip(timeline: Timeline, trackId: string, clip: Clip): Timeli
       durationInFrames: clampClipDuration(
         clip.durationInFrames,
         start,
-        timeline.durationInFrames,
+        timeline.durationInFrames
       ),
       lastModifiedBy: clip.lastModifiedBy ?? "user",
     };
@@ -277,7 +275,11 @@ export function addClip(timeline: Timeline, trackId: string, clip: Clip): Timeli
   return withValidated({ ...timeline, tracks });
 }
 
-export function removeClip(timeline: Timeline, trackId: string, clipId: string): Timeline {
+export function removeClip(
+  timeline: Timeline,
+  trackId: string,
+  clipId: string
+): Timeline {
   const { tracks, changed } = mapTrackById(timeline.tracks, trackId, (track) => {
     if (track.locked) throw new Error("轨道已锁定");
     return { ...track, clips: track.clips.filter((c) => c.id !== clipId) };
@@ -290,7 +292,7 @@ export function moveClip(
   timeline: Timeline,
   clipId: string,
   targetTrackId: string,
-  newStartInFrames: number,
+  newStartInFrames: number
 ): Timeline {
   const located = findClipTrack(timeline, clipId);
   if (!located) throw new Error("片段不存在");
@@ -309,7 +311,7 @@ export function moveClip(
   const start = clampMoveStart(
     newStartInFrames,
     clip.durationInFrames,
-    timeline.durationInFrames,
+    timeline.durationInFrames
   );
   const candidate = getClipRange({ ...clip, startInFrames: start });
 
@@ -321,20 +323,31 @@ export function moveClip(
   const tracks = timeline.tracks.map((track) => {
     let next = track;
 
-    if (track.id === sourceTrack.id || track.children?.some((c) => c.id === sourceTrack.id)) {
+    if (
+      track.id === sourceTrack.id ||
+      track.children?.some((c) => c.id === sourceTrack.id)
+    ) {
       next = mapTrackById([track], sourceTrack.id, (t) => {
         const clips = movingBetweenTracks
           ? t.clips.filter((c) => c.id !== clipId)
           : t.clips.map((c) =>
               c.id === clipId
-                ? { ...c, startInFrames: start, lastModifiedBy: "user" as const, lastModifiedAt: Date.now() }
-                : c,
+                ? {
+                    ...c,
+                    startInFrames: start,
+                    lastModifiedBy: "user" as const,
+                    lastModifiedAt: Date.now(),
+                  }
+                : c
             );
         return { ...t, clips };
       }).tracks[0]!;
     }
 
-    if (movingBetweenTracks && (next.id === targetTrackId || next.children?.some((c) => c.id === targetTrackId))) {
+    if (
+      movingBetweenTracks &&
+      (next.id === targetTrackId || next.children?.some((c) => c.id === targetTrackId))
+    ) {
       next = mapTrackById([next], targetTrackId, (t) => {
         const moved: Clip = {
           ...clip,
@@ -357,7 +370,7 @@ export function resizeClip(
   clipId: string,
   edge: "left" | "right",
   newStartInFrames: number,
-  newDurationInFrames: number,
+  newDurationInFrames: number
 ): Timeline {
   const located = findClipTrack(timeline, clipId);
   if (!located) throw new Error("片段不存在");
@@ -372,7 +385,7 @@ export function resizeClip(
     const clamped = clampResizeLeft(
       newStartInFrames,
       fixedEnd,
-      timeline.durationInFrames,
+      timeline.durationInFrames
     );
     start = clamped.startInFrames;
     duration = clamped.durationInFrames;
@@ -381,32 +394,37 @@ export function resizeClip(
     const clamped = clampResizeRight(
       clip.startInFrames,
       fixedEnd,
-      timeline.durationInFrames,
+      timeline.durationInFrames
     );
     start = clamped.startInFrames;
     duration = clamped.durationInFrames;
   }
 
-  const candidate = getClipRange({ ...clip, startInFrames: start, durationInFrames: duration });
+  const candidate = getClipRange({
+    ...clip,
+    startInFrames: start,
+    durationInFrames: duration,
+  });
   if (hasOverlapOnTrack(located.track, candidate, clipId)) {
     throw new Error("与同轨道其它片段重叠");
   }
 
-  const tracks = timeline.tracks.map((track) =>
-    mapTrackById([track], located.track.id, (t) => ({
-      ...t,
-      clips: t.clips.map((c) =>
-        c.id === clipId
-          ? {
-              ...c,
-              startInFrames: start,
-              durationInFrames: duration,
-              lastModifiedBy: "user" as const,
-              lastModifiedAt: Date.now(),
-            }
-          : c,
-      ),
-    })).tracks[0]!,
+  const tracks = timeline.tracks.map(
+    (track) =>
+      mapTrackById([track], located.track.id, (t) => ({
+        ...t,
+        clips: t.clips.map((c) =>
+          c.id === clipId
+            ? {
+                ...c,
+                startInFrames: start,
+                durationInFrames: duration,
+                lastModifiedBy: "user" as const,
+                lastModifiedAt: Date.now(),
+              }
+            : c
+        ),
+      })).tracks[0]!
   );
 
   return withValidated({ ...timeline, tracks });
@@ -415,7 +433,7 @@ export function resizeClip(
 export function splitClip(
   timeline: Timeline,
   clipId: string,
-  splitFrame: number,
+  splitFrame: number
 ): Timeline {
   const located = findClipTrack(timeline, clipId);
   if (!located) throw new Error("片段不存在");
@@ -446,17 +464,24 @@ export function splitClip(
     lastModifiedAt: Date.now(),
   };
 
-  const tracks = timeline.tracks.map((t) =>
-    mapTrackById([t], track.id, (row) => {
-      const clips = row.clips.flatMap((c) => (c.id === clipId ? [first, second] : [c]));
-      return { ...row, clips };
-    }).tracks[0]!,
+  const tracks = timeline.tracks.map(
+    (t) =>
+      mapTrackById([t], track.id, (row) => {
+        const clips = row.clips.flatMap((c) =>
+          c.id === clipId ? [first, second] : [c]
+        );
+        return { ...row, clips };
+      }).tracks[0]!
   );
 
   return withValidated({ ...timeline, tracks });
 }
 
-export function renameTrack(timeline: Timeline, trackId: string, name: string): Timeline {
+export function renameTrack(
+  timeline: Timeline,
+  trackId: string,
+  name: string
+): Timeline {
   const trimmed = name.trim();
   if (!trimmed) throw new Error("轨道名称不能为空");
   return patchTrack(timeline, trackId, (t) => ({ ...t, name: trimmed }));
@@ -541,7 +566,7 @@ function replaceClipOnTrack(
   track: Track,
   clipTrackId: string,
   clipId: string,
-  nextClip: Clip,
+  nextClip: Clip
 ): Track {
   if (track.id === clipTrackId) {
     return {
@@ -553,7 +578,7 @@ function replaceClipOnTrack(
     return {
       ...track,
       children: track.children.map((child) =>
-        replaceClipOnTrack(child, clipTrackId, clipId, nextClip),
+        replaceClipOnTrack(child, clipTrackId, clipId, nextClip)
       ),
     };
   }
@@ -563,16 +588,12 @@ function replaceClipOnTrack(
 export function updateClip(
   timeline: Timeline,
   clipId: string,
-  patch: ClipPatch,
+  patch: ClipPatch
 ): Timeline {
   const located = findLayerTrackForClip(timeline, clipId);
   if (!located) throw new Error("片段不存在");
   const parentGroup = findParentGroup(timeline, located.clipTrack.id);
-  if (
-    located.layerTrack.locked ||
-    located.clipTrack.locked ||
-    parentGroup?.locked
-  ) {
+  if (located.layerTrack.locked || located.clipTrack.locked || parentGroup?.locked) {
     throw new Error("轨道已锁定");
   }
 
@@ -581,12 +602,12 @@ export function updateClip(
   const start = clampClipStart(
     nextClip.startInFrames,
     nextClip.durationInFrames,
-    timeline.durationInFrames,
+    timeline.durationInFrames
   );
   const duration = clampClipDuration(
     nextClip.durationInFrames,
     start,
-    timeline.durationInFrames,
+    timeline.durationInFrames
   );
   nextClip = { ...nextClip, startInFrames: start, durationInFrames: duration };
 
@@ -596,7 +617,7 @@ export function updateClip(
   }
 
   const tracks = timeline.tracks.map((track) =>
-    replaceClipOnTrack(track, located.clipTrack.id, clipId, nextClip),
+    replaceClipOnTrack(track, located.clipTrack.id, clipId, nextClip)
   );
 
   return withValidated({ ...timeline, tracks });
@@ -610,11 +631,7 @@ function clampMarkerFrame(timeline: Timeline, frame: number): number {
   return Math.min(timeline.durationInFrames, Math.max(0, Math.round(frame)));
 }
 
-export function addMarker(
-  timeline: Timeline,
-  frame: number,
-  name?: string,
-): Timeline {
+export function addMarker(timeline: Timeline, frame: number, name?: string): Timeline {
   const clamped = clampMarkerFrame(timeline, frame);
   const markers = normalizeMarkers(timeline.markers);
   if (findMarkerAtFrame({ ...timeline, markers }, clamped, 0)) {
@@ -655,28 +672,24 @@ export function toggleMarkerAtFrame(timeline: Timeline, frame: number): Timeline
 export function replaceClip(
   timeline: Timeline,
   clipId: string,
-  nextClip: Clip,
+  nextClip: Clip
 ): Timeline {
   const located = findLayerTrackForClip(timeline, clipId);
   if (!located) throw new Error("片段不存在");
   const parentGroup = findParentGroup(timeline, located.clipTrack.id);
-  if (
-    located.layerTrack.locked ||
-    located.clipTrack.locked ||
-    parentGroup?.locked
-  ) {
+  if (located.layerTrack.locked || located.clipTrack.locked || parentGroup?.locked) {
     throw new Error("轨道已锁定");
   }
 
   const start = clampClipStart(
     nextClip.startInFrames,
     nextClip.durationInFrames,
-    timeline.durationInFrames,
+    timeline.durationInFrames
   );
   const duration = clampClipDuration(
     nextClip.durationInFrames,
     start,
-    timeline.durationInFrames,
+    timeline.durationInFrames
   );
   const normalized: Clip = {
     ...nextClip,
@@ -684,27 +697,21 @@ export function replaceClip(
     durationInFrames: duration,
   };
 
-  if (
-    hasOverlapOnTrack(
-      located.clipTrack,
-      getClipRange(normalized),
-      clipId,
-    )
-  ) {
+  if (hasOverlapOnTrack(located.clipTrack, getClipRange(normalized), clipId)) {
     throw new Error("片段与其他片段重叠");
   }
 
   assertValidTimeline({
     ...timeline,
     tracks: timeline.tracks.map((track) =>
-      replaceClipOnTrack(track, located.clipTrack.id, clipId, normalized),
+      replaceClipOnTrack(track, located.clipTrack.id, clipId, normalized)
     ),
   });
 
   return withValidated({
     ...timeline,
     tracks: timeline.tracks.map((track) =>
-      replaceClipOnTrack(track, located.clipTrack.id, clipId, normalized),
+      replaceClipOnTrack(track, located.clipTrack.id, clipId, normalized)
     ),
   });
 }

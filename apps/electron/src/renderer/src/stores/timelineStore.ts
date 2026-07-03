@@ -45,21 +45,16 @@ import {
   removeClipKeyframe,
   updateClipKeyframe,
 } from "@/lib/timeline/keyframes";
-import { clipHasKeyframesForProperty, findKeyframeAtFrame } from "@/lib/timeline/keyframeProperty";
+import {
+  clipHasKeyframesForProperty,
+  findKeyframeAtFrame,
+} from "@/lib/timeline/keyframeProperty";
 import { buildPatchFromPropertyPath } from "@/lib/timeline/clipPropertySchema";
 import { clampTimelinePosition } from "@/lib/timeline/coordinates";
-import {
-  POSITION_X_PATH,
-  POSITION_Y_PATH,
-} from "@/lib/timeline/positionProperty";
+import { POSITION_X_PATH, POSITION_Y_PATH } from "@/lib/timeline/positionProperty";
 import { TimelineValidationError } from "@/lib/timeline/validate";
 import { getEasyMotion } from "@/types/easyMotion";
-import type {
-  ApplyTimelineOptions,
-  Clip,
-  Timeline,
-  TrackType,
-} from "@/types/timeline";
+import type { ApplyTimelineOptions, Clip, Timeline, TrackType } from "@/types/timeline";
 import type { RemotionSyncStats } from "@/lib/remotion-sync";
 import { placeAssetOnTimeline } from "@/lib/timeline/placeAssetClip";
 import { placePresetOnTimeline } from "@/lib/timeline/placePresetClip";
@@ -115,7 +110,10 @@ interface TimelineState {
   isSyncingRemotion: boolean;
   lastRemotionSync: RemotionSyncStats | null;
 
-  loadTimeline: (options?: { skipAutoSync?: boolean; subprojectPath?: string }) => Promise<void>;
+  loadTimeline: (options?: {
+    skipAutoSync?: boolean;
+    subprojectPath?: string;
+  }) => Promise<void>;
   replaceTimelineFromAgent: (timeline: Timeline) => void;
   applyAgentTimelineDiff: (options: {
     subprojectPath: string;
@@ -138,7 +136,7 @@ interface TimelineState {
 
   applyTimelinePatch: (
     updater: (timeline: Timeline) => Timeline,
-    options?: ApplyTimelineOptions,
+    options?: ApplyTimelineOptions
   ) => void;
 
   addTrack: (type: TrackType, name?: string) => void;
@@ -170,14 +168,18 @@ interface TimelineState {
     clipId: string,
     edge: "left" | "right",
     newStartInFrames: number,
-    newDurationInFrames: number,
+    newDurationInFrames: number
   ) => void;
   splitClip: (clipId: string, splitFrame: number) => void;
   updateClip: (clipId: string, patch: ClipPatch) => void;
   addKeyframeAtPlayhead: (clipId: string, property: string, value?: unknown) => void;
   toggleKeyframeAtPlayhead: (clipId: string, property: string) => void;
   toggleKeyframeAtPlayheadForSelectedProperty: () => void;
-  setPropertyValueAtPlayhead: (clipId: string, property: string, value: unknown) => void;
+  setPropertyValueAtPlayhead: (
+    clipId: string,
+    property: string,
+    value: unknown
+  ) => void;
   removeKeyframe: (clipId: string, keyframeId: string) => void;
   removeSelectedKeyframe: () => boolean;
   moveKeyframe: (clipId: string, keyframeId: string, newRelativeFrame: number) => void;
@@ -189,7 +191,7 @@ interface TimelineState {
         import("@/types/timeline").Keyframe,
         "value" | "easing" | "interpolation" | "bezierCp" | "springConfig"
       >
-    >,
+    >
   ) => void;
   splitSelectedClipAtPlayhead: () => void;
   deleteSelectedClip: () => void;
@@ -203,12 +205,12 @@ interface TimelineState {
   placeAssetAtFrame: (
     assetId: string,
     startInFrames: number,
-    trackId?: string | null,
+    trackId?: string | null
   ) => void;
   placePresetAtFrame: (
     presetId: string,
     startInFrames: number,
-    trackId?: string | null,
+    trackId?: string | null
   ) => boolean;
   placePresetAtPlayhead: (presetId: string, trackId?: string | null) => boolean;
 
@@ -224,7 +226,7 @@ export const PREVIEW_PROPS_DEBOUNCE_MS = 250;
 function clampPropertyValueForTimeline(
   timeline: Timeline,
   property: string,
-  value: unknown,
+  value: unknown
 ): unknown {
   if (typeof value !== "number" || !Number.isFinite(value)) return value;
   if (property === POSITION_X_PATH) {
@@ -246,9 +248,7 @@ const debouncedPreviewPropsSync = debounce(() => {
   void useTimelineStore.getState().syncPreviewAfterPropsEdit();
 }, PREVIEW_PROPS_DEBOUNCE_MS);
 
-function usesTimelinePreviewPush(
-  drift: TimelineState["remotionDrift"],
-): boolean {
+function usesTimelinePreviewPush(drift: TimelineState["remotionDrift"]): boolean {
   return Boolean(drift?.hasCustomRemotionCode || drift?.timelineDrivenPreview);
 }
 
@@ -286,7 +286,7 @@ function syncSelectionAfterTimelineChange(
   timeline: Timeline,
   selectedClipId: string | null,
   selectedTrackId: string | null,
-  selectedMarkerId: string | null,
+  selectedMarkerId: string | null
 ): {
   selectedClipId: string | null;
   selectedTrackId: string | null;
@@ -306,7 +306,7 @@ function syncSelectionAfterTimelineChange(
   }
   if (selectedMarkerId) {
     const exists = normalizeMarkers(timeline.markers).some(
-      (m) => m.id === selectedMarkerId,
+      (m) => m.id === selectedMarkerId
     );
     if (!exists) {
       return { selectedClipId, selectedTrackId, selectedMarkerId: null };
@@ -316,10 +316,7 @@ function syncSelectionAfterTimelineChange(
 }
 
 export const useTimelineStore = create<TimelineState>((set, get) => {
-  const commitTimeline = (
-    next: Timeline,
-    options: ApplyTimelineOptions = {},
-  ) => {
+  const commitTimeline = (next: Timeline, options: ApplyTimelineOptions = {}) => {
     const {
       recordHistory = true,
       generate = "debounced",
@@ -349,7 +346,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
       fitted,
       selectedClipId,
       selectedTrackId,
-      selectedMarkerId,
+      selectedMarkerId
     );
 
     set({
@@ -370,7 +367,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
 
   const runMutation = (
     mutator: (timeline: Timeline) => Timeline,
-    options?: ApplyTimelineOptions,
+    options?: ApplyTimelineOptions
   ) => {
     const { timeline } = get();
     if (!timeline) {
@@ -445,8 +442,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
       const clicked = findTrackById(timeline, trackId);
       const layerTrack =
         timeline.tracks.find(
-          (t) =>
-            t.id === trackId || t.children?.some((child) => child.id === trackId),
+          (t) => t.id === trackId || t.children?.some((child) => child.id === trackId)
         ) ?? clicked;
 
       if (!layerTrack) {
@@ -465,7 +461,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
       }
 
       const defaultElement = pickDefaultContentElement(
-        collectLayerElements(layerTrack),
+        collectLayerElements(layerTrack)
       );
 
       set({
@@ -481,9 +477,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
         return;
       }
       const { timeline } = get();
-      const located = timeline
-        ? findLayerTrackForClip(timeline, clipId)
-        : null;
+      const located = timeline ? findLayerTrackForClip(timeline, clipId) : null;
       set({
         selectedClipId: clipId,
         selectedTrackId: located?.layerTrack.id ?? null,
@@ -599,7 +593,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
         }
         const reason = drift.customRemotionReason ?? "手写 Remotion 代码";
         const proceed = window.confirm(
-          `检测到手写 Remotion 项目（${reason}）。\n\n「生成预览」会用时间线 JSON 覆盖 MainSequence.tsx，可能破坏自定义动画。\n\n建议只使用「从 Remotion 读取」同步时间线。\n\n仍要继续生成吗？`,
+          `检测到手写 Remotion 项目（${reason}）。\n\n「生成预览」会用时间线 JSON 覆盖 MainSequence.tsx，可能破坏自定义动画。\n\n建议只使用「从 Remotion 读取」同步时间线。\n\n仍要继续生成吗？`
         );
         if (!proceed) return false;
       }
@@ -680,7 +674,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
             fitted,
             prev.selectedClipId,
             prev.selectedTrackId,
-            prev.selectedMarkerId,
+            prev.selectedMarkerId
           )
         : {
             selectedClipId: null,
@@ -691,9 +685,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
       const maxFrame = Math.max(0, fitted.durationInFrames - 1);
       set({
         timeline: fitted,
-        currentFrame: options?.skipAutoSync
-          ? Math.min(prev.currentFrame, maxFrame)
-          : 0,
+        currentFrame: options?.skipAutoSync ? Math.min(prev.currentFrame, maxFrame) : 0,
         ...selection,
         hasUnsavedChanges: repaired || durationAdjusted,
         history: createHistory(),
@@ -716,7 +708,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
         fitted,
         prev.selectedClipId,
         prev.selectedTrackId,
-        prev.selectedMarkerId,
+        prev.selectedMarkerId
       );
       const maxFrame = Math.max(0, fitted.durationInFrames - 1);
 
@@ -731,11 +723,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
       });
     },
 
-    applyAgentTimelineDiff: async ({
-      subprojectPath,
-      timeline,
-      previewReload,
-    }) => {
+    applyAgentTimelineDiff: async ({ subprojectPath, timeline, previewReload }) => {
       if (timeline) {
         get().replaceTimelineFromAgent(timeline);
       } else {
@@ -765,7 +753,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
       }
 
       await new Promise((resolve) =>
-        window.setTimeout(resolve, previewReload ? 200 : 0),
+        window.setTimeout(resolve, previewReload ? 200 : 0)
       );
       set((state) => ({
         previewTimelineNonce: state.previewTimelineNonce + 1,
@@ -827,7 +815,12 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
         return false;
       }
 
-      set({ isSyncingRemotion: true, isLoading: true, error: null, lastRemotionSync: null });
+      set({
+        isSyncingRemotion: true,
+        isLoading: true,
+        error: null,
+        lastRemotionSync: null,
+      });
       const res = await api.timeline.syncFromRemotion();
       set({ isSyncingRemotion: false, isLoading: false });
 
@@ -845,7 +838,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
         res.data.timeline,
         prev.selectedClipId,
         prev.selectedTrackId,
-        prev.selectedMarkerId,
+        prev.selectedMarkerId
       );
       const maxFrame = Math.max(0, res.data.timeline.durationInFrames - 1);
 
@@ -866,11 +859,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
         compositionError?: string | null;
         bundlerUsed?: boolean;
       };
-      if (
-        stats.bundlerUsed &&
-        stats.compositionError &&
-        !stats.trackCount
-      ) {
+      if (stats.bundlerUsed && stats.compositionError && !stats.trackCount) {
         set({
           error: `从 Remotion 读取失败：${stats.compositionError}`,
         });
@@ -948,7 +937,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
 
       if (clipCount > 0) {
         const ok = window.confirm(
-          `轨道「${track.name}」包含 ${clipCount} 个片段。确定删除？（可用 ${modKeyLabel()}+Z 撤销）`,
+          `轨道「${track.name}」包含 ${clipCount} 个片段。确定删除？（可用 ${modKeyLabel()}+Z 撤销）`
         );
         if (!ok) return;
       }
@@ -1004,7 +993,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
           res.data.timeline,
           prev.selectedClipId,
           prev.selectedTrackId,
-          prev.selectedMarkerId,
+          prev.selectedMarkerId
         );
         set({
           timeline: res.data.timeline,
@@ -1158,7 +1147,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
     resizeClip: (clipId, edge, newStartInFrames, newDurationInFrames) => {
       runMutation(
         (t) => resizeClip(t, clipId, edge, newStartInFrames, newDurationInFrames),
-        { generate: "debounced" },
+        { generate: "debounced" }
       );
     },
 
@@ -1197,7 +1186,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
                 located.clip,
                 property,
                 relativeFrame,
-                timeline.fps,
+                timeline.fps
               );
         const nextClip = addClipKeyframe(located.clip, {
           property,
@@ -1242,7 +1231,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
           located.clip,
           property,
           relativeFrame,
-          timeline.fps,
+          timeline.fps
         );
         const nextClip = addClipKeyframe(located.clip, {
           property,
@@ -1359,11 +1348,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
       const located = findLayerTrackForClip(timeline, clipId);
       if (!located) return;
       try {
-        const nextClip = moveClipKeyframe(
-          located.clip,
-          keyframeId,
-          newRelativeFrame,
-        );
+        const nextClip = moveClipKeyframe(located.clip, keyframeId, newRelativeFrame);
         runMutation((t) => replaceClip(t, clipId, nextClip), { generate: "none" });
         debouncedPreviewPropsSync();
       } catch (err) {
@@ -1451,7 +1436,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
         result.timeline,
         get().selectedClipId,
         get().selectedTrackId,
-        get().selectedMarkerId,
+        get().selectedMarkerId
       );
       set({
         history: result.history,
@@ -1472,7 +1457,7 @@ export const useTimelineStore = create<TimelineState>((set, get) => {
         result.timeline,
         get().selectedClipId,
         get().selectedTrackId,
-        get().selectedMarkerId,
+        get().selectedMarkerId
       );
       set({
         history: result.history,

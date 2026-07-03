@@ -111,18 +111,28 @@ async function main() {
 
     const pending = conversationService.resolvePendingAgentUndo(root, subprojectPath);
     assert(pending?.messageId === "m-ai", "mixed undo snapshot resolves");
-    assert(pending.remotionFilesBefore.length === 1, "mixed undo includes remotion snapshots");
+    assert(
+      pending.remotionFilesBefore.length === 1,
+      "mixed undo includes remotion snapshots"
+    );
 
-    const restored = await conversationService.restoreAgentUndoSnapshot(root, subprojectPath, {
-      messageId: "m-ai",
-    });
+    const restored = await conversationService.restoreAgentUndoSnapshot(
+      root,
+      subprojectPath,
+      {
+        messageId: "m-ai",
+      }
+    );
     assert(restored.restored, "restoreAgentUndoSnapshot restored");
     const restoredTimeline = timelineService.loadTimeline(root, subprojectPath);
     assert(
       restoredTimeline.tracks[0].clips[0].source.content === "before",
       "restoreAgentUndoSnapshot restores timeline"
     );
-    assert(!fs.existsSync(componentPath), "restoreAgentUndoSnapshot deletes created file");
+    assert(
+      !fs.existsSync(componentPath),
+      "restoreAgentUndoSnapshot deletes created file"
+    );
     assert(
       conversationService.resolvePendingAgentUndo(root, subprojectPath) === null,
       "restoreAgentUndoSnapshot clears pending undo"
@@ -133,21 +143,25 @@ async function main() {
     const componentPath = path.join(srcDir, "components", "custom", "ParticleBg.tsx");
     const afterContent = "export const ParticleBg = () => null;\n";
     fs.writeFileSync(componentPath, afterContent, "utf8");
-    await conversationService.saveConversation(root, {
-      version: "1.0",
-      messages: [
-        {
-          id: "m-ai",
-          role: "assistant",
-          content: "done",
-          timestamp: 1,
-          actionButtons: [
-            { id: "undo-agent", label: "撤销此次 AI 修改", action: "undo-agent" },
-          ],
-        },
-      ],
-      pendingAgentUndo: { messageId: "m-ai" },
-    }, subprojectPath);
+    await conversationService.saveConversation(
+      root,
+      {
+        version: "1.0",
+        messages: [
+          {
+            id: "m-ai",
+            role: "assistant",
+            content: "done",
+            timestamp: 1,
+            actionButtons: [
+              { id: "undo-agent", label: "撤销此次 AI 修改", action: "undo-agent" },
+            ],
+          },
+        ],
+        pendingAgentUndo: { messageId: "m-ai" },
+      },
+      subprojectPath
+    );
     await conversationService.saveAgentUndoSnapshot(root, subprojectPath, {
       messageId: "m-ai",
       timeline: buildTimeline("before"),
@@ -161,7 +175,11 @@ async function main() {
         },
       ],
     });
-    fs.writeFileSync(componentPath, "export const ParticleBg = () => <div />;\n", "utf8");
+    fs.writeFileSync(
+      componentPath,
+      "export const ParticleBg = () => <div />;\n",
+      "utf8"
+    );
 
     let conflictThrown = false;
     try {

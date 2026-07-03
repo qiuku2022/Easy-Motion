@@ -2,19 +2,15 @@ const timelineOps = require("./timeline-ops");
 const { normalizeClipUpdates } = require("./clip-updates");
 
 function includesText(value, query) {
-  return String(value ?? "").toLowerCase().includes(String(query ?? "").toLowerCase());
+  return String(value ?? "")
+    .toLowerCase()
+    .includes(String(query ?? "").toLowerCase());
 }
 
 function getClipText(clip) {
   const source = clip.source ?? {};
   const props = source.props && typeof source.props === "object" ? source.props : {};
-  return [
-    source.content,
-    source.title,
-    props.text,
-    props.title,
-    props.subtitle,
-  ]
+  return [source.content, source.title, props.text, props.title, props.subtitle]
     .filter(Boolean)
     .join(" ");
 }
@@ -49,11 +45,18 @@ function summarizeMatch(track, clip, parentGroup = null) {
 function matchesSelector(track, clip, selector = {}) {
   if (selector.type && clip.type !== selector.type) return false;
   if (selector.trackId && track.id !== selector.trackId) return false;
-  if (selector.trackNameIncludes && !includesText(track.name, selector.trackNameIncludes)) {
+  if (
+    selector.trackNameIncludes &&
+    !includesText(track.name, selector.trackNameIncludes)
+  ) {
     return false;
   }
-  if (selector.nameIncludes && !includesText(clip.name, selector.nameIncludes)) return false;
-  if (selector.textIncludes && !includesText(getClipText(clip), selector.textIncludes)) {
+  if (selector.nameIncludes && !includesText(clip.name, selector.nameIncludes))
+    return false;
+  if (
+    selector.textIncludes &&
+    !includesText(getClipText(clip), selector.textIncludes)
+  ) {
     return false;
   }
   if (
@@ -156,7 +159,14 @@ function buildConflictResult(matches, blocked, opCountKey) {
 
 function batchUpdateClips(
   timeline,
-  { selector = {}, updates = {}, maxMatches, dryRun = false, allowSourceReplace = false, confirmOverwrite = false }
+  {
+    selector = {},
+    updates = {},
+    maxMatches,
+    dryRun = false,
+    allowSourceReplace = false,
+    confirmOverwrite = false,
+  }
 ) {
   if (!allowSourceReplace && Object.prototype.hasOwnProperty.call(updates, "source")) {
     throw new Error("批量更新禁止直接替换整个 source；请使用 source.xxx 点路径");
@@ -174,7 +184,8 @@ function batchUpdateClips(
 
   const blocked = collectBlockedMatches(matches, { confirmOverwrite });
   assertNoBlockedMatches(blocked);
-  if (blocked.conflicts.length > 0) return buildConflictResult(matches, blocked, "updatedCount");
+  if (blocked.conflicts.length > 0)
+    return buildConflictResult(matches, blocked, "updatedCount");
 
   if (dryRun) {
     return {
@@ -209,7 +220,13 @@ function batchUpdateClips(
 
 function batchDeleteClips(
   timeline,
-  { selector = {}, maxMatches, dryRun = true, confirmDelete = false, confirmOverwrite = false }
+  {
+    selector = {},
+    maxMatches,
+    dryRun = true,
+    confirmDelete = false,
+    confirmOverwrite = false,
+  }
 ) {
   const limit = normalizeMaxMatches(maxMatches);
   const matches = collectMatches(timeline, selector);
@@ -218,7 +235,8 @@ function batchDeleteClips(
 
   const blocked = collectBlockedMatches(matches, { confirmOverwrite });
   assertNoBlockedMatches(blocked);
-  if (blocked.conflicts.length > 0) return buildConflictResult(matches, blocked, "deletedCount");
+  if (blocked.conflicts.length > 0)
+    return buildConflictResult(matches, blocked, "deletedCount");
 
   if (dryRun || (matches.length > 1 && !confirmDelete)) {
     return {
@@ -263,7 +281,14 @@ function sortShiftMatches(matches, offsetInFrames) {
 
 function batchShiftClips(
   timeline,
-  { selector = {}, offsetInFrames, maxMatches, dryRun = false, extendTimeline = false, confirmOverwrite = false }
+  {
+    selector = {},
+    offsetInFrames,
+    maxMatches,
+    dryRun = false,
+    extendTimeline = false,
+    confirmOverwrite = false,
+  }
 ) {
   const offset = Math.round(Number(offsetInFrames));
   if (!Number.isFinite(offset) || offset === 0) {
@@ -277,7 +302,8 @@ function batchShiftClips(
 
   const blocked = collectBlockedMatches(matches, { confirmOverwrite });
   assertNoBlockedMatches(blocked);
-  if (blocked.conflicts.length > 0) return buildConflictResult(matches, blocked, "shiftedCount");
+  if (blocked.conflicts.length > 0)
+    return buildConflictResult(matches, blocked, "shiftedCount");
 
   const invalid = matches.find((match) => match.clip.startInFrames + offset < 0);
   if (invalid) {

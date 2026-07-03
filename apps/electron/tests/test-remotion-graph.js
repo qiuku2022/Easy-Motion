@@ -1,4 +1,6 @@
-const { buildRemotionCodePromptSection } = require("../src/main/agent/prompts/remotion-code");
+const {
+  buildRemotionCodePromptSection,
+} = require("../src/main/agent/prompts/remotion-code");
 const { TimelineContext } = require("../src/main/agent/timeline-context");
 const { RemotionContext } = require("../src/main/agent/remotion-context");
 const { createRemotionCodeTools } = require("../src/main/agent/tools/remotion-code");
@@ -44,9 +46,15 @@ function main() {
     projectPath: "C:/tmp/Demo.em",
     subprojectPath: "subprojects/default",
   });
-  assert(prompt.includes("Remotion 代码能力"), "system prompt includes remotion section");
+  assert(
+    prompt.includes("Remotion 代码能力"),
+    "system prompt includes remotion section"
+  );
   assert(prompt.includes("useCurrentFrame"), "system prompt includes remotion rules");
-  assert(prompt.includes("listCustomComponents"), "system prompt includes custom lifecycle rules");
+  assert(
+    prompt.includes("listCustomComponents"),
+    "system prompt includes custom lifecycle rules"
+  );
 
   console.log("test-remotion-graph: passed");
 }

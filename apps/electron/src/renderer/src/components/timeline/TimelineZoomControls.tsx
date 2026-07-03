@@ -2,16 +2,9 @@ import { useState } from "react";
 import { Check, ChevronDown, Magnet, Maximize2, Repeat } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import {
-  MAX_PX_PER_FRAME,
-  MIN_PX_PER_FRAME,
-} from "@/lib/timeline/framePixels";
+import { MAX_PX_PER_FRAME, MIN_PX_PER_FRAME } from "@/lib/timeline/framePixels";
 import { PR_SHORTCUTS } from "@/lib/premiereShortcuts";
 import { useTimelineToolbarMenu } from "@/hooks/useTimelineToolbarMenu";
 import {
@@ -52,7 +45,7 @@ function ZoomIconButton({
           size="icon"
           className={cn(
             "h-8 w-8",
-            active ? "text-foreground" : "text-muted-foreground",
+            active ? "text-foreground" : "text-muted-foreground"
           )}
           aria-pressed={active}
           onClick={onClick}
@@ -76,8 +69,12 @@ export function TimelineZoomControls() {
   const requestTimelineFit = useUiStore((s) => s.requestTimelineFit);
   const timeline = useTimelineStore((s) => s.timeline);
   const [rulerScale, setRulerScale] = useState<RulerScaleId>("fit");
-  const { open: scaleMenuOpen, toggle: toggleScaleMenu, close: closeScaleMenu, rootRef: scaleMenuRef } =
-    useTimelineToolbarMenu();
+  const {
+    open: scaleMenuOpen,
+    toggle: toggleScaleMenu,
+    close: closeScaleMenu,
+    rootRef: scaleMenuRef,
+  } = useTimelineToolbarMenu();
 
   const fps = timeline?.fps ?? 30;
 
@@ -93,8 +90,7 @@ export function TimelineZoomControls() {
   };
 
   const sliderValue =
-    ((pxPerFrame - MIN_PX_PER_FRAME) / (MAX_PX_PER_FRAME - MIN_PX_PER_FRAME)) *
-    100;
+    ((pxPerFrame - MIN_PX_PER_FRAME) / (MAX_PX_PER_FRAME - MIN_PX_PER_FRAME)) * 100;
 
   return (
     <div className="flex items-center gap-1.5">
@@ -132,9 +128,7 @@ export function TimelineZoomControls() {
           value={[sliderValue]}
           aria-label="时间线缩放"
           onValueChange={([t]) => {
-            setPxPerFrame(
-              MIN_PX_PER_FRAME + t * (MAX_PX_PER_FRAME - MIN_PX_PER_FRAME),
-            );
+            setPxPerFrame(MIN_PX_PER_FRAME + t * (MAX_PX_PER_FRAME - MIN_PX_PER_FRAME));
           }}
         />
       </div>
@@ -146,7 +140,7 @@ export function TimelineZoomControls() {
           size="sm"
           className={cn(
             "h-7 w-[4.5rem] gap-1 font-mono text-xs",
-            scaleMenuOpen && TIMELINE_MENU_TRIGGER_OPEN_CLASS,
+            scaleMenuOpen && TIMELINE_MENU_TRIGGER_OPEN_CLASS
           )}
           aria-label="时间标尺刻度"
           aria-expanded={scaleMenuOpen}
@@ -157,7 +151,7 @@ export function TimelineZoomControls() {
           <ChevronDown
             className={cn(
               "h-3 w-3 opacity-60 transition-transform",
-              scaleMenuOpen && "rotate-180",
+              scaleMenuOpen && "rotate-180"
             )}
           />
         </Button>

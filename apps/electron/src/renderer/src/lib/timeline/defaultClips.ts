@@ -43,7 +43,10 @@ export function createDefaultShapeClip(timeline: Timeline): Clip {
       height: Math.round(timeline.height * 0.2),
     },
     transform: {
-      position: { x: Math.round(timeline.width / 2), y: Math.round(timeline.height / 2) },
+      position: {
+        x: Math.round(timeline.width / 2),
+        y: Math.round(timeline.height / 2),
+      },
       scale: 1,
       rotation: 0,
       opacity: 1,
@@ -76,7 +79,10 @@ export function createDefaultChartClip(timeline: Timeline): Clip {
       ],
     },
     transform: {
-      position: { x: Math.round(timeline.width / 2), y: Math.round(timeline.height / 2) },
+      position: {
+        x: Math.round(timeline.width / 2),
+        y: Math.round(timeline.height / 2),
+      },
       scale: 1,
       rotation: 0,
       opacity: 1,
@@ -96,13 +102,15 @@ const CONTENT_TRACK_TYPES = ["text", "shape", "chart"] as const;
 
 export function defaultClipForTrackType(
   timeline: Timeline,
-  type: (typeof CONTENT_TRACK_TYPES)[number],
+  type: (typeof CONTENT_TRACK_TYPES)[number]
 ): Clip {
   if (type === "shape") return createDefaultShapeClip(timeline);
   if (type === "chart") return createDefaultChartClip(timeline);
   return createDefaultTextClip(timeline);
 }
 
-export function trackTypeNeedsDefaultClip(type: string): type is (typeof CONTENT_TRACK_TYPES)[number] {
+export function trackTypeNeedsDefaultClip(
+  type: string
+): type is (typeof CONTENT_TRACK_TYPES)[number] {
   return (CONTENT_TRACK_TYPES as readonly string[]).includes(type);
 }

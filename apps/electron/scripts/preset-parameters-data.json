@@ -5,32 +5,10 @@
     "strings": {
       "title": "Monthly Performance",
       "subtitle": "Data visualization for 2023",
-      "labels": [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct"
-      ]
+      "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"]
     },
     "numbers": {
-      "values": [
-        50,
-        80,
-        30,
-        70,
-        45,
-        90,
-        60,
-        75,
-        40,
-        85
-      ]
+      "values": [50, 80, 30, 70, 45, 90, 60, 75, 40, 85]
     },
     "colors": [
       "#111827",
@@ -74,39 +52,12 @@
     "component": "RveLineChart",
     "strings": {
       "title": "Revenue Growth",
-      "labels": [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct"
-      ]
+      "labels": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"]
     },
     "numbers": {
-      "values": [
-        25,
-        40,
-        35,
-        55,
-        50,
-        70,
-        65,
-        80,
-        75,
-        90
-      ]
+      "values": [25, 40, 35, 55, 50, 70, 65, 80, 75, 90]
     },
-    "colors": [
-      "#111827",
-      "#1f2937",
-      "#4361ee",
-      "#f72585"
-    ],
+    "colors": ["#111827", "#1f2937", "#4361ee", "#f72585"],
     "usesImages": false,
     "parameters": [
       {
@@ -140,22 +91,10 @@
     "component": "RvePieChart",
     "strings": {
       "title": "Market Share",
-      "labels": [
-        "Product A",
-        "Product B",
-        "Product C",
-        "Product D",
-        "Product E"
-      ]
+      "labels": ["Product A", "Product B", "Product C", "Product D", "Product E"]
     },
     "numbers": {
-      "values": [
-        35,
-        25,
-        20,
-        12,
-        8
-      ]
+      "values": [35, 25, 20, 12, 8]
     },
     "colors": [
       "#111827",
@@ -200,30 +139,13 @@
     "strings": {
       "title": "Completion Rate",
       "centerLabel": "Completion Rate",
-      "labels": [
-        "Completed",
-        "In Progress",
-        "Pending",
-        "Remaining"
-      ]
+      "labels": ["Completed", "In Progress", "Pending", "Remaining"]
     },
     "numbers": {
-      "values": [
-        40,
-        25,
-        20,
-        15
-      ],
+      "values": [40, 25, 20, 15],
       "progress": 78
     },
-    "colors": [
-      "#111827",
-      "#1f2937",
-      "#4361ee",
-      "#7209b7",
-      "#f72585",
-      "#4cc9f0"
-    ],
+    "colors": ["#111827", "#1f2937", "#4361ee", "#7209b7", "#f72585", "#4cc9f0"],
     "usesImages": false,
     "parameters": [
       {
@@ -257,35 +179,12 @@
     "component": "RveAreaChart",
     "strings": {
       "title": "Performance Metrics",
-      "labels": [
-        "Mon",
-        "Tue",
-        "Wed",
-        "Thu",
-        "Fri",
-        "Sat",
-        "Sun"
-      ]
+      "labels": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     },
     "numbers": {
-      "values": [
-        20,
-        45,
-        35,
-        60,
-        55,
-        75,
-        70,
-        85,
-        80,
-        95
-      ]
+      "values": [20, 45, 35, 60, 55, 75, 70, 85, 80, 95]
     },
-    "colors": [
-      "#111827",
-      "#1f2937",
-      "#4361ee"
-    ],
+    "colors": ["#111827", "#1f2937", "#4361ee"],
     "usesImages": false,
     "parameters": [
       {
@@ -319,22 +218,10 @@
     "component": "RveProgressBars",
     "strings": {
       "title": "Skills Overview",
-      "labels": [
-        "React",
-        "TypeScript",
-        "Node.js",
-        "Python",
-        "Go"
-      ]
+      "labels": ["React", "TypeScript", "Node.js", "Python", "Go"]
     },
     "numbers": {
-      "values": [
-        90,
-        85,
-        75,
-        60,
-        45
-      ]
+      "values": [90, 85, 75, 60, 45]
     },
     "colors": [
       "#111827",
@@ -385,11 +272,7 @@
       "value": 1247,
       "delta": 12.5
     },
-    "colors": [
-      "#111827",
-      "#1f2937",
-      "#22c55e"
-    ],
+    "colors": ["#111827", "#1f2937", "#22c55e"],
     "usesImages": false,
     "parameters": [
       {
@@ -430,12 +313,7 @@
       "beforeValue": 34,
       "afterValue": 89
     },
-    "colors": [
-      "#111827",
-      "#1f2937",
-      "#ef4444",
-      "#4361ee"
-    ],
+    "colors": ["#111827", "#1f2937", "#ef4444", "#4361ee"],
     "usesImages": false,
     "parameters": [
       {
@@ -472,10 +350,7 @@
       "progress": 100,
       "radius": 80
     },
-    "colors": [
-      "#3b82f6",
-      "#1e3a8a"
-    ],
+    "colors": ["#3b82f6", "#1e3a8a"],
     "usesImages": false,
     "parameters": [
       {
@@ -542,10 +417,7 @@
       "subtitle": "Theres never been a better time"
     },
     "numbers": {},
-    "colors": [
-      "#1e3a8a",
-      "#3b82f6"
-    ],
+    "colors": ["#1e3a8a", "#3b82f6"],
     "usesImages": false,
     "parameters": [
       {
@@ -581,10 +453,7 @@
       "text": "HELLO"
     },
     "numbers": {},
-    "colors": [
-      "#1e3a8a",
-      "#3b82f6"
-    ],
+    "colors": ["#1e3a8a", "#3b82f6"],
     "usesImages": false,
     "parameters": [
       {
@@ -614,10 +483,7 @@
       "text": "Floating"
     },
     "numbers": {},
-    "colors": [
-      "#1e3a8a",
-      "#3b82f6"
-    ],
+    "colors": ["#1e3a8a", "#3b82f6"],
     "usesImages": false,
     "parameters": [
       {
@@ -677,12 +543,7 @@
       "text": "BINGO!"
     },
     "numbers": {},
-    "colors": [
-      "#1e3a8a",
-      "#3b82f6",
-      "#A9D6E5",
-      "#fff"
-    ],
+    "colors": ["#1e3a8a", "#3b82f6", "#A9D6E5", "#fff"],
     "usesImages": false,
     "parameters": [
       {
@@ -772,9 +633,7 @@
       "text": "I like typing..."
     },
     "numbers": {},
-    "colors": [
-      "#60a5fa"
-    ],
+    "colors": ["#60a5fa"],
     "usesImages": false,
     "parameters": [
       {
@@ -801,18 +660,10 @@
     "id": "rve-animated-list",
     "component": "RveAnimatedList",
     "strings": {
-      "items": [
-        "Item One",
-        "Item Two",
-        "Item Three"
-      ]
+      "items": ["Item One", "Item Two", "Item Three"]
     },
     "numbers": {},
-    "colors": [
-      "#3b82f6",
-      "#60a5fa",
-      "#93c5fd"
-    ],
+    "colors": ["#3b82f6", "#60a5fa", "#93c5fd"],
     "usesImages": false,
     "parameters": [
       {
@@ -843,10 +694,7 @@
       "subtitle": "Back"
     },
     "numbers": {},
-    "colors": [
-      "#1e3a8a",
-      "#3b82f6"
-    ],
+    "colors": ["#1e3a8a", "#3b82f6"],
     "usesImages": false,
     "parameters": [
       {
@@ -879,23 +727,12 @@
     "id": "rve-countdown-timer",
     "component": "RveCountdownTimer",
     "strings": {
-      "labels": [
-        "5",
-        "4",
-        "3",
-        "2",
-        "1",
-        "GO"
-      ]
+      "labels": ["5", "4", "3", "2", "1", "GO"]
     },
     "numbers": {
       "countdown": 5
     },
-    "colors": [
-      "#111827",
-      "#3b82f6",
-      "#7209b7"
-    ],
+    "colors": ["#111827", "#3b82f6", "#7209b7"],
     "usesImages": false,
     "parameters": [
       {
@@ -947,14 +784,7 @@
     "numbers": {
       "badge": 3
     },
-    "colors": [
-      "#111827",
-      "#1f2937",
-      "#3b82f6",
-      "#a855f7",
-      "#4361ee",
-      "#ef4444"
-    ],
+    "colors": ["#111827", "#1f2937", "#3b82f6", "#a855f7", "#4361ee", "#ef4444"],
     "usesImages": false,
     "parameters": [
       {
@@ -1026,21 +856,12 @@
     "component": "RveProgressSteps",
     "strings": {
       "title": "Project Timeline",
-      "steps": [
-        "Research",
-        "Design",
-        "Build",
-        "Launch"
-      ]
+      "steps": ["Research", "Design", "Build", "Launch"]
     },
     "numbers": {
       "stepCount": 4
     },
-    "colors": [
-      "#111827",
-      "#1f2937",
-      "#3b82f6"
-    ],
+    "colors": ["#111827", "#1f2937", "#3b82f6"],
     "usesImages": false,
     "parameters": [
       {
@@ -1074,20 +895,10 @@
     "component": "RveRotatingCarousel",
     "strings": {
       "title": "Our Features",
-      "items": [
-        "Feature 1",
-        "Feature 2",
-        "Feature 3",
-        "Feature 4"
-      ]
+      "items": ["Feature 1", "Feature 2", "Feature 3", "Feature 4"]
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#1f2937",
-      "#3b82f6",
-      "#4361ee"
-    ],
+    "colors": ["#111827", "#1f2937", "#3b82f6", "#4361ee"],
     "usesImages": false,
     "parameters": [
       {
@@ -1123,9 +934,7 @@
     "numbers": {
       "barCount": 40
     },
-    "colors": [
-      "#3b82f6"
-    ],
+    "colors": ["#3b82f6"],
     "usesImages": false,
     "parameters": [
       {
@@ -1153,20 +962,10 @@
     "component": "RveTextHighlight",
     "strings": {
       "text": "Build amazing videos with code",
-      "words": [
-        "Build",
-        "amazing",
-        "videos",
-        "with",
-        "code"
-      ]
+      "words": ["Build", "amazing", "videos", "with", "code"]
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#1f2937",
-      "#3b82f6"
-    ],
+    "colors": ["#111827", "#1f2937", "#3b82f6"],
     "usesImages": false,
     "parameters": [
       {
@@ -1196,9 +995,7 @@
     "numbers": {
       "circleCount": 15
     },
-    "colors": [
-      "#111827"
-    ],
+    "colors": ["#111827"],
     "usesImages": false,
     "parameters": [
       {
@@ -1228,10 +1025,7 @@
     "numbers": {
       "patternCount": 20
     },
-    "colors": [
-      "#0f172a",
-      "#1e293b"
-    ],
+    "colors": ["#0f172a", "#1e293b"],
     "usesImages": false,
     "parameters": [
       {
@@ -1259,11 +1053,7 @@
     "component": "RveGradientShift",
     "strings": {},
     "numbers": {},
-    "colors": [
-      "#1a1a2e",
-      "#16213e",
-      "#0f3460"
-    ],
+    "colors": ["#1a1a2e", "#16213e", "#0f3460"],
     "usesImages": false,
     "parameters": [
       {
@@ -1294,10 +1084,7 @@
       "cols": 12,
       "rows": 8
     },
-    "colors": [
-      "#111827",
-      "#3b82f6"
-    ],
+    "colors": ["#111827", "#3b82f6"],
     "usesImages": false,
     "parameters": [
       {
@@ -1321,11 +1108,7 @@
     "numbers": {
       "wavePoints": 50
     },
-    "colors": [
-      "#111827",
-      "#1e3a8a",
-      "#3b82f6"
-    ],
+    "colors": ["#111827", "#1e3a8a", "#3b82f6"],
     "usesImages": false,
     "parameters": [
       {
@@ -1355,10 +1138,7 @@
       "charset": "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*"
     },
     "numbers": {},
-    "colors": [
-      "#0a1933",
-      "#1e40af"
-    ],
+    "colors": ["#0a1933", "#1e40af"],
     "usesImages": false,
     "parameters": [
       {
@@ -1389,11 +1169,7 @@
       "subtitle": "Subtle noise texture effect"
     },
     "numbers": {},
-    "colors": [
-      "#1a1a2e",
-      "#16213e",
-      "#0f3460"
-    ],
+    "colors": ["#1a1a2e", "#16213e", "#0f3460"],
     "usesImages": false,
     "parameters": [
       {
@@ -1423,9 +1199,7 @@
     "numbers": {
       "pixelSize": 20
     },
-    "colors": [
-      "#0f172a"
-    ],
+    "colors": ["#0f172a"],
     "usesImages": false,
     "parameters": [
       {
@@ -1455,9 +1229,7 @@
     "numbers": {
       "starCount": 80
     },
-    "colors": [
-      "#0a0a1a"
-    ],
+    "colors": ["#0a0a1a"],
     "usesImages": false,
     "parameters": [
       {
@@ -1484,13 +1256,7 @@
     "numbers": {
       "amplitude": 15
     },
-    "colors": [
-      "#111827",
-      "#1e293b",
-      "#0f172a",
-      "#3b82f6",
-      "#a855f7"
-    ],
+    "colors": ["#111827", "#1e293b", "#0f172a", "#3b82f6", "#a855f7"],
     "usesImages": false,
     "parameters": [
       {
@@ -1527,11 +1293,7 @@
       "subtitle": "Light leak overlay"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#f97316",
-      "#fbbf24"
-    ],
+    "colors": ["#111827", "#f97316", "#fbbf24"],
     "usesImages": false,
     "parameters": [
       {
@@ -1603,11 +1365,7 @@
     "numbers": {
       "barHeight": 50
     },
-    "colors": [
-      "#111827",
-      "#000000",
-      "#93c5fd"
-    ],
+    "colors": ["#111827", "#000000", "#93c5fd"],
     "usesImages": false,
     "parameters": [
       {
@@ -1671,13 +1429,7 @@
     "numbers": {
       "radius": 75
     },
-    "colors": [
-      "#0a0a0a",
-      "#111827",
-      "#1e1b4b",
-      "#3b82f6",
-      "#a855f7"
-    ],
+    "colors": ["#0a0a0a", "#111827", "#1e1b4b", "#3b82f6", "#a855f7"],
     "usesImages": false,
     "parameters": [
       {
@@ -1714,9 +1466,7 @@
       "subtitle": "Vignette pulses around the edges"
     },
     "numbers": {},
-    "colors": [
-      "#111827"
-    ],
+    "colors": ["#111827"],
     "usesImages": false,
     "parameters": [
       {
@@ -1749,13 +1499,7 @@
       "subtitleB": "Purple content"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#3b82f6",
-      "#1d4ed8",
-      "#a855f7",
-      "#7c3aed"
-    ],
+    "colors": ["#111827", "#3b82f6", "#1d4ed8", "#a855f7", "#7c3aed"],
     "usesImages": false,
     "parameters": [
       {
@@ -1826,14 +1570,7 @@
       "subtitleB": "Behind the blinds"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#3b1f5e",
-      "#a855f7",
-      "#7209b7",
-      "#1e3a5f",
-      "#3b82f6"
-    ],
+    "colors": ["#111827", "#3b1f5e", "#a855f7", "#7209b7", "#1e3a5f", "#3b82f6"],
     "usesImages": false,
     "parameters": [
       {
@@ -1872,14 +1609,7 @@
       "subtitleB": "Revealed by clock wipe"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#3b1f5e",
-      "#a855f7",
-      "#7209b7",
-      "#1e3a5f",
-      "#3b82f6"
-    ],
+    "colors": ["#111827", "#3b1f5e", "#a855f7", "#7209b7", "#1e3a5f", "#3b82f6"],
     "usesImages": false,
     "parameters": [
       {
@@ -1965,14 +1695,7 @@
       "subtitleB": "Fading in..."
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#000000",
-      "#3b82f6",
-      "#1d4ed8",
-      "#a855f7",
-      "#7c3aed"
-    ],
+    "colors": ["#111827", "#000000", "#3b82f6", "#1d4ed8", "#a855f7", "#7c3aed"],
     "usesImages": false,
     "parameters": [
       {
@@ -2058,13 +1781,7 @@
       "subtitleB": "Morphing in..."
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#3b82f6",
-      "#1d4ed8",
-      "#a855f7",
-      "#7209b7"
-    ],
+    "colors": ["#111827", "#3b82f6", "#1d4ed8", "#a855f7", "#7209b7"],
     "usesImages": false,
     "parameters": [
       {
@@ -2103,14 +1820,7 @@
       "subtitleB": "Pushing in..."
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#1e3a5f",
-      "#3b82f6",
-      "#3b1f5e",
-      "#a855f7",
-      "#7209b7"
-    ],
+    "colors": ["#111827", "#1e3a5f", "#3b82f6", "#3b1f5e", "#a855f7", "#7209b7"],
     "usesImages": false,
     "parameters": [
       {
@@ -2149,13 +1859,7 @@
       "subtitleB": "Revealed underneath"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#a855f7",
-      "#7c3aed",
-      "#3b82f6",
-      "#1d4ed8"
-    ],
+    "colors": ["#111827", "#a855f7", "#7c3aed", "#3b82f6", "#1d4ed8"],
     "usesImages": false,
     "parameters": [
       {
@@ -2192,13 +1896,7 @@
       "titleB": "Arriving..."
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#3b82f6",
-      "#1d4ed8",
-      "#a855f7",
-      "#7209b7"
-    ],
+    "colors": ["#111827", "#3b82f6", "#1d4ed8", "#a855f7", "#7209b7"],
     "usesImages": false,
     "parameters": [
       {
@@ -2235,11 +1933,7 @@
       "subtitle": "Company Name"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#4361ee",
-      "#7209b7"
-    ],
+    "colors": ["#111827", "#4361ee", "#7209b7"],
     "usesImages": false,
     "parameters": [
       {
@@ -2276,11 +1970,7 @@
       "subtitle": "Company Name"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#4361ee",
-      "#7209b7"
-    ],
+    "colors": ["#111827", "#4361ee", "#7209b7"],
     "usesImages": false,
     "parameters": [
       {
@@ -2318,12 +2008,7 @@
       "tagline": "Your tagline here"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#4361ee",
-      "#7209b7",
-      "#93c5fd"
-    ],
+    "colors": ["#111827", "#4361ee", "#7209b7", "#93c5fd"],
     "usesImages": false,
     "parameters": [
       {
@@ -2361,12 +2046,7 @@
       "tagline": "Your tagline here"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#4361ee",
-      "#7209b7",
-      "#93c5fd"
-    ],
+    "colors": ["#111827", "#4361ee", "#7209b7", "#93c5fd"],
     "usesImages": false,
     "parameters": [
       {
@@ -2403,11 +2083,7 @@
       "subtitle": "Company Name"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#4361ee",
-      "#7209b7"
-    ],
+    "colors": ["#111827", "#4361ee", "#7209b7"],
     "usesImages": false,
     "parameters": [
       {
@@ -2445,12 +2121,7 @@
       "tagline": "Your tagline here"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#4361ee",
-      "#7209b7",
-      "#c084fc"
-    ],
+    "colors": ["#111827", "#4361ee", "#7209b7", "#c084fc"],
     "usesImages": false,
     "parameters": [
       {
@@ -2484,19 +2155,11 @@
     "component": "RveLogoSplitReveal",
     "strings": {
       "title": "LOGO",
-      "titleParts": [
-        "LO",
-        "GO"
-      ],
+      "titleParts": ["LO", "GO"],
       "subtitle": "Company Name"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#4361ee",
-      "#6240c9",
-      "#7209b7"
-    ],
+    "colors": ["#111827", "#4361ee", "#6240c9", "#7209b7"],
     "usesImages": false,
     "parameters": [
       {
@@ -2532,12 +2195,7 @@
       "subtitle": "Company Name"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#4361ee",
-      "#7209b7",
-      "#3b82f6"
-    ],
+    "colors": ["#111827", "#4361ee", "#7209b7", "#3b82f6"],
     "usesImages": false,
     "parameters": [
       {
@@ -2573,12 +2231,7 @@
       "title": "ACME STUDIO"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#4361ee",
-      "#7209b7",
-      "#3b82f6"
-    ],
+    "colors": ["#111827", "#4361ee", "#7209b7", "#3b82f6"],
     "usesImages": false,
     "parameters": [
       {
@@ -2618,12 +2271,7 @@
     "numbers": {
       "chapter": 1
     },
-    "colors": [
-      "#111827",
-      "#9ca3af",
-      "#3b82f6",
-      "#d1d5db"
-    ],
+    "colors": ["#111827", "#9ca3af", "#3b82f6", "#d1d5db"],
     "usesImages": false,
     "parameters": [
       {
@@ -2660,12 +2308,7 @@
       "subtitle": "A Cinematic Experience"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#1a1a2e",
-      "#4361ee",
-      "#7209b7"
-    ],
+    "colors": ["#111827", "#1a1a2e", "#4361ee", "#7209b7"],
     "usesImages": false,
     "parameters": [
       {
@@ -2698,21 +2341,13 @@
     "id": "rve-countdown-intro",
     "component": "RveCountdownIntro",
     "strings": {
-      "labels": [
-        "3",
-        "2",
-        "1"
-      ],
+      "labels": ["3", "2", "1"],
       "text": "GO!"
     },
     "numbers": {
       "countdown": 3
     },
-    "colors": [
-      "#111827",
-      "#1e293b",
-      "#3b82f6"
-    ],
+    "colors": ["#111827", "#1e293b", "#3b82f6"],
     "usesImages": false,
     "parameters": [
       {
@@ -2765,10 +2400,7 @@
       ]
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#3b82f6"
-    ],
+    "colors": ["#111827", "#3b82f6"],
     "usesImages": false,
     "parameters": [
       {
@@ -2806,14 +2438,7 @@
       "footer": "STUDIO CREATIVE"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#1a1a2e",
-      "#4361ee",
-      "#7209b7",
-      "#3b82f6",
-      "#9333ea"
-    ],
+    "colors": ["#111827", "#1a1a2e", "#4361ee", "#7209b7", "#3b82f6", "#9333ea"],
     "usesImages": false,
     "parameters": [
       {
@@ -2850,12 +2475,7 @@
       "subtitle": "Senior Producer"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#1f2937",
-      "#3b82f6",
-      "#4361ee"
-    ],
+    "colors": ["#111827", "#1f2937", "#3b82f6", "#4361ee"],
     "usesImages": false,
     "parameters": [
       {
@@ -2892,11 +2512,7 @@
       "subtitle": "— Steve Jobs"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#3b82f6",
-      "#9ca3af"
-    ],
+    "colors": ["#111827", "#3b82f6", "#9ca3af"],
     "usesImages": false,
     "parameters": [
       {
@@ -2934,12 +2550,7 @@
       "text": "@CreativeStudio"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#374151",
-      "#3b82f6",
-      "#9ca3af"
-    ],
+    "colors": ["#111827", "#374151", "#3b82f6", "#9ca3af"],
     "usesImages": false,
     "parameters": [
       {
@@ -2976,10 +2587,7 @@
       "subtitle": "STUDIO"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#3b82f6"
-    ],
+    "colors": ["#111827", "#3b82f6"],
     "usesImages": false,
     "parameters": [
       {
@@ -3050,11 +2658,7 @@
     "id": "rve-image-carousel",
     "component": "RveImageCarousel",
     "strings": {
-      "labels": [
-        "Mountain",
-        "Ocean",
-        "Forest"
-      ]
+      "labels": ["Mountain", "Ocean", "Forest"]
     },
     "numbers": {
       "slideCount": 3
@@ -3150,13 +2754,7 @@
     "numbers": {
       "initialScale": 2
     },
-    "colors": [
-      "#111827",
-      "#1e293b",
-      "#4361ee",
-      "#7209b7",
-      "#a855f7"
-    ],
+    "colors": ["#111827", "#1e293b", "#4361ee", "#7209b7", "#a855f7"],
     "usesImages": false,
     "parameters": [
       {
@@ -3227,11 +2825,7 @@
     "id": "rve-photo-stack",
     "component": "RvePhotoStack",
     "strings": {
-      "labels": [
-        "Photo 1",
-        "Photo 2",
-        "Photo 3"
-      ]
+      "labels": ["Photo 1", "Photo 2", "Photo 3"]
     },
     "numbers": {
       "photoCount": 3
@@ -3275,13 +2869,7 @@
       "subtitle": "Speaker"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#1e293b",
-      "#6b7280",
-      "#4361ee",
-      "#3b82f6"
-    ],
+    "colors": ["#111827", "#1e293b", "#6b7280", "#4361ee", "#3b82f6"],
     "usesImages": false,
     "parameters": [
       {
@@ -3317,12 +2905,7 @@
       "subtitle": "Summer 2024"
     },
     "numbers": {},
-    "colors": [
-      "#111827",
-      "#4361ee",
-      "#7209b7",
-      "#374151"
-    ],
+    "colors": ["#111827", "#4361ee", "#7209b7", "#374151"],
     "usesImages": false,
     "parameters": [
       {

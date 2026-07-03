@@ -1,18 +1,9 @@
-import {
-  Code2,
-  FileInput,
-  MoreHorizontal,
-  RefreshCw,
-  Wand2,
-} from "lucide-react";
+import { Code2, FileInput, MoreHorizontal, RefreshCw, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AddTrackMenu } from "@/components/timeline/AddTrackMenu";
 import { useTimelineToolbarMenu } from "@/hooks/useTimelineToolbarMenu";
-import {
-  TimelineMenuItem,
-  TimelineMenuPanel,
-} from "@/lib/timeline/toolbar-menu";
+import { TimelineMenuItem, TimelineMenuPanel } from "@/lib/timeline/toolbar-menu";
 import { useTimelineStore } from "@/stores/timelineStore";
 
 interface TimelineDevMenuProps {
@@ -53,7 +44,7 @@ export function TimelineDevMenu({ disabled }: TimelineDevMenuProps) {
           disabled={busy}
           className={cn(
             "h-8 w-8 text-muted-foreground",
-            open && "bg-muted text-foreground shadow-none focus-visible:ring-0",
+            open && "bg-muted text-foreground shadow-none focus-visible:ring-0"
           )}
           title="更多时间线操作"
           aria-expanded={open}
@@ -76,7 +67,7 @@ export function TimelineDevMenu({ disabled }: TimelineDevMenuProps) {
               <RefreshCw
                 className={cn(
                   "h-3.5 w-3.5",
-                  isLoading && !isSyncingRemotion && "animate-spin",
+                  isLoading && !isSyncingRemotion && "animate-spin"
                 )}
               />
               加载时间线
@@ -92,7 +83,9 @@ export function TimelineDevMenu({ disabled }: TimelineDevMenuProps) {
               <Code2 className="h-3.5 w-3.5" />
               <span className="flex-1">{isGenerating ? "生成中…" : "生成预览"}</span>
               {remotionDrift?.hasCustomRemotionCode ? (
-                <span className="text-[10px] text-amber-200/80">将覆盖 MainSequence</span>
+                <span className="text-[10px] text-amber-200/80">
+                  将覆盖 MainSequence
+                </span>
               ) : null}
             </TimelineMenuItem>
           </TimelineMenuPanel>

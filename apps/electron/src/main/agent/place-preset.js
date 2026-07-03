@@ -39,7 +39,7 @@ function resolveAnimationTrack(timeline, preferredTrackId) {
   }
 
   const existing = timeline.tracks.find(
-    (track) => track.type === "animation" && !track.locked,
+    (track) => track.type === "animation" && !track.locked
   );
   if (existing) {
     return { timeline, trackId: existing.id };
@@ -85,7 +85,7 @@ function placePresetOnTimeline(timeline, preset, options = {}) {
 
   const { timeline: withTrack, trackId } = resolveAnimationTrack(
     timeline,
-    options.trackId,
+    options.trackId
   );
 
   const startInFrames = Math.max(0, Number(options.startInFrames ?? 0));
@@ -94,7 +94,7 @@ function placePresetOnTimeline(timeline, preset, options = {}) {
     withTrack,
     trackId,
     startInFrames,
-    durationInFrames,
+    durationInFrames
   );
 
   const source = {

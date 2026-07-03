@@ -14,9 +14,7 @@ type HorizontalScrollRegionProps = ComponentPropsWithoutRef<"div"> & {
 };
 
 function setHScrollHover(active: boolean) {
-  document.dispatchEvent(
-    new CustomEvent(HSCROLL_HOVER_EVENT, { detail: { active } })
-  );
+  document.dispatchEvent(new CustomEvent(HSCROLL_HOVER_EVENT, { detail: { active } }));
 }
 
 export const HorizontalScrollRegion = forwardRef<
@@ -36,9 +34,7 @@ export const HorizontalScrollRegion = forwardRef<
       if (el.scrollWidth <= el.clientWidth + 1) return;
 
       const delta =
-        Math.abs(event.deltaX) > Math.abs(event.deltaY)
-          ? event.deltaX
-          : event.deltaY;
+        Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
       if (delta === 0) return;
 
       event.preventDefault();

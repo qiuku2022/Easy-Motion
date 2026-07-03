@@ -21,7 +21,7 @@ function getWorkspacePath(projectRoot, subprojectRelativePath = DEFAULT_SUBPROJE
   return path.join(
     getSubprojectDir(projectRoot, subprojectRelativePath),
     ".easymotion",
-    WORKSPACE_FILE,
+    WORKSPACE_FILE
   );
 }
 
@@ -50,7 +50,7 @@ function loadWorkspace(projectRoot, subprojectRelativePath = DEFAULT_SUBPROJECT)
 async function saveWorkspace(
   projectRoot,
   subprojectRelativePath = DEFAULT_SUBPROJECT,
-  patch = {},
+  patch = {}
 ) {
   const current = loadWorkspace(projectRoot, subprojectRelativePath);
   const next = normalizeWorkspace({

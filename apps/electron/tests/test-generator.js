@@ -53,18 +53,18 @@ async function run() {
   );
   if (config.durationInFrames !== expectedDuration) {
     throw new Error(
-      `preview-config duration mismatch: expected ${expectedDuration}, got ${config.durationInFrames}`,
+      `preview-config duration mismatch: expected ${expectedDuration}, got ${config.durationInFrames}`
     );
   }
   const manifest = JSON.parse(
     fs.readFileSync(
       path.join(remotionSrcDir, "easymotion-timeline.manifest.json"),
-      "utf8",
-    ),
+      "utf8"
+    )
   );
   if (manifest.timeline.durationInFrames !== expectedDuration) {
     throw new Error(
-      `manifest duration mismatch: expected ${expectedDuration}, got ${manifest.timeline.durationInFrames}`,
+      `manifest duration mismatch: expected ${expectedDuration}, got ${manifest.timeline.durationInFrames}`
     );
   }
   if (result.files.length !== 4) {

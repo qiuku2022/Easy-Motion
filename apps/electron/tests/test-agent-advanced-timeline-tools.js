@@ -31,7 +31,12 @@ function buildTimeline() {
             startInFrames: 0,
             durationInFrames: 30,
             source: { kind: "inline", content: "Hello" },
-            transform: { position: { x: 640, y: 360 }, scale: 1, rotation: 0, opacity: 1 },
+            transform: {
+              position: { x: 640, y: 360 },
+              scale: 1,
+              rotation: 0,
+              opacity: 1,
+            },
             style: { fontSize: 72 },
             keyframes: [],
           },
@@ -85,7 +90,12 @@ function buildTimeline() {
             startInFrames: 0,
             durationInFrames: 120,
             source: { kind: "inline", shape: "rect", width: 1280, height: 720 },
-            transform: { position: { x: 640, y: 360 }, scale: 1, rotation: 0, opacity: 1 },
+            transform: {
+              position: { x: 640, y: 360 },
+              scale: 1,
+              rotation: 0,
+              opacity: 1,
+            },
             style: {},
             keyframes: [],
           },
@@ -104,20 +114,32 @@ function main() {
   const tools = createTimelineTools(ctx);
   const toolNames = tools.map((tool) => tool.name);
   assert(toolNames.includes("moveClip"), "tools include moveClip");
-  assert(toolNames.includes("updateTimelineSettings"), "tools include updateTimelineSettings");
+  assert(
+    toolNames.includes("updateTimelineSettings"),
+    "tools include updateTimelineSettings"
+  );
 
   let result = timelineOps.moveClip(buildTimeline(), {
     clipId: "clip-title",
     startInFrames: 30,
   });
-  assert(findClip(result.timeline, "clip-title").startInFrames === 30, "moveClip moves in same track");
-  assert(findClip(result.timeline, "clip-title").lastModifiedBy === "ai", "moveClip marks ai modified");
+  assert(
+    findClip(result.timeline, "clip-title").startInFrames === 30,
+    "moveClip moves in same track"
+  );
+  assert(
+    findClip(result.timeline, "clip-title").lastModifiedBy === "ai",
+    "moveClip marks ai modified"
+  );
 
   result = timelineOps.moveClip(buildTimeline(), {
     clipId: "clip-title",
     relativeOffsetInFrames: 15,
   });
-  assert(findClip(result.timeline, "clip-title").startInFrames === 15, "moveClip supports relative offset");
+  assert(
+    findClip(result.timeline, "clip-title").startInFrames === 15,
+    "moveClip supports relative offset"
+  );
 
   result = timelineOps.moveClip(buildTimeline(), {
     clipId: "clip-title",
@@ -125,8 +147,9 @@ function main() {
     startInFrames: 45,
   });
   assert(
-    timelineOps.findClipLocation(result.timeline.tracks, "clip-title").track.id === "track-text-b",
-    "moveClip moves between tracks of same type",
+    timelineOps.findClipLocation(result.timeline.tracks, "clip-title").track.id ===
+      "track-text-b",
+    "moveClip moves between tracks of same type"
   );
 
   let overlapThrown = false;
@@ -191,7 +214,10 @@ function main() {
     startInFrames: 30,
     confirmOverwrite: true,
   });
-  assert(findClip(result.timeline, "clip-title").startInFrames === 30, "moveClip confirms overwrite");
+  assert(
+    findClip(result.timeline, "clip-title").startInFrames === 30,
+    "moveClip confirms overwrite"
+  );
 
   const settings = timelineOps.updateTimelineSettings(buildTimeline(), {
     width: 1080,
@@ -203,15 +229,18 @@ function main() {
   assert(settings.after.width === 1080, "updateTimelineSettings updates width");
   assert(settings.after.height === 1920, "updateTimelineSettings updates height");
   assert(settings.after.fps === 60, "updateTimelineSettings updates fps");
-  assert(settings.after.durationInFrames === 150, "updateTimelineSettings updates duration");
+  assert(
+    settings.after.durationInFrames === 150,
+    "updateTimelineSettings updates duration"
+  );
   assert(settings.scaledPositions, "updateTimelineSettings reports scaled positions");
   assert(
     findClip(settings.timeline, "clip-bg").transform.position.x === 540,
-    "updateTimelineSettings scales x position",
+    "updateTimelineSettings scales x position"
   );
   assert(
     findClip(settings.timeline, "clip-bg").source.height === 1920,
-    "updateTimelineSettings scales shape height",
+    "updateTimelineSettings scales shape height"
   );
 
   let truncateThrown = false;
@@ -228,7 +257,10 @@ function main() {
     durationInFrames: 60,
     fitExistingClips: true,
   });
-  assert(fitted.after.durationInFrames === 120, "updateTimelineSettings fits existing clips");
+  assert(
+    fitted.after.durationInFrames === 120,
+    "updateTimelineSettings fits existing clips"
+  );
   assert(fitted.fittedDuration, "updateTimelineSettings reports fitted duration");
 
   const context = new TimelineContext(buildTimeline(), {
@@ -243,7 +275,7 @@ function main() {
   assert(context.timeline.durationInFrames === 180, "TimelineContext updates settings");
   assert(
     context.changeLog.some((entry) => entry.op === "updateTimelineSettings"),
-    "TimelineContext logs updateTimelineSettings",
+    "TimelineContext logs updateTimelineSettings"
   );
 
   console.log("test-agent-advanced-timeline-tools: passed");

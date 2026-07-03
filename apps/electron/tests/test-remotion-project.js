@@ -28,8 +28,8 @@ function run() {
         },
       },
       null,
-      2,
-    ),
+      2
+    )
   );
   fs.mkdirSync(path.join(remotionDir, "node_modules", "remotion"), { recursive: true });
   write(path.join(remotionDir, "node_modules", "remotion", "package.json"), "{}");
@@ -42,7 +42,9 @@ function run() {
     throw new Error("missingDeps should list @remotion/bundler");
   }
 
-  const pkg = JSON.parse(fs.readFileSync(path.join(remotionDir, "package.json"), "utf8"));
+  const pkg = JSON.parse(
+    fs.readFileSync(path.join(remotionDir, "package.json"), "utf8")
+  );
   if (!pkg.dependencies["@remotion/bundler"]) {
     throw new Error("ensureRemotionProject should patch package.json with bundler");
   }
@@ -54,7 +56,7 @@ function run() {
   const layersDir = path.join(remotionDir, "src", "components", "layers");
   write(
     path.join(layersDir, "TextLayer.tsx"),
-    'import { applyKeyframesToClip } from "../lib/apply-keyframes";\n',
+    'import { applyKeyframesToClip } from "../lib/apply-keyframes";\n'
   );
   if (!ensureLayerKeyframesImport(remotionDir)) {
     throw new Error("ensureLayerKeyframesImport should patch bad import");
@@ -72,11 +74,11 @@ function run() {
 
   write(
     path.join(layersDir, "TextLayer.tsx"),
-    "export const TextLayer = () => null;\n",
+    "export const TextLayer = () => null;\n"
   );
   write(
     path.join(remotionDir, "src", "components", "MainSequence.tsx"),
-    'import { flattenClipsForPreview } from "../lib/flatten-clips-for-preview";\nexport const MainSequence = () => null;\n',
+    'import { flattenClipsForPreview } from "../lib/flatten-clips-for-preview";\nexport const MainSequence = () => null;\n'
   );
   if (!ensureLayerKeyframesImport(remotionDir)) {
     throw new Error("ensureLayerKeyframesImport should upgrade legacy layers");
@@ -87,7 +89,7 @@ function run() {
   }
   const mainSeq = fs.readFileSync(
     path.join(remotionDir, "src", "components", "MainSequence.tsx"),
-    "utf8",
+    "utf8"
   );
   if (!mainSeq.includes("ClipTransformWrapper")) {
     throw new Error("MainSequence should wrap presets with ClipTransformWrapper");

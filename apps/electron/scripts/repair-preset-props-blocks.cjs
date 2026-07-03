@@ -11,7 +11,7 @@ const {
 const ROOT = path.resolve(__dirname, "..");
 const RVE_DIR = path.join(
   ROOT,
-  "resources/templates/default-project/subprojects/default/remotion/src/presets/rve",
+  "resources/templates/default-project/subprojects/default/remotion/src/presets/rve"
 );
 
 function helperForParam(param) {
@@ -59,7 +59,7 @@ function repairFile(entry) {
 
   const block = propsBlockForEntry(entry);
   const re = new RegExp(
-    `(export function ${entry.component}\\(props: RveBaseProps = \\{\\}\\) \\{)\\n[\\s\\S]*?(?=\\n  const frame|\\n  const \\{ fps|\\n  return)`,
+    `(export function ${entry.component}\\(props: RveBaseProps = \\{\\}\\) \\{)\\n[\\s\\S]*?(?=\\n  const frame|\\n  const \\{ fps|\\n  return)`
   );
   if (!re.test(code)) return false;
   code = code.replace(re, `$1\n${block}\n`);

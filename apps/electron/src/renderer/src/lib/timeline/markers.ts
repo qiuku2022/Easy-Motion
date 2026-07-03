@@ -6,7 +6,9 @@ export function newMarkerId(): string {
   return `marker-${crypto.randomUUID().slice(0, 8)}`;
 }
 
-export function normalizeMarkers(markers: TimelineMarker[] | undefined): TimelineMarker[] {
+export function normalizeMarkers(
+  markers: TimelineMarker[] | undefined
+): TimelineMarker[] {
   if (!Array.isArray(markers)) return [];
   return markers
     .filter(
@@ -14,7 +16,7 @@ export function normalizeMarkers(markers: TimelineMarker[] | undefined): Timelin
         m &&
         typeof m.id === "string" &&
         typeof m.frame === "number" &&
-        Number.isFinite(m.frame),
+        Number.isFinite(m.frame)
     )
     .map((m) => ({
       id: m.id,
@@ -31,12 +33,10 @@ export function getMarkerFrames(timeline: Timeline): number[] {
 export function findMarkerAtFrame(
   timeline: Timeline,
   frame: number,
-  tolerance = 0,
+  tolerance = 0
 ): TimelineMarker | null {
   const markers = normalizeMarkers(timeline.markers);
-  return (
-    markers.find((m) => Math.abs(m.frame - frame) <= tolerance) ?? null
-  );
+  return markers.find((m) => Math.abs(m.frame - frame) <= tolerance) ?? null;
 }
 
 export function defaultMarkerName(frame: number, fps: number): string {

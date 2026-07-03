@@ -202,9 +202,7 @@ function listLocalProjects() {
 
   return {
     scanRoot: getDefaultProjectsParentDir(),
-    projects: Array.from(merged.values()).sort(
-      (a, b) => b.modifiedAt - a.modifiedAt
-    ),
+    projects: Array.from(merged.values()).sort((a, b) => b.modifiedAt - a.modifiedAt),
   };
 }
 

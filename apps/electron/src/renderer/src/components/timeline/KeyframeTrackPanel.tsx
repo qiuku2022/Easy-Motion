@@ -2,9 +2,7 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { ChevronDown } from "lucide-react";
 import { Playhead } from "@/components/timeline/Playhead";
 import { SpeedGraphHandlesLayer } from "@/components/timeline/graph-editor/SpeedGraphHandlesLayer";
-import {
-  buildValueGraphHandleBindings,
-} from "@/lib/timeline/graph-editor/valueGraphHandleBindings";
+import { buildValueGraphHandleBindings } from "@/lib/timeline/graph-editor/valueGraphHandleBindings";
 import { ValueGraphHandlesLayer } from "@/components/timeline/graph-editor/ValueGraphHandlesLayer";
 import { patchValueHandle } from "@/lib/timeline/graph-editor/bezierTangent";
 import { easingKeyframePatch } from "@/lib/timeline/graph-editor/easingKeyframePatch";
@@ -36,8 +34,16 @@ import { resolveTimelineViewportDuration } from "@/lib/timeline/workArea";
 import { KeyframeContextMenu } from "@/components/timeline/KeyframeContextMenu";
 import { KeyframeEasingPanel } from "@/components/timeline/KeyframeEasingPanel";
 import { CompactSegmentedTabs } from "@/components/common/CompactSegmentedTabs";
-import { clampOpacityInternal, formatOpacityValue, isOpacityProperty } from "@/lib/timeline/opacityProperty";
-import { clampScaleInternal, formatScaleValue, isScaleProperty } from "@/lib/timeline/scaleProperty";
+import {
+  clampOpacityInternal,
+  formatOpacityValue,
+  isOpacityProperty,
+} from "@/lib/timeline/opacityProperty";
+import {
+  clampScaleInternal,
+  formatScaleValue,
+  isScaleProperty,
+} from "@/lib/timeline/scaleProperty";
 import {
   formatPositionValue,
   isPositionProperty,
@@ -81,9 +87,9 @@ export function KeyframeTrackPanel() {
       KEYFRAME_ANIMATABLE_PROPERTIES.reduce(
         (sum, item) =>
           sum + (item.path === selectedProperty ? EXPANDED_HEIGHT : COMPACT_HEIGHT),
-        0,
+        0
       ),
-    [selectedProperty],
+    [selectedProperty]
   );
 
   useEffect(() => {
@@ -100,7 +106,7 @@ export function KeyframeTrackPanel() {
       if (syncingScrollRef.current) return;
       setTimelineScrollX(e.currentTarget.scrollLeft);
     },
-    [setTimelineScrollX],
+    [setTimelineScrollX]
   );
 
   const onPlayheadDragStart = usePlayheadDrag(scrollRef, pxPerFrame);
@@ -119,7 +125,7 @@ export function KeyframeTrackPanel() {
         <ChevronDown
           className={cn(
             "h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 ease-in-out",
-            !keyframePanelExpanded && "-rotate-90",
+            !keyframePanelExpanded && "-rotate-90"
           )}
           aria-hidden
         />
@@ -129,15 +135,13 @@ export function KeyframeTrackPanel() {
       <div
         className={cn(
           "grid transition-[grid-template-rows] duration-300 ease-in-out motion-reduce:transition-none",
-          keyframePanelExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+          keyframePanelExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
         )}
       >
         <div
           className={cn(
             "min-h-0 overflow-hidden transition-opacity duration-300 ease-in-out motion-reduce:transition-none",
-            keyframePanelExpanded
-              ? "opacity-100"
-              : "pointer-events-none opacity-0",
+            keyframePanelExpanded ? "opacity-100" : "pointer-events-none opacity-0"
           )}
         >
           <div className="border-t border-border/60 pb-2 pt-2">
@@ -181,7 +185,9 @@ export function KeyframeTrackPanel() {
                         pxPerFrame={pxPerFrame}
                         active={item.path === selectedProperty}
                         rowHeight={
-                          item.path === selectedProperty ? EXPANDED_HEIGHT : COMPACT_HEIGHT
+                          item.path === selectedProperty
+                            ? EXPANDED_HEIGHT
+                            : COMPACT_HEIGHT
                         }
                         contentWidth={contentWidth}
                         clipOffsetPx={clipOffsetPx}
@@ -227,7 +233,7 @@ function PropertyKeyframeLabelRow({
     <div
       className={cn(
         "box-border flex shrink-0 flex-col justify-center gap-1 border-b border-border/60 px-2",
-        active ? "bg-primary/5" : "bg-background/50",
+        active ? "bg-primary/5" : "bg-background/50"
       )}
       style={{ height: rowHeight }}
     >
@@ -299,7 +305,9 @@ function PropertyKeyframeRow({
   } | null>(null);
 
   const valueRange = useMemo(() => {
-    const values = keyframes.map((kf) => Number(kf.value)).filter((v) => !Number.isNaN(v));
+    const values = keyframes
+      .map((kf) => Number(kf.value))
+      .filter((v) => !Number.isNaN(v));
     if (isOpacityProperty(property)) {
       return { min: 0, max: 1 };
     }
@@ -326,14 +334,14 @@ function PropertyKeyframeRow({
 
   const speedRange = useMemo(
     () => speedRangeForSegments(keyframes, fps),
-    [keyframes, fps],
+    [keyframes, fps]
   );
 
   const frameDenom = Math.max(1, clip.durationInFrames - 1);
 
   const frameToX = useCallback(
     (frame: number) => frameToPx(frame, pxPerFrame),
-    [pxPerFrame],
+    [pxPerFrame]
   );
 
   const frameFromClientX = useCallback(
@@ -344,7 +352,7 @@ function PropertyKeyframeRow({
       const ratio = (clientX - rect.left) / rect.width;
       return Math.max(0, Math.min(clip.durationInFrames - 1, ratio * frameDenom));
     },
-    [clip.durationInFrames, frameDenom],
+    [clip.durationInFrames, frameDenom]
   );
 
   const speedToY = useCallback(
@@ -353,7 +361,7 @@ function PropertyKeyframeRow({
       const ratio = (speed - speedRange.min) / span;
       return graphHeight - ratio * graphHeight;
     },
-    [graphHeight, speedRange.max, speedRange.min],
+    [graphHeight, speedRange.max, speedRange.min]
   );
 
   const speedFromClientY = useCallback(
@@ -365,7 +373,7 @@ function PropertyKeyframeRow({
       const span = speedRange.max - speedRange.min || 1;
       return speedRange.min + ratio * span;
     },
-    [speedRange.max, speedRange.min],
+    [speedRange.max, speedRange.min]
   );
 
   const valueToY = useCallback(
@@ -374,7 +382,7 @@ function PropertyKeyframeRow({
       const ratio = (value - valueRange.min) / span;
       return graphHeight - ratio * graphHeight;
     },
-    [graphHeight, valueRange.max, valueRange.min],
+    [graphHeight, valueRange.max, valueRange.min]
   );
 
   const valueFromClientY = useCallback(
@@ -386,38 +394,51 @@ function PropertyKeyframeRow({
       const span = valueRange.max - valueRange.min || 1;
       return valueRange.min + ratio * span;
     },
-    [valueRange.max, valueRange.min],
+    [valueRange.max, valueRange.min]
   );
 
-  const onPointerMove = useCallback((e: PointerEvent) => {
-    const drag = dragRef.current;
-    if (!drag) return;
-    if (drag.mode === "frame") {
-      const deltaFrames = Math.round((e.clientX - drag.startX) / pxPerFrame);
-      const nextFrame = Math.max(
-        0,
-        Math.min(clip.durationInFrames - 1, drag.startFrame + deltaFrames),
-      );
-      if (nextFrame !== drag.startFrame) {
-        moveKeyframe(clip.id, drag.id, nextFrame);
-        drag.startFrame = nextFrame;
-        drag.startX = e.clientX;
+  const onPointerMove = useCallback(
+    (e: PointerEvent) => {
+      const drag = dragRef.current;
+      if (!drag) return;
+      if (drag.mode === "frame") {
+        const deltaFrames = Math.round((e.clientX - drag.startX) / pxPerFrame);
+        const nextFrame = Math.max(
+          0,
+          Math.min(clip.durationInFrames - 1, drag.startFrame + deltaFrames)
+        );
+        if (nextFrame !== drag.startFrame) {
+          moveKeyframe(clip.id, drag.id, nextFrame);
+          drag.startFrame = nextFrame;
+          drag.startX = e.clientX;
+        }
+        return;
       }
-      return;
-    }
-    const span = valueRange.max - valueRange.min || 1;
-    const deltaY = drag.startY - e.clientY;
-    const deltaValue = (deltaY / graphHeight) * span;
-    let nextValue = drag.startValue + deltaValue;
-    if (isOpacityProperty(property)) {
-      nextValue = clampOpacityInternal(nextValue);
-    } else if (isScaleProperty(property)) {
-      nextValue = clampScaleInternal(nextValue);
-    } else if (isPositionProperty(property)) {
-      nextValue = snapPositionValue(nextValue);
-    }
-    updateKeyframe(clip.id, drag.id, { value: nextValue as KeyframeValue });
-  }, [clip.durationInFrames, clip.id, graphHeight, moveKeyframe, property, pxPerFrame, updateKeyframe, valueRange.max, valueRange.min]);
+      const span = valueRange.max - valueRange.min || 1;
+      const deltaY = drag.startY - e.clientY;
+      const deltaValue = (deltaY / graphHeight) * span;
+      let nextValue = drag.startValue + deltaValue;
+      if (isOpacityProperty(property)) {
+        nextValue = clampOpacityInternal(nextValue);
+      } else if (isScaleProperty(property)) {
+        nextValue = clampScaleInternal(nextValue);
+      } else if (isPositionProperty(property)) {
+        nextValue = snapPositionValue(nextValue);
+      }
+      updateKeyframe(clip.id, drag.id, { value: nextValue as KeyframeValue });
+    },
+    [
+      clip.durationInFrames,
+      clip.id,
+      graphHeight,
+      moveKeyframe,
+      property,
+      pxPerFrame,
+      updateKeyframe,
+      valueRange.max,
+      valueRange.min,
+    ]
+  );
 
   const endDrag = useCallback(() => {
     dragRef.current = null;
@@ -425,11 +446,7 @@ function PropertyKeyframeRow({
     window.removeEventListener("pointerup", endDrag);
   }, [onPointerMove]);
 
-  const startDrag = (
-    e: React.PointerEvent,
-    kf: Keyframe,
-    mode: "frame" | "value",
-  ) => {
+  const startDrag = (e: React.PointerEvent, kf: Keyframe, mode: "frame" | "value") => {
     e.preventDefault();
     e.stopPropagation();
     const num = Number(kf.value);
@@ -466,7 +483,7 @@ function PropertyKeyframeRow({
         pxPerFrame,
         graphHeight,
         speedRange.min,
-        speedRange.max,
+        speedRange.max
       );
       if (d) paths.push(d);
     }
@@ -506,7 +523,9 @@ function PropertyKeyframeRow({
         const x1 = frameToPx(end.frame, pxPerFrame);
         const y0 = graphHeight - ((Number(start.value) - vmin) / vspan) * graphHeight;
         const y1 = graphHeight - ((Number(end.value) - vmin) / vspan) * graphHeight;
-        paths.push(`M${x0.toFixed(2)},${y0.toFixed(2)} L${x1.toFixed(2)},${y1.toFixed(2)}`);
+        paths.push(
+          `M${x0.toFixed(2)},${y0.toFixed(2)} L${x1.toFixed(2)},${y1.toFixed(2)}`
+        );
       }
     }
     return paths;
@@ -522,7 +541,7 @@ function PropertyKeyframeRow({
         bezierCp,
       });
     },
-    [clip.id, fps, updateKeyframe],
+    [clip.id, fps, updateKeyframe]
   );
 
   const onDragIncomingSpeed = useCallback(
@@ -534,12 +553,7 @@ function PropertyKeyframeRow({
       const frame = frameFromClientX(clientX);
       const incoming = {
         speed: speedFromClientY(clientY),
-        influence: pointerInfluenceFromFrame(
-          kf.frame,
-          prev.frame,
-          frame,
-          "incoming",
-        ),
+        influence: pointerInfluenceFromFrame(kf.frame, prev.frame, frame, "incoming"),
       };
       const bezierCp = patchIncomingHandle(prev, kf, incoming, fps);
       updateKeyframe(clip.id, kf.id, {
@@ -547,14 +561,7 @@ function PropertyKeyframeRow({
         bezierCp,
       });
     },
-    [
-      clip.id,
-      fps,
-      frameFromClientX,
-      keyframes,
-      speedFromClientY,
-      updateKeyframe,
-    ],
+    [clip.id, fps, frameFromClientX, keyframes, speedFromClientY, updateKeyframe]
   );
 
   const onDragOutgoingSpeed = useCallback(
@@ -566,12 +573,7 @@ function PropertyKeyframeRow({
       const frame = frameFromClientX(clientX);
       const outgoing = {
         speed: speedFromClientY(clientY),
-        influence: pointerInfluenceFromFrame(
-          kf.frame,
-          next.frame,
-          frame,
-          "outgoing",
-        ),
+        influence: pointerInfluenceFromFrame(kf.frame, next.frame, frame, "outgoing"),
       };
       const bezierCp = patchOutgoingHandle(kf, next, outgoing, fps);
       updateKeyframe(clip.id, next.id, {
@@ -579,14 +581,7 @@ function PropertyKeyframeRow({
         bezierCp,
       });
     },
-    [
-      clip.id,
-      fps,
-      frameFromClientX,
-      keyframes,
-      speedFromClientY,
-      updateKeyframe,
-    ],
+    [clip.id, fps, frameFromClientX, keyframes, speedFromClientY, updateKeyframe]
   );
 
   const onDragIncomingValue = useCallback(
@@ -601,7 +596,7 @@ function PropertyKeyframeRow({
         bezierCp,
       });
     },
-    [clip.id, keyframes, updateKeyframe],
+    [clip.id, keyframes, updateKeyframe]
   );
 
   const onDragOutgoingValue = useCallback(
@@ -616,7 +611,7 @@ function PropertyKeyframeRow({
         bezierCp,
       });
     },
-    [clip.id, keyframes, updateKeyframe],
+    [clip.id, keyframes, updateKeyframe]
   );
 
   const speedHandleBindings = useMemo(() => {
@@ -642,15 +637,7 @@ function PropertyKeyframeRow({
         },
       ];
     });
-  }, [
-    active,
-    fps,
-    frameToX,
-    graphMode,
-    keyframes,
-    selectedKeyframeId,
-    speedToY,
-  ]);
+  }, [active, fps, frameToX, graphMode, keyframes, selectedKeyframeId, speedToY]);
 
   const valueHandleBindings = useMemo(() => {
     if (!active || graphMode !== "value") return [];
@@ -672,7 +659,7 @@ function PropertyKeyframeRow({
     <div
       className={cn(
         "relative box-border shrink-0 border-b border-border/60",
-        active ? "bg-primary/5" : "bg-background/50",
+        active ? "bg-primary/5" : "bg-background/50"
       )}
       style={{ width: contentWidth, height: rowHeight }}
     >
@@ -702,11 +689,7 @@ function PropertyKeyframeRow({
                 strokeWidth={1}
                 strokeDasharray="4 3"
               />
-              <text
-                x={4}
-                y={12}
-                className="fill-muted-foreground text-[9px]"
-              >
+              <text x={4} y={12} className="fill-muted-foreground text-[9px]">
                 速度
               </text>
             </>
@@ -762,7 +745,7 @@ function PropertyKeyframeRow({
                 updateKeyframe(
                   clip.id,
                   kf.id,
-                  easingKeyframePatch(easing, kfPrev, kf, fps),
+                  easingKeyframePatch(easing, kfPrev, kf, fps)
                 )
               }
               onEasyEase={() => applyEasyEase(kf, kfPrev)}
@@ -774,7 +757,7 @@ function PropertyKeyframeRow({
                   "absolute z-10 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rotate-45 border shadow hover:scale-125",
                   selectedKeyframeId === kf.id
                     ? "border-primary bg-primary"
-                    : "border-amber-300 bg-amber-400",
+                    : "border-amber-300 bg-amber-400"
                 )}
                 style={{ left, top }}
                 onPointerDown={(e) => {
@@ -795,13 +778,7 @@ function PropertyKeyframeRow({
   );
 }
 
-function PropertyKeyframeDetail({
-  clip,
-  property,
-}: {
-  clip: Clip;
-  property: string;
-}) {
+function PropertyKeyframeDetail({ clip, property }: { clip: Clip; property: string }) {
   const updateKeyframe = useTimelineStore((s) => s.updateKeyframe);
   const fps = useTimelineStore((s) => s.timeline?.fps ?? 30);
   const selectedKeyframeId = useUiStore((s) => s.selectedKeyframeId);
@@ -823,23 +800,23 @@ function PropertyKeyframeDetail({
     <div className="flex border-t border-border/60">
       <div className="shrink-0" style={{ width: TRACK_HEADER_WIDTH }} />
       <div className="min-w-0 flex-1 px-3 py-2">
-      <p className="font-mono text-xs leading-snug text-foreground/70">
-        {graphMode === "speed"
-          ? "速度图：拖方向手柄 sculpt 缓动（↑加速 ↓减速，远离关键帧=影响更大）"
-          : "值图：拖手柄精调值曲线"}
-        {` · f${clip.startInFrames}: ${formatKeyframeValue(property, getPropertyValueAtFrame(clip, property, 0))} → f${clip.startInFrames + clip.durationInFrames - 1}: ${formatKeyframeValue(property, getPropertyValueAtFrame(clip, property, clip.durationInFrames - 1))}`}
-        {" · "}Shift+拖 改值
-      </p>
+        <p className="font-mono text-xs leading-snug text-foreground/70">
+          {graphMode === "speed"
+            ? "速度图：拖方向手柄 sculpt 缓动（↑加速 ↓减速，远离关键帧=影响更大）"
+            : "值图：拖手柄精调值曲线"}
+          {` · f${clip.startInFrames}: ${formatKeyframeValue(property, getPropertyValueAtFrame(clip, property, 0))} → f${clip.startInFrames + clip.durationInFrames - 1}: ${formatKeyframeValue(property, getPropertyValueAtFrame(clip, property, clip.durationInFrames - 1))}`}
+          {" · "}Shift+拖 改值
+        </p>
 
-      {selectedKeyframe && (
-        <KeyframeEasingPanel
-          keyframe={selectedKeyframe}
-          prevKeyframe={prevKeyframe}
-          fps={fps}
-          disabled={false}
-          onPatch={(patch) => updateKeyframe(clip.id, selectedKeyframe.id, patch)}
-        />
-      )}
+        {selectedKeyframe && (
+          <KeyframeEasingPanel
+            keyframe={selectedKeyframe}
+            prevKeyframe={prevKeyframe}
+            fps={fps}
+            disabled={false}
+            onPatch={(patch) => updateKeyframe(clip.id, selectedKeyframe.id, patch)}
+          />
+        )}
       </div>
     </div>
   );

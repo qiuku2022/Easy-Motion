@@ -98,7 +98,7 @@ async function main() {
   fs.writeFileSync(
     sourceCsv,
     "month,revenue\nJan,120\nFeb,180\nMar,not-a-number\nApr,240\n",
-    "utf8",
+    "utf8"
   );
 
   const ctx = new TimelineContext(buildTimeline(), {
@@ -111,11 +111,17 @@ async function main() {
   assert(toolNames.includes("bindChartData"), "tools include bindChartData");
 
   const imported = await ctx.importDataFile({ source: sourceCsv });
-  assert(imported.relativePath.startsWith("data/"), "importDataFile stores in project data dir");
+  assert(
+    imported.relativePath.startsWith("data/"),
+    "importDataFile stores in project data dir"
+  );
   assert(imported.headers.includes("month"), "importDataFile returns headers");
   assert(imported.rowCount === 4, "importDataFile returns row count");
   assert(imported.previewRows.length === 4, "importDataFile returns preview rows");
-  assert(fs.existsSync(path.join(projectRoot, imported.relativePath)), "importDataFile copies file");
+  assert(
+    fs.existsSync(path.join(projectRoot, imported.relativePath)),
+    "importDataFile copies file"
+  );
 
   const mapped = ctx.mapChartData({
     rows: imported.rows,
@@ -156,10 +162,22 @@ async function main() {
   });
   assert(bound.targetKind === "preset", "bindChartData detects animation preset");
   const presetClip = getClip(ctx.timeline, "clip-preset");
-  assert(presetClip.source.props.data.length === 2, "bindChartData writes preset props data");
-  assert(presetClip.source.props.xField === "label", "bindChartData writes preset xField");
-  assert(presetClip.source.props.yField === "value", "bindChartData writes preset yField");
-  assert(presetClip.source.props.title === "预设数据", "bindChartData writes preset title");
+  assert(
+    presetClip.source.props.data.length === 2,
+    "bindChartData writes preset props data"
+  );
+  assert(
+    presetClip.source.props.xField === "label",
+    "bindChartData writes preset xField"
+  );
+  assert(
+    presetClip.source.props.yField === "value",
+    "bindChartData writes preset yField"
+  );
+  assert(
+    presetClip.source.props.title === "预设数据",
+    "bindChartData writes preset title"
+  );
 
   let missingFieldThrown = false;
   try {

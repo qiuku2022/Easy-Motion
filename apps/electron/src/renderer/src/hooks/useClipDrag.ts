@@ -1,5 +1,8 @@
 import { useCallback, useRef, useState } from "react";
-import type { ClipDragPreview, ClipDragMode } from "@/components/timeline/clipDragTypes";
+import type {
+  ClipDragPreview,
+  ClipDragMode,
+} from "@/components/timeline/clipDragTypes";
 import { clampMoveStart, findClipTrack } from "@/lib/timeline/clipCollision";
 import { frameFromPointer } from "@/lib/timeline/pointerFrame";
 import { snapClipEdge, snapClipMove, type SnapGuide } from "@/lib/timeline/snapClip";
@@ -44,7 +47,7 @@ export function useClipDrag({ scrollRef, tracks, pxPerFrame }: UseClipDragOption
       if (track.type !== clipType) return fallbackTrackId;
       return trackId;
     },
-    [tracks],
+    [tracks]
   );
 
   const consumeClick = useCallback(() => {
@@ -72,8 +75,7 @@ export function useClipDrag({ scrollRef, tracks, pxPerFrame }: UseClipDragOption
       const originDuration = clip.durationInFrames;
       const originEnd = originStart + originDuration;
       const pointerFrame = frameFromPointer(e.clientX, container, pxPerFrame, 0);
-      const grabOffsetFrames =
-        mode === "move" ? pointerFrame - originStart : 0;
+      const grabOffsetFrames = mode === "move" ? pointerFrame - originStart : 0;
 
       let moved = false;
       let latestPreview: ClipDragPreview = {
@@ -99,17 +101,21 @@ export function useClipDrag({ scrollRef, tracks, pxPerFrame }: UseClipDragOption
 
         if (mode === "move") {
           const rawStart = pointerAt - grabOffsetFrames;
-          const { startInFrames, guides } = snapClipMove(rawStart, originDuration, opts);
+          const { startInFrames, guides } = snapClipMove(
+            rawStart,
+            originDuration,
+            opts
+          );
           const start = clampMoveStart(
             startInFrames,
             originDuration,
-            timeline.durationInFrames,
+            timeline.durationInFrames
           );
           const targetTrackId = resolveTrackId(
             ev.clientX,
             ev.clientY,
             trackId,
-            clip.type,
+            clip.type
           );
           latestPreview = {
             clipId,
@@ -126,7 +132,7 @@ export function useClipDrag({ scrollRef, tracks, pxPerFrame }: UseClipDragOption
             pointerAt,
             originStart,
             originEnd,
-            opts,
+            opts
           );
           latestPreview = {
             clipId,
@@ -143,7 +149,7 @@ export function useClipDrag({ scrollRef, tracks, pxPerFrame }: UseClipDragOption
             pointerAt,
             originStart,
             originEnd,
-            opts,
+            opts
           );
           latestPreview = {
             clipId,
@@ -174,21 +180,21 @@ export function useClipDrag({ scrollRef, tracks, pxPerFrame }: UseClipDragOption
           store.moveClip(
             clipId,
             latestPreview.targetTrackId,
-            latestPreview.startInFrames,
+            latestPreview.startInFrames
           );
         } else if (latestPreview.mode === "resize-left") {
           store.resizeClip(
             clipId,
             "left",
             latestPreview.startInFrames,
-            latestPreview.durationInFrames,
+            latestPreview.durationInFrames
           );
         } else {
           store.resizeClip(
             clipId,
             "right",
             latestPreview.startInFrames,
-            latestPreview.durationInFrames,
+            latestPreview.durationInFrames
           );
         }
       };
@@ -196,7 +202,7 @@ export function useClipDrag({ scrollRef, tracks, pxPerFrame }: UseClipDragOption
       window.addEventListener("pointermove", move);
       window.addEventListener("pointerup", up);
     },
-    [pxPerFrame, resolveTrackId, scrollRef],
+    [pxPerFrame, resolveTrackId, scrollRef]
   );
 
   return { dragPreview, snapGuides, startDrag, consumeClick };

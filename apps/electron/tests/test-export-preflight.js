@@ -40,14 +40,14 @@ function main() {
 
   const bytes = estimateRequiredBytes(
     { width: 1920, height: 1080, durationInFrames: 100 },
-    "original",
+    "original"
   );
   assert(bytes > 50 * 1024 * 1024, "disk estimate has headroom");
 
   const { formatExportError } = require("../src/main/utils/remotion-binaries");
   assert(
     formatExportError("E2600: spawn EFTYPE").includes("Chrome"),
-    "friendly EFTYPE message",
+    "friendly EFTYPE message"
   );
 
   console.log("export preflight tests passed");

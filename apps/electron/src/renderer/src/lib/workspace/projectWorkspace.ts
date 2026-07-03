@@ -13,9 +13,7 @@ export async function hydrateProjectWorkspace(subprojectPath?: string) {
     return;
   }
 
-  const res = await api.workspace.load(
-    subprojectPath ? { subprojectPath } : undefined,
-  );
+  const res = await api.workspace.load(subprojectPath ? { subprojectPath } : undefined);
 
   useUiStore.setState({
     keyframePanelExpanded: res.success

@@ -30,10 +30,7 @@ function requireProject() {
 function resolveImportOptions(projectPath, payload) {
   let fps = payload?.fps ?? 30;
   try {
-    const timeline = timelineService.loadTimeline(
-      projectPath,
-      payload?.subprojectPath,
-    );
+    const timeline = timelineService.loadTimeline(projectPath, payload?.subprojectPath);
     fps = timeline.fps ?? fps;
   } catch {
     /* use default fps */
@@ -52,7 +49,7 @@ function registerAssetHandlers() {
     wrap(() => {
       const projectPath = requireProject();
       return assetService.listAssets(projectPath);
-    }),
+    })
   );
 
   ipcMain.handle(
@@ -67,9 +64,9 @@ function registerAssetHandlers() {
       return assetService.importAssetFiles(
         projectPath,
         filePaths,
-        resolveImportOptions(projectPath, payload),
+        resolveImportOptions(projectPath, payload)
       );
-    }),
+    })
   );
 
   ipcMain.handle("main:asset:pickAndImport", async (_event, payload) => {
@@ -107,7 +104,7 @@ function registerAssetHandlers() {
       const data = await assetService.importAssetFiles(
         projectPath,
         result.filePaths,
-        resolveImportOptions(projectPath, payload),
+        resolveImportOptions(projectPath, payload)
       );
       return { success: true, data };
     } catch (error) {
@@ -130,7 +127,7 @@ function registerAssetHandlers() {
         isFavorite: payload?.isFavorite,
         name: payload?.name,
       });
-    }),
+    })
   );
 
   ipcMain.handle(
@@ -142,7 +139,7 @@ function registerAssetHandlers() {
         throw new Error("缺少 assetId");
       }
       return assetService.recordAssetUsage(projectPath, assetId);
-    }),
+    })
   );
 
   ipcMain.handle(
@@ -154,7 +151,7 @@ function registerAssetHandlers() {
         throw new Error("缺少 assetId");
       }
       return assetService.readAssetThumbnail(projectPath, assetId);
-    }),
+    })
   );
 }
 

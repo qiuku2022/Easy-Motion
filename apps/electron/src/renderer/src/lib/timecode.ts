@@ -11,7 +11,7 @@ export function formatTimecode(frame: number, fps: number): string {
 export function formatSmpteTimecode(
   frame: number,
   fps: number,
-  options?: { showHours?: boolean },
+  options?: { showHours?: boolean }
 ): string {
   const safeFps = Math.max(1, Math.round(fps));
   const f = Math.max(0, Math.floor(frame));

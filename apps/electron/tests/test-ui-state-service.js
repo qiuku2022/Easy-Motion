@@ -9,7 +9,7 @@ function testClampBoundsToWorkArea() {
     { x: 2000, y: 1200, width: 1440, height: 900 },
     workArea,
     1200,
-    700,
+    700
   );
 
   if (clamped.x + clamped.width > workArea.width) {

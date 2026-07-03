@@ -128,7 +128,13 @@ async function readSseStream(response, webContents, requestId) {
   sendChunk(webContents, requestId, "", true);
 }
 
-async function streamAnthropicChat({ webContents, requestId, messages, config, signal }) {
+async function streamAnthropicChat({
+  webContents,
+  requestId,
+  messages,
+  config,
+  signal,
+}) {
   const url = `${config.baseUrl}/v1/messages`;
   const response = await fetch(url, {
     method: "POST",

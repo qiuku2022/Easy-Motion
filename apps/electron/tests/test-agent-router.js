@@ -1,4 +1,7 @@
-const { resolveCreationMode, includesRemotionTools } = require("../src/main/agent/router");
+const {
+  resolveCreationMode,
+  includesRemotionTools,
+} = require("../src/main/agent/router");
 const { TimelineContext } = require("../src/main/agent/timeline-context");
 const { RemotionContext } = require("../src/main/agent/remotion-context");
 const { createTimelineTools } = require("../src/main/agent/tools");
@@ -40,9 +43,14 @@ function main() {
   });
 
   assert(createTimelineTools(timelineCtx).length >= 10, "timeline tools baseline");
-  assert(createRemotionCodeTools(remotionCtx, timelineCtx).length === 9, "remotion tools");
   assert(
-    resolveCreationMode("auto", "标题 Hello") === includesRemotionTools("quick") ? "quick" : "free",
+    createRemotionCodeTools(remotionCtx, timelineCtx).length === 9,
+    "remotion tools"
+  );
+  assert(
+    resolveCreationMode("auto", "标题 Hello") === includesRemotionTools("quick")
+      ? "quick"
+      : "free",
     "auto resolves consistently"
   );
 

@@ -64,8 +64,7 @@ function parseDataFile(filePath) {
     }
     if (Array.isArray(parsed.rows)) {
       const headers =
-        parsed.headers ??
-        (parsed.rows[0] ? Object.keys(parsed.rows[0]) : []);
+        parsed.headers ?? (parsed.rows[0] ? Object.keys(parsed.rows[0]) : []);
       return { headers, rows: parsed.rows };
     }
     throw new Error("JSON 数据需为数组或 { headers, rows }");

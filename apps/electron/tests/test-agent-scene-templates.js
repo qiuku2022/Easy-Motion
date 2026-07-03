@@ -25,7 +25,7 @@ function writeManifest(projectRoot, assets) {
   fs.writeFileSync(
     manifestPath,
     JSON.stringify({ version: 1, assets }, null, 2),
-    "utf8",
+    "utf8"
   );
 }
 
@@ -96,7 +96,10 @@ function main() {
   const title = findClip(ctx.timeline, (clip) => clip.source?.content === "EasyMotion");
   assert(title?.track.type === "text", "product-intro creates title text");
   const assetClip = findClip(ctx.timeline, (clip) => clip.source?.assetId === "logo");
-  assert(assetClip?.clip.source.publicPath === "/assets/image/logo.png", "product-intro resolves asset path");
+  assert(
+    assetClip?.clip.source.publicPath === "/assets/image/logo.png",
+    "product-intro resolves asset path"
+  );
 
   const missingData = ctx.applySceneTemplate({
     templateId: "data-report",
@@ -137,11 +140,17 @@ function main() {
       aspectRatio: "9:16",
     },
   });
-  assert(social.createdClips.length >= 6, "social-short creates hook, points and ending");
+  assert(
+    social.createdClips.length >= 6,
+    "social-short creates hook, points and ending"
+  );
   assert(socialCtx.timeline.width === 1080, "social-short sets vertical width");
   assert(socialCtx.timeline.height === 1920, "social-short sets vertical height");
   const point = findClip(socialCtx.timeline, (clip) => clip.name === "要点 2");
-  assert(point?.clip.source.content.includes("自动生成动画"), "social-short creates point text");
+  assert(
+    point?.clip.source.content.includes("自动生成动画"),
+    "social-short creates point text"
+  );
 
   let unknownThrown = false;
   try {

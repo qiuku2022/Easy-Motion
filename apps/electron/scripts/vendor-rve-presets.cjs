@@ -14,7 +14,7 @@ const RVE_SRC_BASE =
   "https://raw.githubusercontent.com/reactvideoeditor/remotion-templates/main/templates";
 const RVE_OUT_DIR = path.join(
   ROOT,
-  "resources/templates/default-project/subprojects/default/remotion/src/presets/rve",
+  "resources/templates/default-project/subprojects/default/remotion/src/presets/rve"
 );
 const PRESETS_DIR = path.join(ROOT, "resources/presets");
 const RENDERER_DATA_DIR = path.join(ROOT, "src/renderer/src/data/presets");
@@ -43,12 +43,12 @@ function fetchUrl(url) {
 function sanitizeForRemotionVite(code, fileName) {
   if (code.includes('from "next/') || code.includes("from 'next/")) {
     throw new Error(
-      `${fileName}: uses Next.js imports — add a hand-written Remotion patch in vendor-rve-presets.cjs`,
+      `${fileName}: uses Next.js imports — add a hand-written Remotion patch in vendor-rve-presets.cjs`
     );
   }
   if (code.includes("style jsx")) {
     throw new Error(
-      `${fileName}: uses styled-jsx — add a hand-written Remotion patch in vendor-rve-presets.cjs`,
+      `${fileName}: uses styled-jsx — add a hand-written Remotion patch in vendor-rve-presets.cjs`
     );
   }
   if (/\banimation\s*:/.test(code) && !code.includes("Adapted for Remotion")) {
@@ -69,18 +69,15 @@ function transformSource(source, componentName, fileName) {
   if (hasNamedFn) {
     code = code.replace(
       /export\s+default\s+function\s+(\w+)/,
-      `export function ${componentName}`,
+      `export function ${componentName}`
     );
   } else if (constExport) {
     const oldName = constExport[1];
     code = code.replace(
       new RegExp(`export\\s+const\\s+${oldName}\\b`),
-      `export const ${componentName}`,
+      `export const ${componentName}`
     );
-    code = code.replace(
-      new RegExp(`export\\s+default\\s+${oldName}\\s*;?`, "m"),
-      "",
-    );
+    code = code.replace(new RegExp(`export\\s+default\\s+${oldName}\\s*;?`, "m"), "");
   } else {
     throw new Error(`Could not transform export for ${componentName}`);
   }
@@ -123,9 +120,7 @@ function shouldSkipVendorFile(item) {
   const outPath = path.join(RVE_OUT_DIR, item.file);
   if (!fs.existsSync(outPath)) return false;
   const content = fs.readFileSync(outPath, "utf8");
-  return (
-    content.includes("RveBaseProps") || content.includes('from "./shared"')
-  );
+  return content.includes("RveBaseProps") || content.includes('from "./shared"');
 }
 
 async function main() {
@@ -173,9 +168,7 @@ async function main() {
     });
 
     const moduleBase = item.file.replace(/\.tsx$/, "");
-    barrelExports.push(
-      `export { ${item.component} } from "./${moduleBase}";`,
-    );
+    barrelExports.push(`export { ${item.component} } from "./${moduleBase}";`);
   }
 
   const indexTs = `${barrelExports.join("\n")}\n`;
@@ -189,7 +182,7 @@ import * as Rve from "./rve";
 
 export const PRESET_COMPONENT_MAP: Record<string, FC> = {
 ${RVE_PRESET_CATALOG.map(
-  (item) => `  ${item.component}: Rve.${item.component} as FC,`,
+  (item) => `  ${item.component}: Rve.${item.component} as FC,`
 ).join("\n")}
 };
 
@@ -202,9 +195,12 @@ ${RVE_PRESET_CATALOG.map((item) => `  "${item.component}",`).join("\n")}
 ]);
 `;
   fs.writeFileSync(
-    path.join(ROOT, "resources/templates/default-project/subprojects/default/remotion/src/presets/registry.ts"),
+    path.join(
+      ROOT,
+      "resources/templates/default-project/subprojects/default/remotion/src/presets/registry.ts"
+    ),
     registryTs,
-    "utf8",
+    "utf8"
   );
 
   const categories = [
@@ -221,29 +217,29 @@ ${RVE_PRESET_CATALOG.map((item) => `  "${item.component}",`).join("\n")}
   fs.writeFileSync(
     path.join(PRESETS_DIR, "categories.json"),
     JSON.stringify(categories, null, 2),
-    "utf8",
+    "utf8"
   );
 
   fs.writeFileSync(
     path.join(PRESETS_DIR, "component-registry.json"),
     JSON.stringify(componentRegistry, null, 2),
-    "utf8",
+    "utf8"
   );
 
   fs.writeFileSync(
     path.join(PRESETS_DIR, "manifest.json"),
     JSON.stringify(manifest, null, 2),
-    "utf8",
+    "utf8"
   );
 
   // Renderer bundle copy
   fs.copyFileSync(
     path.join(PRESETS_DIR, "manifest.json"),
-    path.join(RENDERER_DATA_DIR, "manifest.json"),
+    path.join(RENDERER_DATA_DIR, "manifest.json")
   );
   fs.copyFileSync(
     path.join(PRESETS_DIR, "categories.json"),
-    path.join(RENDERER_DATA_DIR, "categories.json"),
+    path.join(RENDERER_DATA_DIR, "categories.json")
   );
 
   const notice = `# RVE Preset Components (MIT)

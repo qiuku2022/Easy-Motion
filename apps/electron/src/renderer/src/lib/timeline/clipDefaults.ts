@@ -9,7 +9,7 @@ export const DEFAULT_TRANSFORM = {
 
 export function ensureTransform(
   transform: Clip["transform"] | undefined,
-  canvas?: { width: number; height: number },
+  canvas?: { width: number; height: number }
 ): {
   position: { x: number; y: number };
   scale: number;

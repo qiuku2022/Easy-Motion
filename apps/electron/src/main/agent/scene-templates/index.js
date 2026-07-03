@@ -20,7 +20,9 @@ function frameSeconds(timeline, seconds) {
 function clampSceneDuration(timeline, params, fallbackSeconds) {
   return Math.max(
     frameSeconds(timeline, 3),
-    Math.round(Number(params.durationInFrames ?? frameSeconds(timeline, fallbackSeconds)))
+    Math.round(
+      Number(params.durationInFrames ?? frameSeconds(timeline, fallbackSeconds))
+    )
   );
 }
 
@@ -165,7 +167,12 @@ function buildProductIntro(timeline, params, options) {
     name: "品牌渐变背景",
     startInFrames: start,
     durationInFrames: duration,
-    source: { kind: "inline", shape: "rect", width: canvas.width, height: canvas.height },
+    source: {
+      kind: "inline",
+      shape: "rect",
+      width: canvas.width,
+      height: canvas.height,
+    },
     transform: defaultTextTransform(canvas, canvas.height / 2),
     style: { background: makeGradient(primary, secondary) },
   });
@@ -184,11 +191,20 @@ function buildProductIntro(timeline, params, options) {
     addClip(operations, "subtitle", {
       name: "产品标语",
       startInFrames: start + frameSeconds(timeline, 1.2),
-      durationInFrames: Math.max(frameSeconds(timeline, 3), duration - frameSeconds(timeline, 2)),
+      durationInFrames: Math.max(
+        frameSeconds(timeline, 3),
+        duration - frameSeconds(timeline, 2)
+      ),
       source: { kind: "inline", content: String(params.tagline) },
       transform: defaultTextTransform(canvas, canvas.height * 0.47),
-      style: textStyle({ fontSize: Math.round(canvas.width * 0.032), color: "#e0f2fe", fontWeight: 500 }),
-      animations: { in: { type: "slide-up", durationInFrames: frameSeconds(timeline, 0.5) } },
+      style: textStyle({
+        fontSize: Math.round(canvas.width * 0.032),
+        color: "#e0f2fe",
+        fontWeight: 500,
+      }),
+      animations: {
+        in: { type: "slide-up", durationInFrames: frameSeconds(timeline, 0.5) },
+      },
     });
   }
 
@@ -197,7 +213,10 @@ function buildProductIntro(timeline, params, options) {
     addClip(operations, "image", {
       name: mediaAsset.name ?? "产品素材",
       startInFrames: start + frameSeconds(timeline, 2),
-      durationInFrames: Math.max(frameSeconds(timeline, 3), duration - frameSeconds(timeline, 4)),
+      durationInFrames: Math.max(
+        frameSeconds(timeline, 3),
+        duration - frameSeconds(timeline, 4)
+      ),
       source: assetSource(mediaAsset),
       transform: {
         position: { x: canvas.width / 2, y: canvas.height * 0.32 },
@@ -215,7 +234,11 @@ function buildProductIntro(timeline, params, options) {
     durationInFrames: Math.min(frameSeconds(timeline, 3), duration),
     source: { kind: "inline", content: String(params.callToAction ?? "立即开始") },
     transform: defaultTextTransform(canvas, canvas.height * 0.16),
-    style: textStyle({ fontSize: Math.round(canvas.width * 0.03), color: "#ffffff", fontWeight: 600 }),
+    style: textStyle({
+      fontSize: Math.round(canvas.width * 0.03),
+      color: "#ffffff",
+      fontWeight: 600,
+    }),
     animations: { in: { type: "fade", durationInFrames: frameSeconds(timeline, 0.4) } },
   });
 
@@ -236,10 +259,19 @@ function buildDataReport(timeline, params, options) {
   const primary = resolveColor(params.brandColor, "#0f766e");
   const canvas = { width: timeline.width, height: timeline.height };
   const operations = [];
-  const titleDuration = Math.min(frameSeconds(timeline, 3), Math.round(duration * 0.25));
-  const outroDuration = Math.min(frameSeconds(timeline, 3), Math.round(duration * 0.25));
+  const titleDuration = Math.min(
+    frameSeconds(timeline, 3),
+    Math.round(duration * 0.25)
+  );
+  const outroDuration = Math.min(
+    frameSeconds(timeline, 3),
+    Math.round(duration * 0.25)
+  );
   const chartStart = start + titleDuration;
-  const chartDuration = Math.max(frameSeconds(timeline, 3), duration - titleDuration - outroDuration);
+  const chartDuration = Math.max(
+    frameSeconds(timeline, 3),
+    duration - titleDuration - outroDuration
+  );
 
   addTrack(operations, "bg", "shape", "数据汇报背景");
   addTrack(operations, "title", "text", "汇报标题");
@@ -250,7 +282,12 @@ function buildDataReport(timeline, params, options) {
     name: "数据汇报背景",
     startInFrames: start,
     durationInFrames: duration,
-    source: { kind: "inline", shape: "rect", width: canvas.width, height: canvas.height },
+    source: {
+      kind: "inline",
+      shape: "rect",
+      width: canvas.width,
+      height: canvas.height,
+    },
     transform: defaultTextTransform(canvas, canvas.height / 2),
     style: { fillColor: "#07111f" },
   });
@@ -270,7 +307,11 @@ function buildDataReport(timeline, params, options) {
       durationInFrames: Math.max(1, titleDuration - frameSeconds(timeline, 0.8)),
       source: { kind: "inline", content: String(params.subtitle) },
       transform: defaultTextTransform(canvas, canvas.height * 0.58),
-      style: textStyle({ fontSize: Math.round(canvas.width * 0.026), color: "#94a3b8", fontWeight: 500 }),
+      style: textStyle({
+        fontSize: Math.round(canvas.width * 0.026),
+        color: "#94a3b8",
+        fontWeight: 500,
+      }),
     });
   }
   addClip(operations, "chart", {
@@ -288,15 +329,24 @@ function buildDataReport(timeline, params, options) {
     },
     transform: defaultTextTransform(canvas, canvas.height * 0.48),
     style: { primaryColor: primary },
-    animations: { in: { type: "scale-up", durationInFrames: frameSeconds(timeline, 0.5) } },
+    animations: {
+      in: { type: "scale-up", durationInFrames: frameSeconds(timeline, 0.5) },
+    },
   });
   addClip(operations, "insight", {
     name: "关键洞察",
     startInFrames: start + duration - outroDuration,
     durationInFrames: outroDuration,
-    source: { kind: "inline", content: String(params.insightText ?? "关键指标表现稳定增长") },
+    source: {
+      kind: "inline",
+      content: String(params.insightText ?? "关键指标表现稳定增长"),
+    },
     transform: defaultTextTransform(canvas, canvas.height * 0.18),
-    style: textStyle({ fontSize: Math.round(canvas.width * 0.03), color: "#d1fae5", fontWeight: 600 }),
+    style: textStyle({
+      fontSize: Math.round(canvas.width * 0.03),
+      color: "#d1fae5",
+      fontWeight: 600,
+    }),
     animations: { in: { type: "fade", durationInFrames: frameSeconds(timeline, 0.4) } },
   });
 
@@ -308,7 +358,9 @@ function buildSocialShort(timeline, params) {
   if (!hook) {
     return { needsInput: true, requiredInputs: ["hook"] };
   }
-  const points = Array.isArray(params.points) ? params.points.filter(Boolean).slice(0, 4) : [];
+  const points = Array.isArray(params.points)
+    ? params.points.filter(Boolean).slice(0, 4)
+    : [];
   if (points.length === 0) {
     return { needsInput: true, requiredInputs: ["points"] };
   }
@@ -323,11 +375,20 @@ function buildSocialShort(timeline, params) {
   const primary = resolveColor(params.brandColor, "#f97316");
   const operations = [];
   const hookDuration = Math.min(frameSeconds(timeline, 2), Math.round(duration * 0.25));
-  const endingDuration = Math.min(frameSeconds(timeline, 2), Math.round(duration * 0.2));
+  const endingDuration = Math.min(
+    frameSeconds(timeline, 2),
+    Math.round(duration * 0.2)
+  );
   const pointsStart = start + hookDuration;
-  const pointDuration = Math.max(1, Math.floor((duration - hookDuration - endingDuration) / points.length));
+  const pointDuration = Math.max(
+    1,
+    Math.floor((duration - hookDuration - endingDuration) / points.length)
+  );
 
-  if (settings && (settings.width !== timeline.width || settings.height !== timeline.height)) {
+  if (
+    settings &&
+    (settings.width !== timeline.width || settings.height !== timeline.height)
+  ) {
     operations.push({
       op: "updateTimelineSettings",
       args: {
@@ -348,7 +409,12 @@ function buildSocialShort(timeline, params) {
     name: "短视频背景",
     startInFrames: start,
     durationInFrames: duration,
-    source: { kind: "inline", shape: "rect", width: canvas.width, height: canvas.height },
+    source: {
+      kind: "inline",
+      shape: "rect",
+      width: canvas.width,
+      height: canvas.height,
+    },
     transform: defaultTextTransform(canvas, canvas.height / 2),
     style: { background: makeGradient("#111827", primary) },
   });
@@ -359,7 +425,9 @@ function buildSocialShort(timeline, params) {
     source: { kind: "inline", content: hook },
     transform: defaultTextTransform(canvas, canvas.height * 0.68),
     style: textStyle({ fontSize: Math.round(canvas.width * 0.078), color: "#ffffff" }),
-    animations: { in: { type: "scale-up", durationInFrames: frameSeconds(timeline, 0.4) } },
+    animations: {
+      in: { type: "scale-up", durationInFrames: frameSeconds(timeline, 0.4) },
+    },
   });
 
   points.forEach((point, index) => {
@@ -369,8 +437,14 @@ function buildSocialShort(timeline, params) {
       durationInFrames: pointDuration,
       source: { kind: "inline", content: `${index + 1}. ${point}` },
       transform: defaultTextTransform(canvas, canvas.height * (0.58 - index * 0.1)),
-      style: textStyle({ fontSize: Math.round(canvas.width * 0.052), color: "#fff7ed", fontWeight: 600 }),
-      animations: { in: { type: "slide-up", durationInFrames: frameSeconds(timeline, 0.35) } },
+      style: textStyle({
+        fontSize: Math.round(canvas.width * 0.052),
+        color: "#fff7ed",
+        fontWeight: 600,
+      }),
+      animations: {
+        in: { type: "slide-up", durationInFrames: frameSeconds(timeline, 0.35) },
+      },
     });
   });
 
@@ -380,7 +454,11 @@ function buildSocialShort(timeline, params) {
     durationInFrames: endingDuration,
     source: { kind: "inline", content: String(params.ending ?? "关注获取更多") },
     transform: defaultTextTransform(canvas, canvas.height * 0.2),
-    style: textStyle({ fontSize: Math.round(canvas.width * 0.05), color: "#ffffff", fontWeight: 700 }),
+    style: textStyle({
+      fontSize: Math.round(canvas.width * 0.05),
+      color: "#ffffff",
+      fontWeight: 700,
+    }),
     animations: { in: { type: "fade", durationInFrames: frameSeconds(timeline, 0.3) } },
   });
 

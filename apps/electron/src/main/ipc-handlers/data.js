@@ -31,9 +31,7 @@ function registerDataHandlers() {
       const result = await dialog.showOpenDialog({
         title: "选择数据文件",
         properties: ["openFile"],
-        filters: [
-          { name: "数据文件", extensions: ["csv", "json"] },
-        ],
+        filters: [{ name: "数据文件", extensions: ["csv", "json"] }],
       });
 
       if (result.canceled || result.filePaths.length === 0) {
@@ -42,7 +40,7 @@ function registerDataHandlers() {
 
       const imported = await dataService.importDataFileToProject(
         projectPath,
-        result.filePaths[0],
+        result.filePaths[0]
       );
       return { success: true, data: imported };
     } catch (error) {
@@ -65,7 +63,7 @@ function registerDataHandlers() {
       return {
         data: dataService.mapRowsToChartData(rows, xField, yField),
       };
-    }),
+    })
   );
 }
 

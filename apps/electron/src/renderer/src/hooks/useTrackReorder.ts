@@ -9,7 +9,7 @@ export interface TrackReorderPreview {
 function reorderTrackIds(
   trackIds: string[],
   trackId: string,
-  insertBeforeIndex: number,
+  insertBeforeIndex: number
 ): string[] {
   const from = trackIds.indexOf(trackId);
   if (from < 0) return trackIds;
@@ -26,7 +26,7 @@ function reorderTrackIds(
 
 export function useTrackReorder(
   sortedTrackIds: string[],
-  containerRef: React.RefObject<HTMLElement | null>,
+  containerRef: React.RefObject<HTMLElement | null>
 ) {
   const [preview, setPreview] = useState<TrackReorderPreview | null>(null);
   const reorderTracks = useTimelineStore((s) => s.reorderTracks);
@@ -37,7 +37,7 @@ export function useTrackReorder(
       if (!el) return 0;
       const headers = [
         ...el.querySelectorAll<HTMLElement>(
-          '[data-track-header-id][data-top-level="true"]',
+          '[data-track-header-id][data-top-level="true"]'
         ),
       ];
       if (headers.length === 0) return 0;
@@ -52,7 +52,7 @@ export function useTrackReorder(
       }
       return insertIndex;
     },
-    [containerRef],
+    [containerRef]
   );
 
   const startReorder = useCallback(
@@ -96,7 +96,7 @@ export function useTrackReorder(
       window.addEventListener("pointermove", onMove);
       window.addEventListener("pointerup", onUp);
     },
-    [sortedTrackIds, computeInsertIndex, reorderTracks],
+    [sortedTrackIds, computeInsertIndex, reorderTracks]
   );
 
   return { preview, startReorder };

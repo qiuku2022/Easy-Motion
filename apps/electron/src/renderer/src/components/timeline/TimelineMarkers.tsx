@@ -33,7 +33,7 @@ export function RulerMarkers({
             aria-label={marker.name ?? `标记 帧 ${marker.frame}`}
             className={cn(
               "absolute top-0 z-20 -translate-x-1/2 cursor-pointer rounded-md p-0.5 transition-colors duration-150 ease-out hover:bg-muted",
-              selected && "bg-em-accent/20",
+              selected && "bg-em-accent/20"
             )}
             style={{ left: frameToPx(marker.frame, pxPerFrame) }}
             onPointerDown={(e) => e.stopPropagation()}
@@ -88,7 +88,7 @@ export function BodyMarkerLines({
               "h-full w-0 border-l border-dashed opacity-60",
               marker.id === selectedMarkerId
                 ? "border-amber-400 opacity-90"
-                : "border-amber-500/70",
+                : "border-amber-500/70"
             )}
           />
         </div>

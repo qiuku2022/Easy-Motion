@@ -52,11 +52,12 @@ function defaultZipName(projectName: string) {
 function statusTitle(
   phase: string,
   progressStatus?: string,
-  exportKind: ExportKind = "video",
+  exportKind: ExportKind = "video"
 ): string {
   if (phase === "failed") return exportKind === "project" ? "工程导出失败" : "导出失败";
   if (phase === "cancelled") return "已取消";
-  if (phase === "completed") return exportKind === "project" ? "工程导出完成" : "导出完成";
+  if (phase === "completed")
+    return exportKind === "project" ? "工程导出完成" : "导出完成";
   if (progressStatus === "preparing") {
     return exportKind === "project" ? "准备打包…" : "准备渲染…";
   }
@@ -90,7 +91,7 @@ export function ExportDialogs() {
   const timeline = useTimelineStore((s) => s.timeline);
   const exportRange = useMemo(
     () => (timeline ? resolveExportFrameRange(timeline) : null),
-    [timeline],
+    [timeline]
   );
 
   const [format, setFormat] = useState<ExportFormat>("mp4");
@@ -235,9 +236,7 @@ export function ExportDialogs() {
                     <InfoNote>
                       导出帧 {exportRange.inFrame}–{exportRange.outFrame}，共{" "}
                       {exportRange.frameCount} 帧
-                      {exportRange.custom
-                        ? "（已设 I/O）"
-                        : "（至最后有内容的帧）"}
+                      {exportRange.custom ? "（已设 I/O）" : "（至最后有内容的帧）"}
                     </InfoNote>
                   ) : null}
 
@@ -262,7 +261,9 @@ export function ExportDialogs() {
                   className="h-9 font-mono text-xs"
                   value={output}
                   onChange={(e) => setOutput(e.target.value)}
-                  placeholder={mode === "project" ? "选择 .zip 保存位置" : "选择视频保存位置"}
+                  placeholder={
+                    mode === "project" ? "选择 .zip 保存位置" : "选择视频保存位置"
+                  }
                 />
                 <Button
                   type="button"
@@ -370,11 +371,17 @@ export function ExportDialogs() {
 
           <DialogFooter className="mx-0 mb-0 gap-3 border-t border-border bg-muted/10 px-5 py-4 sm:justify-end">
             {canCancel ? (
-              <Button type="button" variant="outline" onClick={() => void cancelExport()}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => void cancelExport()}
+              >
                 取消渲染
               </Button>
             ) : isActive ? (
-              <p className="mr-auto text-xs text-muted-foreground">工程打包中，请稍候…</p>
+              <p className="mr-auto text-xs text-muted-foreground">
+                工程打包中，请稍候…
+              </p>
             ) : null}
             {!isActive && isFailed ? (
               <>
@@ -399,9 +406,12 @@ export function ExportDialogs() {
                 <Button
                   type="button"
                   onClick={() => {
-                    toast.success(exportKind === "project" ? "工程导出完成" : "导出完成", {
-                      description: outputPath ?? undefined,
-                    });
+                    toast.success(
+                      exportKind === "project" ? "工程导出完成" : "导出完成",
+                      {
+                        description: outputPath ?? undefined,
+                      }
+                    );
                     reset();
                   }}
                 >
@@ -469,11 +479,15 @@ function ModeCard({
         "flex flex-col items-start gap-1 rounded-lg border px-3 py-2.5 text-left transition-colors",
         active
           ? "border-foreground/20 bg-background shadow-sm ring-1 ring-foreground/10"
-          : "border-border bg-muted/15 text-muted-foreground hover:border-foreground/15 hover:bg-muted/30 hover:text-foreground",
+          : "border-border bg-muted/15 text-muted-foreground hover:border-foreground/15 hover:bg-muted/30 hover:text-foreground"
       )}
     >
-      <Icon className={cn("h-4 w-4", active ? "text-foreground" : "text-muted-foreground")} />
-      <span className={cn("text-sm font-medium", active && "text-foreground")}>{title}</span>
+      <Icon
+        className={cn("h-4 w-4", active ? "text-foreground" : "text-muted-foreground")}
+      />
+      <span className={cn("text-sm font-medium", active && "text-foreground")}>
+        {title}
+      </span>
       <span className="text-[11px]">{description}</span>
     </button>
   );
@@ -497,13 +511,7 @@ function ProjectFeature({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Field({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-1.5">
       <label className="text-xs font-medium text-muted-foreground">{label}</label>

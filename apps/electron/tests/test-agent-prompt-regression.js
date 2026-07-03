@@ -39,14 +39,32 @@ function main() {
   assert(prompt.includes("createTrack"), "system prompt mentions createTrack");
   assert(prompt.includes("listTimeline"), "system prompt mentions listTimeline");
   assert(prompt.includes("getClipDetail"), "system prompt mentions getClipDetail");
-  assert(prompt.includes("queryTimelineRange"), "system prompt mentions queryTimelineRange");
+  assert(
+    prompt.includes("queryTimelineRange"),
+    "system prompt mentions queryTimelineRange"
+  );
   assert(prompt.includes("moveClip"), "system prompt mentions moveClip");
-  assert(prompt.includes("updateTimelineSettings"), "system prompt mentions updateTimelineSettings");
-  assert(prompt.includes("batchUpdateClips"), "system prompt mentions batchUpdateClips");
-  assert(prompt.includes("batchDeleteClips"), "system prompt mentions batchDeleteClips");
+  assert(
+    prompt.includes("updateTimelineSettings"),
+    "system prompt mentions updateTimelineSettings"
+  );
+  assert(
+    prompt.includes("batchUpdateClips"),
+    "system prompt mentions batchUpdateClips"
+  );
+  assert(
+    prompt.includes("batchDeleteClips"),
+    "system prompt mentions batchDeleteClips"
+  );
   assert(prompt.includes("batchShiftClips"), "system prompt mentions batchShiftClips");
-  assert(prompt.includes("applySceneTemplate"), "system prompt mentions applySceneTemplate");
-  assert(prompt.includes("applyVisualLayout"), "system prompt mentions applyVisualLayout");
+  assert(
+    prompt.includes("applySceneTemplate"),
+    "system prompt mentions applySceneTemplate"
+  );
+  assert(
+    prompt.includes("applyVisualLayout"),
+    "system prompt mentions applyVisualLayout"
+  );
   assert(prompt.includes("setWorkArea"), "system prompt mentions setWorkArea");
   assert(prompt.includes("exportVideo"), "system prompt mentions exportVideo");
   assert(prompt.includes("getExportStatus"), "system prompt mentions getExportStatus");
@@ -85,7 +103,7 @@ function main() {
   });
   assert(
     gradientBg["style.background"]?.includes("linear-gradient"),
-    "normalize background -> style.background",
+    "normalize background -> style.background"
   );
 
   const visionSection = buildVisionContextSection({
@@ -107,7 +125,10 @@ function main() {
   assert(toolNames.includes("getClipDetail"), "tools include getClipDetail");
   assert(toolNames.includes("queryTimelineRange"), "tools include queryTimelineRange");
   assert(toolNames.includes("moveClip"), "tools include moveClip");
-  assert(toolNames.includes("updateTimelineSettings"), "tools include updateTimelineSettings");
+  assert(
+    toolNames.includes("updateTimelineSettings"),
+    "tools include updateTimelineSettings"
+  );
   assert(toolNames.includes("batchUpdateClips"), "tools include batchUpdateClips");
   assert(toolNames.includes("batchDeleteClips"), "tools include batchDeleteClips");
   assert(toolNames.includes("batchShiftClips"), "tools include batchShiftClips");
@@ -142,7 +163,7 @@ function main() {
   assert(fallback.timelineChanged, "fallback changes timeline for title request");
   assert(
     fallback.reply.includes("PromptRegression") || fallback.reply.includes("简化"),
-    "fallback reply mentions input or simplified mode",
+    "fallback reply mentions input or simplified mode"
   );
 
   const cases = [
@@ -159,7 +180,10 @@ function main() {
   ];
   assert(cases.length === 10, "prompt regression case list has 10 items");
   for (const text of cases) {
-    assert(typeof text === "string" && text.length > 0, `case should be non-empty: ${text}`);
+    assert(
+      typeof text === "string" && text.length > 0,
+      `case should be non-empty: ${text}`
+    );
   }
 
   console.log("test-agent-prompt-regression: passed");

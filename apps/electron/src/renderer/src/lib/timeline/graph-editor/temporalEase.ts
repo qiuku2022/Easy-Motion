@@ -39,7 +39,7 @@ export function temporalEasesToBezierCp(
   end: Keyframe,
   outgoing: KeyframeTemporalEase,
   incoming: KeyframeTemporalEase,
-  fps: number,
+  fps: number
 ): KeyframeBezierCp {
   const avg = averageSpeed(prev, end, fps);
   const outInf = clampInfluence(outgoing.influence) / 100;
@@ -62,7 +62,7 @@ export function temporalEasesToBezierCp(
 export function bezierCpToTemporalEases(
   prev: Keyframe,
   end: Keyframe,
-  fps: number,
+  fps: number
 ): { outgoing: KeyframeTemporalEase; incoming: KeyframeTemporalEase } {
   const cp = end.bezierCp ?? DEFAULT_BEZIER_CP;
   const avg = averageSpeed(prev, end, fps);
@@ -72,8 +72,7 @@ export function bezierCpToTemporalEases(
 
   const inInfluence = (1 - cp.x2) * 100;
   const inInfNorm = inInfluence / 100;
-  const inSpeed =
-    inInfNorm > 1e-6 ? ((1 - cp.y2) / inInfNorm) * avg : 0;
+  const inSpeed = inInfNorm > 1e-6 ? ((1 - cp.y2) / inInfNorm) * avg : 0;
 
   return {
     outgoing: {
@@ -91,7 +90,7 @@ export function bezierCpToTemporalEases(
 export function easyEaseBezierCp(
   prev: Keyframe,
   end: Keyframe,
-  fps: number,
+  fps: number
 ): KeyframeBezierCp {
   return temporalEasesToBezierCp(prev, end, AE_EASY_EASE, AE_EASY_EASE, fps);
 }

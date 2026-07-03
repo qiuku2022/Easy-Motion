@@ -1,12 +1,12 @@
 import { memo, useMemo } from "react";
 import { frameToPx, clampFrame } from "@/lib/timeline/framePixels";
 import { RULER_HEIGHT } from "@/lib/timeline/constants";
-import {
-  buildRulerTicks,
-  formatRulerLabel,
-} from "@/lib/timeline/rulerTicks";
+import { buildRulerTicks, formatRulerLabel } from "@/lib/timeline/rulerTicks";
 import { RulerMarkers } from "@/components/timeline/TimelineMarkers";
-import { WorkAreaRulerMarkers, WorkAreaRulerShade } from "@/components/timeline/WorkAreaOverlay";
+import {
+  WorkAreaRulerMarkers,
+  WorkAreaRulerShade,
+} from "@/components/timeline/WorkAreaOverlay";
 import { cn } from "@/lib/utils";
 import { useUiStore } from "@/stores/uiStore";
 import type { Timeline } from "@/types/timeline";
@@ -40,7 +40,7 @@ export const TimelineRuler = memo(function TimelineRuler({
 
   const ticks = useMemo(
     () => buildRulerTicks(durationInFrames, pxPerFrame, fps),
-    [durationInFrames, pxPerFrame, fps],
+    [durationInFrames, pxPerFrame, fps]
   );
 
   const seekFromPointer = (clientX: number, el: HTMLElement) => {
@@ -58,7 +58,7 @@ export const TimelineRuler = memo(function TimelineRuler({
       aria-valuemax={Math.max(0, durationInFrames - 1)}
       className={cn(
         "relative shrink-0 cursor-pointer select-none border-b border-em-border bg-em-surface/50",
-        className,
+        className
       )}
       style={{ width: contentWidth, height: RULER_HEIGHT }}
       onPointerDown={(e) => {
@@ -86,7 +86,7 @@ export const TimelineRuler = memo(function TimelineRuler({
           <div
             className={cn(
               "absolute bottom-0 w-px bg-em-border",
-              kind === "labeled" ? "h-full" : "h-2",
+              kind === "labeled" ? "h-full" : "h-2"
             )}
           />
           {kind === "labeled" ? (

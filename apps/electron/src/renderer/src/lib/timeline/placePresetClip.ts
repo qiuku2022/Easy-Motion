@@ -1,9 +1,6 @@
 import { ensureTimelineFitsClip } from "@/lib/timeline/workArea";
 import { addClip, addTrack, newId } from "@/lib/timeline/mutations";
-import {
-  clampMoveStart,
-  hasOverlapOnTrack,
-} from "@/lib/timeline/clipCollision";
+import { clampMoveStart, hasOverlapOnTrack } from "@/lib/timeline/clipCollision";
 import { defaultPropsFromPreset } from "@/lib/presetProps";
 import { snapClipMove } from "@/lib/timeline/snapClip";
 import type { SnapEditOptions } from "@/lib/timeline/snapEditFrame";
@@ -27,7 +24,7 @@ export interface PlacePresetResult {
 function buildClipFromPreset(
   preset: PresetDefinition,
   timeline: Timeline,
-  durationInFrames: number,
+  durationInFrames: number
 ): Omit<Clip, "startInFrames"> {
   return {
     id: newId("clip"),
@@ -56,7 +53,7 @@ function buildClipFromPreset(
 
 function resolveAnimationTrack(
   timeline: Timeline,
-  preferredTrackId?: string | null,
+  preferredTrackId?: string | null
 ): { timeline: Timeline; trackId: string } {
   if (preferredTrackId) {
     const preferred = timeline.tracks.find((t) => t.id === preferredTrackId);
@@ -65,9 +62,7 @@ function resolveAnimationTrack(
     }
   }
 
-  const existing = timeline.tracks.find(
-    (t) => t.type === "animation" && !t.locked,
-  );
+  const existing = timeline.tracks.find((t) => t.type === "animation" && !t.locked);
   if (existing) return { timeline, trackId: existing.id };
 
   const next = addTrack(timeline, "animation", defaultTrackName("animation"));
@@ -82,7 +77,7 @@ function resolvePresetPlacement(
   timeline: Timeline,
   trackId: string,
   startInFrames: number,
-  presetDuration: number,
+  presetDuration: number
 ): { timeline: Timeline; trackId: string; startInFrames: number } {
   const duration = Math.max(1, presetDuration);
   let next = ensureTimelineFitsClip(timeline, startInFrames, duration);
@@ -114,7 +109,7 @@ function resolvePresetPlacement(
 export function placePresetOnTimeline(
   timeline: Timeline,
   preset: PresetDefinition,
-  options: PlacePresetOptions,
+  options: PlacePresetOptions
 ): PlacePresetResult {
   if (preset.kind !== "component" || !preset.component) {
     throw new Error("仅支持组件类预设");
@@ -124,7 +119,7 @@ export function placePresetOnTimeline(
 
   const { timeline: withTrack, trackId } = resolveAnimationTrack(
     timeline,
-    options.trackId,
+    options.trackId
   );
 
   let startInFrames = Math.max(0, options.startInFrames);
@@ -143,7 +138,7 @@ export function placePresetOnTimeline(
     withTrack,
     trackId,
     startInFrames,
-    presetDuration,
+    presetDuration
   );
   const clip: Clip = { ...clipDraft, startInFrames: placement.startInFrames };
   const next = addClip(placement.timeline, placement.trackId, clip);

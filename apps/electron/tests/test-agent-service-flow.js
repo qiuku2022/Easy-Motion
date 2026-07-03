@@ -81,8 +81,7 @@ async function main() {
   const onDisk = timelineService.loadTimeline(projectPath, subprojectPath);
   const hasHello = onDisk.tracks.some((track) =>
     (track.clips ?? []).some(
-      (clip) =>
-        clip.source?.content?.includes("Hello") || clip.name?.includes("Hello")
+      (clip) => clip.source?.content?.includes("Hello") || clip.name?.includes("Hello")
     )
   );
   if (!hasHello) {
