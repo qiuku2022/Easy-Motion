@@ -14,6 +14,8 @@ const { runSimplifiedFallback } = require("./fallback-templates");
 const { buildMultimodalHumanMessage } = require("./multimodal");
 const { analyzeReferenceImages } = require("./vision-analyze");
 
+const VISION_TOOL_IDLE_TIMEOUT_MS = 120_000;
+
 function getMessageText(message) {
   if (!message?.content) return "";
   if (typeof message.content === "string") return message.content;
@@ -100,6 +102,9 @@ async function runAgentAttempt({
   currentFrame = 0,
   imagePaths = [],
   creationMode = "free",
+  frameRenderService,
+  previewCaptureService,
+  frameInspector,
   onStatus,
   onChunk,
   signal,
@@ -143,12 +148,15 @@ async function runAgentAttempt({
     }
   }
 
-  const { agent } = createHybridAgent(
+  const { agent, visionCtx } = createHybridAgent(
     ctx,
     remotionCtx,
     { visualAnalysis, toolHints, layoutPlan },
     {
       creationMode,
+      frameRenderService,
+      previewCaptureService,
+      frameInspector,
     }
   );
   const messages = buildAgentMessages({
@@ -166,6 +174,7 @@ async function runAgentAttempt({
     onStatus,
     isAiMessage,
     getMessageText,
+    chunkIdleMs: VISION_TOOL_IDLE_TIMEOUT_MS,
   });
 
   onStatus?.(AgentState.COMPLETED);
@@ -181,6 +190,7 @@ async function runAgentAttempt({
     remotionChangeLog: remotionCtx.changeLog,
     remotionUndoSnapshots: remotionCtx.changed ? remotionCtx.getSnapshotsForUndo() : [],
     remotionCtx,
+    visualChecks: visionCtx.getVisualChecks(),
     simplifiedMode: false,
     systemNotice: visionNotice,
   };
@@ -225,6 +235,10 @@ function buildRetryPrompt(input, attempt) {
   const base =
     "【系统要求】你必须调用 timeline 工具（queryElement / updateClip / applyPreset 等）或 Remotion 工具（writeRemotionFile / registerCustomComponent）完成修改，禁止仅用文字描述已完成。";
 
+  if (/字|字体|字号|font/i.test(input)) {
+    return `${input}\n\n${base}\n修改字体大小：如果用户已选中片段，直接 updateClip 修改该 clip 的 style.fontSize；如果未选中，先 queryElement 定位标题/文字片段。使用用户给出的目标字号，不要自行编造字号。`;
+  }
+
   if (/折线|饼图|环形图|面积图|图表|Chart|primaryColor|secondaryColor/i.test(input)) {
     return `${input}\n\n${base}\n修改图表/预设配色：先 queryElement 定位 animation 片段，再 updateClip 设置 source.props.primaryColor（折线）与 source.props.secondaryColor（数据点），例如浅色可用 #93c5fd 与 #fde68a。`;
   }
@@ -234,6 +248,13 @@ function buildRetryPrompt(input, attempt) {
   }
 
   return `${input}\n\n${base}`;
+}
+
+function buildNoModificationNotice(input) {
+  if (/字|字体|字号|font/i.test(input)) {
+    return "本次未实际修改时间线或 Remotion 代码（模型未调用工具）。如果要改字体大小，请先选中目标文字片段，并说明「字体大一点 / 字体小一点」或明确字号，例如「字号改成 88」。";
+  }
+  return "本次未实际修改时间线或 Remotion 代码（模型未调用工具）。请用更具体的指令重试，例如「把折线图折线改成 #93c5fd、数据点改成 #fde68a」或「在 components/custom 创建 RedBg 组件」。";
 }
 
 async function runAgent(options) {
@@ -279,8 +300,7 @@ async function runAgent(options) {
       if (attempt >= maxAttempts - 1) {
         return {
           ...result,
-          systemNotice:
-            "本次未实际修改时间线或 Remotion 代码（模型未调用工具）。请用更具体的指令重试，例如「把折线图折线改成 #93c5fd、数据点改成 #fde68a」或「在 components/custom 创建 RedBg 组件」。",
+          systemNotice: buildNoModificationNotice(options.input),
         };
       }
       options.onStatus?.(AgentState.PARSING);
@@ -317,4 +337,5 @@ module.exports = {
   buildAgentMessages,
   getMessageText,
   isRetriableAgentError,
+  VISION_TOOL_IDLE_TIMEOUT_MS,
 };

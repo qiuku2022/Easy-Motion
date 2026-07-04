@@ -5,6 +5,8 @@ const { buildVisionContextSection } = require("./prompts/vision");
 const { buildRemotionCodePromptSection } = require("./prompts/remotion-code");
 const { createTimelineTools } = require("./tools");
 const { createRemotionCodeTools } = require("./tools/remotion-code");
+const { createVisionFeedbackTools } = require("./tools/vision-feedback");
+const { VisionFeedbackContext } = require("./vision-feedback-context");
 const { resolveCreationMode, includesRemotionTools } = require("./router");
 
 function createAgentGraph(timelineCtx, remotionCtx, visionContext = {}, options = {}) {
@@ -18,7 +20,17 @@ function createAgentGraph(timelineCtx, remotionCtx, visionContext = {}, options 
   const remotionTools = includesRemotionTools(effectiveMode)
     ? createRemotionCodeTools(remotionCtx, timelineCtx)
     : [];
-  const tools = [...timelineTools, ...remotionTools];
+  const visionCtx = new VisionFeedbackContext({
+    timelineCtx,
+    projectPath: timelineCtx.meta.projectPath,
+    subprojectPath: timelineCtx.meta.subprojectPath,
+    currentFrame: timelineCtx.meta.currentFrame ?? 0,
+    frameRenderService: options.frameRenderService,
+    previewCaptureService: options.previewCaptureService,
+    frameInspector: options.frameInspector,
+  });
+  const visionTools = createVisionFeedbackTools(visionCtx);
+  const tools = [...timelineTools, ...remotionTools, ...visionTools];
 
   let systemPrompt = buildSystemPrompt({
     timeline: timelineCtx.timeline,
@@ -50,7 +62,7 @@ function createAgentGraph(timelineCtx, remotionCtx, visionContext = {}, options 
     systemPrompt,
   });
 
-  return { agent, systemPrompt, effectiveMode };
+  return { agent, systemPrompt, effectiveMode, visionCtx };
 }
 
 function createHybridAgent(timelineCtx, remotionCtx, visionContext = {}, options = {}) {

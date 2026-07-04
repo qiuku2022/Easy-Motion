@@ -78,19 +78,45 @@ function normalizeClipUpdates(updates = {}) {
   return normalized;
 }
 
+function extractRequestedFontSize(text) {
+  const value = String(text ?? "");
+  if (!/字|字体|字号|font/i.test(value)) return null;
+
+  const patterns = [
+    /(?:字号|字体大小|字体|font\s*-?\s*size)\D{0,10}(\d+(?:\.\d+)?)/i,
+    /(\d+(?:\.\d+)?)\s*(?:px|像素)?\s*(?:字号|字体)/i,
+  ];
+  for (const pattern of patterns) {
+    const match = value.match(pattern);
+    if (!match) continue;
+    const size = Math.round(Number(match[1]));
+    if (Number.isFinite(size) && size > 0) {
+      return Math.min(512, Math.max(1, size));
+    }
+  }
+  return null;
+}
+
 /**
  * 根据用户自然语言对选中片段做相对调整（±20% 等），避免 LLM 用错基准值。
  */
 function resolveRelativeClipUpdates(clip, userInput, updates = {}) {
   const normalized = normalizeClipUpdates(updates);
   const text = String(userInput ?? "");
+  const fontContext = /字|字体|字号|font/i.test(text) || clip?.type === "text";
+  const requestedFontSize = extractRequestedFontSize(text);
+  if (fontContext && requestedFontSize !== null) {
+    return {
+      ...normalized,
+      "style.fontSize": requestedFontSize,
+    };
+  }
 
   const wantsBigger = /大(一点|些|点)|变大|增大|放大/.test(text);
   const wantsSmaller = /小(一点|些|点)|变小|减小|缩小/.test(text);
   if (!wantsBigger && !wantsSmaller) return normalized;
 
   const result = { ...normalized };
-  const fontContext = /字|字体|字号|font/i.test(text) || clip?.type === "text";
   const speedContext = /快|慢|速度|时长|动画/.test(text);
 
   if (fontContext) {

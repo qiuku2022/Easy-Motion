@@ -561,7 +561,12 @@ function ensurePreviewDynamicDuration(remotionDir) {
   if (!fs.existsSync(destEntry)) return false;
 
   const content = fs.readFileSync(destEntry, "utf8");
-  if (content.includes("previewMeta.durationInFrames")) return false;
+  if (
+    content.includes("previewMeta.durationInFrames") &&
+    content.includes("__EASYMOTION_PREVIEW_ROOT__")
+  ) {
+    return false;
+  }
 
   const templateEntry = path.join(
     getTemplatesDir(),
@@ -575,7 +580,7 @@ function ensurePreviewDynamicDuration(remotionDir) {
   if (!fs.existsSync(templateEntry)) return false;
 
   fs.copyFileSync(templateEntry, destEntry);
-  broadcastLog("已更新 preview-entry（时长随时间线同步）", "preview");
+  broadcastLog("已更新 preview-entry（动态时长与热更新 root 复用）", "preview");
   return true;
 }
 

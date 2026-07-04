@@ -10,14 +10,11 @@ const {
   requireFromRemotion,
   REMOTION_ENTRY,
   isTimelineDrivenPreview,
-} = require("./remotion-project");
+  DEFAULT_COMPOSITION_ID,
+  resolveNativeRenderRuntime,
+} = require("./remotion-native-render");
 const { readTimelineManifest } = require("../importer/timeline-manifest");
-const { DEFAULT_COMPOSITION_ID } = require("../importer/remotion-composition");
-const { resolveBrowserExecutable } = require("../utils/remotion-browser");
-const {
-  resolveRemotionBinariesDirectory,
-  formatExportError,
-} = require("../utils/remotion-binaries");
+const { formatExportError } = require("../utils/remotion-binaries");
 const {
   validateExportRequest,
   mapFormatToCodec,
@@ -142,8 +139,8 @@ async function runVideoExport(request, exportId, cancelSignal) {
       },
     });
 
-    const browserExecutable = resolveBrowserExecutable();
-    const binariesDirectory = resolveRemotionBinariesDirectory(remotionDir);
+    const { browserExecutable, binariesDirectory } =
+      resolveNativeRenderRuntime(remotionDir);
 
     const composition = await selectComposition({
       serveUrl,

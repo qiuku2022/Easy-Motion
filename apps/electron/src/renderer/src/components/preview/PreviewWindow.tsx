@@ -19,6 +19,7 @@ import { getEasyMotion } from "@/types/easyMotion";
 
 export function PreviewWindow() {
   const viewportRef = useRef<HTMLDivElement>(null);
+  const previewFrameRef = useRef<HTMLDivElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const {
@@ -58,6 +59,25 @@ export function PreviewWindow() {
     const frame = useTimelineStore.getState().currentFrame;
     preservePlayheadRef.current = { frame, until: Date.now() + 2500 };
     return frame;
+  }, []);
+
+  const reportPreviewFrameBounds = useCallback(() => {
+    const api = getEasyMotion();
+    const element = previewFrameRef.current;
+    if (!api?.preview?.updateFrameBounds || !element) return;
+
+    const rect = element.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return;
+
+    void api.preview.updateFrameBounds({
+      rect: {
+        x: rect.x,
+        y: rect.y,
+        width: rect.width,
+        height: rect.height,
+      },
+      devicePixelRatio: window.devicePixelRatio,
+    });
   }, []);
 
   const restorePlayheadToPreview = useCallback((frame: number, delayMs = 0) => {
@@ -210,6 +230,36 @@ export function PreviewWindow() {
     pushLoopToPreview();
   }, [loopEnabled, previewUrl, pushLoopToPreview]);
 
+  useEffect(() => {
+    reportPreviewFrameBounds();
+    const element = previewFrameRef.current;
+    if (!element) return;
+
+    const observer = new ResizeObserver(reportPreviewFrameBounds);
+    observer.observe(element);
+    window.addEventListener("resize", reportPreviewFrameBounds);
+    window.addEventListener("scroll", reportPreviewFrameBounds, true);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", reportPreviewFrameBounds);
+      window.removeEventListener("scroll", reportPreviewFrameBounds, true);
+    };
+  }, [previewSize.width, previewSize.height, previewUrl, reportPreviewFrameBounds]);
+
+  useEffect(() => {
+    const api = getEasyMotion();
+    if (!api?.preview?.onSeekRequested || !api.preview.seekCompleted) return;
+
+    return api.preview.onSeekRequested(({ requestId, frame }) => {
+      const clamped = Math.min(maxFrame, Math.max(0, Math.round(frame)));
+      usePlaybackStore.getState().setPlaying(false);
+      usePlaybackStore.getState().seekTo(clamped);
+      window.setTimeout(() => {
+        void api.preview.seekCompleted({ requestId, frame: clamped });
+      }, 120);
+    });
+  }, [maxFrame]);
+
   const postToPreview = useCallback(
     (type: "PLAY" | "PAUSE" | "SEEK", frame?: number) => {
       const win = iframeRef.current?.contentWindow;
@@ -258,6 +308,7 @@ export function PreviewWindow() {
         className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-preview-canvas p-3"
       >
         <div
+          ref={previewFrameRef}
           className="relative shrink-0 overflow-hidden rounded-lg border border-border bg-black shadow-sm"
           style={previewFrameStyle}
         >
@@ -325,6 +376,7 @@ export function PreviewWindow() {
               const frame = markPreservePlayhead();
               const win = iframeRef.current?.contentWindow;
               if (!win) return;
+              reportPreviewFrameBounds();
               pushTimelineToPreview();
               pushLoopToPreview();
               restorePlayheadToPreview(frame, 150);

@@ -42,6 +42,30 @@ export interface ConversationChunkPayload {
   isDone: boolean;
 }
 
+export interface VisualCheckSummary {
+  kind: "renderFrame" | "verifyFrameAgainstGoal" | string;
+  success: boolean;
+  renderId?: string | null;
+  frame?: number | null;
+  reason?: string | null;
+  goal?: string | null;
+  pass?: boolean | null;
+  confidence?: number;
+  summary?: string;
+  issues?: unknown[];
+  suggestedToolActions?: unknown[];
+  image?: {
+    relativePath?: string;
+    mime?: string;
+    width?: number;
+    height?: number;
+    bytes?: number;
+    sha256?: string;
+  } | null;
+  error?: string | null;
+  createdAt?: number;
+}
+
 export interface ConversationCompletePayload {
   requestId: string;
   reply?: string;
@@ -57,6 +81,7 @@ export interface ConversationCompletePayload {
   changeLog?: unknown[];
   remotionChangeLog?: unknown[];
   remotionUndoSnapshots?: PendingAgentUndoPayload["remotionFilesBefore"];
+  visualChecks?: VisualCheckSummary[];
   cancelled?: boolean;
   simplifiedMode?: boolean;
   systemNotice?: string;
@@ -184,6 +209,17 @@ export interface EasyMotionApi {
     ) => Promise<IpcResult<{ url: string; remotionFingerprint?: string | null }>>;
     stop: () => Promise<IpcResult<unknown>>;
     getState: () => Promise<IpcResult<{ status: string; url?: string }>>;
+    updateFrameBounds: (payload: {
+      rect: { x: number; y: number; width: number; height: number };
+      devicePixelRatio?: number;
+    }) => Promise<IpcResult<{ rect: { x: number; y: number; width: number; height: number } }>>;
+    seekCompleted: (payload: {
+      requestId: string;
+      frame: number;
+    }) => Promise<IpcResult<{ resolved: boolean }>>;
+    onSeekRequested: (
+      callback: (payload: { requestId: string; frame: number }) => void
+    ) => () => void;
     onLog: (callback: (data: { line?: string; phase?: string }) => void) => void;
   };
   asset: {

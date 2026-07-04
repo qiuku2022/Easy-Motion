@@ -1,7 +1,7 @@
 # EasyMotion
 
 > 🎬 用自然语言制作 Remotion 动画 —— 零代码门槛的视频动画创作工具  
-> **文档更新：2026-07-02** | 实施状态：**M0–M10 ✅**（Windows 预发行 v0.1.2；Agent 能力增强首轮完成）；后续以稳定性、E2E、CI 与多平台为主
+> **文档更新：2026-07-04** | 实施状态：**M0–M11 ✅**（Windows 预发行 v0.1.2；Agent 能力增强与视觉反馈闭环完成）；发版前仍需 `build:win` 与安装包手测
 
 EasyMotion 是一款基于 Remotion + Electron 的桌面应用，通过 LLM 驱动的对话式交互，让没有编程经验的剪辑师和内容创作者也能快速生成专业级动画。
 
@@ -84,7 +84,7 @@ EasyMotion 是一款基于 Remotion + Electron 的桌面应用，通过 LLM 驱�
 
 | 文档 | 说明 |
 |------|------|
-| [开发里程碑与路线图.md](开发里程碑与路线图.md) | M0–M10 里程碑、交付物、验收标准 |
+| [开发里程碑与路线图.md](开发里程碑与路线图.md) | M0–M11 里程碑、交付物、验收标准 |
 | [技术风险分析.md](技术风险分析.md) | 风险识别与应对 |
 | [依赖清单与许可证.md](依赖清单与许可证.md) | 依赖与 Remotion 许可说明 |
 
@@ -92,7 +92,7 @@ EasyMotion 是一款基于 Remotion + Electron 的桌面应用，通过 LLM 驱�
 
 | 文档 | 说明 |
 |------|------|
-| [测试策略.md](测试策略.md) | 里程碑脚本测试（m1–m8）；E2E 规划于 M9 |
+| [测试策略.md](测试策略.md) | 里程碑脚本测试（m1–m11）；E2E 按需补建 |
 | [非功能需求.md](非功能需求.md) | 性能、可靠性、安全性 |
 | [安全模型设计.md](安全模型设计.md) | CSP、代码注入防护 |
 | [可访问性设计.md](可访问性设计.md) | 键盘导航、高对比度 |
@@ -143,6 +143,7 @@ pnpm dev:all      # 上述 + Python FastAPI（8000 起，自动试 8001–8019�
 | `pnpm --filter @easymotion/electron test:m5` | Agent timeline / assets / data / batch / export / undo 回归 |
 | `pnpm --filter @easymotion/electron test:m8` | 导出、工作区、工程 ZIP |
 | `pnpm --filter @easymotion/electron test:m5.2` | Remotion Code Agent |
+| `pnpm test:m11` | Agent 视觉反馈闭环（离屏渲帧、视觉复核、实时预览截图） |
 | `pnpm build:win` | Windows NSIS 安装包（见 [构建与部署.md](构建与部署.md)） |
 | `pnpm build:python` | 仅打 Python venv bundle → `resources/python/` |
 | `pnpm vendor:rve-presets` | vendoring 81 个 RVE 预设 |
@@ -206,12 +207,21 @@ EasyMotion/
 | M8 | 导出（MP4/WEBM + ZIP + I/O） | ✅ |
 | M9 | 打包发布 + 测试优化 | ✅（Windows MVP；E2E/签名/CI 延后） |
 | M10 | Agent 能力增强：结构化读取、移动与 timeline 设置、素材/数据、批量/场景/视觉、导出与混合撤销 | ✅ |
+| M11 | Agent 视觉反馈闭环：离屏渲帧、多模态复核、实时预览截图 | ✅（本地完成，待提交） |
 
 详细规划：[开发里程碑与路线图.md](开发里程碑与路线图.md)
 
 ---
 
-## 近期变更（2026-07-02）
+## 近期变更（2026-07-04）
+
+| 类别 | 变更 |
+|------|------|
+| **M11 Agent 视觉反馈** | 新增 `renderFrame`、`verifyFrameAgainstGoal`、`seekPlayhead`、`capturePreview`，支持 Agent 基于本轮 timeline 渲帧/截图并做多模态视觉复核 |
+| **预览截图链路** | renderer 上报预览区域并响应 seek；主进程通过 `BrowserWindow.capturePage(rect)` 写入受控缓存，不让 renderer 接触文件系统 |
+| **验证** | 已通过 `pnpm test:m11`、`pnpm test`、`pnpm lint`、`pnpm --filter @easymotion/electron build:renderer`；发版前建议补跑 `pnpm build:win` |
+
+## 历史变更（2026-07-02）
 
 | 类别 | 变更 |
 |------|------|

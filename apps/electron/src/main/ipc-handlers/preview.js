@@ -1,5 +1,6 @@
 const { ipcMain } = require("electron");
 const previewService = require("../services/preview-service");
+const previewCaptureService = require("../services/preview-capture-service");
 const projectService = require("../services/project-service");
 
 function wrap(handler) {
@@ -45,6 +46,39 @@ function registerPreviewHandlers() {
   ipcMain.handle(
     "main:preview:getState",
     wrap(() => previewService.getPreviewState())
+  );
+
+  ipcMain.handle(
+    "main:preview:updateFrameBounds",
+    async (event, payload) => {
+      try {
+        const data = previewCaptureService.registerPreviewFrameBounds(
+          event.sender,
+          payload
+        );
+        return { success: true, data };
+      } catch (error) {
+        return {
+          success: false,
+          error: { message: error.message || "unknown error" },
+        };
+      }
+    }
+  );
+
+  ipcMain.handle(
+    "main:preview:seekCompleted",
+    async (event, payload) => {
+      try {
+        const data = previewCaptureService.resolvePreviewSeek(event.sender, payload);
+        return { success: true, data };
+      } catch (error) {
+        return {
+          success: false,
+          error: { message: error.message || "unknown error" },
+        };
+      }
+    }
   );
 }
 

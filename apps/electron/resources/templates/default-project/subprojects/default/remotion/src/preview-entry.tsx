@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { createRoot } from "react-dom/client";
+import { createRoot, type Root } from "react-dom/client";
 import {
   Player,
   type CallbackListener,
@@ -209,5 +209,10 @@ const PreviewApp: React.FC = () => {
 
 const rootEl = document.getElementById("root");
 if (rootEl) {
-  createRoot(rootEl).render(<PreviewApp />);
+  const previewWindow = window as typeof window & {
+    __EASYMOTION_PREVIEW_ROOT__?: Root;
+  };
+  const root = previewWindow.__EASYMOTION_PREVIEW_ROOT__ ?? createRoot(rootEl);
+  previewWindow.__EASYMOTION_PREVIEW_ROOT__ = root;
+  root.render(<PreviewApp />);
 }
