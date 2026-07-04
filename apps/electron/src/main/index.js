@@ -1,4 +1,4 @@
-const { app, BrowserWindow, nativeTheme, screen } = require("electron");
+const { app, BrowserWindow, nativeImage, nativeTheme, screen } = require("electron");
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
@@ -49,6 +49,24 @@ function getInitialWindowBounds() {
   };
 }
 
+function getWindowIcon() {
+  const appRoot = path.resolve(__dirname, "../..");
+  const candidates = app.isPackaged
+    ? [path.join(__dirname, "../../dist/renderer/app-icon.png")]
+    : [
+        path.join(appRoot, "build/icon.ico"),
+        path.join(appRoot, "src/renderer/public/app-icon.png"),
+      ];
+
+  for (const candidate of candidates) {
+    const icon = nativeImage.createFromPath(candidate);
+    if (!icon.isEmpty()) {
+      return icon;
+    }
+  }
+  return undefined;
+}
+
 const createWindow = () => {
   const saved = uiStateService.getMainWindowState();
   const { bounds, maximized, fullscreen } = uiStateService.resolveMainWindowPlacement(
@@ -58,6 +76,7 @@ const createWindow = () => {
 
   const win = new BrowserWindow({
     ...getMainWindowChromeOptions(bounds),
+    icon: getWindowIcon(),
     minWidth: uiStateService.MAIN_WINDOW_MIN_WIDTH,
     minHeight: uiStateService.MAIN_WINDOW_MIN_HEIGHT,
     webPreferences: {

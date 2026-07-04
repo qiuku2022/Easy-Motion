@@ -5,6 +5,7 @@ import { useProjectStore } from "@/stores/projectStore";
 import { getEasyMotion, type WindowState } from "@/types/easyMotion";
 
 const DRAG_REGION = { WebkitAppRegion: "drag" } as React.CSSProperties;
+const APP_ICON_SRC = `${import.meta.env.BASE_URL}app-icon.png`;
 
 export function TitleBar() {
   const shell = getEasyMotion()?.shell;
@@ -59,12 +60,13 @@ export function TitleBar() {
           className="flex shrink-0 items-center gap-2 pl-3"
           style={{ WebkitAppRegion: "no-drag" }}
         >
-          <span
-            className="flex h-4 w-4 items-center justify-center rounded-sm bg-primary/15 text-[10px] font-semibold text-foreground/90"
+          <img
+            src={APP_ICON_SRC}
+            alt=""
+            draggable={false}
+            className="h-5 w-5 rounded-sm"
             aria-hidden
-          >
-            E
-          </span>
+          />
           <span className="text-xs font-medium text-foreground/80">EasyMotion</span>
         </div>
         {projectName ? (
