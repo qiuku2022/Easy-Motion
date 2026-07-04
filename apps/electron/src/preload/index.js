@@ -49,6 +49,14 @@ contextBridge.exposeInMainWorld("easyMotion", {
     start: (payload) => invoke("main:preview:start", payload),
     stop: () => invoke("main:preview:stop"),
     getState: () => invoke("main:preview:getState"),
+    updateFrameBounds: (payload) => invoke("main:preview:updateFrameBounds", payload),
+    seekCompleted: (payload) => invoke("main:preview:seekCompleted", payload),
+    onSeekRequested: (callback) => {
+      const listener = (_event, data) => callback(data);
+      ipcRenderer.on("renderer:preview:seek-requested", listener);
+      return () =>
+        ipcRenderer.removeListener("renderer:preview:seek-requested", listener);
+    },
     onLog: (callback) => {
       ipcRenderer.on("renderer:preview:log", (_event, data) => callback(data));
     },

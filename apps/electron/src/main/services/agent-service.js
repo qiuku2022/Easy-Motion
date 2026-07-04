@@ -9,6 +9,7 @@ const { AgentState } = require("../agent/state");
 const timelineService = require("./timeline-service");
 const projectService = require("./project-service");
 const previewService = require("./preview-service");
+const previewCaptureService = require("./preview-capture-service");
 const conversationService = require("./conversation-service");
 const { formatConversationSendError } = require("./conversation-errors");
 
@@ -175,6 +176,13 @@ function startConversationSend(webContents, payload) {
           typeof payload?.currentFrame === "number" ? payload.currentFrame : 0,
         imagePaths: resolveAttachedImagePaths(payload?.attachedImages),
         creationMode: payload?.creationMode ?? "free",
+        previewCaptureService: previewCaptureService.createPreviewCaptureBridge(
+          webContents,
+          {
+            projectPath: ctx.projectPath,
+            subprojectPath: ctx.subprojectPath,
+          }
+        ),
         signal: controller.signal,
         onStatus: (status) => sendStatus(webContents, requestId, status),
         onChunk: (chunk) => sendChunk(webContents, requestId, chunk, false),
@@ -234,6 +242,7 @@ function startConversationSend(webContents, payload) {
         changeLog: result.changeLog,
         remotionChangeLog: result.remotionChangeLog,
         remotionUndoSnapshots: result.remotionUndoSnapshots,
+        visualChecks: result.visualChecks,
         simplifiedMode: Boolean(result.simplifiedMode),
         systemNotice: result.systemNotice ?? undefined,
       });

@@ -4,7 +4,7 @@
 
 本文档定义基于 LangChain 构建的多模态对话 Agent 的详细设计，包括 Agent 工作流、Prompt 模板、工具调用定义和多模态输入处理流程。
 
-> **实施状态（2026-07-02）**：M5 + **M5.2** + **M10** 已落地。Agent 通过 **30 个 timeline 工具**与 **9 个 Remotion Code 工具**修改 `subproject.json` / 自定义 TSX；M10 新增结构化读取、clip 移动与 timeline settings、素材/数据、批量/场景/视觉、Work Area/导出与 mixed undo。预览由 **timeline JSON → 动态 MainSequence** 刷新，**非每次**触发 Generator。入口：`apps/electron/src/main/agent/graph.js`。
+> **实施状态（2026-07-04）**：M5 + **M5.2** + **M10** + **M11** 已落地。Agent 通过 **30 个 timeline 工具**、**4 个视觉反馈工具**与 **9 个 Remotion Code 工具**修改 `subproject.json` / 自定义 TSX，并可对结果渲帧/截图后做多模态视觉复核；M10 新增结构化读取、clip 移动与 timeline settings、素材/数据、批量/场景/视觉、Work Area/导出与 mixed undo；M11 新增 `renderFrame`、`verifyFrameAgainstGoal`、`seekPlayhead`、`capturePreview`。预览由 **timeline JSON → 动态 MainSequence** 刷新，**非每次**触发 Generator。入口：`apps/electron/src/main/agent/graph.js`。
 
 ---
 
@@ -17,9 +17,12 @@
   ↓
 LangChain createAgent（graph.js）
   ├── Timeline 工具链：listPresets / applyPreset / createTrack / updateClip / …
+  ├── Vision Feedback 工具（M11）：renderFrame / verifyFrameAgainstGoal / seekPlayhead / capturePreview
   └── Remotion Code 工具（M5.2）：readRemotionFile / writeRemotionFile / registerCustomComponent / …
         ↓
 timeline JSON 或 remotion/src 变更
+        ↓
+可选视觉自检：渲帧/截图 → 多模态复核 → 有限修正
         ↓
 conversation IPC 流式推送 → conversationStore → eventBus(diffReady) → timelineStore
         ↓
@@ -308,8 +311,10 @@ Agent 通过 LangChain 的 Tool 机制调用以下工具。每个工具对应一
 > **M5.2 更新（2026-06）**：除 timeline 工具外，Agent 还挂载 Remotion Code Tools（`listRemotionFiles`、`readRemotionFile`、`writeRemotionFile`、`patchRemotionFile`、`registerCustomComponent`、`compileRemotionCheck`、`getRemotionPackageInfo`），实现见 `apps/electron/src/main/agent/tools/remotion-code.js`。沙箱可写路径：`components/custom/**`、`presets/custom-registry.ts`。离线测试：`pnpm test:m5.2`。
 
 > **M10 更新（2026-07-02）**：timeline 工具扩展到 30 个，覆盖结构化读取、clip 移动、timeline settings、素材/数据、批量编辑、场景模板、视觉 layout、Work Area 与导出。Remotion Code Tools 扩展到 9 个，新增 `listCustomComponents` 与 `unregisterCustomComponent`。对话层新增 mixed undo bundle，支持一次 AI 修改同时撤销 timeline 与 Remotion 自定义文件。
+>
+> **M11 更新（2026-07-04）**：新增视觉反馈工具 `renderFrame`、`verifyFrameAgainstGoal`、`seekPlayhead`、`capturePreview`，实现 Agent 对本轮内存 timeline 的离屏渲帧、多模态视觉复核，以及当前实时预览可见区域截图。离线测试：`pnpm test:m11`。
 
-### M10 工具分组
+### M10–M11 工具分组
 
 | 分组 | 工具 |
 | --- | --- |
@@ -319,6 +324,7 @@ Agent 通过 LangChain 的 Tool 机制调用以下工具。每个工具对应一
 | 素材与数据 | `importAsset`、`listAssets`、`placeAsset`、`importDataFile`、`mapChartData`、`bindChartData` |
 | 批量与模板 | `batchUpdateClips`、`batchDeleteClips`、`batchShiftClips`、`applySceneTemplate`、`applyVisualLayout` |
 | 导出 | `getWorkArea`、`setWorkArea`、`exportVideo`、`getExportStatus`、`cancelExport` |
+| 视觉反馈 | `renderFrame`、`verifyFrameAgainstGoal`、`seekPlayhead`、`capturePreview` |
 | Remotion Code | `listRemotionFiles`、`readRemotionFile`、`writeRemotionFile`、`patchRemotionFile`、`registerCustomComponent`、`compileRemotionCheck`、`getRemotionPackageInfo`、`listCustomComponents`、`unregisterCustomComponent` |
 
 ### 工具列表

@@ -77,6 +77,23 @@ function main() {
   assert(prompt.includes("bindChartData"), "system prompt mentions bindChartData");
   assert(prompt.includes("applyPreset"), "system prompt mentions applyPreset");
   assert(prompt.includes("listPresets"), "system prompt mentions listPresets");
+  assert(prompt.includes("renderFrame"), "system prompt mentions renderFrame");
+  assert(prompt.includes("capturePreview"), "system prompt mentions capturePreview");
+  assert(prompt.includes("seekPlayhead"), "system prompt mentions seekPlayhead");
+  assert(
+    prompt.includes("verifyFrameAgainstGoal"),
+    "system prompt mentions verifyFrameAgainstGoal"
+  );
+  assert(
+    prompt.includes("未完成视觉确认"),
+    "system prompt requires honest visual check failure"
+  );
+  assert(prompt.includes("最多 2 次"), "system prompt mentions finite visual checks");
+  assert(prompt.includes("导出中"), "system prompt mentions export busy skip");
+  assert(
+    prompt.includes("compileRemotionCheck"),
+    "system prompt requires compile before render for Remotion code"
+  );
   assert(prompt.includes("E2010"), "system prompt mentions conflict handling");
   assert(prompt.includes("1280"), "system prompt includes width");
   assert(prompt.includes("30fps"), "system prompt includes fps");

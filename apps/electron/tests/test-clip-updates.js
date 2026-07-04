@@ -29,6 +29,15 @@ function main() {
   const smaller = resolveRelativeClipUpdates(clip, "字体小一点", {});
   assert(smaller["style.fontSize"] === 77, "96 * 0.8 = 77");
 
+  const absolute = resolveRelativeClipUpdates(clip, "字号改成 88", {});
+  assert(absolute["style.fontSize"] === 88, "字号改成 88 -> style.fontSize");
+
+  const pxSize = resolveRelativeClipUpdates(clip, "把字体调到 100px", {});
+  assert(pxSize["style.fontSize"] === 100, "字体调到 100px -> style.fontSize");
+
+  const vague = resolveRelativeClipUpdates(clip, "修改字体大小", {});
+  assert(vague["style.fontSize"] === undefined, "vague font size request needs a direction or value");
+
   const wrongLlm = resolveRelativeClipUpdates(clip, "字体大一点", { fontSize: 72 });
   assert(
     wrongLlm["style.fontSize"] === 115,

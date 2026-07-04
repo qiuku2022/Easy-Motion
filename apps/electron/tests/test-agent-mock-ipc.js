@@ -114,6 +114,19 @@ async function main() {
     timeline: updatedTimeline,
     timelineChanged: true,
     changeLog: [{ op: "createTrack", trackId: "track-text-1" }],
+    visualChecks: [
+      {
+        kind: "verifyFrameAgainstGoal",
+        success: true,
+        renderId: "render-1",
+        frame: 30,
+        pass: true,
+        confidence: 0.9,
+        summary: "标题可见且居中",
+        issues: [],
+        suggestedToolActions: [],
+      },
+    ],
     simplifiedMode: false,
     systemNotice: null,
   }));
@@ -131,6 +144,9 @@ async function main() {
   const complete = await webContents.waitForComplete(requestId);
   if (!complete.timelineUpdated) {
     throw new Error(`expected timelineUpdated, got ${JSON.stringify(complete)}`);
+  }
+  if (complete.visualChecks?.[0]?.renderId !== "render-1") {
+    throw new Error(`expected visualChecks passthrough, got ${JSON.stringify(complete)}`);
   }
 
   const onDisk = timelineService.loadTimeline(created.path, "subprojects/default");

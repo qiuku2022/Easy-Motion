@@ -19,6 +19,8 @@
     "test:m5": "node tests/test-conversation-service.js && node tests/test-conversation-errors.js && node tests/test-llm-factory.js && node tests/test-timeline-ops.js && node tests/test-agent-read-tools.js && node tests/test-agent-advanced-timeline-tools.js && node tests/test-agent-assets.js && node tests/test-agent-data-tools.js && node tests/test-agent-batch-tools.js && node tests/test-agent-scene-templates.js && node tests/test-agent-export-tools.js && node tests/test-agent-mixed-undo.js && node tests/test-clip-updates.js && node tests/test-preset-clip-updates.js && node tests/test-agent-resilience.js && node tests/test-vision-layout.js && node tests/test-asset-import.js && node tests/test-agent-mock-ipc.js && node tests/test-agent-prompt-regression.js",
     "test:m5.2": "node tests/test-remotion-sandbox.js && node tests/test-remotion-code-tools.js && node tests/test-remotion-registry.js && node tests/test-remotion-graph.js && node tests/test-agent-router.js",
     "test:m8": "node tests/test-export-preflight.js && node tests/test-work-area.js && node tests/test-project-export.js",
+    "test:m11": "node tests/test-remotion-native-render.js && node tests/test-frame-render-service.js && node tests/test-preview-capture-service.js && node tests/test-agent-vision-feedback-tools.js",
+    "test:m11:real-render": "node tests/test-frame-render-real.js",
     "vendor:rve-presets": "node scripts/vendor-rve-presets.cjs",
     "generate:preset-thumbnails": "node scripts/generate-preset-thumbnails.cjs",
     "test": "pnpm test:m1 && pnpm test:m2 && pnpm test:m3 && pnpm test:m5 && pnpm test:m5.2"
