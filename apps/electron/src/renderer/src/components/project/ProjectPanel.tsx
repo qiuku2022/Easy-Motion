@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { FolderOpen, FolderPlus, Loader2, RefreshCw } from "lucide-react";
+import { Database, FolderOpen, FolderPlus, Loader2, RefreshCw } from "lucide-react";
 import { ContextMenuWrapper } from "@/components/common/ContextMenu";
+import { AgentMemoryDialog } from "@/components/ai/AgentMemoryDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,6 +29,7 @@ export function ProjectPanel() {
   const clearError = useProjectStore((s) => s.clearError);
 
   const [name, setName] = useState("演示项目");
+  const [memoryOpen, setMemoryOpen] = useState(false);
 
   useEffect(() => {
     void loadLocalProjects();
@@ -37,8 +39,24 @@ export function ProjectPanel() {
     <div className="flex flex-col gap-3 text-sm">
       {current ? (
         <div className="rounded-md border border-border bg-card p-3">
-          <p className="font-medium text-foreground">{current.name}</p>
-          <p className="mt-1 break-all text-xs text-muted-foreground">{current.path}</p>
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <p className="font-medium text-foreground">{current.name}</p>
+              <p className="mt-1 break-all text-xs text-muted-foreground">
+                {current.path}
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="shrink-0 gap-1.5"
+              onClick={() => setMemoryOpen(true)}
+            >
+              <Database className="size-3.5" />
+              记忆
+            </Button>
+          </div>
         </div>
       ) : (
         <p className="text-muted-foreground">尚未打开项目</p>
@@ -194,6 +212,11 @@ export function ProjectPanel() {
           </ScrollArea>
         )}
       </div>
+      <AgentMemoryDialog
+        open={memoryOpen}
+        onOpenChange={setMemoryOpen}
+        initialScope="project"
+      />
     </div>
   );
 }

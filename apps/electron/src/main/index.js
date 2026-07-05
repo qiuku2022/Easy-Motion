@@ -11,6 +11,7 @@ const { registerDataHandlers } = require("./ipc-handlers/data");
 const { registerLlmHandlers } = require("./ipc-handlers/llm");
 const { registerSettingsHandlers } = require("./ipc-handlers/settings");
 const { registerConversationHandlers } = require("./ipc-handlers/conversation");
+const { registerMemoryHandlers } = require("./ipc-handlers/memory");
 const { registerExportHandlers } = require("./ipc-handlers/export");
 const { registerWorkspaceHandlers } = require("./ipc-handlers/workspace");
 const {
@@ -176,6 +177,7 @@ app.whenReady().then(async () => {
   registerLlmHandlers();
   registerSettingsHandlers();
   registerConversationHandlers();
+  registerMemoryHandlers();
   registerExportHandlers();
   registerWorkspaceHandlers();
   registerWindowHandlers();

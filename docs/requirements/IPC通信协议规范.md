@@ -37,6 +37,7 @@
 | `data` | CSV/JSON 选取与图表字段映射 | `ipc-handlers/data.js` |
 | `export` | 视频渲染、工程 ZIP、进度 | `ipc-handlers/export.js` |
 | `settings` | 应用设置、LLM Key | `ipc-handlers/settings.js` |
+| `memory` | Agent 长期记忆读写与设置（M12 ✅） | `ipc-handlers/memory.js` |
 | `llm` | LLM 流式代理（旧路径，对话走 conversation） | `ipc-handlers/llm.js` |
 | `app` | 应用生命周期 | 内置于 `main/index.js` |
 | `python` | Python 服务代理 | **未实现**（规划可选） |
@@ -459,7 +460,46 @@ interface IPCNotification<T = unknown> {
 
 ---
 
-### 8. Python 服务代理（python）
+### 8. 记忆领域（memory，M12 ✅）
+
+> Preload 暴露为 `window.easyMotion.memory.*`；类型见 `renderer/src/types/easyMotion.ts`。
+
+#### `main:memory:list`
+- **说明**：列出全局/项目长期记忆与当前 `agent.memory` 设置
+- **请求参数**：`{ scope?: 'global' | 'project' | 'all' }`（默认 `all`）
+- **响应数据**：`{ settings, global?, project? }`
+- **错误码**：`E2105`（读取项目记忆但未打开项目）
+- **超时**：3 秒
+
+#### `main:memory:writeNote`
+- **说明**：写入自由笔记
+- **请求参数**：`{ scope: 'global' | 'project'; text: string; tags?: string[] }`
+- **响应数据**：更新后的记忆文件片段
+- **超时**：3 秒
+
+#### `main:memory:updatePreference`
+- **说明**：新增或更新结构化偏好
+- **请求参数**：`{ scope: 'global' | 'project'; key: string; value: PreferenceValue; label?: string }`
+- **超时**：3 秒
+
+#### `main:memory:delete`
+- **说明**：删除笔记或偏好
+- **请求参数**：`{ scope: 'global' | 'project'; type: 'note' | 'preference'; idOrKey: string }`
+- **超时**：3 秒
+
+#### `main:memory:clear`
+- **说明**：清空指定作用域全部记忆
+- **请求参数**：`{ scope: 'global' | 'project' }`
+- **超时**：3 秒
+
+#### `main:memory:getSettings` / `main:memory:updateSettings`
+- **说明**：读取/更新 `settings.agent.memory`（enabled、autoExtract、promptBudgetChars、projectMemory、includeInBackups）
+- **update 请求参数**：`{ settings: Partial<AgentMemorySettings> }`
+- **超时**：2–3 秒
+
+---
+
+### 9. Python 服务代理（python）
 
 #### `main:python:proxy`
 - **说明**：Renderer 通过 Main 转发请求到 Python FastAPI
@@ -746,3 +786,4 @@ function sanitizePath(inputPath: string, baseDir: string): string {
 |------|------|----------|
 | v0.1 | 2026-05-30 | 初始版本，定义 10 个领域的 IPC 接口、错误码映射、超时策略 |
 | v0.2 | 2026-06-26 | 对齐 `.js` handler；补充 data/export:project/conversation:send；标注动态预览与 python 未实现 |
+| v0.3 | 2026-07-05 | 新增 M12 `memory` 领域 7 个通道；preload `easyMotion.memory` |

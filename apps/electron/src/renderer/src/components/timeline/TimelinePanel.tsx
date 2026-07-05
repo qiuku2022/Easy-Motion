@@ -1,5 +1,7 @@
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { blurEditableFocusUnlessTarget } from "@/lib/keyboard";
+import { cn } from "@/lib/utils";
 import { useTimelineStore } from "@/stores/timelineStore";
 import { formatRemotionSyncSummary } from "@/lib/remotion-sync";
 import { TimelineBody } from "@/components/timeline/TimelineBody";
@@ -8,10 +10,8 @@ import { TimelineDevMenu } from "@/components/timeline/TimelineDevMenu";
 import { TimelineTransport } from "@/components/timeline/TimelineTransport";
 import { TimelineZoomControls } from "@/components/timeline/TimelineZoomControls";
 import { resolveTimelineViewportDuration } from "@/lib/timeline/workArea";
-import { useUiStore } from "@/stores/uiStore";
 
 export function TimelinePanel() {
-  const collapsed = useUiStore((s) => s.timelineCollapsed);
   const timeline = useTimelineStore((s) => s.timeline);
   const isLoading = useTimelineStore((s) => s.isLoading);
   const isGenerating = useTimelineStore((s) => s.isGenerating);
@@ -29,14 +29,6 @@ export function TimelinePanel() {
   const busy = isLoading || isGenerating || isSaving;
   const showRemotionSyncBanner =
     Boolean(remotionDrift?.suggestSync) && !isSyncingRemotion;
-
-  if (collapsed) {
-    return (
-      <footer className="z-10 flex h-10 shrink-0 items-center border-t border-border bg-background px-3 text-xs text-muted-foreground">
-        时间线（已收起）
-      </footer>
-    );
-  }
 
   const fps = timeline?.fps ?? 30;
   const duration = timeline ? resolveTimelineViewportDuration(timeline) : 0;
@@ -99,8 +91,18 @@ export function TimelinePanel() {
         </div>
       )}
 
-      {timeline && timeline.tracks.length > 0 ? (
-        <>
+      {isLoading && !timeline ? (
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 p-4 text-center text-sm text-muted-foreground">
+          <Loader2 className="h-6 w-6 animate-spin text-ring" aria-hidden />
+          <p>正在加载时间线…</p>
+        </div>
+      ) : timeline && timeline.tracks.length > 0 ? (
+        <div
+          className={cn(
+            "flex min-h-0 flex-1 flex-col overflow-hidden transition-opacity duration-300 ease-in-out motion-reduce:transition-none",
+            isLoading ? "opacity-60" : "opacity-100"
+          )}
+        >
           <TimelineBody
             tracks={timeline.tracks}
             durationInFrames={duration}
@@ -112,10 +114,10 @@ export function TimelinePanel() {
             onPointerDownCapture={(e) => blurEditableFocusUnlessTarget(e.target)}
           />
           <KeyframeTrackPanel />
-        </>
+        </div>
       ) : (
         <div
-          className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 p-4 text-center text-sm text-muted-foreground"
+          className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 p-4 text-center text-sm text-muted-foreground animate-in fade-in duration-300 motion-reduce:animate-none"
           onPointerDownCapture={(e) => blurEditableFocusUnlessTarget(e.target)}
         >
           <p className="text-foreground">开始你的动画创作</p>

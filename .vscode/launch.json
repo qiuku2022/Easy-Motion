@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "▸ Electron Main",
+      "name": "EasyMotion",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}/apps/electron",
@@ -11,7 +11,8 @@
         "runtimeExecutable": "${workspaceFolder}/apps/electron/node_modules/electron/dist/electron.exe"
       },
       "program": "${workspaceFolder}/apps/electron/src/main/index.js",
-      "args": ["--remote-debugging-port=9333"],
+      "preLaunchTask": "debug: prepare",
+      "postDebugTask": "debug: cleanup",
       "outputCapture": "std",
       "console": "internalConsole",
       "sourceMaps": true,
@@ -23,13 +24,12 @@
       "env": {
         "ELECTRON_ENABLE_LOGGING": "1",
         "NODE_ENV": "development",
-        "ELECTRON_RENDERER_URL": "http://127.0.0.1:5173",
-        "ELECTRON_CDP_PORT": "9333"
+        "ELECTRON_RENDERER_URL": "http://127.0.0.1:5173"
       },
       "presentation": { "hidden": true }
     },
     {
-      "name": "▸ Electron Main + Renderer",
+      "name": "EasyMotion + React",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}/apps/electron",
@@ -39,6 +39,8 @@
       },
       "program": "${workspaceFolder}/apps/electron/src/main/index.js",
       "args": ["--remote-debugging-port=9333"],
+      "preLaunchTask": "debug: prepare (react)",
+      "postDebugTask": "debug: cleanup",
       "outputCapture": "std",
       "console": "internalConsole",
       "sourceMaps": true,
@@ -51,17 +53,18 @@
         "ELECTRON_ENABLE_LOGGING": "1",
         "NODE_ENV": "development",
         "ELECTRON_RENDERER_URL": "http://127.0.0.1:5173",
-        "ELECTRON_CDP_PORT": "9333"
+        "ELECTRON_CDP_PORT": "9333",
+        "EASY_MOTION_PREPARE_FREE_CDP": "1"
       },
       "serverReadyAction": {
         "pattern": "\\[easymotion\\] renderer cdp ready",
         "action": "debugWithConfig",
-        "name": "▸ Attach React Renderer"
+        "name": "Attach React"
       },
       "presentation": { "hidden": true }
     },
     {
-      "name": "▸ Attach React Renderer",
+      "name": "Attach React",
       "type": "chrome",
       "request": "attach",
       "address": "127.0.0.1",
@@ -81,14 +84,14 @@
   ],
   "compounds": [
     {
-      "name": "EasyMotion: Dev",
-      "configurations": ["▸ Electron Main"],
+      "name": "▸ EasyMotion",
+      "configurations": ["EasyMotion"],
       "stopAll": true,
       "presentation": { "group": "main", "order": 1 }
     },
     {
-      "name": "EasyMotion: Dev + React",
-      "configurations": ["▸ Electron Main + Renderer"],
+      "name": "▸ EasyMotion + React",
+      "configurations": ["EasyMotion + React"],
       "stopAll": true,
       "presentation": { "group": "main", "order": 2 }
     }

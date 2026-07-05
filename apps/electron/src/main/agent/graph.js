@@ -6,7 +6,9 @@ const { buildRemotionCodePromptSection } = require("./prompts/remotion-code");
 const { createTimelineTools } = require("./tools");
 const { createRemotionCodeTools } = require("./tools/remotion-code");
 const { createVisionFeedbackTools } = require("./tools/vision-feedback");
+const { createMemoryTools } = require("./tools/memory");
 const { VisionFeedbackContext } = require("./vision-feedback-context");
+const { MemoryContext } = require("./memory-context");
 const { resolveCreationMode, includesRemotionTools } = require("./router");
 
 function createAgentGraph(timelineCtx, remotionCtx, visionContext = {}, options = {}) {
@@ -30,7 +32,15 @@ function createAgentGraph(timelineCtx, remotionCtx, visionContext = {}, options 
     frameInspector: options.frameInspector,
   });
   const visionTools = createVisionFeedbackTools(visionCtx);
-  const tools = [...timelineTools, ...remotionTools, ...visionTools];
+  const memoryCtx =
+    options.memoryContext ??
+    new MemoryContext({
+      projectPath: timelineCtx.meta.projectPath,
+      subprojectPath: timelineCtx.meta.subprojectPath,
+      userInput: timelineCtx.meta.userInput,
+    });
+  const memoryTools = createMemoryTools(memoryCtx);
+  const tools = [...timelineTools, ...remotionTools, ...visionTools, ...memoryTools];
 
   let systemPrompt = buildSystemPrompt({
     timeline: timelineCtx.timeline,
@@ -56,13 +66,20 @@ function createAgentGraph(timelineCtx, remotionCtx, visionContext = {}, options 
     layoutPlan: visionContext.layoutPlan,
   });
 
+  const memoryContext = memoryCtx.buildMemoryContext({
+    tokenBudget: options.memoryPromptBudgetChars,
+  });
+  if (memoryContext) {
+    systemPrompt += `\n\n${memoryContext}`;
+  }
+
   const agent = createAgent({
     model,
     tools,
     systemPrompt,
   });
 
-  return { agent, systemPrompt, effectiveMode, visionCtx };
+  return { agent, systemPrompt, effectiveMode, visionCtx, memoryCtx };
 }
 
 function createHybridAgent(timelineCtx, remotionCtx, visionContext = {}, options = {}) {

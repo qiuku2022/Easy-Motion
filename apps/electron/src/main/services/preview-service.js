@@ -133,33 +133,8 @@ async function findAvailablePort(startPort) {
   throw new Error("no available preview port");
 }
 
-/** 将旧版 preview-entry（无效 onFrameUpdate）同步为模板最新版 */
-function ensurePreviewEntry(remotionDir) {
-  const destEntry = path.join(remotionDir, "src", "preview-entry.tsx");
-  if (!fs.existsSync(destEntry)) return;
-
-  const content = fs.readFileSync(destEntry, "utf8");
-  if (!content.includes("onFrameUpdate")) return;
-
-  const templateEntry = path.join(
-    getTemplatesDir(),
-    "default-project",
-    "subprojects",
-    "default",
-    "remotion",
-    "src",
-    "preview-entry.tsx"
-  );
-  if (!fs.existsSync(templateEntry)) return;
-
-  fs.copyFileSync(templateEntry, destEntry);
-  broadcastLog("已更新 preview-entry（播放头同步修复）", "preview");
-}
-
-/** 同步预览独奏支持：preview-entry、preview-visibility、Newsletter MainSequence */
-function ensurePreviewSoloSupport(remotionDir) {
-  let updated = false;
-  const templateSrc = path.join(
+function getTemplatePreviewSrcDir() {
+  return path.join(
     getTemplatesDir(),
     "default-project",
     "subprojects",
@@ -167,14 +142,66 @@ function ensurePreviewSoloSupport(remotionDir) {
     "remotion",
     "src"
   );
+}
+
+function getPreviewEntryPath(remotionDir) {
+  return path.join(remotionDir, "src", "preview-entry.tsx");
+}
+
+function getPreviewAppPath(remotionDir) {
+  return path.join(remotionDir, "src", "PreviewApp.tsx");
+}
+
+function readIfExists(filePath) {
+  return fs.existsSync(filePath) ? fs.readFileSync(filePath, "utf8") : "";
+}
+
+function readPreviewRuntimeContent(remotionDir) {
+  return [
+    readIfExists(getPreviewEntryPath(remotionDir)),
+    readIfExists(getPreviewAppPath(remotionDir)),
+  ].join("\n");
+}
+
+function copyPreviewRuntimeTemplate(remotionDir) {
+  const templateSrc = getTemplatePreviewSrcDir();
+  const destEntry = getPreviewEntryPath(remotionDir);
+  const templateEntry = path.join(templateSrc, "preview-entry.tsx");
+  const destApp = getPreviewAppPath(remotionDir);
+  const templateApp = path.join(templateSrc, "PreviewApp.tsx");
+
+  if (fs.existsSync(templateEntry)) {
+    fs.copyFileSync(templateEntry, destEntry);
+  }
+  if (fs.existsSync(templateApp)) {
+    fs.copyFileSync(templateApp, destApp);
+  }
+}
+
+/** 将旧版 preview-entry（无效 onFrameUpdate）同步为模板最新版 */
+function ensurePreviewEntry(remotionDir) {
+  const destEntry = getPreviewEntryPath(remotionDir);
+  if (!fs.existsSync(destEntry)) return;
+
+  const content = fs.readFileSync(destEntry, "utf8");
+  if (!content.includes("onFrameUpdate")) return;
+
+  copyPreviewRuntimeTemplate(remotionDir);
+  broadcastLog("已更新 preview-entry（播放头同步修复）", "preview");
+}
+
+/** 同步预览独奏支持：preview-entry、preview-visibility、Newsletter MainSequence */
+function ensurePreviewSoloSupport(remotionDir) {
+  let updated = false;
+  const templateSrc = getTemplatePreviewSrcDir();
   if (!fs.existsSync(templateSrc)) return updated;
 
-  const destEntry = path.join(remotionDir, "src", "preview-entry.tsx");
-  const templateEntry = path.join(templateSrc, "preview-entry.tsx");
-  if (fs.existsSync(destEntry) && fs.existsSync(templateEntry)) {
-    const content = fs.readFileSync(destEntry, "utf8");
-    if (!content.includes("TIMELINE_UPDATE")) {
-      fs.copyFileSync(templateEntry, destEntry);
+  const destEntry = getPreviewEntryPath(remotionDir);
+  const destApp = getPreviewAppPath(remotionDir);
+  if (fs.existsSync(destEntry)) {
+    const content = readPreviewRuntimeContent(remotionDir);
+    if (!content.includes("TIMELINE_UPDATE") || !fs.existsSync(destApp)) {
+      copyPreviewRuntimeTemplate(remotionDir);
       broadcastLog("已更新 preview-entry（独奏预览支持）", "preview");
       updated = true;
     }
@@ -460,9 +487,11 @@ function ensurePreviewCanvasTheme(remotionDir) {
     }
   }
 
-  const previewEntry = path.join(remotionDir, "src", "preview-entry.tsx");
-  if (fs.existsSync(previewEntry)) {
-    let content = fs.readFileSync(previewEntry, "utf8");
+  const previewRuntime = fs.existsSync(getPreviewAppPath(remotionDir))
+    ? getPreviewAppPath(remotionDir)
+    : getPreviewEntryPath(remotionDir);
+  if (fs.existsSync(previewRuntime)) {
+    let content = fs.readFileSync(previewRuntime, "utf8");
     const before = content;
     if (
       !content.includes(`backgroundColor: "${PREVIEW_CANVAS_BG}"`) &&
@@ -474,8 +503,8 @@ function ensurePreviewCanvasTheme(remotionDir) {
       );
     }
     if (content !== before) {
-      fs.writeFileSync(previewEntry, content, "utf8");
-      broadcastLog("已更新 preview-entry（预览舞台背景）", "preview");
+      fs.writeFileSync(previewRuntime, content, "utf8");
+      broadcastLog("已更新预览入口（预览舞台背景）", "preview");
       updated = true;
     }
   }
@@ -485,82 +514,49 @@ function ensurePreviewCanvasTheme(remotionDir) {
 
 /** 同步预览循环播放开关（SET_LOOP 消息） */
 function ensurePreviewLoopControl(remotionDir) {
-  const destEntry = path.join(remotionDir, "src", "preview-entry.tsx");
+  const destEntry = getPreviewEntryPath(remotionDir);
   if (!fs.existsSync(destEntry)) return false;
 
-  const content = fs.readFileSync(destEntry, "utf8");
+  const content = readPreviewRuntimeContent(remotionDir);
   if (content.includes("SET_LOOP")) return false;
 
-  const templateEntry = path.join(
-    getTemplatesDir(),
-    "default-project",
-    "subprojects",
-    "default",
-    "remotion",
-    "src",
-    "preview-entry.tsx"
-  );
-  if (!fs.existsSync(templateEntry)) return false;
-
-  fs.copyFileSync(templateEntry, destEntry);
+  copyPreviewRuntimeTemplate(remotionDir);
   broadcastLog("已更新 preview-entry（循环播放开关）", "preview");
   return true;
 }
 
 /** 同步预览刷新后保持播放头位置（resumeFrameRef） */
 function ensurePreviewPlayheadPreserve(remotionDir) {
-  const destEntry = path.join(remotionDir, "src", "preview-entry.tsx");
+  const destEntry = getPreviewEntryPath(remotionDir);
   if (!fs.existsSync(destEntry)) return false;
 
-  const content = fs.readFileSync(destEntry, "utf8");
+  const content = readPreviewRuntimeContent(remotionDir);
   if (content.includes("canPostFramesRef")) return false;
 
-  const templateEntry = path.join(
-    getTemplatesDir(),
-    "default-project",
-    "subprojects",
-    "default",
-    "remotion",
-    "src",
-    "preview-entry.tsx"
-  );
-  if (!fs.existsSync(templateEntry)) return false;
-
-  fs.copyFileSync(templateEntry, destEntry);
+  copyPreviewRuntimeTemplate(remotionDir);
   broadcastLog("已更新 preview-entry（刷新后保持播放头）", "preview");
   return true;
 }
 
 /** 时间线热更新后强制暂停，避免 Player 重挂载后自动播放与 UI 不同步 */
 function ensurePreviewPlaybackSync(remotionDir) {
-  const destEntry = path.join(remotionDir, "src", "preview-entry.tsx");
+  const destEntry = getPreviewEntryPath(remotionDir);
   if (!fs.existsSync(destEntry)) return false;
 
-  const content = fs.readFileSync(destEntry, "utf8");
+  const content = readPreviewRuntimeContent(remotionDir);
   if (content.includes('addEventListener("play"')) return false;
 
-  const templateEntry = path.join(
-    getTemplatesDir(),
-    "default-project",
-    "subprojects",
-    "default",
-    "remotion",
-    "src",
-    "preview-entry.tsx"
-  );
-  if (!fs.existsSync(templateEntry)) return false;
-
-  fs.copyFileSync(templateEntry, destEntry);
+  copyPreviewRuntimeTemplate(remotionDir);
   broadcastLog("已更新 preview-entry（时间线更新后保持暂停）", "preview");
   return true;
 }
 
 /** Player duration follows timeline JSON instead of static preview-config */
 function ensurePreviewDynamicDuration(remotionDir) {
-  const destEntry = path.join(remotionDir, "src", "preview-entry.tsx");
+  const destEntry = getPreviewEntryPath(remotionDir);
   if (!fs.existsSync(destEntry)) return false;
 
-  const content = fs.readFileSync(destEntry, "utf8");
+  const content = readPreviewRuntimeContent(remotionDir);
   if (
     content.includes("previewMeta.durationInFrames") &&
     content.includes("__EASYMOTION_PREVIEW_ROOT__")
@@ -568,18 +564,7 @@ function ensurePreviewDynamicDuration(remotionDir) {
     return false;
   }
 
-  const templateEntry = path.join(
-    getTemplatesDir(),
-    "default-project",
-    "subprojects",
-    "default",
-    "remotion",
-    "src",
-    "preview-entry.tsx"
-  );
-  if (!fs.existsSync(templateEntry)) return false;
-
-  fs.copyFileSync(templateEntry, destEntry);
+  copyPreviewRuntimeTemplate(remotionDir);
   broadcastLog("已更新 preview-entry（动态时长与热更新 root 复用）", "preview");
   return true;
 }

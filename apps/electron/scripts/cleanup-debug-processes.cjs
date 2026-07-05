@@ -8,7 +8,6 @@
 const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
-const { execSync } = require("node:child_process");
 const { killPidTree, killPortListeners } = require("./process-utils.cjs");
 
 const VITE_PID_FILE = path.join(os.tmpdir(), "easymotion-debug-vite.pid");
@@ -27,6 +26,13 @@ function cleanupViteStartedByDebug() {
 
   const raw = fs.readFileSync(VITE_PID_FILE, "utf8").trim();
   fs.unlinkSync(VITE_PID_FILE);
+
+  if (process.env.EASY_MOTION_CLEANUP_RENDERER_VITE !== "1") {
+    console.log(
+      "[debug-cleanup] keeping renderer vite alive for faster next F5 (set EASY_MOTION_CLEANUP_RENDERER_VITE=1 to kill)"
+    );
+    return;
+  }
 
   const pid = Number(raw);
   if (!Number.isInteger(pid) || pid <= 0) return;
@@ -57,32 +63,6 @@ function cleanupCdpPort() {
   const n = killPortListeners(Number(CDP_PORT));
   if (n > 0) {
     console.log(`[debug-cleanup] freed cdp port ${CDP_PORT} (${n} pid)`);
-  }
-}
-
-/** 终止 F5 中断后可能残留的 wait-cdp preLaunch 子进程 */
-function cleanupWaitCdpScripts() {
-  if (process.platform !== "win32") return;
-
-  let out = "";
-  try {
-    out = execSync(
-      "powershell -NoProfile -Command \"Get-CimInstance Win32_Process -Filter \\\"Name = 'node.exe'\\\" | Where-Object { $_.CommandLine -like '*wait-cdp.cjs*' } | Select-Object -ExpandProperty ProcessId\"",
-      { encoding: "utf8", stdio: ["pipe", "pipe", "ignore"], windowsHide: true }
-    );
-  } catch {
-    return;
-  }
-
-  const pids = out
-    .split(/\s+/)
-    .map((s) => Number(s.trim()))
-    .filter((n) => Number.isInteger(n) && n > 0);
-
-  for (const pid of pids) {
-    if (killPidTree(pid)) {
-      console.log(`[debug-cleanup] stopped orphan wait-cdp pid ${pid}`);
-    }
   }
 }
 
@@ -145,8 +125,7 @@ function main() {
 }
 
 function runCleanupBody() {
-  sleepSync(300);
-  cleanupWaitCdpScripts();
+  sleepSync(100);
   cleanupViteStartedByDebug();
   cleanupRemotionPreviewPorts();
   cleanupCdpPort();

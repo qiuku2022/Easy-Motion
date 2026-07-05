@@ -1,9 +1,7 @@
 # EasyMotion
 
 > 用自然语言制作 Remotion 动画 —— Electron 桌面应用（React + LangChain Agent）  
-> M0–M10 ✅ · Windows 预发行版可用（后续以功能增强为主）
-
-![EasyMotion 主界面：预设库、Newsletter 预览、变换属性与关键帧、时间线与 AI 助手](docs/images/app-screenshot.png)
+> M0–M12 ✅ · Windows 预发行版可用（后续以功能增强为主）
 
 EasyMotion 让剪辑师和内容创作者用**对话**驱动时间线编辑，实时预览 Remotion 动画，并导出视频或完整工程。内置 **81 个 RVE 预设**、关键帧编辑、素材库与 AI 助手。
 
@@ -16,6 +14,7 @@ EasyMotion 让剪辑师和内容创作者用**对话**驱动时间线编辑，�
 - **素材库**：导入、搜索、分类；收藏与最近使用（左栏「素材」Tab）
 - **导出**：MP4 / WEBM（进度与取消）、Remotion 工程 ZIP
 - **Remotion Code Agent（M5.2/M10）**：AI 读写、注册、列出、注销用户项目内自定义 TSX 组件，并支持混合撤销
+- **Agent 持久记忆（M12）**：跨会话记住配色/节奏等偏好；AI 助手 / LLM 设置 / 项目面板可管理全局与项目记忆
 
 **界面布局**：左栏 项目 / 素材 / 预设 · 中栏 16:9 预览 · 右栏 属性 / 模板 · 底栏 时间线 · 最右 AI 助手通高列。
 
@@ -51,6 +50,7 @@ AI Key：应用内 **AI 助手 → 设置**，或复制 `apps/electron/.env.exam
 | `pnpm --filter @easymotion/electron test:m5` | Agent timeline / assets / data / batch / export / undo 回归 |
 | `pnpm --filter @easymotion/electron test:m8` | 导出与 ZIP |
 | `pnpm --filter @easymotion/electron test:m5.2` | Remotion Code Agent |
+| `pnpm --filter @easymotion/electron test:m12` | Agent 长期记忆（M12） |
 
 Electron 开发模式加载 **`http://127.0.0.1:5173`**（勿用 `localhost`，Windows 可能仅 IPv6）。
 
@@ -99,10 +99,10 @@ pnpm --filter @easymotion/electron build:dir   # 仅目录，不生成 NSIS
 
 | 配置 | 用途 |
 |------|------|
-| **EasyMotion: Dev** | 主进程（IPC、服务、Agent） |
-| **EasyMotion: Dev + React** | 主进程 + React 渲染进程 |
+| **▸ EasyMotion** | 主进程（IPC、服务、Agent） |
+| **▸ EasyMotion + React** | 主进程 + React 渲染进程（自动 attach CDP 9333） |
 
-F5 会自动检查 Electron 二进制、拉起 Vite 并启动 Electron。任务面板：**`pnpm: dev`**（`Ctrl+Shift+B`）、**`pnpm: test`**。
+F5 会检查 Electron 二进制并确保 Vite 5173 就绪（已在跑则复用，约 0.3s）；停止调试默认保留 Vite 以便下次 F5 更快。任务面板：**`dev`**（`Ctrl+Shift+B`）、**`test`**。
 
 **Windows 首次 `pnpm install`**：若 F5 报 `ENOENT path.txt`，说明 Electron 二进制未下载完整：
 

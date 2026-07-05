@@ -1,5 +1,5 @@
 import type { Timeline } from "./timeline";
-import type { AppSettings, LlmProvider } from "./settings";
+import type { AgentMemorySettings, AppSettings, LlmProvider } from "./settings";
 import type { Conversation, AttachedImage } from "./conversation";
 
 export interface PendingAgentUndoPayload {
@@ -81,6 +81,9 @@ export interface ConversationCompletePayload {
   changeLog?: unknown[];
   remotionChangeLog?: unknown[];
   remotionUndoSnapshots?: PendingAgentUndoPayload["remotionFilesBefore"];
+  memoryUpdated?: boolean;
+  memoryChangeSummary?: string;
+  memoryChangeLog?: unknown[];
   visualChecks?: VisualCheckSummary[];
   cancelled?: boolean;
   simplifiedMode?: boolean;
@@ -90,6 +93,49 @@ export interface ConversationCompletePayload {
 export interface ConversationStatusPayload {
   requestId: string;
   status: string;
+}
+
+export type AgentMemoryScope = "global" | "project";
+export type AgentMemorySource = "user-explicit" | "agent-inferred" | "manual-edit";
+export type AgentMemoryPreferenceValue =
+  | string
+  | number
+  | boolean
+  | string[]
+  | Record<string, string | number | boolean>;
+
+export interface AgentMemoryPreference {
+  key: string;
+  value: AgentMemoryPreferenceValue;
+  label?: string;
+  source: AgentMemorySource;
+  confidence: number;
+  updatedAt: number;
+}
+
+export interface AgentMemoryNote {
+  id: string;
+  text: string;
+  tags: string[];
+  subprojectPath?: string;
+  source: AgentMemorySource;
+  confidence: number;
+  createdAt: number;
+  updatedAt: number;
+}
+
+export interface AgentMemoryFile {
+  version: string;
+  scope: AgentMemoryScope;
+  updatedAt: number;
+  preferences: Record<string, Omit<AgentMemoryPreference, "key">>;
+  notes: AgentMemoryNote[];
+}
+
+export interface AgentMemoryListResult {
+  settings: AgentMemorySettings;
+  global?: AgentMemoryFile;
+  project?: AgentMemoryFile;
 }
 
 export interface ProjectSummary {
@@ -280,7 +326,12 @@ export interface EasyMotionApi {
   settings: {
     get: (payload?: { keys?: string[] }) => Promise<IpcResult<AppSettings>>;
     update: (payload: {
-      settings: Partial<AppSettings>;
+      settings: Partial<Omit<AppSettings, "agent" | "llm">> & {
+        llm?: Partial<AppSettings["llm"]>;
+        agent?: Partial<AppSettings["agent"]> & {
+          memory?: Partial<AgentMemorySettings>;
+        };
+      };
     }) => Promise<IpcResult<{ updated: boolean; settings: AppSettings }>>;
     setLlmApiKey: (payload: {
       provider?: LlmProvider;
@@ -292,6 +343,37 @@ export interface EasyMotionApi {
       model?: string;
       apiKey?: string;
     }) => Promise<IpcResult<{ valid: boolean; error?: string }>>;
+  };
+  memory: {
+    list: (payload?: {
+      scope?: AgentMemoryScope | "all";
+    }) => Promise<IpcResult<AgentMemoryListResult>>;
+    writeNote: (payload: {
+      scope: AgentMemoryScope;
+      text: string;
+      tags?: string[];
+      subprojectPath?: string;
+      confidence?: number;
+    }) => Promise<IpcResult<AgentMemoryNote>>;
+    updatePreference: (payload: {
+      scope: AgentMemoryScope;
+      key: string;
+      value: AgentMemoryPreferenceValue;
+      label?: string;
+      confidence?: number;
+    }) => Promise<IpcResult<AgentMemoryPreference>>;
+    delete: (payload: {
+      scope: AgentMemoryScope;
+      type: "note" | "preference";
+      idOrKey: string;
+    }) => Promise<IpcResult<{ deleted: boolean }>>;
+    clear: (payload: {
+      scope: AgentMemoryScope;
+    }) => Promise<IpcResult<{ cleared: boolean; scope: AgentMemoryScope }>>;
+    getSettings: () => Promise<IpcResult<AgentMemorySettings>>;
+    updateSettings: (payload: {
+      settings: Partial<AgentMemorySettings>;
+    }) => Promise<IpcResult<AgentMemorySettings>>;
   };
   conversation: {
     load: (payload?: { subprojectId?: string; subprojectPath?: string }) => Promise<

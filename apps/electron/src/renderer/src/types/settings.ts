@@ -3,8 +3,17 @@ export type LlmProvider = "openai" | "anthropic";
 /** quick=仅 timeline | free=timeline+remotion | auto=按输入路由 */
 export type AgentCreationMode = "quick" | "free" | "auto";
 
+export interface AgentMemorySettings {
+  enabled: boolean;
+  autoExtract: boolean;
+  promptBudgetChars: number;
+  projectMemory: boolean;
+  includeInBackups: boolean;
+}
+
 export interface AgentSettings {
   creationMode: AgentCreationMode;
+  memory: AgentMemorySettings;
 }
 
 export interface LlmSettings {

@@ -50,6 +50,18 @@
     "PYTHONUTF8": "1"
   },
   "npm.packageManager": "pnpm",
-  "npm.exclude": "**/node_modules/**",
-  "npm.scriptExplorerExclude": ["**/node_modules/**", "**/release/**"]
+  "npm.autoDetect": "off",
+  "task.autoDetect": "off",
+  "npm.exclude": [
+    "**/node_modules/**",
+    "**/release/**",
+    "**/dist/**",
+    "**/resources/templates/**"
+  ],
+  "npm.scriptExplorerExclude": [
+    "**/node_modules/**",
+    "**/release/**",
+    "**/dist/**",
+    "**/resources/templates/**"
+  ]
 }

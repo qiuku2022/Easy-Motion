@@ -13,6 +13,7 @@ const { streamAgentWithTimeouts, isRetriableAgentError } = require("./stream-tim
 const { runSimplifiedFallback } = require("./fallback-templates");
 const { buildMultimodalHumanMessage } = require("./multimodal");
 const { analyzeReferenceImages } = require("./vision-analyze");
+const memoryService = require("../services/memory-service");
 
 const VISION_TOOL_IDLE_TIMEOUT_MS = 120_000;
 
@@ -90,6 +91,12 @@ function applyPresetClipFallback(ctx, selectedElement, input) {
   }
 }
 
+function shouldPersistExtractedPreference(input) {
+  const text = String(input ?? "");
+  if (/记住|以后默认|下次都/.test(text)) return true;
+  return memoryService.getMemorySettings().autoExtract === true;
+}
+
 async function runAgentAttempt({
   timeline,
   subprojectName,
@@ -128,6 +135,7 @@ async function runAgentAttempt({
   let toolHints = [];
   let layoutPlan = null;
   let visionNotice = null;
+  let memoryNotice = null;
 
   if (imagePaths.length && projectPath) {
     onStatus?.(AgentState.ANALYZING);
@@ -148,7 +156,7 @@ async function runAgentAttempt({
     }
   }
 
-  const { agent, visionCtx } = createHybridAgent(
+  const { agent, visionCtx, memoryCtx } = createHybridAgent(
     ctx,
     remotionCtx,
     { visualAnalysis, toolHints, layoutPlan },
@@ -180,6 +188,20 @@ async function runAgentAttempt({
   onStatus?.(AgentState.COMPLETED);
   applySelectedElementFallback(ctx, selectedElement, input);
   applyPresetClipFallback(ctx, selectedElement, input);
+  if (!memoryCtx.changed && shouldPersistExtractedPreference(input)) {
+    try {
+      const candidates = memoryService.extractPreferenceCandidates(input);
+      for (const candidate of candidates) {
+        await memoryCtx.updatePreference(candidate);
+      }
+    } catch (error) {
+      if (/E2714|E2715/.test(error?.message || "")) {
+        memoryNotice = "这条内容看起来包含敏感信息或规则覆盖指令，我没有写入长期记忆。";
+      } else {
+        throw error;
+      }
+    }
+  }
 
   return {
     reply: streamed,
@@ -191,8 +213,11 @@ async function runAgentAttempt({
     remotionUndoSnapshots: remotionCtx.changed ? remotionCtx.getSnapshotsForUndo() : [],
     remotionCtx,
     visualChecks: visionCtx.getVisualChecks(),
+    memoryChanged: memoryCtx.changed,
+    memoryChangeLog: memoryCtx.changeLog,
+    memoryChangeSummary: memoryCtx.getChangeSummary(),
     simplifiedMode: false,
-    systemNotice: visionNotice,
+    systemNotice: [visionNotice, memoryNotice].filter(Boolean).join("\n") || undefined,
   };
 }
 
@@ -292,6 +317,7 @@ async function runAgent(options) {
       const modified =
         result.timelineChanged ||
         result.remotionChanged ||
+        result.memoryChanged ||
         (!looksLikeTimelineModification(options.input) &&
           !looksLikeRemotionCodeModification(options.input));
       if (modified) {

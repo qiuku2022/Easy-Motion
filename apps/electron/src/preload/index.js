@@ -88,6 +88,15 @@ contextBridge.exposeInMainWorld("easyMotion", {
     setLlmApiKey: (payload) => invoke("main:settings:setLlmApiKey", payload),
     validateLLMKey: (payload) => invoke("main:settings:validateLLMKey", payload),
   },
+  memory: {
+    list: (payload) => invoke("main:memory:list", payload),
+    writeNote: (payload) => invoke("main:memory:writeNote", payload),
+    updatePreference: (payload) => invoke("main:memory:updatePreference", payload),
+    delete: (payload) => invoke("main:memory:delete", payload),
+    clear: (payload) => invoke("main:memory:clear", payload),
+    getSettings: () => invoke("main:memory:getSettings"),
+    updateSettings: (payload) => invoke("main:memory:updateSettings", payload),
+  },
   conversation: {
     load: (payload) => invoke("main:conversation:load", payload),
     save: (payload) => invoke("main:conversation:save", payload),

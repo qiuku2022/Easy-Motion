@@ -22,6 +22,7 @@ import {
 import type { LlmProvider, LlmSettingsFormState } from "@/types/settings";
 import { LLM_PROVIDER_OPTIONS, LLM_PROVIDER_PRESETS } from "@/types/settings";
 import { getEasyMotion } from "@/types/easyMotion";
+import { AgentMemoryDialog } from "@/components/ai/AgentMemoryDialog";
 
 interface LLMSettingsDialogProps {
   open: boolean;
@@ -56,6 +57,7 @@ export function LLMSettingsDialog({
   const [loading, setLoading] = useState(false);
   const [validating, setValidating] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [memoryOpen, setMemoryOpen] = useState(false);
 
   const loadSettings = useCallback(async () => {
     const api = getEasyMotion()?.settings;
@@ -179,8 +181,9 @@ export function LLMSettingsDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>LLM 设置</DialogTitle>
           <DialogDescription>
@@ -277,6 +280,22 @@ export function LLMSettingsDialog({
           </div>
         )}
 
+        <div className="rounded-lg border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
+          <p className="font-medium text-foreground">Agent 长期记忆</p>
+          <p className="mt-1">
+            管理跨会话偏好、项目上下文、自动偏好抽取和 Prompt 注入预算。
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="mt-3"
+            onClick={() => setMemoryOpen(true)}
+          >
+            打开记忆管理
+          </Button>
+        </div>
+
         <DialogFooter className="gap-2 sm:gap-3">
           <Button
             type="button"
@@ -294,7 +313,9 @@ export function LLMSettingsDialog({
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "保存"}
           </Button>
         </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+      <AgentMemoryDialog open={memoryOpen} onOpenChange={setMemoryOpen} />
+    </>
   );
 }

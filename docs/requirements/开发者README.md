@@ -1,7 +1,7 @@
 # EasyMotion
 
 > 🎬 用自然语言制作 Remotion 动画 —— 零代码门槛的视频动画创作工具  
-> **文档更新：2026-07-04** | 实施状态：**M0–M11 ✅**（Windows 预发行 v0.1.2；Agent 能力增强与视觉反馈闭环完成）；发版前仍需 `build:win` 与安装包手测
+> **文档更新：2026-07-05** | 实施状态：**M0–M12 ✅**（Windows 预发行 v0.1.2；Agent 视觉反馈与持久记忆完成）；发版前仍需 `build:win` 与安装包手测
 
 EasyMotion 是一款基于 Remotion + Electron 的桌面应用，通过 LLM 驱动的对话式交互，让没有编程经验的剪辑师和内容创作者也能快速生成专业级动画。
 
@@ -84,7 +84,7 @@ EasyMotion 是一款基于 Remotion + Electron 的桌面应用，通过 LLM 驱�
 
 | 文档 | 说明 |
 |------|------|
-| [开发里程碑与路线图.md](开发里程碑与路线图.md) | M0–M11 里程碑、交付物、验收标准 |
+| [开发里程碑与路线图.md](开发里程碑与路线图.md) | M0–M12 里程碑、交付物、验收标准 |
 | [技术风险分析.md](技术风险分析.md) | 风险识别与应对 |
 | [依赖清单与许可证.md](依赖清单与许可证.md) | 依赖与 Remotion 许可说明 |
 
@@ -151,7 +151,7 @@ pnpm dev:all      # 上述 + Python FastAPI（8000 起，自动试 8001–8019�
 
 开发模式 Electron 加载 **`http://127.0.0.1:5173`**（避免 Windows 上 `localhost` IPv6 问题）。
 
-**F5 调试**：`.vscode/launch.json` 中 **EasyMotion: Dev** / **Dev + React**；`debug: prepare` 会检查 Electron 二进制（`ensure-electron-binary.cjs`）。Windows 首次 `pnpm install` 若报 `ENOENT path.txt`，见 [开发环境搭建指南 · Q8](开发环境搭建指南.md)。
+**F5 调试**：`.vscode/launch.json` 中 **▸ EasyMotion** / **▸ EasyMotion + React**；`debug: prepare` 会检查 Electron 二进制并确保 Vite 5173 就绪。Windows 首次 `pnpm install` 若报 `ENOENT path.txt`，见 [开发环境搭建指南 · Q8](开发环境搭建指南.md)。
 
 ### 打包（Windows 测试版）
 
@@ -207,13 +207,24 @@ EasyMotion/
 | M8 | 导出（MP4/WEBM + ZIP + I/O） | ✅ |
 | M9 | 打包发布 + 测试优化 | ✅（Windows MVP；E2E/签名/CI 延后） |
 | M10 | Agent 能力增强：结构化读取、移动与 timeline 设置、素材/数据、批量/场景/视觉、导出与混合撤销 | ✅ |
-| M11 | Agent 视觉反馈闭环：离屏渲帧、多模态复核、实时预览截图 | ✅（本地完成，待提交） |
+| M11 | Agent 视觉反馈闭环：离屏渲帧、多模态复核、实时预览截图 | ✅ |
+| M12 | Agent 持久记忆：双层 memory.json、memory 工具、偏好抽取、`AgentMemoryDialog` | ✅ |
 
 详细规划：[开发里程碑与路线图.md](开发里程碑与路线图.md)
 
 ---
 
-## 近期变更（2026-07-04）
+## 近期变更（2026-07-05）
+
+| 类别 | 变更 |
+|------|------|
+| **M12 Agent 持久记忆** | 新增 `memory-service`、`readMemory`/`writeMemory`/`updatePreference`/`deleteMemory`、prompt 注入与预算裁剪、保守偏好抽取、敏感过滤 |
+| **记忆管理 UI** | `AgentMemoryDialog`：全局/项目 Tab、策略开关（双层圆角胶囊指示）、偏好与笔记 CRUD |
+| **IPC** | `main:memory:*` 七通道；preload `easyMotion.memory` |
+| **验证** | `pnpm test:m12`；改 Agent 相关时叠加 `test:m5` / `test:m5.2` / `pnpm lint` |
+| **UI 过渡动画** | 视图四面板 `CollapsiblePanelSlot`；分组轨道折叠；项目打开 `ProjectBootstrapOverlay`；预览 iframe 淡入（300–500ms，`motion-reduce` 可关） |
+
+## 历史变更（2026-07-04）
 
 | 类别 | 变更 |
 |------|------|

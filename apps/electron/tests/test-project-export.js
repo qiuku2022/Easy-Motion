@@ -8,6 +8,7 @@ const {
 } = require("../src/main/services/project-export-collect");
 const {
   validateProjectExportRequest,
+  buildProjectZipFileList,
   exportRemotionProjectZip,
 } = require("../src/main/services/project-export-service");
 
@@ -92,6 +93,21 @@ async function main() {
 
   try {
     fs.cpSync(templateProject, exportProject, { recursive: true });
+    fs.writeFileSync(
+      path.join(exportProject, "memory.json"),
+      JSON.stringify({ scope: "project", notes: [{ text: "private project note" }] }),
+      "utf8"
+    );
+    const zipFiles = await buildProjectZipFileList({
+      projectPath: exportProject,
+      remotionDir: path.join(exportProject, "subprojects/default/remotion"),
+      timeline: { tracks: [] },
+      includeAssets: false,
+    });
+    assert(
+      !zipFiles.some((file) => file.archivePath === "memory.json"),
+      "project memory.json excluded from remotion zip"
+    );
 
     const result = await exportRemotionProjectZip({
       projectPath: exportProject,

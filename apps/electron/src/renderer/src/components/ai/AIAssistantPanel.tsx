@@ -1,7 +1,8 @@
-import { Settings } from "lucide-react";
+import { Database, Settings } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { AgentCreationModeToggle } from "@/components/ai/AgentCreationModeToggle";
+import { AgentMemoryDialog } from "@/components/ai/AgentMemoryDialog";
 import { LLMSettingsDialog } from "@/components/ai/LLMSettingsDialog";
 import { HSCROLL_HOVER_EVENT } from "@/components/conversation/HorizontalScrollRegion";
 import { GenerationProgress } from "@/components/conversation/GenerationProgress";
@@ -53,6 +54,7 @@ export function AIAssistantPanel() {
   const selectedClipId = useTimelineStore((state) => state.selectedClipId);
 
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [memoryOpen, setMemoryOpen] = useState(false);
   const [llmConfigured, setLlmConfigured] = useState<boolean | null>(null);
   const scrollViewportRef = useRef<HTMLDivElement>(null);
   const scrollContentRef = useRef<HTMLDivElement>(null);
@@ -228,15 +230,26 @@ export function AIAssistantPanel() {
             onChange={(mode) => void setCreationMode(mode)}
           />
         </div>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          aria-label="LLM 设置"
-          onClick={() => setSettingsOpen(true)}
-        >
-          <Settings className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            aria-label="查看 Agent 长期记忆"
+            onClick={() => setMemoryOpen(true)}
+          >
+            <Database className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            aria-label="LLM 设置"
+            onClick={() => setSettingsOpen(true)}
+          >
+            <Settings className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       <ScrollArea
@@ -296,6 +309,7 @@ export function AIAssistantPanel() {
         onOpenChange={setSettingsOpen}
         onSaved={() => void refreshLlmStatus()}
       />
+      <AgentMemoryDialog open={memoryOpen} onOpenChange={setMemoryOpen} />
     </div>
   );
 }

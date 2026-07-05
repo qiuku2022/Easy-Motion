@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState, type CSSProperties } from "react";
 import { AiPanel } from "@/components/layout/AiPanel";
+import { CollapsiblePanelSlot } from "@/components/layout/CollapsiblePanelSlot";
 import { PanelResizer } from "@/components/layout/PanelResizer";
 import { LeftPanel } from "@/components/layout/LeftPanel";
 import { RightPanel } from "@/components/layout/RightPanel";
@@ -114,69 +115,76 @@ export function AppLayout() {
     <div className="flex min-h-0 flex-1 overflow-hidden">
       <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
         <div ref={rowRef} className="flex min-h-0 flex-1 overflow-hidden">
-          {!leftCollapsed && (
-            <>
-              <div
-                ref={leftRef}
-                style={sidePanelStyle(leftPinned, leftPanelWidth, LEFT_MIN, LEFT_MAX)}
-                className="min-w-0 overflow-hidden"
-              >
-                <LeftPanel />
-              </div>
-              <PanelResizer axis="horizontal" onResize={onResizeLeft} />
-            </>
-          )}
+          <CollapsiblePanelSlot
+            expanded={!leftCollapsed}
+            axis="horizontal"
+            innerClassName="flex min-w-0"
+          >
+            <div
+              ref={leftRef}
+              style={sidePanelStyle(leftPinned, leftPanelWidth, LEFT_MIN, LEFT_MAX)}
+              className="min-w-0 overflow-hidden"
+            >
+              <LeftPanel />
+            </div>
+            <PanelResizer axis="horizontal" onResize={onResizeLeft} />
+          </CollapsiblePanelSlot>
           <main
             style={{ flex: previewFlex }}
             className="flex min-h-0 min-w-0 flex-col overflow-hidden"
           >
             <PreviewWindow />
           </main>
-          {!rightCollapsed && (
-            <>
-              <PanelResizer axis="horizontal" onResize={onResizeRight} />
-              <div
-                ref={rightRef}
-                style={sidePanelStyle(
-                  rightPinned,
-                  rightPanelWidth,
-                  RIGHT_MIN,
-                  RIGHT_MAX
-                )}
-                className="min-w-0 overflow-hidden"
-              >
-                <RightPanel />
-              </div>
-            </>
-          )}
-        </div>
-        {!timelineCollapsed && (
-          <>
-            <PanelResizer axis="vertical" onResize={onResizeTimeline} />
-            <div
-              style={{ height: timelineHeight }}
-              className="shrink-0 overflow-hidden"
-            >
-              <TimelinePanel />
-            </div>
-          </>
-        )}
-      </div>
-      {!aiCollapsed && (
-        <>
-          <PanelResizer axis="horizontal" onResize={onResizeAi} />
-          <div
-            style={{
-              flex: `0 0 ${aiPanelWidth}px`,
-              minWidth: AI_MIN,
-              maxWidth: AI_MAX,
-            }}
-            className="min-h-0 min-w-0 shrink-0 overflow-hidden"
+          <CollapsiblePanelSlot
+            expanded={!rightCollapsed}
+            axis="horizontal"
+            innerClassName="flex min-w-0"
           >
-            <AiPanel />
+            <PanelResizer axis="horizontal" onResize={onResizeRight} />
+            <div
+              ref={rightRef}
+              style={sidePanelStyle(
+                rightPinned,
+                rightPanelWidth,
+                RIGHT_MIN,
+                RIGHT_MAX
+              )}
+              className="min-w-0 overflow-hidden"
+            >
+              <RightPanel />
+            </div>
+          </CollapsiblePanelSlot>
+        </div>
+        <CollapsiblePanelSlot
+          expanded={!timelineCollapsed}
+          axis="vertical"
+          className="shrink-0"
+          innerClassName="flex min-h-0 flex-col"
+        >
+          <PanelResizer axis="vertical" onResize={onResizeTimeline} />
+          <div style={{ height: timelineHeight }} className="overflow-hidden">
+            <TimelinePanel />
           </div>
-        </>
-      )}
+        </CollapsiblePanelSlot>
+      </div>
+      <CollapsiblePanelSlot
+        expanded={!aiCollapsed}
+        axis="horizontal"
+        className="shrink-0"
+        innerClassName="flex min-h-0"
+      >
+        <PanelResizer axis="horizontal" onResize={onResizeAi} />
+        <div
+          style={{
+            flex: `0 0 ${aiPanelWidth}px`,
+            minWidth: AI_MIN,
+            maxWidth: AI_MAX,
+          }}
+          className="min-h-0 min-w-0 overflow-hidden"
+        >
+          <AiPanel />
+        </div>
+      </CollapsiblePanelSlot>
     </div>
   );
 }

@@ -69,6 +69,9 @@ interface ConversationState {
     remotionCodeUpdated?: boolean;
     remotionChangeLog?: unknown[];
     remotionUndoSnapshots?: PendingAgentUndoPayload["remotionFilesBefore"];
+    memoryUpdated?: boolean;
+    memoryChangeSummary?: string;
+    memoryChangeLog?: unknown[];
     cancelled?: boolean;
     simplifiedMode?: boolean;
     systemNotice?: string;
@@ -172,7 +175,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
     set({ creationMode: mode });
     const api = getEasyMotion()?.settings;
     if (!api?.update) return;
-    await api.update({ agent: { creationMode: mode } });
+    await api.update({ settings: { agent: { creationMode: mode } } });
   },
 
   loadConversation: async (subprojectPath = DEFAULT_SUBPROJECT_PATH) => {
@@ -465,6 +468,8 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
     remotionCodeUpdated,
     remotionChangeLog,
     remotionUndoSnapshots,
+    memoryUpdated,
+    memoryChangeSummary,
     cancelled,
     simplifiedMode: _simplifiedMode,
     systemNotice,
@@ -585,6 +590,15 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
         }
       }
       set({ lastAgentUndoRemotionSnapshots: snapshots });
+    } else if (memoryUpdated) {
+      set({
+        lastAgentUndoSnapshot: null,
+        lastAgentUndoRemotionSnapshots: [],
+        lastAgentUndoMessageId: null,
+      });
+      toast.success("长期记忆已更新", {
+        description: memoryChangeSummary,
+      });
     } else {
       set({
         lastAgentUndoSnapshot: null,

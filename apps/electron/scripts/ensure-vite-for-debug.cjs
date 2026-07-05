@@ -28,7 +28,7 @@ async function isViteUp(timeoutMs) {
 }
 
 async function main() {
-  if (await isViteUp(3000)) {
+  if (await isViteUp(800)) {
     console.log("[ensure-vite] already running at", target);
     return;
   }

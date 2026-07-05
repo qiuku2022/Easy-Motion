@@ -8,8 +8,41 @@
   },
   "tasks": [
     {
-      "label": "pnpm: dev",
-      "type": "shell",
+      "label": "debug: prepare",
+      "type": "process",
+      "command": "node",
+      "args": ["scripts/debug-prepare.cjs"],
+      "options": { "cwd": "${workspaceFolder}/apps/electron" },
+      "presentation": { "reveal": "silent", "panel": "shared", "close": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "debug: prepare (react)",
+      "type": "process",
+      "command": "node",
+      "args": ["scripts/debug-prepare.cjs"],
+      "options": {
+        "cwd": "${workspaceFolder}/apps/electron",
+        "env": {
+          "EASY_MOTION_PREPARE_FREE_CDP": "1",
+          "ELECTRON_CDP_PORT": "9333"
+        }
+      },
+      "presentation": { "reveal": "silent", "panel": "shared", "close": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "debug: cleanup",
+      "type": "process",
+      "command": "node",
+      "args": ["scripts/cleanup-debug-processes.cjs"],
+      "options": { "cwd": "${workspaceFolder}/apps/electron" },
+      "presentation": { "reveal": "silent", "panel": "shared", "close": true },
+      "problemMatcher": []
+    },
+    {
+      "label": "dev",
+      "type": "process",
       "command": "pnpm",
       "args": ["dev"],
       "options": { "cwd": "${workspaceFolder}" },
@@ -18,13 +51,43 @@
       "problemMatcher": []
     },
     {
-      "label": "pnpm: test",
-      "type": "shell",
+      "label": "dev:all",
+      "type": "process",
+      "command": "pnpm",
+      "args": ["dev:all"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "dedicated", "group": "dev" },
+      "problemMatcher": []
+    },
+    {
+      "label": "test",
+      "type": "process",
       "command": "pnpm",
       "args": ["test"],
       "options": { "cwd": "${workspaceFolder}" },
+      "group": { "kind": "test", "isDefault": true },
       "presentation": { "reveal": "always", "panel": "dedicated" },
       "problemMatcher": []
+    },
+    {
+      "label": "test:m12",
+      "type": "process",
+      "command": "pnpm",
+      "args": ["test:m12"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "group": "test",
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "problemMatcher": []
+    },
+    {
+      "label": "lint",
+      "type": "process",
+      "command": "pnpm",
+      "args": ["lint"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "problemMatcher": ["$eslint-stylish"]
     }
   ]
 }

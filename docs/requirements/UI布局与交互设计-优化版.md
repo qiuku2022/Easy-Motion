@@ -59,13 +59,18 @@
 
 ### 0.5 动画规范
 
-| 场景 | 时长 | 缓动函数 |
-|------|------|----------|
-| 按钮悬停（颜色变化，**不位移**） | 150ms | `ease-out` |
-| 面板展开/收起 | 200ms | `cubic-bezier(0.4, 0, 0.2, 1)` |
-| 弹窗出现 | 150ms | `ease-out` + `scale(0.95→1)` |
-| 时间线播放头移动 | 实时 | 无过渡，精确到帧 |
-| 轨道拖拽 | 100ms | `ease-out` |
+| 场景 | 时长 | 缓动函数 | 实现 |
+|------|------|----------|------|
+| 按钮悬停（颜色变化，**不位移**） | 150ms | `ease-out` | — |
+| 视图菜单面板展开/收起（左/属性/AI/时间线） | 300ms | `ease-in-out` | `CollapsiblePanelSlot`：`grid-cols/rows` 0fr↔1fr + opacity |
+| 时间线分组轨道展开/收起 | 300ms | `ease-in-out` | `TimelineBody` 内 `CollapsibleTrackRows` |
+| 关键帧轨道面板展开/收起 | 300ms | `ease-in-out` | `KeyframeTrackPanel` |
+| 项目打开/切换/关闭过渡 | 300ms | `ease-in-out` | `ProjectBootstrapOverlay` + 工作区淡入 |
+| 预览 iframe 就绪 | 500ms | `ease-in-out` | `PreviewWindow` opacity |
+| 属性分组折叠 | 200ms | `cubic-bezier(0.4, 0, 0.2, 1)` | `PropertyCollapsibleSection` |
+| 弹窗出现 | 150ms | `ease-out` + `scale(0.95→1)` | shadcn `Dialog` |
+| 时间线播放头移动 | 实时 | 无过渡，精确到帧 | — |
+| 轨道拖拽 | 100ms | `ease-out` | — |
 
 **性能要求**：所有动画使用 `transform` 和 `opacity`（避免触发重排）；支持 `prefers-reduced-motion` 媒体查询。
 
@@ -178,8 +183,11 @@
 |----|----------|
 | **窗口壳** | `window-chrome.js`：`frame: false` + `thickFrame`（Win/Linux）；macOS `titleBarStyle: hiddenInset`；`TitleBar` + `WindowControls` |
 | **应用菜单 `≡`** | `AppMenu.tsx`：文件（新建/打开/**关闭项目**/保存/导出/退出）、编辑、视图、帮助 |
-| **关闭项目** | `main:project:close` → 停止预览、清空时间线/素材/对话，回到未打开项目状态；有未保存更改时确认 |
-| **AI 助手** | `AiPanel.tsx` 独立列，**不**与时间线同宽；工具栏 AI 按钮可展开已收起的 AI 栏 |
+| **关闭项目** | `main:project:close` → 停止预览、清空时间线/素材/对话，回到未打开项目状态；有未保存更改时确认；**带 300ms 过渡遮罩** |
+| **项目打开/切换** | `projectStore.isProjectTransitioning` + `initializeWorkspace()`；加载时间线/素材/对话期间 `ProjectBootstrapOverlay`，工作区淡入 |
+| **视图面板开关** | 菜单 **视图** → 左侧面板 / 属性 / AI / 时间线；`AppLayout` + `CollapsiblePanelSlot` 动画显隐（非 mount/unmount） |
+| **分组轨道折叠** | 轨道头 Chevron → 子轨道 `grid-rows` 过渡；箭头 `-rotate-90` 与关键帧面板一致 |
+| **AI 助手** | `AiPanel.tsx` 独立列，**不**与时间线同宽；工具栏 AI 按钮可展开已收起的 AI 栏；栏内可打开 **Agent 长期记忆**（`AgentMemoryDialog`：策略开关、全局/项目记忆管理） |
 | **预览宽度** | `usePreviewColumnWidth`：按行高与 16:9 计算列宽；左栏与属性栏 `flex: 1 1 0` 均分剩余横向空间（拖拽后可锁定像素宽） |
 | **时间线高度** | `uiStore.timelineHeight` 默认 `480px`（`TIMELINE_HEIGHT_MAX`），范围 160–480px |
 | **滚动条** | 预设库、右侧属性栏、时间线关键帧轨道用 `scrollbar-theme`；左侧「项目/素材」Tab 仍用 `ScrollArea` |
@@ -651,7 +659,10 @@ EasyMotion 的核心卖点是"对话式生成"，但用户**并非 100% 时间�
 | 场景 | 时长 | 缓动 | 效果 |
 |------|------|------|------|
 | 按钮悬停 | 150ms | ease-out | 背景色变化 + `translateY(-1px)` |
-| 面板展开/收起 | 200ms | cubic-bezier(0.4, 0, 0.2, 1) | 高度变化 |
+| 视图菜单四面板展开/收起 | 300ms | ease-in-out | `grid-template-columns/rows` + opacity |
+| 时间线分组子轨道 | 300ms | ease-in-out | 同上 |
+| 项目打开/切换 | 300ms | ease-in-out | 遮罩 + 工作区/预览淡入 |
+| 面板展开/收起（属性分组等） | 200ms | cubic-bezier(0.4, 0, 0.2, 1) | 高度变化 |
 | 弹窗出现 | 150ms | ease-out | `scale(0.95→1)` + 透明度 |
 | 片段选中 | 100ms | ease-out | 蓝色边框淡入 + 微弱阴影 |
 | 浮动工具条出现 | 200ms | ease-out | 向上位移 8px + 淡入 |

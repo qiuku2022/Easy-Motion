@@ -16,6 +16,8 @@ import {
 import { frameFromPointer } from "@/lib/timeline/pointerFrame";
 import {
   buildTimelineRows,
+  buildTimelineSections,
+  computeTimelineBodyHeight,
   effectiveTrackState,
   findLayerTrackForClip,
   getLeafTracks,
@@ -94,6 +96,7 @@ export function TimelineBody({
   });
 
   const rows = buildTimelineRows(tracks);
+  const sections = buildTimelineSections(tracks);
   const sortedTrackIds = sortTracksForTimelineUi(tracks).map((t) => t.id);
   const { preview: trackReorderPreview, startReorder } = useTrackReorder(
     sortedTrackIds,
@@ -107,8 +110,10 @@ export function TimelineBody({
   const removeSelectedMarker = useTimelineStore((s) => s.removeSelectedMarker);
   const clearSelection = useTimelineStore((s) => s.clearSelection);
   const contentWidth = Math.max(1, durationInFrames * pxPerFrame);
-  const bodyHeight = rows.length * TRACK_ROW_HEIGHT;
-  const layoutKey = `${durationInFrames}:${rows.map((r) => `${r.track.id}:${r.track.collapsed ? 1 : 0}`).join(",")}`;
+  const bodyHeight = computeTimelineBodyHeight(tracks);
+  const layoutKey = `${durationInFrames}:${sortTracksForTimelineUi(tracks)
+    .map((t) => `${t.id}:${t.type === "group" && t.collapsed ? 1 : 0}`)
+    .join(",")}`;
 
   const handleSeek = useCallback(
     (frame: number) => {
@@ -305,34 +310,75 @@ export function TimelineBody({
             syncVerticalScroll(e.currentTarget.scrollTop);
           }}
         >
-          {rows.map((row, rowIndex) => (
-            <TrackHeader
-              key={`${row.track.id}-${row.depth}`}
-              track={row.track}
-              rowIndex={rowIndex}
-              depth={row.depth}
-              parentGroup={row.parentGroup}
-              isGroupHeader={row.isGroupHeader}
-              className="border-b border-border"
-              selected={
-                selectedTrackId === row.track.id ||
-                selectedTrackId === row.parentGroup?.id
-              }
-              isDragging={trackReorderPreview?.trackId === row.track.id}
-              showDropLineAbove={
-                row.depth === 0 && trackReorderPreview?.insertIndex === rowIndex
-              }
-              showDropLineBelow={
-                row.depth === 0 &&
-                trackReorderPreview?.insertIndex === sortedTrackIds.length &&
-                rowIndex === rows.filter((r) => r.depth === 0).length - 1
-              }
-              onSelect={() => selectTrack(row.track.id)}
-              onReorderStart={
-                row.depth === 0 ? (e) => startReorder(e, row.track.id) : undefined
-              }
-            />
-          ))}
+          {sections.map((section, topLevelIndex) => {
+            if (section.kind === "group") {
+              const group = section.track;
+              const expanded = !group.collapsed;
+              return (
+                <div key={group.id}>
+                  <TrackHeader
+                    track={group}
+                    rowIndex={topLevelIndex}
+                    depth={0}
+                    parentGroup={null}
+                    isGroupHeader
+                    className="border-b border-border"
+                    selected={selectedTrackId === group.id}
+                    isDragging={trackReorderPreview?.trackId === group.id}
+                    showDropLineAbove={
+                      trackReorderPreview?.insertIndex === topLevelIndex
+                    }
+                    showDropLineBelow={
+                      trackReorderPreview?.insertIndex === sortedTrackIds.length &&
+                      topLevelIndex === sections.length - 1
+                    }
+                    onSelect={() => selectTrack(group.id)}
+                    onReorderStart={(e) => startReorder(e, group.id)}
+                  />
+                  <CollapsibleTrackRows expanded={expanded}>
+                    {section.children.map((row) => (
+                      <TrackHeader
+                        key={row.track.id}
+                        track={row.track}
+                        rowIndex={topLevelIndex}
+                        depth={row.depth}
+                        parentGroup={row.parentGroup}
+                        isGroupHeader={false}
+                        className="border-b border-border"
+                        selected={
+                          selectedTrackId === row.track.id ||
+                          selectedTrackId === row.parentGroup?.id
+                        }
+                        onSelect={() => selectTrack(row.track.id)}
+                      />
+                    ))}
+                  </CollapsibleTrackRows>
+                </div>
+              );
+            }
+
+            const row = section.row;
+            return (
+              <TrackHeader
+                key={row.track.id}
+                track={row.track}
+                rowIndex={topLevelIndex}
+                depth={row.depth}
+                parentGroup={row.parentGroup}
+                isGroupHeader={false}
+                className="border-b border-border"
+                selected={selectedTrackId === row.track.id}
+                isDragging={trackReorderPreview?.trackId === row.track.id}
+                showDropLineAbove={trackReorderPreview?.insertIndex === topLevelIndex}
+                showDropLineBelow={
+                  trackReorderPreview?.insertIndex === sortedTrackIds.length &&
+                  topLevelIndex === sections.length - 1
+                }
+                onSelect={() => selectTrack(row.track.id)}
+                onReorderStart={(e) => startReorder(e, row.track.id)}
+              />
+            );
+          })}
         </div>
       </div>
 
@@ -384,27 +430,68 @@ export function TimelineBody({
           }}
         >
           <div
-            className="relative min-h-full bg-em-bg"
+            className="relative min-h-full bg-em-bg transition-[height] duration-300 ease-in-out motion-reduce:transition-none"
             style={{ width: contentWidth, height: bodyHeight }}
             onPointerDown={(e) => {
               if (e.target === e.currentTarget) clearSelection();
             }}
           >
-            {rows.map((row) => (
-              <TrackRow
-                key={`${row.track.id}-${row.depth}`}
-                track={row.track}
-                parentGroup={row.parentGroup}
-                isGroupHeader={row.isGroupHeader}
-                pxPerFrame={pxPerFrame}
-                selectedClipId={selectedClipId}
-                dragPreview={dragPreview}
-                onSelectClip={handleSelectClip}
-                onDragStart={(e, clipId, mode) =>
-                  startDrag(e, clipId, row.track.id, mode)
-                }
-              />
-            ))}
+            {sections.map((section) => {
+              if (section.kind === "group") {
+                const group = section.track;
+                const expanded = !group.collapsed;
+                return (
+                  <div key={group.id}>
+                    <TrackRow
+                      track={group}
+                      parentGroup={null}
+                      isGroupHeader
+                      pxPerFrame={pxPerFrame}
+                      selectedClipId={selectedClipId}
+                      dragPreview={dragPreview}
+                      onSelectClip={handleSelectClip}
+                      onDragStart={(e, clipId, mode) =>
+                        startDrag(e, clipId, group.id, mode)
+                      }
+                    />
+                    <CollapsibleTrackRows expanded={expanded}>
+                      {section.children.map((row) => (
+                        <TrackRow
+                          key={row.track.id}
+                          track={row.track}
+                          parentGroup={row.parentGroup}
+                          isGroupHeader={false}
+                          pxPerFrame={pxPerFrame}
+                          selectedClipId={selectedClipId}
+                          dragPreview={dragPreview}
+                          onSelectClip={handleSelectClip}
+                          onDragStart={(e, clipId, mode) =>
+                            startDrag(e, clipId, row.track.id, mode)
+                          }
+                        />
+                      ))}
+                    </CollapsibleTrackRows>
+                  </div>
+                );
+              }
+
+              const row = section.row;
+              return (
+                <TrackRow
+                  key={row.track.id}
+                  track={row.track}
+                  parentGroup={row.parentGroup}
+                  isGroupHeader={false}
+                  pxPerFrame={pxPerFrame}
+                  selectedClipId={selectedClipId}
+                  dragPreview={dragPreview}
+                  onSelectClip={handleSelectClip}
+                  onDragStart={(e, clipId, mode) =>
+                    startDrag(e, clipId, row.track.id, mode)
+                  }
+                />
+              );
+            })}
 
             {timeline && (
               <WorkAreaOverlay
@@ -446,6 +533,32 @@ export function TimelineBody({
             />
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function CollapsibleTrackRows({
+  expanded,
+  children,
+}: {
+  expanded: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className={cn(
+        "grid transition-[grid-template-rows] duration-300 ease-in-out motion-reduce:transition-none",
+        expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+      )}
+    >
+      <div
+        className={cn(
+          "min-h-0 overflow-hidden transition-opacity duration-300 ease-in-out motion-reduce:transition-none",
+          expanded ? "opacity-100" : "pointer-events-none opacity-0"
+        )}
+      >
+        {children}
       </div>
     </div>
   );

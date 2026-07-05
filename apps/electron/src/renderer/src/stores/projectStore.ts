@@ -23,10 +23,13 @@ interface ProjectState {
   localProjects: ProjectSummary[];
   localScanRoot: string | null;
   isLoading: boolean;
+  /** 打开/创建/关闭/启动恢复项目时的全屏过渡 */
+  isProjectTransitioning: boolean;
   isLoadingLocal: boolean;
   error: string | null;
 
   refreshCurrent: () => Promise<void>;
+  initializeWorkspace: () => Promise<void>;
   loadLocalProjects: () => Promise<void>;
   createProject: (name: string, parentPath?: string) => Promise<boolean>;
   openProjectByPicker: () => Promise<boolean>;
@@ -44,6 +47,27 @@ async function reloadProjectWorkspace() {
     useAssetStore.getState().loadAssets(),
     useConversationStore.getState().loadConversation(),
   ]);
+}
+
+function resetWorkspaceForTransition() {
+  useTimelineStore.setState({
+    timeline: null,
+    isLoading: true,
+    isSaving: false,
+    isGenerating: false,
+    error: null,
+    currentFrame: 0,
+    selectedTrackId: null,
+    selectedClipId: null,
+    selectedMarkerId: null,
+    hasUnsavedChanges: false,
+    remotionDrift: null,
+    isSyncingRemotion: false,
+    lastRemotionSync: null,
+  });
+  useAssetStore.getState().clear();
+  useConversationStore.getState().resetForProjectClose();
+  usePlaybackStore.getState().setPlaying(false);
 }
 
 async function clearProjectWorkspace() {
@@ -82,6 +106,7 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
   localProjects: [],
   localScanRoot: null,
   isLoading: false,
+  isProjectTransitioning: false,
   isLoadingLocal: false,
   error: null,
 
@@ -104,6 +129,21 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       },
       error: null,
     });
+  },
+
+  initializeWorkspace: async () => {
+    set({ isProjectTransitioning: true, isLoading: true });
+    try {
+      await get().refreshCurrent();
+      if (get().current) {
+        await reloadProjectWorkspace();
+      } else {
+        useAssetStore.getState().clear();
+        useConversationStore.getState().resetForProjectClose();
+      }
+    } finally {
+      set({ isProjectTransitioning: false, isLoading: false });
+    }
   },
 
   loadLocalProjects: async () => {
@@ -137,19 +177,24 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       await flushProjectWorkspace();
     }
 
-    set({ isLoading: true, error: null });
-    const res = await api.project.open(projectPath);
-    set({ isLoading: false });
+    set({ isProjectTransitioning: true, isLoading: true, error: null });
+    resetWorkspaceForTransition();
 
-    if (!res.success) {
-      set({ error: res.error?.message ?? "打开项目失败" });
-      return false;
+    try {
+      const res = await api.project.open(projectPath);
+      if (!res.success) {
+        useTimelineStore.setState({ isLoading: false });
+        set({ error: res.error?.message ?? "打开项目失败" });
+        return false;
+      }
+
+      await get().refreshCurrent();
+      await reloadProjectWorkspace();
+      await get().loadLocalProjects();
+      return true;
+    } finally {
+      set({ isProjectTransitioning: false, isLoading: false });
     }
-
-    await get().refreshCurrent();
-    await reloadProjectWorkspace();
-    await get().loadLocalProjects();
-    return true;
   },
 
   createProject: async (name, parentPath) => {
@@ -169,19 +214,24 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
       await flushProjectWorkspace();
     }
 
-    set({ isLoading: true, error: null });
-    const res = await api.project.create({ name: trimmed, parentPath });
-    set({ isLoading: false });
+    set({ isProjectTransitioning: true, isLoading: true, error: null });
+    resetWorkspaceForTransition();
 
-    if (!res.success) {
-      set({ error: res.error?.message ?? "创建项目失败" });
-      return false;
+    try {
+      const res = await api.project.create({ name: trimmed, parentPath });
+      if (!res.success) {
+        useTimelineStore.setState({ isLoading: false });
+        set({ error: res.error?.message ?? "创建项目失败" });
+        return false;
+      }
+
+      await get().refreshCurrent();
+      await reloadProjectWorkspace();
+      await get().loadLocalProjects();
+      return true;
+    } finally {
+      set({ isProjectTransitioning: false, isLoading: false });
     }
-
-    await get().refreshCurrent();
-    await reloadProjectWorkspace();
-    await get().loadLocalProjects();
-    return true;
   },
 
   openProjectByPicker: async () => {
@@ -242,19 +292,22 @@ export const useProjectStore = create<ProjectState>((set, get) => ({
 
     await flushProjectWorkspace();
 
-    set({ isLoading: true, error: null });
-    const res = await api.project.close();
-    set({ isLoading: false });
+    set({ isProjectTransitioning: true, isLoading: true, error: null });
 
-    if (!res.success) {
-      set({ error: res.error?.message ?? "关闭项目失败" });
-      return false;
+    try {
+      const res = await api.project.close();
+      if (!res.success) {
+        set({ error: res.error?.message ?? "关闭项目失败" });
+        return false;
+      }
+
+      await clearProjectWorkspace();
+      await get().refreshCurrent();
+      await get().loadLocalProjects();
+      return true;
+    } finally {
+      set({ isProjectTransitioning: false, isLoading: false });
     }
-
-    await clearProjectWorkspace();
-    await get().refreshCurrent();
-    await get().loadLocalProjects();
-    return true;
   },
 
   deleteProject: async (projectPath) => {

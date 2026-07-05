@@ -1,6 +1,7 @@
 import type { Clip, Timeline, Track, TrackType } from "@/types/timeline";
 import { isCompositeLayerType } from "@/lib/timeline/contentType";
 import { resolveEditableClipType } from "@/lib/timeline/clipPropertySchema";
+import { TRACK_ROW_HEIGHT } from "@/lib/timeline/constants";
 import { isTrackIncludedInPreview } from "@/lib/timeline/solo";
 
 export interface LayerElement {
@@ -58,6 +59,65 @@ export function sortTracksForTimelineUi(tracks: Track[]): Track[] {
 
 function sortChildrenForTimelineUi(children: Track[]): Track[] {
   return [...children].sort((a, b) => b.order - a.order);
+}
+
+export interface TimelineGroupSection {
+  kind: "group";
+  track: Track;
+  children: TimelineRow[];
+}
+
+export interface TimelineTrackSection {
+  kind: "track";
+  row: TimelineRow;
+}
+
+export type TimelineSection = TimelineGroupSection | TimelineTrackSection;
+
+/** 时间线 UI 分区（group 含可动画折叠的 children） */
+export function buildTimelineSections(tracks: Track[]): TimelineSection[] {
+  const sorted = sortTracksForTimelineUi(tracks);
+  const sections: TimelineSection[] = [];
+
+  for (const track of sorted) {
+    if (track.type === "group") {
+      const children = sortChildrenForTimelineUi(track.children ?? []).map((child) => ({
+        track: child,
+        depth: 1,
+        parentGroup: track,
+        isGroupHeader: false as const,
+      }));
+      sections.push({ kind: "group", track, children });
+    } else {
+      sections.push({
+        kind: "track",
+        row: {
+          track,
+          depth: 0,
+          parentGroup: null,
+          isGroupHeader: false,
+        },
+      });
+    }
+  }
+
+  return sections;
+}
+
+/** 按折叠状态计算时间线内容区高度（配合 CSS 过渡） */
+export function computeTimelineBodyHeight(tracks: Track[]): number {
+  let height = 0;
+  for (const section of buildTimelineSections(tracks)) {
+    if (section.kind === "group") {
+      height += TRACK_ROW_HEIGHT;
+      if (!section.track.collapsed) {
+        height += section.children.length * TRACK_ROW_HEIGHT;
+      }
+    } else {
+      height += TRACK_ROW_HEIGHT;
+    }
+  }
+  return height;
 }
 
 export function buildTimelineRows(tracks: Track[]): TimelineRow[] {

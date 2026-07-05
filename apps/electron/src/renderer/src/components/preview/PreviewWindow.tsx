@@ -313,7 +313,7 @@ export function PreviewWindow() {
           style={previewFrameStyle}
         >
           {showOverlay && (
-            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-preview-canvas px-6 text-center">
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-preview-canvas px-6 text-center transition-opacity duration-300 ease-in-out motion-reduce:transition-none">
               {isLoading && (
                 <Loader2 className="h-8 w-8 animate-spin text-ring" aria-hidden />
               )}
@@ -371,7 +371,10 @@ export function PreviewWindow() {
             ref={iframeRef}
             src={previewUrl ?? undefined}
             title="Remotion Preview"
-            className={cn("h-full w-full", !previewUrl && "invisible")}
+            className={cn(
+              "h-full w-full transition-opacity duration-500 ease-in-out motion-reduce:transition-none",
+              previewUrl ? "opacity-100" : "pointer-events-none opacity-0"
+            )}
             onLoad={() => {
               const frame = markPreservePlayhead();
               const win = iframeRef.current?.contentWindow;

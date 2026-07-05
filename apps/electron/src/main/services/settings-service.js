@@ -5,6 +5,14 @@ const { atomicWriteJson, readJsonFile, ensureDir } = require("./file-service");
 
 const SETTINGS_VERSION = "1.0";
 
+const DEFAULT_AGENT_MEMORY_SETTINGS = {
+  enabled: true,
+  autoExtract: false,
+  promptBudgetChars: 1200,
+  projectMemory: true,
+  includeInBackups: false,
+};
+
 const DEFAULT_SETTINGS = {
   version: SETTINGS_VERSION,
   llm: {
@@ -18,15 +26,17 @@ const DEFAULT_SETTINGS = {
   },
   agent: {
     creationMode: "free",
+    memory: DEFAULT_AGENT_MEMORY_SETTINGS,
   },
 };
 
 const LLM_PROVIDERS = new Set(["openai", "anthropic"]);
 
 let cachedSettings = null;
+let testConfigDir = null;
 
 function getSettingsPath() {
-  return path.join(getConfigDir(), "settings.json");
+  return path.join(testConfigDir ?? getConfigDir(), "settings.json");
 }
 
 function deepMerge(target, source) {
@@ -82,8 +92,23 @@ function normalizeLlmSettings(llm = {}) {
 
 function normalizeAgentSettings(agent = {}) {
   const modes = new Set(["quick", "free", "auto"]);
+  const memory = agent.memory && typeof agent.memory === "object" ? agent.memory : {};
+  const promptBudgetChars = Number(memory.promptBudgetChars);
+
   return {
     creationMode: modes.has(agent.creationMode) ? agent.creationMode : "free",
+    memory: {
+      enabled: memory.enabled !== false,
+      autoExtract: memory.autoExtract === true,
+      promptBudgetChars:
+        Number.isFinite(promptBudgetChars) &&
+        promptBudgetChars >= 300 &&
+        promptBudgetChars <= 3000
+          ? promptBudgetChars
+          : DEFAULT_AGENT_MEMORY_SETTINGS.promptBudgetChars,
+      projectMemory: memory.projectMemory !== false,
+      includeInBackups: memory.includeInBackups === true,
+    },
   };
 }
 
@@ -99,7 +124,7 @@ function normalizeSettings(raw) {
 
 function loadSettingsFromDisk() {
   const filePath = getSettingsPath();
-  ensureDir(getConfigDir());
+  ensureDir(path.dirname(filePath));
 
   if (!fs.existsSync(filePath)) {
     return normalizeSettings({});
@@ -151,12 +176,20 @@ function resetSettingsCache() {
   cachedSettings = null;
 }
 
+function setSettingsConfigDirForTest(configDir) {
+  testConfigDir = configDir || null;
+  resetSettingsCache();
+}
+
 module.exports = {
   DEFAULT_SETTINGS,
+  DEFAULT_AGENT_MEMORY_SETTINGS,
   LLM_PROVIDERS,
   getSettings,
   getLlmSettings,
   updateSettings,
   resetSettingsCache,
+  setSettingsConfigDirForTest,
   normalizeLlmSettings,
+  normalizeAgentSettings,
 };

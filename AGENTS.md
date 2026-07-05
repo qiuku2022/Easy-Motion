@@ -107,6 +107,7 @@ EasyMotion 是用自然语言制作 Remotion 动画的 **Electron 桌面应用**
 | 任意 JS/TS | `pnpm lint` |
 | 主进程 / Agent / Generator | `pnpm test` |
 | 仅 Agent 相关 | `pnpm --filter @easymotion/electron test:m5` |
+| Agent 长期记忆（M12） | `pnpm --filter @easymotion/electron test:m12` |
 | 预设 manifest / 参数 | `cd apps/electron && node tests/test-preset-parameters.js` |
 | 仅 UI（无逻辑） | `pnpm lint`；手动 `pnpm dev` 目视检查 |
 | 打包 / electron-builder / 安装包路径 | `pnpm build:win`（或 `pnpm --filter @easymotion/electron build:dir`）；手测 `release/win-unpacked/EasyMotion.exe` |

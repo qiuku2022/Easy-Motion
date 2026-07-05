@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import {
   BarChart3,
   ChevronDown,
-  ChevronRight,
   Eye,
   EyeOff,
   Folder,
@@ -334,11 +333,13 @@ export function TrackHeader({
               toggleGroupCollapsed(track.id);
             }}
           >
-            {track.collapsed ? (
-              <ChevronRight className="h-3.5 w-3.5" />
-            ) : (
-              <ChevronDown className="h-3.5 w-3.5" />
-            )}
+            <ChevronDown
+              className={cn(
+                "h-3.5 w-3.5 transition-transform duration-300 ease-in-out motion-reduce:transition-none",
+                track.collapsed && "-rotate-90"
+              )}
+              aria-hidden
+            />
           </TrackHeaderIconButton>
         ) : null}
 

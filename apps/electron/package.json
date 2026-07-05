@@ -21,8 +21,11 @@
     "test:m8": "node tests/test-export-preflight.js && node tests/test-work-area.js && node tests/test-project-export.js",
     "test:m11": "node tests/test-remotion-native-render.js && node tests/test-frame-render-service.js && node tests/test-preview-capture-service.js && node tests/test-agent-vision-feedback-tools.js",
     "test:m11:real-render": "node tests/test-frame-render-real.js",
+    "test:m12": "node tests/test-memory-service.js && node tests/test-agent-memory-settings.js && node tests/test-agent-memory-tools.js && node tests/test-agent-memory-context.js && node tests/test-agent-memory-extractor.js",
     "vendor:rve-presets": "node scripts/vendor-rve-presets.cjs",
     "generate:preset-thumbnails": "node scripts/generate-preset-thumbnails.cjs",
+    "debug:prepare": "node scripts/debug-prepare.cjs",
+    "debug:cleanup": "node scripts/cleanup-debug-processes.cjs",
     "test": "pnpm test:m1 && pnpm test:m2 && pnpm test:m3 && pnpm test:m5 && pnpm test:m5.2"
   },
   "dependencies": {
