@@ -32,15 +32,28 @@ const AI_MAX = AI_PANEL_WIDTH_MAX;
 const TIMELINE_MIN = TIMELINE_HEIGHT_MIN;
 const TIMELINE_MAX = TIMELINE_HEIGHT_MAX;
 
-function sidePanelStyle(
+/**
+ * 编辑器左右栏外层占位：
+ * - 未拖拽：flex 均分预览列之外的剩余宽度（不受 Tab 内容影响）
+ * - 已拖拽 / 收起：不设 flex，由内容宽或 CollapsiblePanelSlot 收为 0
+ */
+function editorSideSlotStyle(
+  collapsed: boolean,
   pinned: boolean,
-  width: number,
-  min: number,
-  max: number
-): CSSProperties {
-  return pinned
-    ? { flex: `0 0 ${width}px`, minWidth: min, maxWidth: max }
-    : { flex: "1 1 0", minWidth: min };
+  min: number
+): CSSProperties | undefined {
+  if (collapsed || pinned) return undefined;
+  // 不设 maxWidth，宽屏剩余空间才能真正吃进两侧
+  return { flex: "1 1 0", minWidth: min };
+}
+
+function pinnedPanelStyle(width: number, min: number, max: number) {
+  return {
+    flex: `0 0 ${width}px`,
+    width,
+    minWidth: min,
+    maxWidth: max,
+  } as const;
 }
 
 export function AppLayout() {
@@ -109,7 +122,8 @@ export function AppLayout() {
   );
 
   const editorSideCount = (leftCollapsed ? 0 : 1) + (rightCollapsed ? 0 : 1);
-  const previewFlex = editorSideCount === 0 ? "1 1 0" : `0 0 ${previewColumnWidth}px`;
+  const previewFlex =
+    editorSideCount === 0 ? "1 1 0" : `0 0 ${previewColumnWidth}px`;
 
   return (
     <div className="flex min-h-0 flex-1 overflow-hidden">
@@ -118,12 +132,24 @@ export function AppLayout() {
           <CollapsiblePanelSlot
             expanded={!leftCollapsed}
             axis="horizontal"
+            className={
+              leftCollapsed || leftPinned ? "shrink-0" : "min-w-0 overflow-hidden"
+            }
+            style={editorSideSlotStyle(leftCollapsed, leftPinned, LEFT_MIN)}
             innerClassName="flex min-w-0"
           >
             <div
               ref={leftRef}
-              style={sidePanelStyle(leftPinned, leftPanelWidth, LEFT_MIN, LEFT_MAX)}
-              className="min-w-0 overflow-hidden"
+              style={
+                leftPinned
+                  ? pinnedPanelStyle(leftPanelWidth, LEFT_MIN, LEFT_MAX)
+                  : undefined
+              }
+              className={
+                leftPinned
+                  ? "min-w-0 overflow-hidden"
+                  : "min-w-0 flex-1 overflow-hidden"
+              }
             >
               <LeftPanel />
             </div>
@@ -138,18 +164,27 @@ export function AppLayout() {
           <CollapsiblePanelSlot
             expanded={!rightCollapsed}
             axis="horizontal"
+            className={
+              rightCollapsed || rightPinned
+                ? "shrink-0"
+                : "min-w-0 overflow-hidden"
+            }
+            style={editorSideSlotStyle(rightCollapsed, rightPinned, RIGHT_MIN)}
             innerClassName="flex min-w-0"
           >
             <PanelResizer axis="horizontal" onResize={onResizeRight} />
             <div
               ref={rightRef}
-              style={sidePanelStyle(
-                rightPinned,
-                rightPanelWidth,
-                RIGHT_MIN,
-                RIGHT_MAX
-              )}
-              className="min-w-0 overflow-hidden"
+              style={
+                rightPinned
+                  ? pinnedPanelStyle(rightPanelWidth, RIGHT_MIN, RIGHT_MAX)
+                  : undefined
+              }
+              className={
+                rightPinned
+                  ? "min-w-0 overflow-hidden"
+                  : "min-w-0 flex-1 overflow-hidden"
+              }
             >
               <RightPanel />
             </div>
@@ -175,11 +210,7 @@ export function AppLayout() {
       >
         <PanelResizer axis="horizontal" onResize={onResizeAi} />
         <div
-          style={{
-            flex: `0 0 ${aiPanelWidth}px`,
-            minWidth: AI_MIN,
-            maxWidth: AI_MAX,
-          }}
+          style={pinnedPanelStyle(aiPanelWidth, AI_MIN, AI_MAX)}
           className="min-h-0 min-w-0 overflow-hidden"
         >
           <AiPanel />

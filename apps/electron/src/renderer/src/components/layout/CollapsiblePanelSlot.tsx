@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { cn } from "@/lib/utils";
 
 type CollapsiblePanelAxis = "horizontal" | "vertical";
@@ -7,6 +8,7 @@ interface CollapsiblePanelSlotProps {
   axis: CollapsiblePanelAxis;
   className?: string;
   innerClassName?: string;
+  style?: CSSProperties;
   children: React.ReactNode;
 }
 
@@ -16,12 +18,14 @@ export function CollapsiblePanelSlot({
   axis,
   className,
   innerClassName,
+  style,
   children,
 }: CollapsiblePanelSlotProps) {
   const isHorizontal = axis === "horizontal";
 
   return (
     <div
+      style={style}
       className={cn(
         "grid motion-reduce:transition-none",
         isHorizontal
