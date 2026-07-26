@@ -4,7 +4,7 @@ const http = require("node:http");
 const { spawn, execSync } = require("node:child_process");
 const { BrowserWindow } = require("electron");
 const timelineService = require("./timeline-service");
-const { ensureLayerKeyframesImport } = require("./remotion-project");
+const { ensureLayerKeyframesImport, ensurePresetBundle, ensureRemotionProject, getMissingRemotionDeps } = require("./remotion-project");
 const { getTemplatesDir } = require("../utils/paths");
 const { killPortListeners } = require("../utils/process-utils");
 
@@ -85,13 +85,30 @@ function spawnLogged(label, args, cwd) {
 
 async function ensureRemotionDeps(remotionDir) {
   const nodeModules = path.join(remotionDir, "node_modules");
-  if (fs.existsSync(nodeModules)) {
+  const projectState = ensureRemotionProject(remotionDir);
+  const missing = getMissingRemotionDeps(remotionDir);
+  const needsInstall =
+    !fs.existsSync(nodeModules) ||
+    projectState.needsInstall ||
+    missing.length > 0;
+
+  if (!needsInstall) {
     broadcastLog("依赖已存在，跳过 npm install", "install");
     return;
   }
 
+  if (missing.length > 0) {
+    broadcastLog(`缺少依赖：${missing.join(", ")}，正在安装…`, "install");
+  } else if (projectState.changedPackage) {
+    broadcastLog("package.json 已更新，正在安装依赖…", "install");
+  } else {
+    broadcastLog(
+      "首次预览需要安装 Remotion 依赖，请稍候（约 1–5 分钟）...",
+      "install"
+    );
+  }
+
   previewState.status = "installing";
-  broadcastLog("首次预览需要安装 Remotion 依赖，请稍候（约 1–5 分钟）...", "install");
   await spawnLogged(
     "install",
     ["install", "--no-fund", "--loglevel=info"],
@@ -578,6 +595,7 @@ async function startPreview(projectRoot, subprojectPath = "subprojects/default")
   }
 
   broadcastLog("正在准备 Remotion 预览环境…", "preview");
+  ensurePresetBundle(remotionDir);
   const keyframesPatched = ensureLayerKeyframesImport(remotionDir);
   ensurePreviewEntry(remotionDir);
   const soloSupportPatched = ensurePreviewSoloSupport(remotionDir);

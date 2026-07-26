@@ -206,6 +206,8 @@ function PresetPreviewThumb({
   dragImageRef?: React.Ref<HTMLDivElement>;
 }) {
   const src = presetThumbnailSrc(preset.thumbnail);
+  const badge = presetSourceBadge(preset);
+
   if (src) {
     return (
       <div
@@ -223,6 +225,7 @@ function PresetPreviewThumb({
           decoding="async"
           draggable={false}
         />
+        {badge ? <PresetSourceBadge label={badge} /> : null}
       </div>
     );
   }
@@ -242,7 +245,27 @@ function PresetPreviewThumb({
           {preset.name}
         </span>
       </div>
+      {badge ? <PresetSourceBadge label={badge} /> : null}
     </div>
+  );
+}
+
+function presetSourceBadge(preset: PresetDefinition): "Bits" | "RVE" | null {
+  const source = preset.source ?? "";
+  if (source.includes("remotion-bits") || preset.id.startsWith("bits-")) {
+    return "Bits";
+  }
+  if (source.includes("reactvideoeditor") || preset.id.startsWith("rve-")) {
+    return "RVE";
+  }
+  return null;
+}
+
+function PresetSourceBadge({ label }: { label: string }) {
+  return (
+    <span className="pointer-events-none absolute bottom-1 left-1 rounded bg-black/65 px-1 py-px text-[9px] font-medium leading-none text-white">
+      {label}
+    </span>
   );
 }
 

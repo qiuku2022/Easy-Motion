@@ -920,7 +920,7 @@ function createTimelineTools(ctx) {
     {
       name: "listPresets",
       description:
-        "搜索内置 Remotion 动画预设（81 个）。按名称、描述或分类查询，返回 presetId 供 applyPreset 使用。",
+        "搜索内置 Remotion 动画预设（RVE + Bits，约 100+）。按名称、描述或分类查询，返回 presetId 供 applyPreset 使用。Bits 预设 id 以 bits- 开头。",
       schema: z.object({
         query: z.string().describe("搜索词，如「柱状图」「标题淡入」「片头」"),
         category: z.enum(PRESET_CATEGORIES).optional().describe("可选分类过滤"),

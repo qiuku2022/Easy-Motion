@@ -322,5 +322,173 @@
   "RveSplitScreen": {
     "importPath": "./presets/rve/split-screen",
     "exportName": "RveSplitScreen"
+  },
+  "BitsBasicCounter": {
+    "importPath": "./presets/bits/basic-counter",
+    "exportName": "BitsBasicCounter"
+  },
+  "BitsCounterConfetti": {
+    "importPath": "./presets/bits/counter-confetti",
+    "exportName": "BitsCounterConfetti"
+  },
+  "BitsBlurSlideWord": {
+    "importPath": "./presets/bits/blur-slide-word",
+    "exportName": "BitsBlurSlideWord"
+  },
+  "BitsCharByChar": {
+    "importPath": "./presets/bits/char-by-char",
+    "exportName": "BitsCharByChar"
+  },
+  "BitsFadeIn": {
+    "importPath": "./presets/bits/fade-in",
+    "exportName": "BitsFadeIn"
+  },
+  "BitsGlitchCycle": {
+    "importPath": "./presets/bits/glitch-cycle",
+    "exportName": "BitsGlitchCycle"
+  },
+  "BitsGlitchIn": {
+    "importPath": "./presets/bits/glitch-in",
+    "exportName": "BitsGlitchIn"
+  },
+  "BitsMatrixRain": {
+    "importPath": "./presets/bits/matrix-rain",
+    "exportName": "BitsMatrixRain"
+  },
+  "BitsWordByWord": {
+    "importPath": "./presets/bits/word-by-word",
+    "exportName": "BitsWordByWord"
+  },
+  "BitsBasicCodeBlock": {
+    "importPath": "./presets/bits/basic-code-block",
+    "exportName": "BitsBasicCodeBlock"
+  },
+  "BitsTypingCodeBlock": {
+    "importPath": "./presets/bits/typing-code-block",
+    "exportName": "BitsTypingCodeBlock"
+  },
+  "BitsConicGradient": {
+    "importPath": "./presets/bits/conic-gradient",
+    "exportName": "BitsConicGradient"
+  },
+  "BitsLinearGradient": {
+    "importPath": "./presets/bits/linear-gradient",
+    "exportName": "BitsLinearGradient"
+  },
+  "BitsRadialGradient": {
+    "importPath": "./presets/bits/radial-gradient",
+    "exportName": "BitsRadialGradient"
+  },
+  "BitsFireflies": {
+    "importPath": "./presets/bits/fireflies",
+    "exportName": "BitsFireflies"
+  },
+  "BitsParticlesFountain": {
+    "importPath": "./presets/bits/particles-fountain",
+    "exportName": "BitsParticlesFountain"
+  },
+  "BitsParticlesGrid": {
+    "importPath": "./presets/bits/particles-grid",
+    "exportName": "BitsParticlesGrid"
+  },
+  "BitsParticlesSnow": {
+    "importPath": "./presets/bits/particles-snow",
+    "exportName": "BitsParticlesSnow"
+  },
+  "BitsEasingsVisualizer": {
+    "importPath": "./presets/bits/easings-visualizer",
+    "exportName": "BitsEasingsVisualizer"
+  },
+  "BitsGridStagger": {
+    "importPath": "./presets/bits/grid-stagger",
+    "exportName": "BitsGridStagger"
+  },
+  "BitsListReveal": {
+    "importPath": "./presets/bits/list-reveal",
+    "exportName": "BitsListReveal"
+  },
+  "BitsMosaicReframe": {
+    "importPath": "./presets/bits/mosaic-reframe",
+    "exportName": "BitsMosaicReframe"
+  },
+  "BitsSlideFromLeft": {
+    "importPath": "./presets/bits/slide-from-left",
+    "exportName": "BitsSlideFromLeft"
+  },
+  "BitsStaggeredFadeIn": {
+    "importPath": "./presets/bits/staggered-fade-in",
+    "exportName": "BitsStaggeredFadeIn"
+  },
+  "BitsBasicTypewriter": {
+    "importPath": "./presets/bits/basic-typewriter",
+    "exportName": "BitsBasicTypewriter"
+  },
+  "BitsCliSimulation": {
+    "importPath": "./presets/bits/cli-simulation",
+    "exportName": "BitsCliSimulation"
+  },
+  "BitsMultitextTypewriter": {
+    "importPath": "./presets/bits/multitext-typewriter",
+    "exportName": "BitsMultitextTypewriter"
+  },
+  "BitsVariableSpeedTypewriter": {
+    "importPath": "./presets/bits/variable-speed-typewriter",
+    "exportName": "BitsVariableSpeedTypewriter"
+  },
+  "BitsCardStack": {
+    "importPath": "./presets/bits/card-stack",
+    "exportName": "BitsCardStack"
+  },
+  "BitsFractureReassemble": {
+    "importPath": "./presets/bits/fracture-reassemble",
+    "exportName": "BitsFractureReassemble"
+  },
+  "BitsScrollingColumns": {
+    "importPath": "./presets/bits/scrolling-columns",
+    "exportName": "BitsScrollingColumns"
+  },
+  "Bits3dBasic": {
+    "importPath": "./presets/bits/3d-basic",
+    "exportName": "Bits3dBasic"
+  },
+  "Bits3dElements": {
+    "importPath": "./presets/bits/3d-elements",
+    "exportName": "Bits3dElements"
+  },
+  "BitsCarousel3d": {
+    "importPath": "./presets/bits/carousel-3d",
+    "exportName": "BitsCarousel3d"
+  },
+  "BitsScene3dCubeNav": {
+    "importPath": "./presets/bits/scene-3d-cube-nav",
+    "exportName": "BitsScene3dCubeNav"
+  },
+  "BitsCursorFlyover": {
+    "importPath": "./presets/bits/cursor-flyover",
+    "exportName": "BitsCursorFlyover"
+  },
+  "BitsFlyingThroughWords": {
+    "importPath": "./presets/bits/flying-through-words",
+    "exportName": "BitsFlyingThroughWords"
+  },
+  "BitsKenBurns": {
+    "importPath": "./presets/bits/ken-burns",
+    "exportName": "BitsKenBurns"
+  },
+  "Bits3dStepTimingContext": {
+    "importPath": "./presets/bits/3d-step-timing-context",
+    "exportName": "Bits3dStepTimingContext"
+  },
+  "BitsTerminal3d": {
+    "importPath": "./presets/bits/terminal-3d",
+    "exportName": "BitsTerminal3d"
+  },
+  "BitsTransform3dShowcase": {
+    "importPath": "./presets/bits/transform3d-showcase",
+    "exportName": "BitsTransform3dShowcase"
+  },
+  "BitsRemotionBitsPromo": {
+    "importPath": "./presets/bits/remotion-bits-promo",
+    "exportName": "BitsRemotionBitsPromo"
   }
 }

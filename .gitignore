@@ -82,3 +82,8 @@ temp/
 # Preset animated WebP thumbnails (large; generate locally — see README)
 apps/electron/resources/presets/thumbnails/*.webp
 apps/electron/src/renderer/public/presets/thumbnails/*.webp
+
+# Preset thumbnail tooling scratch (generate / debug renders)
+apps/electron/.tmp-thumb-check/
+apps/electron/.tmp-*/
+apps/electron/scripts/tmp-*.cjs

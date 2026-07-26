@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 /**
- * Render animated WebP thumbnails for all RVE presets.
+ * Render animated WebP thumbnails for RVE + Bits presets.
  * Uses @remotion/bundler + renderStill (system Chrome) + ffmpeg libwebp.
  *
  *   cd apps/electron && pnpm generate:preset-thumbnails
+ *   pnpm generate:preset-thumbnails -- --skip-existing
+ *   pnpm generate:preset-thumbnails -- --only bits-fade-in
+ *   pnpm generate:preset-thumbnails -- --source bits
  */
 const fs = require("node:fs");
 const path = require("node:path");
@@ -11,6 +14,9 @@ const os = require("node:os");
 const { execSync } = require("node:child_process");
 
 const { RVE_PRESET_CATALOG } = require("./rve-preset-catalog.cjs");
+const { BITS_PRESET_CATALOG } = require("./bits-preset-catalog.cjs");
+
+/** @typedef {{ id: string, name: string, component: string, durationInFrames?: number }} ThumbCatalogItem */
 
 const ELECTRON_ROOT = path.resolve(__dirname, "..");
 const REMOTION_DIR = path.join(
@@ -30,10 +36,24 @@ const MANIFEST_RENDERER_PATH = path.join(
 
 const ENTRY = path.join(REMOTION_DIR, "src/presets/thumbnail-entry.tsx");
 const COMPOSITION_ID = "PresetThumbnail";
-const WIDTH = 320;
-const HEIGHT = 180;
+/** Capture resolution (matches Bits useViewportRect / RVE AbsoluteFill layouts). */
+const WIDTH = 1920;
+const HEIGHT = 1080;
+/** Output card size after ffmpeg scale. */
+const OUT_WIDTH = 320;
+const OUT_HEIGHT = 180;
 const FPS = 15;
 const FRAMES = 45;
+
+/** Prefer later frames for long demos whose early segments are mostly black/empty. */
+const SAMPLE_START_RATIO = {
+  "bits-scrolling-columns": 0.2,
+  "bits-remotion-bits-promo": 0.55,
+  "bits-transform3d-showcase": 0.2,
+  "bits-cursor-flyover": 0.08,
+  "bits-ken-burns": 0.15,
+  "bits-flying-through-words": 0.25,
+};
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
@@ -94,7 +114,7 @@ function hasFfmpeg() {
 function framesToWebp(frameDir, outputWebp) {
   const pattern = path.join(frameDir, "frame%03d.png");
   execSync(
-    `ffmpeg -y -framerate ${FPS} -i "${pattern}" -vcodec libwebp -lossless 0 -q:v 78 -loop 0 -an "${outputWebp}"`,
+    `ffmpeg -y -framerate ${FPS} -i "${pattern}" -vf "scale=${OUT_WIDTH}:${OUT_HEIGHT}:flags=lanczos" -vcodec libwebp -lossless 0 -q:v 88 -loop 0 -an "${outputWebp}"`,
     { stdio: "pipe", shell: true }
   );
 }
@@ -128,22 +148,41 @@ async function renderPresetThumbnail({
     browserExecutable,
   });
 
+  const durationInFrames = Math.max(
+    FRAMES,
+    Number(item.durationInFrames) || FRAMES
+  );
+  // Sample across the animation (not only the first 45 source frames —
+  // many Bits demos stay blank / off-screen early).
+  const sampleSpan = Math.min(
+    durationInFrames,
+    Math.max(120, Math.floor(durationInFrames * 0.7))
+  );
+
   const thumbComposition = {
     ...composition,
     width: WIDTH,
     height: HEIGHT,
-    fps: FPS,
-    durationInFrames: FRAMES,
+    fps: 30,
+    durationInFrames: Math.max(composition.durationInFrames || 1, sampleSpan),
   };
 
   const frameDir = fs.mkdtempSync(path.join(os.tmpdir(), `em-thumb-${item.id}-`));
   try {
-    for (let frame = 0; frame < FRAMES; frame++) {
+    for (let i = 0; i < FRAMES; i++) {
+      // Prefer mid-late segment: intros / particle warmups are often empty.
+      const startRatio = SAMPLE_START_RATIO[item.id] ?? 0.42;
+      const start = Math.floor((sampleSpan - 1) * startRatio);
+      const end = sampleSpan - 1;
+      const frame =
+        FRAMES === 1
+          ? Math.floor((sampleSpan - 1) * Math.min(0.7, startRatio + 0.15))
+          : Math.round(start + (i / (FRAMES - 1)) * (end - start));
       await renderStill({
         serveUrl,
         composition: thumbComposition,
         inputProps,
-        output: path.join(frameDir, `frame${String(frame).padStart(3, "0")}.png`),
+        output: path.join(frameDir, `frame${String(i).padStart(3, "0")}.png`),
         frame,
         imageFormat: "png",
         logLevel: "error",
@@ -202,9 +241,37 @@ async function main() {
   const skipExisting = process.argv.includes("--skip-existing");
   const onlyIdx = process.argv.indexOf("--only");
   const onlyId = onlyIdx >= 0 ? process.argv[onlyIdx + 1] : null;
+  const sourceIdx = process.argv.indexOf("--source");
+  const sourceFilter = sourceIdx >= 0 ? process.argv[sourceIdx + 1] : null;
+
+  /** @type {ThumbCatalogItem[]} */
+  let fullCatalog = [
+    ...RVE_PRESET_CATALOG.map((item) => ({
+      id: item.id,
+      name: item.name,
+      component: item.component,
+      durationInFrames: item.durationInFrames,
+    })),
+    ...BITS_PRESET_CATALOG.map((item) => ({
+      id: item.id,
+      name: item.name,
+      component: item.component,
+      durationInFrames: item.durationInFrames,
+    })),
+  ];
+
+  if (sourceFilter === "rve") {
+    fullCatalog = fullCatalog.filter((item) => item.id.startsWith("rve-"));
+  } else if (sourceFilter === "bits") {
+    fullCatalog = fullCatalog.filter((item) => item.id.startsWith("bits-"));
+  } else if (sourceFilter) {
+    console.error(`Unknown --source ${sourceFilter} (use rve|bits)`);
+    process.exit(1);
+  }
+
   const catalog = onlyId
-    ? RVE_PRESET_CATALOG.filter((item) => item.id === onlyId)
-    : RVE_PRESET_CATALOG;
+    ? fullCatalog.filter((item) => item.id === onlyId)
+    : fullCatalog;
 
   if (onlyId && catalog.length === 0) {
     console.error(`Unknown preset id: ${onlyId}`);

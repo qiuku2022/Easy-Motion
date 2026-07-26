@@ -12,9 +12,12 @@
     "@remotion/media-parser": "4.0.269",
     "@remotion/player": "4.0.269",
     "@remotion/renderer": "4.0.269",
+    "culori": "^4.0.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "remotion": "4.0.269"
+    "remotion": "4.0.269",
+    "remotion-bits": "0.2.0",
+    "three": "^0.182.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.12",

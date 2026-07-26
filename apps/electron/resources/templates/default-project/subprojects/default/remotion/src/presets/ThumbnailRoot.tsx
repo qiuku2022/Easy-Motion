@@ -6,10 +6,10 @@ export const ThumbnailRoot: React.FC = () => {
     <Composition
       id="PresetThumbnail"
       component={PresetThumbnailComposition}
-      durationInFrames={45}
-      fps={15}
-      width={320}
-      height={180}
+      durationInFrames={90}
+      fps={30}
+      width={1920}
+      height={1080}
       defaultProps={{ component: "RvePoppingText" }}
     />
   );

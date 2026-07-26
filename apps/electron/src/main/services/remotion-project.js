@@ -7,6 +7,9 @@ const REMOTION_ENTRY = "remotion-entry.tsx";
 const REQUIRED_DEPS = {
   "@remotion/bundler": "4.0.269",
   "@remotion/renderer": "4.0.269",
+  "remotion-bits": "0.2.0",
+  culori: "^4.0.2",
+  three: "^0.182.0",
 };
 
 function getRemotionDir(projectRoot, subprojectRelativePath = "subprojects/default") {
@@ -294,7 +297,7 @@ function ensureLayerKeyframesImport(remotionDir) {
   return patched;
 }
 
-/** 将模板中的 RVE 预设组件同步到已打开项目的 remotion/src（幂等，覆盖 rve 目录） */
+/** 将模板中的 RVE / Bits 预设组件同步到已打开项目的 remotion/src（幂等） */
 function ensurePresetBundle(remotionDir) {
   const templatePresetsDir = path.join(
     getTemplatesDir(),
@@ -308,15 +311,18 @@ function ensurePresetBundle(remotionDir) {
   const destPresetsDir = path.join(remotionDir, "src", "presets");
   if (!fs.existsSync(templatePresetsDir)) return false;
 
-  const templateRve = path.join(templatePresetsDir, "rve");
-  const destRve = path.join(destPresetsDir, "rve");
-  if (fs.existsSync(templateRve)) {
-    copyDirRecursive(templateRve, destRve);
+  for (const folder of ["rve", "bits"]) {
+    const templateFolder = path.join(templatePresetsDir, folder);
+    const destFolder = path.join(destPresetsDir, folder);
+    if (fs.existsSync(templateFolder)) {
+      copyDirRecursive(templateFolder, destFolder);
+    }
   }
 
   for (const file of [
     "registry.ts",
     "rve/index.ts",
+    "bits/index.ts",
     "ThumbnailComposition.tsx",
     "ThumbnailRoot.tsx",
     "thumbnail-entry.tsx",

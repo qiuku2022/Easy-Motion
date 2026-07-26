@@ -23,6 +23,7 @@
     "test:m11:real-render": "node tests/test-frame-render-real.js",
     "test:m12": "node tests/test-memory-service.js && node tests/test-agent-memory-settings.js && node tests/test-agent-memory-tools.js && node tests/test-agent-memory-context.js && node tests/test-agent-memory-extractor.js",
     "vendor:rve-presets": "node scripts/vendor-rve-presets.cjs",
+    "vendor:bits-presets": "node scripts/vendor-bits-presets.cjs",
     "generate:preset-thumbnails": "node scripts/generate-preset-thumbnails.cjs",
     "debug:prepare": "node scripts/debug-prepare.cjs",
     "debug:cleanup": "node scripts/cleanup-debug-processes.cjs",

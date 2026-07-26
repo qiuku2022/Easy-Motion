@@ -124,7 +124,15 @@ function defaultPropsFromPreset(preset) {
 
 function getPresetCatalogSummary() {
   const manifest = loadManifest();
-  const lines = ["内置 Remotion 预设库（81 个组件预设）："];
+  const rveCount = manifest.filter(
+    (item) => item.source === "reactvideoeditor/remotion-templates"
+  ).length;
+  const bitsCount = manifest.filter(
+    (item) => item.source === "av/remotion-bits"
+  ).length;
+  const lines = [
+    `内置 Remotion 预设库（共 ${manifest.length} 个：RVE ${rveCount} + Bits ${bitsCount}）：`,
+  ];
   for (const [category, hint] of Object.entries(CATEGORY_HINTS)) {
     const samples = manifest
       .filter((item) => item.category === category)
@@ -133,6 +141,9 @@ function getPresetCatalogSummary() {
       .join("、");
     lines.push(`- ${hint}（${category}）：如 ${samples || "—"}`);
   }
+  lines.push(
+    "来源标记：RVE（reactvideoeditor）与 Bits（av/remotion-bits）；id 前缀分别为 rve- / bits-。"
+  );
   lines.push(
     "用 listPresets 按名称/分类查询；用 applyPreset 应用到 animation 轨道；修改已有预设片段用 updateClip 更新 source.props。"
   );

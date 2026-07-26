@@ -40,10 +40,28 @@ function main() {
     "ken-burns has imageUrl"
   );
 
-  const manifestCount = require("../resources/presets/manifest.json").filter(
-    (item) => Array.isArray(item.parameters) && item.parameters.length > 0
+  const manifest = require("../resources/presets/manifest.json");
+  const rveParameterized = manifest.filter(
+    (item) =>
+      item.source === "reactvideoeditor/remotion-templates" &&
+      Array.isArray(item.parameters) &&
+      item.parameters.length > 0
   ).length;
-  assert(manifestCount === 81, `all 81 presets parameterized, got ${manifestCount}`);
+  assert(
+    rveParameterized === 81,
+    `all 81 RVE presets parameterized, got ${rveParameterized}`
+  );
+
+  const bitsCount = manifest.filter(
+    (item) => item.source === "av/remotion-bits"
+  ).length;
+  assert(bitsCount === 42, `expected 42 Bits presets, got ${bitsCount}`);
+
+  const matrixRain = getPresetById("bits-matrix-rain");
+  assert(
+    matrixRain?.parameters?.some((p) => p.key === "color"),
+    "bits-matrix-rain has color param from upstream controls"
+  );
 
   const defaults = defaultPropsFromPreset(popping);
   assert(defaults.text === "BINGO!", "default text from manifest");
