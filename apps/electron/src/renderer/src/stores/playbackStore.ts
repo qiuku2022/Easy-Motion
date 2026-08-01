@@ -22,7 +22,7 @@ interface PlaybackState {
 
 export const usePlaybackStore = create<PlaybackState>((set, get) => ({
   isPlaying: false,
-  loopEnabled: true,
+  loopEnabled: false,
   handlers: null,
 
   registerHandlers: (handlers) => set({ handlers }),

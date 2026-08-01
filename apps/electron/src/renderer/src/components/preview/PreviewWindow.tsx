@@ -225,10 +225,41 @@ export function PreviewWindow() {
     });
   }, []);
 
+  const pushPlayRangeToPreview = useCallback(() => {
+    const win = iframeRef.current?.contentWindow;
+    const tl = useTimelineStore.getState().timeline;
+    if (!win || !tl) return;
+    postPreview(win, {
+      channel: PREVIEW_CHANNEL,
+      type: "SET_PLAY_RANGE",
+      workArea: tl.workArea
+        ? { inFrame: tl.workArea.inFrame, outFrame: tl.workArea.outFrame }
+        : null,
+      durationInFrames: Math.max(1, Number(tl.durationInFrames) || 1),
+    });
+  }, []);
+
   useEffect(() => {
     if (!previewUrl) return;
     pushLoopToPreview();
   }, [loopEnabled, previewUrl, pushLoopToPreview]);
+
+  const workAreaIn = timeline?.workArea?.inFrame;
+  const workAreaOut = timeline?.workArea?.outFrame;
+  const hasWorkArea = Boolean(timeline?.workArea);
+  const durationInFrames = timeline?.durationInFrames;
+
+  useEffect(() => {
+    if (!previewUrl) return;
+    pushPlayRangeToPreview();
+  }, [
+    previewUrl,
+    hasWorkArea,
+    workAreaIn,
+    workAreaOut,
+    durationInFrames,
+    pushPlayRangeToPreview,
+  ]);
 
   useEffect(() => {
     reportPreviewFrameBounds();
@@ -382,6 +413,7 @@ export function PreviewWindow() {
               reportPreviewFrameBounds();
               pushTimelineToPreview();
               pushLoopToPreview();
+              pushPlayRangeToPreview();
               restorePlayheadToPreview(frame, 150);
             }}
           />

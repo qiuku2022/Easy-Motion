@@ -9,6 +9,13 @@ export type PreviewOutbound =
   | { channel: typeof PREVIEW_CHANNEL; type: "SET_LOOP"; loop: boolean }
   | {
       channel: typeof PREVIEW_CHANNEL;
+      type: "SET_PLAY_RANGE";
+      /** null = 完整时间线播放 */
+      workArea: { inFrame: number; outFrame: number } | null;
+      durationInFrames: number;
+    }
+  | {
+      channel: typeof PREVIEW_CHANNEL;
       type: "TIMELINE_UPDATE";
       timeline: unknown;
       frame?: number;

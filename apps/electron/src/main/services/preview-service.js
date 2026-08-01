@@ -586,6 +586,25 @@ function ensurePreviewDynamicDuration(remotionDir) {
   return true;
 }
 
+/** I/O 工作区限制预览播放范围；播完暂停且不跳回开头 */
+function ensurePreviewPlayRange(remotionDir) {
+  const destEntry = getPreviewEntryPath(remotionDir);
+  if (!fs.existsSync(destEntry)) return false;
+
+  const content = readPreviewRuntimeContent(remotionDir);
+  if (
+    content.includes("moveToBeginningWhenEnded") &&
+    content.includes("resolvePlayerPlayRange") &&
+    content.includes("SET_PLAY_RANGE")
+  ) {
+    return false;
+  }
+
+  copyPreviewRuntimeTemplate(remotionDir);
+  broadcastLog("已更新 preview-entry（I/O 播放范围）", "preview");
+  return true;
+}
+
 async function startPreview(projectRoot, subprojectPath = "subprojects/default") {
   await stopPreview();
 
@@ -605,6 +624,7 @@ async function startPreview(projectRoot, subprojectPath = "subprojects/default")
   const playheadPreservePatched = ensurePreviewPlayheadPreserve(remotionDir);
   const playbackSyncPatched = ensurePreviewPlaybackSync(remotionDir);
   const dynamicDurationPatched = ensurePreviewDynamicDuration(remotionDir);
+  const playRangePatched = ensurePreviewPlayRange(remotionDir);
   let remotionFingerprint = null;
   if (
     keyframesPatched ||
@@ -614,7 +634,8 @@ async function startPreview(projectRoot, subprojectPath = "subprojects/default")
     loopControlPatched ||
     playheadPreservePatched ||
     playbackSyncPatched ||
-    dynamicDurationPatched
+    dynamicDurationPatched ||
+    playRangePatched
   ) {
     const refreshed = timelineService.refreshRemotionFingerprint(
       projectRoot,

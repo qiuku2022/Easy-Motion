@@ -20,6 +20,11 @@ type PreviewMeta = {
   height: number;
 };
 
+type PlayRange = {
+  inFrame: number | null;
+  outFrame: number | null;
+};
+
 function metaFromTimeline(timeline: Record<string, unknown> | undefined): PreviewMeta | null {
   if (!timeline) return null;
   const durationInFrames = Number(timeline.durationInFrames);
@@ -42,6 +47,54 @@ function metaFromTimeline(timeline: Record<string, unknown> | undefined): Previe
   };
 }
 
+function clampInt(value: number, min: number, max: number): number {
+  const n = Math.round(Number(value));
+  if (!Number.isFinite(n)) return min;
+  return Math.min(max, Math.max(min, n));
+}
+
+/**
+ * Map timeline workArea → Remotion Player in/out.
+ * - No workArea: full composition (null/null)
+ * - Remotion requires outFrame > inFrame and outFrame > 0
+ */
+function resolvePlayerPlayRange(
+  workArea: unknown,
+  durationInFrames: number,
+): PlayRange {
+  const maxFrame = Math.max(0, durationInFrames - 1);
+  if (!workArea || typeof workArea !== "object" || Array.isArray(workArea)) {
+    return { inFrame: null, outFrame: null };
+  }
+
+  const raw = workArea as Record<string, unknown>;
+  let inFrame = clampInt(Number(raw.inFrame), 0, maxFrame);
+  let outFrame = clampInt(Number(raw.outFrame), 0, maxFrame);
+  if (inFrame > outFrame) {
+    const swap = inFrame;
+    inFrame = outFrame;
+    outFrame = swap;
+  }
+
+  // Single-frame I/O: widen by 1 frame so Player validation passes.
+  if (outFrame <= inFrame) {
+    if (inFrame < maxFrame) {
+      outFrame = inFrame + 1;
+    } else if (maxFrame > 0) {
+      inFrame = maxFrame - 1;
+      outFrame = maxFrame;
+    } else {
+      return { inFrame: null, outFrame: null };
+    }
+  }
+
+  if (outFrame <= 0) {
+    return { inFrame: null, outFrame: null };
+  }
+
+  return { inFrame, outFrame };
+}
+
 export const PreviewApp: React.FC = () => {
   const playerRef = useRef<PlayerRef>(null);
   const resumeFrameRef = useRef(0);
@@ -55,7 +108,16 @@ export const PreviewApp: React.FC = () => {
     width: previewConfig.width,
     height: previewConfig.height,
   });
-  const [loop, setLoop] = useState(true);
+  const [loop, setLoop] = useState(false);
+  const [playRange, setPlayRange] = useState<PlayRange>({
+    inFrame: null,
+    outFrame: null,
+  });
+
+  const playRangeRef = useRef(playRange);
+  playRangeRef.current = playRange;
+  const durationRef = useRef(previewMeta.durationInFrames);
+  durationRef.current = previewMeta.durationInFrames;
 
   const restorePlayhead = useCallback(
     (frame: number, target?: PlayerRef | null) => {
@@ -70,6 +132,18 @@ export const PreviewApp: React.FC = () => {
     },
     [],
   );
+
+  const playFromCurrentOrRangeStart = useCallback((target: PlayerRef) => {
+    const current = target.getCurrentFrame();
+    const range = playRangeRef.current;
+    const first = range.inFrame ?? 0;
+    const last = range.outFrame ?? Math.max(0, durationRef.current - 1);
+    // At/after out point, or before in point → restart from in (or composition start).
+    if (current < first || current >= last) {
+      restorePlayhead(first, target);
+    }
+    target.play();
+  }, [restorePlayhead]);
 
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
@@ -93,11 +167,31 @@ export const PreviewApp: React.FC = () => {
         canPostFramesRef.current = false;
         const timeline = data.timeline as Record<string, unknown>;
         const nextMeta = metaFromTimeline(timeline);
+        const durationInFrames =
+          nextMeta?.durationInFrames ?? durationRef.current;
         if (nextMeta) {
           setPreviewMeta(nextMeta);
         }
+        setPlayRange(resolvePlayerPlayRange(timeline.workArea, durationInFrames));
         setInputProps({ timeline });
         setCompositionKey((k) => k + 1);
+        return;
+      }
+
+      if (data.type === "SET_PLAY_RANGE") {
+        const durationInFrames = Math.max(
+          1,
+          Math.round(Number(data.durationInFrames) || durationRef.current),
+        );
+        durationRef.current = durationInFrames;
+        setPreviewMeta((prev) =>
+          prev.durationInFrames === durationInFrames
+            ? prev
+            : { ...prev, durationInFrames },
+        );
+        setPlayRange(
+          resolvePlayerPlayRange(data.workArea ?? null, durationInFrames),
+        );
         return;
       }
 
@@ -108,7 +202,7 @@ export const PreviewApp: React.FC = () => {
 
       if (!target) return;
 
-      if (data.type === "PLAY") target.play();
+      if (data.type === "PLAY") playFromCurrentOrRangeStart(target);
       if (data.type === "PAUSE") target.pause();
       if (data.type === "SEEK" && typeof data.frame === "number") {
         restorePlayhead(data.frame, target);
@@ -118,7 +212,7 @@ export const PreviewApp: React.FC = () => {
     window.addEventListener("message", onMessage);
     window.parent.postMessage({ channel: CHANNEL, type: "READY" }, "*");
     return () => window.removeEventListener("message", onMessage);
-  }, [restorePlayhead]);
+  }, [playFromCurrentOrRangeStart, restorePlayhead]);
 
   useEffect(() => {
     if (!player) return;
@@ -199,6 +293,9 @@ export const PreviewApp: React.FC = () => {
         style={{ width: "100%", maxHeight: "100%" }}
         controls={false}
         loop={loop}
+        moveToBeginningWhenEnded={false}
+        inFrame={playRange.inFrame}
+        outFrame={playRange.outFrame}
         acknowledgeRemotionLicense
         inputProps={inputProps}
       />
