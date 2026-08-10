@@ -1,5 +1,7 @@
 # EasyMotion
 
+> [English](README.en.md) | 简体中文
+
 > 用自然语言制作 Remotion 动画 —— Electron 桌面应用（React + LangChain Agent）  
 > M0–M12 ✅ · Windows 预发行版可用（后续以功能增强为主）
 
