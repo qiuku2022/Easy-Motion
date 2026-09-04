@@ -1,158 +1,96 @@
-# EasyMotion
+<div align="center">
+  <img src="apps/electron/src/renderer/public/app-icon.png" width="112" alt="EasyMotion 图标" />
 
-> [English](README.en.md) | 简体中文
+  <h1>EasyMotion</h1>
 
-> 用自然语言制作 Remotion 动画 —— Electron 桌面应用（React + LangChain Agent）  
-> M0–M12 ✅ · Windows 预发行版可用（后续以功能增强为主）
+  <p><strong>用自然语言驱动时间线，用 Remotion 完成动画。</strong></p>
+  <p>面向剪辑师和内容创作者的 Windows 桌面动画应用。</p>
 
-EasyMotion 让剪辑师和内容创作者用**对话**驱动时间线编辑，实时预览 Remotion 动画，并导出视频或完整工程。内置 **81 个 RVE 预设**、关键帧编辑、素材库与 AI 助手。
+  <p>
+    <strong>简体中文</strong> · <a href="README.en.md">English</a>
+  </p>
+
+  <p><code>Electron</code> · <code>React</code> · <code>Remotion</code> · <code>LangChain</code> · <code>FastAPI</code></p>
+</div>
+
+![EasyMotion 主界面](docs/assets/readme/easymotion-workspace.png)
+
+EasyMotion 将对话式 AI 与可视化时间线结合起来：你可以用自然语言创建和调整动画，也可以直接编辑素材、关键帧、预设参数与工作区，并实时预览和导出结果。
+
+> 当前处于 Windows 预发行阶段，适合体验和开发测试。
 
 ## 核心能力
 
-- **自然语言编辑**：LangChain Agent 修改时间线 JSON、素材/数据、Work Area 与导出任务，预览自动刷新
-- **动态预览**：`MainSequence` 运行时渲染预设 `props` 与关键帧（`apply-keyframes`）
-- **时间线**：拖拽、吸附、I/O 工作区、撤销/重做、底部关键帧轨道
-- **预设库**：单击查看 / 双击应用 / 拖到时间线；参数面板全量可编辑
-- **素材库**：导入、搜索、分类；收藏与最近使用（左栏「素材」Tab）
-- **导出**：MP4 / WEBM（进度与取消）、Remotion 工程 ZIP
-- **Remotion Code Agent（M5.2/M10）**：AI 读写、注册、列出、注销用户项目内自定义 TSX 组件，并支持混合撤销
-- **Agent 持久记忆（M12）**：跨会话记住配色/节奏等偏好；AI 助手 / LLM 设置 / 项目面板可管理全局与项目记忆
-
-**界面布局**：左栏 项目 / 素材 / 预设 · 中栏 16:9 预览 · 右栏 属性 / 模板 · 底栏 时间线 · 最右 AI 助手通高列。
+- **AI 时间线编辑**：通过自然语言添加、移动和调整动画、素材、数据与关键帧。
+- **实时 Remotion 预览**：时间线 JSON 驱动动态 `MainSequence`，修改后自动刷新。
+- **可视化时间线**：支持拖拽、吸附、I/O 工作区、撤销/重做和关键帧编辑。
+- **123 个动画预设**：包含 81 个 RVE 预设和 42 个 Remotion Bits 预设。
+- **素材与自定义组件**：管理本地素材，并允许 AI 创建和维护项目内 Remotion 组件。
+- **多种导出方式**：支持 MP4、WebM 和完整 Remotion 工程 ZIP。
 
 ## 下载
 
-Windows x64 预发行安装包（未签名，SmartScreen 可能提示）：
+Windows x64 测试安装包：
 
-- 百度网盘：[EasyMotion-Setup.exe](https://pan.baidu.com/s/1IszD8X-GDhq-hjcH9cN0Lg?pwd=ncwr) · 提取码 `ncwr`
-- 或本地构建：`pnpm build:win` → `apps/electron/release/EasyMotion-Setup-*.exe`
+- [百度网盘下载](https://pan.baidu.com/s/1IszD8X-GDhq-hjcH9cN0Lg?pwd=ncwr)（提取码：`ncwr`）
 
-安装版已内置 Python。首次使用 AI 请在 **AI 助手 → 设置** 填入 API Key。问题反馈见 [Issues](https://github.com/qiuku2022/Easy-Motion/issues)。
+安装版已内置 Python。当前安装包未签名，Windows SmartScreen 可能显示安全提示。首次使用 AI 时，请在 **AI 助手 → 设置** 中配置 API Key。
 
-## 快速开始
+问题反馈请前往 [GitHub Issues](https://github.com/qiuku2022/Easy-Motion/issues)。
 
-**环境**：Node.js 20+ · pnpm 10+ · Python 3.11+（仅 `dev:all` / 打安装包时需要）
+## 本地开发
+
+### 环境要求
+
+- Node.js 20+
+- pnpm 10+
+- Python 3.11+（仅 FastAPI 服务和 Windows 打包需要）
+
+### 启动应用
 
 ```bash
 pnpm install
-python -m pip install -r apps/python/requirements.txt   # 可选，Python 功能
-
-# 克隆后生成预设动图缩略图（81 个 WebP，未纳入 Git，需 Chrome + ffmpeg）
-cd apps/electron && pnpm generate:preset-thumbnails
-
-pnpm dev          # 日常开发
-pnpm dev:all      # + Python FastAPI
+pnpm dev
 ```
 
-AI Key：应用内 **AI 助手 → 设置**，或复制 `apps/electron/.env.example` → `.env`。
+`pnpm dev` 会启动 Vite 渲染进程和 Electron，不依赖 Python。AI Key 可在应用内配置，也可以将 `apps/electron/.env.example` 复制为 `.env`。
 
-| 命令 | 作用 |
-|------|------|
-| `pnpm lint` / `pnpm test` | 代码检查 / 主进程测试 |
-| `pnpm --filter @easymotion/electron test:m5` | Agent timeline / assets / data / batch / export / undo 回归 |
-| `pnpm --filter @easymotion/electron test:m8` | 导出与 ZIP |
-| `pnpm --filter @easymotion/electron test:m5.2` | Remotion Code Agent |
-| `pnpm --filter @easymotion/electron test:m12` | Agent 长期记忆（M12） |
+需要同时启动 FastAPI 时，先在项目根目录初始化 Python 环境：
 
-Electron 开发模式加载 **`http://127.0.0.1:5173`**（勿用 `localhost`，Windows 可能仅 IPv6）。
-
-### 预设缩略图
-
-```bash
-cd apps/electron
-pnpm generate:preset-thumbnails              # 全部（约 30–40 分钟）
-pnpm generate:preset-thumbnails --only rve-pie-chart
-pnpm generate:preset-thumbnails --skip-existing
+```powershell
+python -m venv apps/python/.venv
+.\apps\python\.venv\Scripts\python.exe -m pip install -r apps/python/requirements.txt
+pnpm dev:all
 ```
 
-未生成时预设库仍可用，卡片显示渐变占位。输出：`resources/presets/thumbnails/` 与 `src/renderer/public/presets/thumbnails/`。
+### 常用命令
 
-打安装包前需**至少生成一次**（或确保 `resources/presets/thumbnails/*.webp` 已存在）；`build:renderer` 会自动同步到 Vite `public/`。
+| 命令 | 用途 |
+| --- | --- |
+| `pnpm dev` | 启动 Electron 和渲染进程 |
+| `pnpm dev:all` | 同时启动 FastAPI |
+| `pnpm check` | 运行 lint、类型检查和核心测试 |
+| `pnpm test:release` | 执行导出与真实渲染验证 |
+| `pnpm build:win` | 构建 Windows 安装包 |
 
-## 打包 Windows 安装包
-
-**环境**：在 **Windows x64** 本机构建（Python venv 不可交叉编译）。需本机已装 Python 3.10+。
-
-```bash
-pnpm build:win
-```
-
-流程：同步预设缩略图 → Vite 构建 → 打包 Python venv → `electron-builder`（NSIS）。
-
-| 产物 | 路径 |
-|------|------|
-| 安装程序 | `apps/electron/release/EasyMotion-Setup-*.exe` |
-| 免安装目录 | `apps/electron/release/win-unpacked/` |
-
-安装版会 bundled 启动 Python FastAPI（`127.0.0.1:8000`），无需用户单独安装 Python。当前为**未签名测试包**，SmartScreen 可能提示。
-
-细分命令：
-
-```bash
-pnpm build:python                              # 仅打 Python bundle
-pnpm --filter @easymotion/electron build:dir   # 仅目录，不生成 NSIS
-```
-
-详见 [`docs/requirements/构建与部署.md`](docs/requirements/构建与部署.md)。
-
-## 调试（Cursor / VS Code）
-
-日常 **`pnpm dev`** 即可。断点调试按 **F5**：
-
-| 配置 | 用途 |
-|------|------|
-| **▸ EasyMotion** | 主进程（IPC、服务、Agent） |
-| **▸ EasyMotion + React** | 主进程 + React 渲染进程（自动 attach CDP 9333） |
-
-F5 会检查 Electron 二进制并确保 Vite 5173 就绪（已在跑则复用，约 0.3s）；停止调试默认保留 Vite 以便下次 F5 更快。任务面板：**`dev`**（`Ctrl+Shift+B`）、**`test`**。
-
-**Windows 首次 `pnpm install`**：若 F5 报 `ENOENT path.txt`，说明 Electron 二进制未下载完整：
-
-```bash
-pnpm install    # 根 package.json 已配置 onlyBuiltDependencies: electron
-# 仍失败时：
-pnpm approve-builds   # 勾选 electron
-pnpm install
-```
-
-F5 的 `debug: prepare` 也会尝试自动修复（`ensure-electron-binary.cjs`）。
-
-## 模块状态
-
-| 模块 | 说明 |
-|------|------|
-| Electron 主进程 | 项目、时间线、预览、Generator、Agent、导出 |
-| 渲染进程 | 时间线 UI、属性面板、预设库、素材库、AI 栏 |
-| Python API | FastAPI（可选 dev；安装版 bundled） |
-
-打开项目后自动启动 Remotion 预览；旧项目会在预览启动时自动修补 `layers/*` 的 `apply-keyframes` 引用路径。
-
-## 文档
-
-| 文档 | 说明 |
-|------|------|
-| [`docs/requirements/开发者README.md`](docs/requirements/开发者README.md) | 开发者入口、技术栈、里程碑 |
-| [`docs/requirements/构建与部署.md`](docs/requirements/构建与部署.md) | electron-builder、CI、体积 |
-| [`docs/requirements/`](docs/requirements/) | 完整需求与架构（35+ 篇） |
-| [`.local/agent-capability-plan/README.md`](.local/agent-capability-plan/README.md) | M10 Agent 能力扩展落地记录 |
-| [`AGENTS.md`](AGENTS.md) | AI 编码 Agent 约束 |
-| [`docs/design-system/easymotion/MASTER.md`](docs/design-system/easymotion/MASTER.md) | UI 设计 Token |
+Windows 打包、预设缩略图和调试说明见[构建与部署](docs/requirements/构建与部署.md)与[开发环境搭建指南](docs/requirements/开发环境搭建指南.md)。
 
 ## 仓库结构
 
+```text
+apps/electron/     Electron 主进程、Preload、React UI 和 Remotion
+apps/python/       可选 FastAPI 服务
+packages/shared/   共享时间线模型与逻辑
+docs/requirements/ 产品、架构和开发文档
 ```
-apps/electron/     # 主进程、preload、React UI、Remotion 模板、electron-builder
-apps/python/       # FastAPI（bundle 进安装包 extraResources）
-packages/shared/   # timeline 共享逻辑
-docs/              # 需求文档、截图、设计规范
-```
 
-## 协作者须知
+## 文档
 
-- 勿提交：`.env`、`node_modules/`、**`presets/thumbnails/*.webp`**、`apps/electron/resources/python/`（构建产物）、`release/`、`dist/`
-- 新增 shadcn 组件：`cd apps/electron && npx shadcn@latest add <name>`
-- 提交前：`pnpm lint` · `pnpm test`
+- [开发环境搭建](docs/requirements/开发环境搭建指南.md)
+- [构建与部署](docs/requirements/构建与部署.md)
+- [产品与技术文档](docs/requirements/)
+- [Agent 开发约束](AGENTS.md)
 
----
+## 许可证
 
-MIT · 详见 [`LICENSE`](LICENSE) 与 [`docs/requirements/依赖清单与许可证.md`](docs/requirements/依赖清单与许可证.md)
+EasyMotion 基于 MIT License 发布。Remotion 及其他依赖的许可说明见[依赖清单与许可证](docs/requirements/依赖清单与许可证.md)。

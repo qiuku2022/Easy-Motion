@@ -1,158 +1,96 @@
-# EasyMotion
+<div align="center">
+  <img src="apps/electron/src/renderer/public/app-icon.png" width="112" alt="EasyMotion icon" />
 
-> [English](README.en.md) | [简体中文](README.md)
+  <h1>EasyMotion</h1>
 
-> Create Remotion animations with natural language — Electron desktop app (React + LangChain Agent)  
-> M0–M12 ✅ · Windows pre-release available (feature enhancements ongoing)
+  <p><strong>Drive the timeline with natural language. Build animations with Remotion.</strong></p>
+  <p>A Windows desktop animation app for editors and content creators.</p>
 
-EasyMotion lets editors and content creators drive timeline editing through **conversation**, preview Remotion animations in real time, and export videos or full projects. Includes **81 RVE presets**, keyframe editing, an asset library, and an AI assistant.
+  <p>
+    <a href="README.md">简体中文</a> · <strong>English</strong>
+  </p>
 
-## Core capabilities
+  <p><code>Electron</code> · <code>React</code> · <code>Remotion</code> · <code>LangChain</code> · <code>FastAPI</code></p>
+</div>
 
-- **Natural-language editing**: LangChain Agent modifies timeline JSON, assets/data, Work Area, and export jobs; preview refreshes automatically
-- **Dynamic preview**: `MainSequence` renders preset `props` and keyframes (`apply-keyframes`) at runtime
-- **Timeline**: drag-and-drop, snapping, I/O work area, undo/redo, bottom keyframe tracks
-- **Preset library**: click to preview / double-click to apply / drag onto timeline; fully editable parameter panel
-- **Asset library**: import, search, categorize; favorites and recently used (left panel **Assets** tab)
-- **Export**: MP4 / WEBM (progress and cancel), Remotion project ZIP
-- **Remotion Code Agent (M5.2/M10)**: AI read/write, register, list, and unregister custom TSX components in user projects, with mixed undo support
-- **Agent persistent memory (M12)**: remembers color/rhythm preferences across sessions; manage global and project memory from AI assistant / LLM settings / project panel
+![EasyMotion workspace](docs/assets/readme/easymotion-workspace.png)
 
-**Layout**: left panel Project / Assets / Presets · center 16:9 preview · right panel Properties / Templates · bottom timeline · full-height AI assistant column on the far right.
+EasyMotion combines conversational AI with a visual timeline. Create and refine animations in natural language, or directly edit assets, keyframes, preset parameters, and the work area—with real-time preview and export built in.
+
+> EasyMotion is currently a Windows pre-release intended for evaluation and development testing.
+
+## Features
+
+- **AI timeline editing**: Add, move, and adjust animations, assets, data, and keyframes using natural language.
+- **Live Remotion preview**: Timeline JSON drives a dynamic `MainSequence` that refreshes automatically.
+- **Visual timeline**: Drag and drop, snapping, I/O work area, undo/redo, and keyframe editing.
+- **123 animation presets**: 81 RVE presets plus 42 Remotion Bits presets.
+- **Assets and custom components**: Manage local media and let the AI create and maintain project-level Remotion components.
+- **Flexible export**: Export MP4, WebM, or a complete Remotion project ZIP.
 
 ## Download
 
-Windows x64 pre-release installer (unsigned; SmartScreen may warn):
+Windows x64 test installer:
 
-- Baidu Netdisk: [EasyMotion-Setup.exe](https://pan.baidu.com/s/1IszD8X-GDhq-hjcH9cN0Lg?pwd=ncwr) · extraction code `ncwr`
-- Or build locally: `pnpm build:win` → `apps/electron/release/EasyMotion-Setup-*.exe`
+- [Baidu Netdisk](https://pan.baidu.com/s/1IszD8X-GDhq-hjcH9cN0Lg?pwd=ncwr) (extraction code: `ncwr`)
 
-The installer bundles Python. On first use, enter your API Key in **AI Assistant → Settings**. Report issues via [Issues](https://github.com/qiuku2022/Easy-Motion/issues).
+Python is bundled with the installer. The current build is unsigned, so Windows SmartScreen may display a warning. To use AI features, configure an API key under **AI Assistant → Settings**.
 
-## Quick start
+Report problems through [GitHub Issues](https://github.com/qiuku2022/Easy-Motion/issues).
 
-**Requirements**: Node.js 20+ · pnpm 10+ · Python 3.11+ (only for `dev:all` / packaging)
+## Local development
+
+### Requirements
+
+- Node.js 20+
+- pnpm 10+
+- Python 3.11+ (only required for the FastAPI service and Windows packaging)
+
+### Start the app
 
 ```bash
 pnpm install
-python -m pip install -r apps/python/requirements.txt   # optional, for Python features
-
-# After clone: generate preset animated thumbnails (81 WebPs, not in Git; requires Chrome + ffmpeg)
-cd apps/electron && pnpm generate:preset-thumbnails
-
-pnpm dev          # daily development
-pnpm dev:all      # + Python FastAPI
+pnpm dev
 ```
 
-AI Key: in-app **AI Assistant → Settings**, or copy `apps/electron/.env.example` → `.env`.
+`pnpm dev` starts the Vite renderer and Electron without Python. Configure the AI key in the app, or copy `apps/electron/.env.example` to `.env` for development.
 
-| Command | Purpose |
-|---------|---------|
-| `pnpm lint` / `pnpm test` | Lint / main-process tests |
-| `pnpm --filter @easymotion/electron test:m5` | Agent timeline / assets / data / batch / export / undo regression |
-| `pnpm --filter @easymotion/electron test:m8` | Export and ZIP |
-| `pnpm --filter @easymotion/electron test:m5.2` | Remotion Code Agent |
-| `pnpm --filter @easymotion/electron test:m12` | Agent long-term memory (M12) |
+To run FastAPI as well, initialize its Python environment from the repository root:
 
-Electron dev mode loads **`http://127.0.0.1:5173`** (avoid `localhost` on Windows — it may resolve to IPv6 only).
-
-### Preset thumbnails
-
-```bash
-cd apps/electron
-pnpm generate:preset-thumbnails              # all (~30–40 min)
-pnpm generate:preset-thumbnails --only rve-pie-chart
-pnpm generate:preset-thumbnails --skip-existing
+```powershell
+python -m venv apps/python/.venv
+.\apps\python\.venv\Scripts\python.exe -m pip install -r apps/python/requirements.txt
+pnpm dev:all
 ```
 
-Without thumbnails, the preset library still works; cards show gradient placeholders. Output: `resources/presets/thumbnails/` and `src/renderer/public/presets/thumbnails/`.
+### Common commands
 
-Generate **at least once** before packaging (or ensure `resources/presets/thumbnails/*.webp` exists); `build:renderer` syncs them to Vite `public/` automatically.
+| Command             | Purpose                                 |
+| ------------------- | --------------------------------------- |
+| `pnpm dev`          | Start Electron and the renderer         |
+| `pnpm dev:all`      | Start FastAPI as well                   |
+| `pnpm check`        | Run lint, type checking, and core tests |
+| `pnpm test:release` | Run export and real-render verification |
+| `pnpm build:win`    | Build the Windows installer             |
 
-## Build Windows installer
-
-**Requirements**: build on **Windows x64** locally (Python venv cannot be cross-compiled). Python 3.10+ must be installed on the machine.
-
-```bash
-pnpm build:win
-```
-
-Pipeline: sync preset thumbnails → Vite build → bundle Python venv → `electron-builder` (NSIS).
-
-| Artifact | Path |
-|----------|------|
-| Installer | `apps/electron/release/EasyMotion-Setup-*.exe` |
-| Portable directory | `apps/electron/release/win-unpacked/` |
-
-The installer bundled-starts Python FastAPI (`127.0.0.1:8000`); users do not need a separate Python install. Currently an **unsigned test build**; SmartScreen may warn.
-
-Granular commands:
-
-```bash
-pnpm build:python                              # Python bundle only
-pnpm --filter @easymotion/electron build:dir   # directory only, no NSIS
-```
-
-See [`docs/requirements/构建与部署.md`](docs/requirements/构建与部署.md) for details (Chinese).
-
-## Debugging (Cursor / VS Code)
-
-For daily work, **`pnpm dev`** is enough. Press **F5** for breakpoints:
-
-| Configuration | Purpose |
-|---------------|---------|
-| **▸ EasyMotion** | Main process (IPC, services, Agent) |
-| **▸ EasyMotion + React** | Main process + React renderer (auto-attach CDP 9333) |
-
-F5 checks the Electron binary and ensures Vite on 5173 is ready (reuses if already running, ~0.3s). Stopping debug keeps Vite running for faster next F5. Task panel: **`dev`** (`Ctrl+Shift+B`), **`test`**.
-
-**First `pnpm install` on Windows**: if F5 reports `ENOENT path.txt`, the Electron binary download is incomplete:
-
-```bash
-pnpm install    # root package.json sets onlyBuiltDependencies: electron
-# if still failing:
-pnpm approve-builds   # check electron
-pnpm install
-```
-
-F5 `debug: prepare` also tries auto-fix via `ensure-electron-binary.cjs`.
-
-## Module status
-
-| Module | Description |
-|--------|-------------|
-| Electron main | Project, timeline, preview, Generator, Agent, export |
-| Renderer | Timeline UI, property panel, preset library, asset library, AI panel |
-| Python API | FastAPI (optional in dev; bundled in installer) |
-
-Opening a project auto-starts Remotion preview; legacy projects get `layers/*` `apply-keyframes` import paths patched on preview start.
-
-## Documentation
-
-| Document | Description |
-|----------|-------------|
-| [`docs/requirements/开发者README.md`](docs/requirements/开发者README.md) | Developer entry, stack, milestones (Chinese) |
-| [`docs/requirements/构建与部署.md`](docs/requirements/构建与部署.md) | electron-builder, CI, bundle size (Chinese) |
-| [`docs/requirements/`](docs/requirements/) | Full requirements and architecture (35+ docs, Chinese) |
-| [`.local/agent-capability-plan/README.md`](.local/agent-capability-plan/README.md) | M10 Agent capability rollout notes |
-| [`AGENTS.md`](AGENTS.md) | AI coding agent constraints |
-| [`docs/design-system/easymotion/MASTER.md`](docs/design-system/easymotion/MASTER.md) | UI design tokens |
+For Windows packaging, preset thumbnails, and debugging, see [Build and deployment](docs/requirements/构建与部署.md) and the [development setup guide](docs/requirements/开发环境搭建指南.md) (Chinese).
 
 ## Repository layout
 
+```text
+apps/electron/     Electron main process, Preload, React UI, and Remotion
+apps/python/       Optional FastAPI service
+packages/shared/   Shared timeline models and logic
+docs/requirements/ Product, architecture, and development documentation
 ```
-apps/electron/     # Main process, preload, React UI, Remotion templates, electron-builder
-apps/python/       # FastAPI (bundled into installer extraResources)
-packages/shared/   # Shared timeline logic
-docs/              # Requirements, screenshots, design system
-```
 
-## For contributors
+## Documentation
 
-- Do not commit: `.env`, `node_modules/`, **`presets/thumbnails/*.webp`**, `apps/electron/resources/python/` (build output), `release/`, `dist/`
-- Add shadcn components: `cd apps/electron && npx shadcn@latest add <name>`
-- Before commit: `pnpm lint` · `pnpm test`
+- [Development setup](docs/requirements/开发环境搭建指南.md) (Chinese)
+- [Build and deployment](docs/requirements/构建与部署.md) (Chinese)
+- [Product and technical documentation](docs/requirements/) (Chinese)
+- [Coding-agent guidelines](AGENTS.md) (Chinese)
 
----
+## License
 
-MIT · See [`LICENSE`](LICENSE) and [`docs/requirements/依赖清单与许可证.md`](docs/requirements/依赖清单与许可证.md) (Chinese)
+EasyMotion is released under the MIT License. See [dependencies and licenses](docs/requirements/依赖清单与许可证.md) for Remotion and third-party licensing notes (Chinese).
