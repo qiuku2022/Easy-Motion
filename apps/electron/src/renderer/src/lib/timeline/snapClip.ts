@@ -10,7 +10,7 @@ import {
   RESIZE_SNAP_THRESHOLD_PX,
 } from "@/lib/timeline/snap";
 import type { SnapEditOptions } from "@/lib/timeline/snapEditFrame";
-import type { Timeline } from "@/types/timeline";
+import type { Clip, Timeline } from "@/types/timeline";
 
 export type ClipEdge = "start" | "end" | "center";
 
@@ -34,11 +34,7 @@ function thresholdFrames(
 function forEachSnapClip(
   timeline: Timeline,
   excludeClipId: string | undefined,
-  visitor: (clip: {
-    id: string;
-    startInFrames: number;
-    durationInFrames: number;
-  }) => void
+  visitor: (clip: Pick<Clip, "id" | "startInFrames" | "durationInFrames">) => void
 ): void {
   for (const track of timeline.tracks) {
     for (const clip of track.clips) {

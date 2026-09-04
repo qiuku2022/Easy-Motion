@@ -205,9 +205,14 @@ export interface EasyMotionApi {
     applySample: (payload?: {
       subprojectPath?: string;
     }) => Promise<IpcResult<Timeline>>;
-    generate: (payload?: {
-      subprojectPath?: string;
-    }) => Promise<IpcResult<{ files: string[]; previewReload?: boolean }>>;
+    generate: (payload?: { subprojectPath?: string }) => Promise<
+      IpcResult<{
+        files: string[];
+        previewReload?: boolean;
+        previewUrl?: string;
+        timeline?: Timeline;
+      }>
+    >;
     checkRemotionDrift: (payload?: { subprojectPath?: string }) => Promise<
       IpcResult<{
         drifted: boolean;
@@ -258,7 +263,9 @@ export interface EasyMotionApi {
     updateFrameBounds: (payload: {
       rect: { x: number; y: number; width: number; height: number };
       devicePixelRatio?: number;
-    }) => Promise<IpcResult<{ rect: { x: number; y: number; width: number; height: number } }>>;
+    }) => Promise<
+      IpcResult<{ rect: { x: number; y: number; width: number; height: number } }>
+    >;
     seekCompleted: (payload: {
       requestId: string;
       frame: number;

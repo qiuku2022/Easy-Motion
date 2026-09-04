@@ -333,6 +333,15 @@ Agent 通过 LangChain 的 Tool 机制调用以下工具。每个工具对应一
 | 长期记忆 | `readMemory`、`writeMemory`、`updatePreference`、`deleteMemory` |
 | Remotion Code | `listRemotionFiles`、`readRemotionFile`、`writeRemotionFile`、`patchRemotionFile`、`registerCustomComponent`、`compileRemotionCheck`、`getRemotionPackageInfo`、`listCustomComponents`、`unregisterCustomComponent` |
 
+### M11 视觉反馈实施边界
+
+- `renderFrame` 渲染 `TimelineContext` 的本轮内存态，不回退读取磁盘旧 timeline；渲帧时使用临时 manifest / preview config，不调用会提前写入 `subproject.json` 的 `syncPreviewManifest()`。
+- 渲帧和预览截图只能写入当前子项目的 `.easymotion/agent-frames/`；默认最多保留 50 张、总量 100 MB，读取和清理都必须通过路径边界校验。
+- `frame-render-service` 同一时刻只允许一个渲帧任务；视频导出进行中拒绝额外渲帧。单轮 Agent 最多调用 2 次渲帧和 2 次视觉复核，防止资源竞争和无限自检。
+- `capturePreview` 由 renderer 上报预览区域并响应 seek，主进程通过 `BrowserWindow.capturePage(rect)` 截图和落盘；renderer 不接触文件系统。
+- 视觉复核失败不回滚已完成的 timeline 修改，但 Agent 必须明确说明画面未验证；未调用视觉工具时不得声称已看到或已确认画面。
+- 离线门禁为 `pnpm test:m11`；改动真实 Remotion 渲帧或打包路径时，还需运行 `pnpm build:win` 并手测安装包。
+
 ### 工具列表
 
 ```typescript

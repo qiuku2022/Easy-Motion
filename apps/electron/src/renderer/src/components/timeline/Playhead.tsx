@@ -21,12 +21,12 @@ export function Playhead({
       style={{ left, height, width: 0 }}
     >
       <div
-        className="pointer-events-auto absolute -left-[5px] top-0 h-0 w-0 cursor-ew-resize border-x-[5px] border-t-[8px] border-x-transparent border-t-em-accent"
+        className="pointer-events-auto absolute -left-[5px] top-0 h-0 w-0 cursor-ew-resize border-x-[5px] border-t-[9px] border-x-transparent border-t-accent-blue drop-shadow-[0_1px_3px_rgba(47,129,247,0.5)]"
         onPointerDown={onDragStart}
         aria-label="播放头"
         role="slider"
       />
-      <div className="absolute bottom-0 top-2 w-0.5 -translate-x-1/2 bg-em-accent" />
+      <div className="absolute bottom-0 top-2 w-0.5 -translate-x-1/2 bg-accent-blue shadow-[0_0_4px_rgba(47,129,247,0.6)]" />
     </div>
   );
 }

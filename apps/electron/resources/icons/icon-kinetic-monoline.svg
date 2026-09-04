@@ -1,0 +1,30 @@
+<svg viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg2" x1="80" y1="80" x2="944" y2="944" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#161b22" />
+      <stop offset="100%" stop-color="#0d1117" />
+    </linearGradient>
+    <linearGradient id="curveGrad2" x1="240" y1="512" x2="780" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2ea043" />
+      <stop offset="45%" stop-color="#58a6ff" />
+      <stop offset="100%" stop-color="#bc8cff" />
+    </linearGradient>
+  </defs>
+  <rect x="80" y="80" width="864" height="864" rx="200" fill="url(#bg2)" stroke="#30363d" stroke-width="6" />
+  <rect x="86" y="86" width="852" height="852" rx="194" fill="none" stroke="rgba(255, 255, 255, 0.08)" stroke-width="3" />
+  
+  <line x1="200" y1="360" x2="824" y2="360" stroke="#21262d" stroke-width="4" stroke-dasharray="8 8" />
+  <line x1="200" y1="512" x2="824" y2="512" stroke="#21262d" stroke-width="4" />
+  <line x1="200" y1="664" x2="824" y2="664" stroke="#21262d" stroke-width="4" stroke-dasharray="8 8" />
+  
+  <rect x="220" y="332" width="140" height="56" rx="28" fill="#238636" />
+  <rect x="220" y="484" width="100" height="56" rx="28" fill="#21262d" stroke="#30363d" stroke-width="4" />
+  <rect x="220" y="636" width="160" height="56" rx="28" fill="#238636" />
+  
+  <path d="M 360 360 C 460 360 460 280 540 280 C 600 280 620 560 680 560 C 720 560 740 360 800 360" 
+        stroke="url(#curveGrad2)" stroke-width="64" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <polygon points="540,240 580,280 540,320 500,280" fill="#ffffff" stroke="#1f6feb" stroke-width="8" />
+  <circle cx="360" cy="360" r="16" fill="#ffffff" />
+  <circle cx="800" cy="360" r="16" fill="#ffffff" />
+</svg>

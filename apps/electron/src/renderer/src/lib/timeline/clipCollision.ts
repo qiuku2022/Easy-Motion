@@ -6,7 +6,9 @@ export interface ClipRange {
   end: number;
 }
 
-export function getClipRange(clip: Clip): ClipRange {
+type ClipTiming = Pick<Clip, "startInFrames" | "durationInFrames">;
+
+export function getClipRange(clip: ClipTiming): ClipRange {
   return {
     start: clip.startInFrames,
     end: clip.startInFrames + clip.durationInFrames,

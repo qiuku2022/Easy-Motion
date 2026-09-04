@@ -1,0 +1,79 @@
+<svg viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background Slate Gradient (GitHub Primer Dark Badge) -->
+    <linearGradient id="bgGrad" x1="80" y1="80" x2="944" y2="944" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#161b22" />
+      <stop offset="100%" stop-color="#0a0e14" />
+    </linearGradient>
+
+    <!-- Main AE Bezier Curve Gradient: GitHub Green to Electric Cobalt -->
+    <linearGradient id="curveGrad" x1="200" y1="720" x2="760" y2="300" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2ea043" />
+      <stop offset="45%" stop-color="#388bfd" />
+      <stop offset="100%" stop-color="#58a6ff" />
+    </linearGradient>
+
+    <!-- Curve Area Fill (AE Speed Graph Area) -->
+    <linearGradient id="speedArea" x1="512" y1="300" x2="512" y2="760" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#388bfd" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#388bfd" stop-opacity="0.0" />
+    </linearGradient>
+
+    <!-- Keyframe Diamond Glow -->
+    <filter id="keyframeGlow" x="614" y="230" width="180" height="180" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#388bfd" flood-opacity="0.6" />
+    </filter>
+
+    <!-- Tangent Handle Glow -->
+    <filter id="handleGlow" x="460" y="280" width="80" height="80" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#f0883e" flood-opacity="0.6" />
+    </filter>
+
+    <!-- Curve Shadow -->
+    <filter id="curveShadow" x="160" y="280" width="640" height="480" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
+  </defs>
+
+  <!-- Windows 11 Squircle Outer Shell (864x864, r=200, 23.5% curvature) -->
+  <rect x="80" y="80" width="864" height="864" rx="200" fill="url(#bgGrad)" stroke="#30363d" stroke-width="6" />
+  
+  <!-- Subtle Inner Hairline Bevel (Windows Acrylic / Fluent border highlight) -->
+  <rect x="86" y="86" width="852" height="852" rx="194" fill="none" stroke="rgba(255, 255, 255, 0.08)" stroke-width="3" />
+
+  <!-- AE Graph Editor Grid Coordinates (坐标网格刻度) -->
+  <line x1="160" y1="320" x2="864" y2="320" stroke="#21262d" stroke-width="4" stroke-dasharray="12 12" />
+  <line x1="160" y1="512" x2="864" y2="512" stroke="#21262d" stroke-width="4" />
+  <line x1="160" y1="704" x2="864" y2="704" stroke="#21262d" stroke-width="4" stroke-dasharray="12 12" />
+  <line x1="320" y1="180" x2="320" y2="844" stroke="#21262d" stroke-width="4" stroke-dasharray="12 12" />
+  <line x1="704" y1="180" x2="704" y2="844" stroke="#21262d" stroke-width="4" stroke-dasharray="12 12" />
+
+  <!-- Speed Area Projection (速度积分投影面积) -->
+  <path d="M 240 704 C 440 704, 440 320, 704 320 L 704 704 Z" fill="url(#speedArea)" />
+
+  <!-- Main AE Bezier Curve with Elevation Shadow -->
+  <g filter="url(#curveShadow)">
+    <path d="M 200 704 C 440 704, 440 320, 740 320" 
+          stroke="url(#curveGrad)" stroke-width="28" stroke-linecap="round" fill="none" />
+  </g>
+
+  <!-- Bottom Keyframe / Ease-out Anchor Point (240, 704) -->
+  <line x1="240" y1="704" x2="380" y2="704" stroke="#2ea043" stroke-width="6" stroke-linecap="round" />
+  <circle cx="380" cy="704" r="10" fill="#2ea043" />
+  <circle cx="240" cy="704" r="20" fill="#0d1117" stroke="#2ea043" stroke-width="12" />
+
+  <!-- Top Keyframe & AE Tangent Handle (704, 320) -->
+  <!-- 1. Amber Tangent Bar (AE 经典橙色切线手柄横杆) -->
+  <line x1="500" y1="320" x2="704" y2="320" stroke="#f0883e" stroke-width="8" stroke-linecap="round" />
+
+  <!-- 2. AE Tangent Handle Ball (切线端点控制珠) -->
+  <g filter="url(#handleGlow)">
+    <circle cx="500" cy="320" r="16" fill="#f0883e" stroke="#ffffff" stroke-width="4" />
+  </g>
+
+  <!-- 3. Keyframe Diamond (波峰锚点关键帧钻石) -->
+  <g filter="url(#keyframeGlow)">
+    <polygon points="704,284 740,320 704,356 668,320" fill="#ffffff" stroke="#388bfd" stroke-width="10" />
+    <polygon points="704,298 726,320 704,342 682,320" fill="#1f6feb" />
+  </g>
+</svg>

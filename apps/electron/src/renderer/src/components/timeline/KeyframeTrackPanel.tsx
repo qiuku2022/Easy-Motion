@@ -703,7 +703,7 @@ function PropertyKeyframeRow({
               strokeWidth={1.5}
               strokeLinejoin="round"
               strokeLinecap="round"
-              className="text-em-teal/80"
+              className="text-accent-blue/80"
             />
           ))}
         </svg>

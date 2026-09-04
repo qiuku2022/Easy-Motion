@@ -1,0 +1,25 @@
+<svg viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg3" x1="80" y1="80" x2="944" y2="944" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#161b22" />
+      <stop offset="100%" stop-color="#0d1117" />
+    </linearGradient>
+  </defs>
+  <rect x="80" y="80" width="864" height="864" rx="200" fill="url(#bg3)" stroke="#30363d" stroke-width="6" />
+  <rect x="86" y="86" width="852" height="852" rx="194" fill="none" stroke="rgba(255, 255, 255, 0.08)" stroke-width="3" />
+  
+  <rect x="160" y="260" width="704" height="504" rx="40" fill="#010409" stroke="#30363d" stroke-width="4" />
+  
+  <rect x="200" y="320" width="360" height="76" rx="16" fill="#1f4028" stroke="#3fb950" stroke-width="3" />
+  <rect x="590" y="320" width="230" height="76" rx="16" fill="#161b22" stroke="#30363d" stroke-width="3" />
+  
+  <rect x="200" y="428" width="180" height="76" rx="16" fill="#161b22" stroke="#30363d" stroke-width="3" />
+  <rect x="410" y="428" width="410" height="76" rx="16" fill="#13384e" stroke="#388bfd" stroke-width="3" />
+  
+  <rect x="200" y="536" width="460" height="76" rx="16" fill="#453316" stroke="#d29922" stroke-width="3" />
+  
+  <line x1="512" y1="260" x2="512" y2="764" stroke="#58a6ff" stroke-width="6" />
+  
+  <path d="M 476 252 L 548 252 L 548 296 L 512 320 L 476 296 Z" fill="#2f81f7" stroke="#ffffff" stroke-width="4" />
+  <circle cx="512" cy="466" r="12" fill="#ffffff" stroke="#1f6feb" stroke-width="4" />
+</svg>

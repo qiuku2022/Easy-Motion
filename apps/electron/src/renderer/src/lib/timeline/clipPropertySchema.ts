@@ -2,13 +2,26 @@
  * 属性面板可编辑字段 — 对齐 docs/requirements/代码生成规范.md Layer Props
  * 与 docs/requirements/数据字典汇总.md Clip 字段
  */
-import type { Clip, TrackType } from "@/types/timeline";
+import type { AnimationConfig, Clip, TrackType } from "@/types/timeline";
 import type { ClipPatch } from "@/lib/timeline/mutations";
 import { getValueByPath } from "@/lib/timeline/objectPath";
 import { isKnownTrackType } from "@/lib/timeline/contentType";
 import { clampOpacityInternal } from "@/lib/timeline/opacityProperty";
 import { clampScaleInternal } from "@/lib/timeline/scaleProperty";
 import { snapPositionValue } from "@/lib/timeline/positionProperty";
+
+const ANIMATION_TYPES = [
+  "fade",
+  "slide-left",
+  "slide-right",
+  "slide-up",
+  "slide-down",
+  "scale-up",
+  "scale-down",
+  "rotate",
+  "blur",
+  "none",
+] as const satisfies readonly AnimationConfig["type"][];
 
 export type PropertyFieldType = "text" | "multiline" | "number" | "color";
 
@@ -193,7 +206,7 @@ export function getClipPropertyValue(clip: Clip, path: string): unknown {
   if (path === "source.chartType") {
     return clip.source?.chartType ?? "line";
   }
-  return getValueByPath(clip as Record<string, unknown>, path);
+  return getValueByPath({ ...clip }, path);
 }
 
 /** 将属性路径转为 updateClip 可合并的 patch */
@@ -225,7 +238,9 @@ export function buildPatchFromPropertyPath(path: string, value: unknown): ClipPa
     return { transform: { opacity: clampOpacityInternal(Number(value)) } };
   }
   if (path === "animations.in.type") {
-    return { animations: { in: { type: String(value) } } };
+    const type =
+      ANIMATION_TYPES.find((candidate) => candidate === String(value)) ?? "none";
+    return { animations: { in: { type } } };
   }
   if (path === "animations.in.durationInFrames") {
     return { animations: { in: { durationInFrames: Number(value) } } };

@@ -167,7 +167,7 @@ pnpm build:win
 
 - 路径：`apps/electron/src/renderer/src/components/ui/`
 - 配置：`apps/electron/components.json`
-- 主题：[`docs/design-system/easymotion/MASTER.md`](../design-system/easymotion/MASTER.md)
+- 主题：[`index.css`](../../apps/electron/src/renderer/src/index.css) 与 [`tailwind.config.js`](../../apps/electron/tailwind.config.js)
 - 清单：[组件库清单.md](组件库清单.md)
 
 ---
@@ -186,7 +186,7 @@ EasyMotion/
 │   └── python/                # FastAPI（可选）
 ├── packages/shared/           # timeline 校验、work-area 等
 ├── docs/requirements/         # 本目录（35 份）
-├── docs/design-system/        # UI token 权威
+├── docs/requirements/         # 产品与技术规格
 ```
 
 ---

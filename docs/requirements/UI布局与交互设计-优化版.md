@@ -5,7 +5,7 @@
 > **本版本**：v1.0 优化版（v0.3 旧版已废弃并归档至 git 历史，本文档为唯一 UI 设计基准）
 > **优化目标**：融合 **Adobe Premiere Pro** 的专业性与 **剪映 (CapCut)** 的极简体验，降低剪辑师和无编程经验用户的上手门槛。
 > **核心原则**：**预览优先、操作即达、智能辅助、减少选择**。
-> **关联文档**：[设计系统 Master](../design-system/easymotion/MASTER.md)
+> **关联文档**：[组件库清单](组件库清单.md)、[可访问性设计](可访问性设计.md)
 
 ---
 
@@ -15,47 +15,71 @@
 
 ### 0.1 颜色系统
 
-采用 **shadcn Neutral Dark**（2026-06 更新，替代原 Cinema Dark + Action Red）。壳层为中性灰黑 + 浅灰白主按钮；删除/错误仍用 destructive 红。
+采用 **GitHub Primer Design System & Brand Hero Color**（2026-09 全量落地升级）。遵循 Primer 三层 Token 架构（Primitive → Semantic → Component），构建沉稳专业、零色偏的深暗工程创作环境。
 
-| 角色 | 实现 | 用途 |
-|------|------|------|
-| **背景主色** | `--background` oklch(0.145 0 0) | 主窗口、面板 |
-| **抬升面** | `--card` / `--popover` | 卡片、浮层 |
-| **边框** | `--border` white 10% | 分隔线 |
-| **文字主/次** | `--foreground` / `--muted-foreground` | 标题与说明 |
-| **主按钮** | `--primary` 浅灰白 | 极少数 CTA（非满屏红） |
-| **聚焦环** | `--ring` 中性灰 | 输入框、键盘焦点 |
-| **警告/错误** | `--warning` / `--destructive` | 静音、删除等 |
+| 角色 | 语义 Token | 实现值 (Dark Default) | 视觉特征与用途 |
+|------|-----------|---------------------|--------------|
+| **主工作台底色** | `--background` / `--canvas-default` | `#0d1117` | 纯净深冷黑灰，消除环境杂光干扰 |
+| **面板与卡片** | `--card` / `--canvas-subtle` | `#161b22` | 左右侧栏、顶部工具栏、卡片容器 |
+| **时间线容器底色** | `--timeline-track-bg` / `--canvas-inset`| `#010409` | 时间线轨道微陷深底 |
+| **预览舞台深渊** | `--preview-canvas` | `#05070a` | Remotion 视频舞台边缘，消除溢光色偏 |
+| **标准边框** | `--border` | `#30363d` | 1px 物理微边框、面板主分割线 |
+| **次级微边框** | `--border-muted` | `#21262d` | 标尺次刻度、二级列表细分线 |
+| **文字主色** | `--foreground` | `#e6edf3` | 主体标题、高频正文（AAA 级对比度 13.9:1） |
+| **次要文字** | `--muted-foreground` | `#7d8590` | 说明、单位、快捷键提示（AA 级对比度 4.7:1） |
+| **核心行动 CTA** | `--primary` | `#238636` (GitHub Green) | 渲染导出、确认应用（悬停 `#2ea043`，按下 `#196c2e`） |
+| **时间线交互高亮** | `--accent-blue` / `--ring` | `#2f81f7` / `#1f6feb` | 播放头指针与垂直指示线、键盘聚焦环、活动链接 |
+| **AI 助手感知色** | `--copilot` | `#a371f7` (Copilot Purple) | AI 对话指示微条、Bot 图标高亮、Prompt 聚焦外环 |
+| **警示/吸附** | `--warning` | `#d29922` | 吸附对齐虚线、关键帧高亮、离线提示 |
+| **危险/错误** | `--destructive` | `#da3633` (文本 `#f85149`) | 删除确认、破坏性操作按钮 |
 
-权威 token：`apps/electron/src/renderer/src/index.css`；设计说明见 `docs/design-system/easymotion/MASTER.md`。
+#### 多轨道剪辑色谱 (Timeline Tracks Palette)
+遵循 **“15%~25% 明度深色底 + 1px 亮色边框”** 原则，避免满屏大色块刺激眼球：
+- **画面/视频 (Video)**：`track-video` 底色 `#1f4028` / 边框 `#3fb950` / 文本 `#aff5b4`
+- **音频/音乐 (Audio)**：`track-audio` 底色 `#13384e` / 边框 `#388bfd` / 文本 `#79c0ff`
+- **文字/字幕 (Text)**：`track-text` 底色 `#453316` / 边框 `#d29922` / 文本 `#e3b341`
+- **特效/动效 (Animation)**：`track-fx` 底色 `#392556` / 边框 `#a371f7` / 文本 `#d2a8ff`
+- **静态图片 (Image)**：`track-image` 底色 `#1a3b32` / 边框 `#2ea043` / 文本 `#7ee787`
+- **几何图形 (Shape)**：`track-shape` 底色 `#3d2817` / 边框 `#db6d28` / 文本 `#ffa657`
+- **选中态**：片段被选中时边框加粗为 **实心 2px 纯白边框 + 蓝色外晕轮（`border-white ring-2 ring-blue-500/50 shadow-md`）**
 
-**暗色主题实现**：
-- shadcn `.dark` on `<html>`（v1.0 仅 dark）
-- `:root` 与 `.dark` 同步同一套 oklch 变量
+权威 Token 入口：`apps/electron/src/renderer/src/index.css`；Tailwind 映射见 `apps/electron/tailwind.config.js`。完整设计系统详见 `docs/design/`。
 
 ### 0.2 字体系统
 
 | 角色 | 字体 | 字重 | 用途 |
 |------|------|------|------|
-| **界面字体** | Plus Jakarta Sans | 400/500/600 | 所有 UI 文字（菜单、按钮、标签） |
-| **等宽字体** | JetBrains Mono | 400 | 时间码、代码片段、文件名 |
+| **界面字体** | Plus Jakarta Sans | 400/500/600/700 | 所有 UI 文字（菜单、按钮、标签） |
+| **等宽字体** | JetBrains Mono | 400/500/600 | 时间码 (`tnum`)、关键帧数值、代码片段 |
 
 字号层级：`text-xs`(12px) / `text-sm`(14px) / `text-base`(16px) / `text-lg`(18px) / `text-xl`(20px) / `text-2xl`(24px)。
 
-### 0.3 间距与圆角
+### 0.3 间距与微倒角规范
 
 - 间距 Token：`space-1`(4px) / `space-2`(8px) / `space-3`(12px) / `space-4`(16px) / `space-6`(24px)
-- 圆角 Token：`rounded-sm`(4px，按钮/标签) / `rounded-md`(6px，输入框/卡片) / `rounded-lg`(8px，面板/弹窗)
+- 圆角 Token（Primer / Win 11 几何微倒角）：
+  - `--radius-control` (6px / `rounded-md` / `rounded-control`)：按钮、输入框、微调器
+  - `--radius-overlay` (8px / `rounded-lg` / `rounded-overlay`)：浮动工具条、下拉菜单、Dialog 模态弹窗
+  - `--radius-small` (4px / `rounded-sm`)：多轨剪辑块 (Clip)、Tab 分段标签
+  - `--radius-xsmall` (2px)：播放头指针倒角、关键帧菱形微端点
+- 微立体投影 Token：
+  - `--shadow-primer-btn-primary`: 顶部微白光 + 底部沉稳阴影（主按钮专用）
+  - `--shadow-primer-overlay`: 浮层与右键菜单平滑投影
 
 ### 0.4 组件规范
 
-- **按钮**（shadcn `Button`，radix-nova）：
+- **按钮**（shadcn `Button` + Primer 样式）：
+  - **核心主行动 (Hero CTA)**：`variant="default"`（GitHub Green 实心绿底白字 + 顶部微反光边框 + 柔和悬停高光），用于“导出视频”、“应用到时间线”等高确认度动作
   - 工具栏图标：`variant="ghost" size="icon"`
-  - 常规操作：`variant="outline"` 或 `secondary`
-  - 高强调（稀少）：`variant="default"`（浅灰白实心）
-  - 危险：`variant="destructive"` + 必要时 `AlertDialog`
-- **输入框**：shadcn `Input` / `Textarea`；聚焦 `ring-ring`
-- **面板/卡片**：`bg-background border-border rounded-lg`
+  - 次级与常规操作：`variant="outline"` 或 `variant="secondary"`（深灰底 `#21262d`）
+  - 危险操作：`variant="destructive"` + 必要时 `AlertDialog`
+- **输入框**：shadcn `Input` / `Textarea`；圆角 `rounded-control`，聚焦呈现 `ring-ring`（普通）或 `ring-copilot/40`（AI 提示框）
+- **AI 对话组件**：
+  - 用户气泡：独立深冷中性色（`bg-secondary` `#21262d`），与主色解耦（避免误变绿）
+  - AI 回复卡片：采用 `bg-card`，左侧带有 2~3px Copilot 紫色指示条（`border-l-copilot`）
+- **分段控制器 (Segmented Tabs)**：
+  - 滑动选中小药丸采用中性卡片浮层（`bg-card border border-border/80 shadow-sm`），文字高亮为 `text-foreground`
+- **面板/卡片**：`bg-card border-border rounded-lg`
 
 ### 0.5 动画规范
 
@@ -225,11 +249,22 @@
 - 右键轨道 → "设置颜色" → 轨道左侧显示 4px 彩色竖条
 - 帮助用户快速区分轨道类型和用途
 
-### 3.2 选中片段：浮动快捷工具条（剪映核心体验）
+### 3.2 剪辑块 (Clip) 与播放头视觉规范（2026-09 落地）
+
+1. **播放头指针 (Playhead)**：
+   - 针尖采用 **Primer Accent Blue (`#2f81f7`)** 倒梯形指针，附带 `drop-shadow-[0_1px_3px_rgba(47,129,247,0.5)]` 锐利微阴影；
+   - 垂直穿透时间线参考线带微光晕（`shadow-[0_0_4px_rgba(47,129,247,0.6)]`），在任何亮暗视频画面下均清晰可见，消除旧版漂白问题。
+2. **多轨剪辑块 (Clip Blocks)**：
+   - **常态**：遵循 `track-*` 语义色谱（15%~25% 明度深色底 + 1px 细边框），大幅降低眼疲劳；
+   - **选中态**：边框加粗为 **实心 2px 纯白边框 + 蓝色外晕轮 (`ring-2 ring-blue-500/50 shadow-md`)**；
+   - **裁切把手**：左右两端边缘微光亮化（`bg-white/60 hover:bg-white/80`），鼠标悬停呈现 `col-resize` 双向箭头；
+   - **关键帧标记**：选中的关键帧锚点为发光蓝色钻石（`border-white bg-accent-blue shadow-[0_0_6px_rgba(47,129,247,0.7)]`）。
+
+### 3.3 选中片段：浮动快捷工具条（剪映核心体验）
 
 **这是最重要的交互优化之一。**
 
-当用户**单击选中时间线上的片段**时，在片段**上方或时间线顶部**弹出浮动工具条：
+当用户**单击选中时间线上的片段**时，在片段**上方或时间线顶部**弹出浮动工具条（采用 `bg-card/95 backdrop-blur-md border border-border shadow-primer-overlay rounded-control` 亚克力质感容器）：
 
 ```
                     ┌─────────────────────────────────────┐
@@ -793,6 +828,7 @@ App
 | **素材拖拽** | 基本拖拽 | **智能放置**（拖到轨道/预览/空白处的不同行为）+ 悬停预览 | 剪映 |
 | **快捷键** | 纯 Premiere 风格 | 保留 Premiere 专业快捷键 + 增加剪映风格单键快捷键（S分割、T文字） | 两者融合 |
 | **预览性能** | 无感知 | **性能降级提示**，一键降低预览质量 | 剪映 |
+| **视觉与色彩系统** | 基础暗色 + 白色高强调按钮 | **GitHub Primer 三层 Token 体系**（暗灰底 `#0d1117`、GitHub Green `#238636` 导出主按钮、Accent Blue 播放头、Copilot 紫色指示色谱、多轨道深底高亮边框） | GitHub Primer / Win 11 微倒角 |
 | **新手引导** | 无 | **首次启动欢迎弹窗** → AI 示例生成 → 关键操作浮动提示 | 剪映 |
 
 ---
@@ -810,7 +846,8 @@ App
 | **M6** | 🟡 中 | 素材悬停预览、智能拖拽放置、预设缩略图 | 素材管理体验 |
 | **M7** | 🟡 中 | 空状态可操作化、新手引导流程、性能降级提示 | 降低上手门槛 |
 | **M8-M9** | 🟢 低 | 快捷键优化、动效打磨、响应式细节 | 锦上添花 |
+| **2026-09** | 🟢 已完成 | GitHub Primer 完整视觉与配色体系全量落地升级 | 统一专业视频暗色质感与可访问性 |
 
 ---
 
-*文档版本：v1.0（优化版）| 基于 UI布局与交互设计-优化版.md v0.3 + ui-ux-pro-max 设计系统 | 最后更新：2026-06-26*
+*文档版本：v1.1（Primer 视觉升级版）| 基于 UI布局与交互设计-优化版.md v1.0 + GitHub Primer 设计系统 | 最后更新：2026-09-04*

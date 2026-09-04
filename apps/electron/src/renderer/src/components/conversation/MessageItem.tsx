@@ -36,19 +36,19 @@ export const MessageItem = memo(function MessageItem({
     >
       <div
         className={cn(
-          "min-w-0 overflow-hidden rounded-lg px-3 py-2 text-sm leading-relaxed",
+          "min-w-0 overflow-hidden rounded-control px-3 py-2 text-sm leading-relaxed",
           isUser ? "max-w-[88%]" : "w-full max-w-full",
           isUser
-            ? "bg-primary text-primary-foreground"
+            ? "border border-border/60 bg-secondary text-secondary-foreground shadow-sm"
             : isSystem
-              ? "w-auto max-w-full bg-muted/60 text-center text-xs text-muted-foreground"
-              : "bg-muted text-foreground"
+              ? "w-auto max-w-full border border-border/40 bg-muted/60 text-center text-xs text-muted-foreground"
+              : "border border-border border-l-[3px] border-l-copilot bg-card text-foreground shadow-sm"
         )}
       >
         {message.attachedImages?.length ? (
           <MessageImageThumbnails
             paths={message.attachedImages}
-            variant={isUser ? "on-primary" : "default"}
+            variant="default"
             className={message.content.trim() ? "mb-2" : undefined}
           />
         ) : null}

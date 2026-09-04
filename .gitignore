@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+/.pnpm-store/
 
 # Build & bundler outputs
 dist/
@@ -55,12 +56,8 @@ desktop.ini
 !.vscode/settings.json
 !.vscode/extensions.json
 
-# Cursor: ignore local agent state; committed skills live under .cursor/skills/
-.cursor/*
-!.cursor/skills/
-!.cursor/skills/**
-
-# npx skills 管理目录（不提交；更新后运行 pnpm skills:sync）
+# Agent-local state is not committed; this repository currently ships no development Skills.
+.cursor/
 .agents/
 
 # Local-only notes (agent plans, scratch — not for commit)

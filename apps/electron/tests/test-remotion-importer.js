@@ -143,6 +143,12 @@ async function testCorruptManifestDurationRepair() {
 
   const manifestPath = path.join(remotionSrcDir, "easymotion-timeline.manifest.json");
   const manifest = readJsonFile(manifestPath);
+  const expectedMeta = {
+    fps: manifest.timeline.fps,
+    durationInFrames: manifest.timeline.durationInFrames,
+    width: manifest.timeline.width,
+    height: manifest.timeline.height,
+  };
   manifest.timeline.fps = 0;
   manifest.timeline.durationInFrames = 0;
   manifest.timeline.width = 0;
@@ -158,18 +164,24 @@ async function testCorruptManifestDurationRepair() {
     },
   });
 
-  if (imported.timeline.durationInFrames !== timeline.durationInFrames) {
+  if (imported.timeline.durationInFrames !== expectedMeta.durationInFrames) {
     throw new Error(
       `corrupt manifest should repair duration, got ${imported.timeline.durationInFrames}`
     );
   }
-  if (imported.timeline.fps !== timeline.fps) {
+  if (imported.timeline.fps !== expectedMeta.fps) {
     throw new Error(`corrupt manifest should repair fps, got ${imported.timeline.fps}`);
   }
 
   const repaired = readTimelineManifest(remotionSrcDir);
-  if (repaired.timeline.durationInFrames !== timeline.durationInFrames) {
+  if (repaired.timeline.durationInFrames !== expectedMeta.durationInFrames) {
     throw new Error("manifest on disk should be repaired after sync");
+  }
+  if (
+    repaired.timeline.width !== expectedMeta.width ||
+    repaired.timeline.height !== expectedMeta.height
+  ) {
+    throw new Error("manifest dimensions should be repaired after sync");
   }
 }
 

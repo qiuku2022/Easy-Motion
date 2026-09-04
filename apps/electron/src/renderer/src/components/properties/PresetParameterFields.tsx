@@ -41,7 +41,7 @@ export function PresetParameterFields({
   const values = useMemo(() => resolvedClipPresetProps(clip, preset), [clip, preset]);
 
   const schema = useMemo(() => {
-    const shape: Record<string, z.ZodTypeAny> = {};
+    const shape: Record<string, z.ZodString> = {};
     for (const param of parameters) {
       const fieldType = presetParameterToFieldType(param);
       if (fieldType === "number") {

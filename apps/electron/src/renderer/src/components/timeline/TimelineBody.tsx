@@ -430,7 +430,7 @@ export function TimelineBody({
           }}
         >
           <div
-            className="relative min-h-full bg-em-bg transition-[height] duration-300 ease-in-out motion-reduce:transition-none"
+            className="relative min-h-full bg-gh-inset transition-[height] duration-300 ease-in-out motion-reduce:transition-none"
             style={{ width: contentWidth, height: bodyHeight }}
             onPointerDown={(e) => {
               if (e.target === e.currentTarget) clearSelection();
@@ -596,12 +596,12 @@ function TrackRow({
     <div
       data-track-id={isGroupHeader ? undefined : track.id}
       className={cn(
-        "relative box-border border-b border-em-border",
+        "relative box-border border-b border-border",
         !visible && "opacity-40",
-        locked && "bg-em-surface/20",
-        isGroupHeader && "bg-em-surface/10",
-        isDropTarget && "bg-em-teal/5",
-        hasSelectedClip && "bg-primary/[0.07]"
+        locked && "bg-muted/20",
+        isGroupHeader && "bg-muted/10",
+        isDropTarget && "bg-accent-blue/10",
+        hasSelectedClip && "bg-accent-blue/[0.04]"
       )}
       style={{ height: TRACK_ROW_HEIGHT }}
     >

@@ -8,6 +8,7 @@ import { useProjectStore } from "@/stores/projectStore";
 import { toast } from "sonner";
 import { useTimelineStore } from "@/stores/timelineStore";
 import { useUiStore } from "@/stores/uiStore";
+import { cn } from "@/lib/utils";
 
 function ToolbarIconButton({
   label,
@@ -56,7 +57,7 @@ export function TopToolbar() {
   const currentProject = useProjectStore((s) => s.current);
 
   return (
-    <header className="z-40 flex h-11 shrink-0 items-center justify-between border-b border-border bg-background px-2">
+    <header className="z-40 flex h-11 shrink-0 items-center justify-between border-b border-border bg-card px-3">
       <div className="flex items-center gap-1">
         <AppMenu />
         <ToolbarIconButton
@@ -80,7 +81,7 @@ export function TopToolbar() {
             void (async () => {
               const ok = await saveProject();
               if (ok) {
-                toast.success("项目已保存");
+                 toast.success("项目已保存");
                 return;
               }
               const message = useProjectStore.getState().error;
@@ -97,32 +98,45 @@ export function TopToolbar() {
           )}
         </ToolbarIconButton>
       </div>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1.5">
         <ToolbarIconButton
           label="AI 助手"
           onClick={() => {
             if (aiCollapsed) toggleAiCollapsed();
           }}
         >
-          <Bot className="h-4 w-4" />
+          <Bot
+            className={cn(
+              "h-4 w-4 transition-colors",
+              !aiCollapsed ? "text-copilot" : "text-muted-foreground hover:text-copilot"
+            )}
+          />
         </ToolbarIconButton>
         <ToolbarIconButton label="渲染">
           <Sparkles className="h-4 w-4" />
         </ToolbarIconButton>
-        <ToolbarIconButton
-          label="导出"
-          variant="outline"
-          disabled={!currentProject || exportPhase === "exporting"}
-          onClick={() => {
-            if (!currentProject) {
-              toast.error("请先打开项目");
-              return;
-            }
-            openExportDialog();
-          }}
-        >
-          <Download className="h-4 w-4" />
-        </ToolbarIconButton>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              type="button"
+              variant="default"
+              size="sm"
+              className="h-8 gap-1.5 px-3 font-medium shadow-primer-btn-primary"
+              disabled={!currentProject || exportPhase === "exporting"}
+              onClick={() => {
+                if (!currentProject) {
+                  toast.error("请先打开项目");
+                  return;
+                }
+                openExportDialog();
+              }}
+            >
+              <Download className="h-4 w-4" />
+              <span>导出</span>
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">导出视频</TooltipContent>
+        </Tooltip>
       </div>
     </header>
   );

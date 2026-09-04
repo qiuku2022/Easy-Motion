@@ -100,7 +100,7 @@ export function ClipFloatingToolbar({
   return (
     <div
       className={cn(
-        "clip-floating-toolbar pointer-events-auto absolute z-[60] flex items-center gap-0.5 rounded-md border border-border bg-popover px-1 py-0.5 shadow-lg shadow-black/30",
+        "clip-floating-toolbar pointer-events-auto absolute z-[60] flex items-center gap-0.5 rounded-control border border-border bg-card/95 px-1.5 py-1 backdrop-blur-md shadow-primer-overlay",
         placeBelow ? "clip-floating-toolbar-below" : "clip-floating-toolbar-above"
       )}
       style={

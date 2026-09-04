@@ -10,8 +10,8 @@ const DEFAULT_COMPOSITION_ID = "Main";
 
 /**
  * Remotion 官方路径：bundle(entryPoint) + selectComposition()
- * @see docs/Remotion-API/bundle.md
- * @see docs/Remotion-API/renderer/select-composition.md
+ * @see https://www.remotion.dev/docs/bundle
+ * @see https://www.remotion.dev/docs/renderer/select-composition
  */
 async function evaluateMainComposition(remotionDir, options = {}) {
   const compositionId = options.compositionId ?? DEFAULT_COMPOSITION_ID;

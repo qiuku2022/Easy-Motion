@@ -12,7 +12,7 @@
     "tracks": [
       {
         "id": "track-intro-group",
-        "name": "开场",
+        "name": "电影级开场展台",
         "type": "group",
         "order": 0,
         "visible": true,
@@ -22,8 +22,8 @@
         "collapsed": false,
         "children": [
           {
-            "id": "track-intro-bg",
-            "name": "景深光斑",
+            "id": "track-showcase-bg",
+            "name": "3D科技动效展台",
             "type": "animation",
             "order": 0,
             "visible": true,
@@ -31,48 +31,22 @@
             "muted": false,
             "clips": [
               {
-                "id": "clip-intro-bg",
+                "id": "clip-showcase-bg",
                 "type": "animation",
-                "name": "景深光斑",
+                "name": "电影级3D展台",
                 "startInFrames": 0,
                 "durationInFrames": 125,
                 "source": {
                   "kind": "component",
-                  "component": "RveBokehCircles",
-                  "presetId": "rve-bokeh-circles",
+                  "component": "CinematicTechShowcase",
                   "props": {
+                    "badgeText": "✦ EASYMOTION 2.0 • NEXT-GEN MOTION ENGINE",
+                    "title": "THE FUTURE OF MOTION IS CODE",
+                    "subtitle": "用对话编排多维空间，让每一帧动效皆具电影质感",
+                    "promptText": "Create a cinematic 3D cyber product launch video with glowing telemetry and isometric cards...",
                     "primaryColor": "#6366f1",
-                    "secondaryColor": "#a78bfa",
-                    "backgroundColor": "#09090b"
-                  }
-                },
-                "keyframes": []
-              }
-            ]
-          },
-          {
-            "id": "track-intro-title",
-            "name": "逐字标题",
-            "type": "animation",
-            "order": 1,
-            "visible": true,
-            "locked": false,
-            "muted": false,
-            "clips": [
-              {
-                "id": "clip-intro-title",
-                "type": "animation",
-                "name": "逐字动画",
-                "startInFrames": 8,
-                "durationInFrames": 90,
-                "source": {
-                  "kind": "component",
-                  "component": "RveAnimatedText",
-                  "presetId": "rve-animated-text",
-                  "props": {
-                    "text": "EasyMotion",
-                    "primaryColor": "#fafafa",
-                    "backgroundColor": "#09090b"
+                    "accentColor": "#06b6d4",
+                    "secondaryColor": "#ec4899"
                   }
                 },
                 "keyframes": []
@@ -81,9 +55,9 @@
           },
           {
             "id": "track-intro-subtitle",
-            "name": "副标题",
+            "name": "动态标语",
             "type": "text",
-            "order": 2,
+            "order": 1,
             "visible": true,
             "locked": false,
             "muted": false,
@@ -92,16 +66,16 @@
                 "id": "clip-intro-subtitle",
                 "type": "text",
                 "name": "副标题",
-                "startInFrames": 40,
-                "durationInFrames": 85,
+                "startInFrames": 45,
+                "durationInFrames": 80,
                 "source": {
                   "kind": "inline",
-                  "content": "用对话，做动画"
+                  "content": "用对话，做电影级动画"
                 },
                 "transform": {
                   "position": {
                     "x": 960,
-                    "y": 440
+                    "y": 180
                   },
                   "scale": 1,
                   "rotation": 0,
@@ -109,15 +83,15 @@
                 },
                 "style": {
                   "fontFamily": "Inter, sans-serif",
-                  "fontSize": 42,
-                  "color": "#a1a1aa",
+                  "fontSize": 32,
+                  "color": "#94a3b8",
                   "textAlign": "center"
                 },
                 "keyframes": [],
                 "animations": {
                   "in": {
                     "type": "fade",
-                    "durationInFrames": 28
+                    "durationInFrames": 24
                   }
                 }
               }

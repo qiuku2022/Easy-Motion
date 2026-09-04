@@ -22,12 +22,19 @@
     "test:m11": "node tests/test-remotion-native-render.js && node tests/test-frame-render-service.js && node tests/test-preview-capture-service.js && node tests/test-agent-vision-feedback-tools.js",
     "test:m11:real-render": "node tests/test-frame-render-real.js",
     "test:m12": "node tests/test-memory-service.js && node tests/test-agent-memory-settings.js && node tests/test-agent-memory-tools.js && node tests/test-agent-memory-context.js && node tests/test-agent-memory-extractor.js",
+    "test:renderer": "tsx --tsconfig tsconfig.renderer.json --test tests/renderer/timeline-properties.test.ts",
+    "test:presets": "node tests/test-bits-preset-sync.js && node tests/test-place-preset.js && node tests/test-preset-catalog.js && node tests/test-preset-parameters.js",
+    "test:importer": "node tests/test-remotion-importer.js",
+    "test:core": "pnpm test:m1 && pnpm test:m2 && pnpm test:m5 && pnpm test:m5.2 && pnpm test:m11 && pnpm test:m12 && pnpm test:presets && node tests/test-coordinates.js && pnpm test:renderer && pnpm test:importer",
+    "test:release": "pnpm test:m8 && pnpm test:m11:real-render",
+    "test:live": "node tests/test-agent-live.js && node tests/test-agent-service-flow.js",
+    "test:all": "pnpm test:core && pnpm test:release",
     "vendor:rve-presets": "node scripts/vendor-rve-presets.cjs",
     "vendor:bits-presets": "node scripts/vendor-bits-presets.cjs",
     "generate:preset-thumbnails": "node scripts/generate-preset-thumbnails.cjs",
     "debug:prepare": "node scripts/debug-prepare.cjs",
     "debug:cleanup": "node scripts/cleanup-debug-processes.cjs",
-    "test": "pnpm test:m1 && pnpm test:m2 && pnpm test:m3 && pnpm test:m5 && pnpm test:m5.2"
+    "test": "pnpm test:core"
   },
   "dependencies": {
     "@easymotion/shared": "workspace:*",
@@ -56,6 +63,7 @@
     "zustand": "^4.5.7"
   },
   "devDependencies": {
+    "@types/node": "^24.12.4",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^4.5.2",
@@ -66,6 +74,7 @@
     "electron-builder": "^26.15.3",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.23.13",
     "typescript": "^5.8.3",
     "vite": "^5.4.19",
     "wait-on": "^8.0.3"

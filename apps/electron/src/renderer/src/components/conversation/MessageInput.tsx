@@ -65,8 +65,8 @@ export function MessageInput({
   return (
     <div
       className={cn(
-        "rounded-lg border border-border/80 bg-muted/20 p-2",
-        "focus-within:border-ring/50 focus-within:ring-2 focus-within:ring-ring/20"
+        "rounded-control border border-border/80 bg-card/60 p-2 transition-colors",
+        "focus-within:border-copilot/60 focus-within:ring-2 focus-within:ring-copilot/20"
       )}
     >
       {attachedImages.length > 0 && (

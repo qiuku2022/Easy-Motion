@@ -26,6 +26,7 @@ import {
 } from "@/lib/timeline/markers";
 import { assertValidTimeline } from "@/lib/timeline/validate";
 import type {
+  AnimationConfig,
   Clip,
   Timeline,
   TimelineMarker,
@@ -500,10 +501,21 @@ export interface ClipPatch {
     opacity?: number;
   };
   animations?: {
-    in?: { type?: string; durationInFrames?: number };
-    out?: { type?: string; durationInFrames?: number };
+    in?: Partial<AnimationConfig>;
+    out?: Partial<AnimationConfig>;
   };
   keyframes?: Clip["keyframes"];
+}
+
+function mergeAnimationConfig(
+  base: AnimationConfig | undefined,
+  patch: Partial<AnimationConfig> | undefined
+): AnimationConfig | undefined {
+  if (!patch) return base;
+  return {
+    type: patch.type ?? base?.type ?? "none",
+    durationInFrames: patch.durationInFrames ?? base?.durationInFrames ?? 15,
+  };
 }
 
 function mergeClip(base: Clip, patch: ClipPatch): Clip {
@@ -545,14 +557,8 @@ function mergeClip(base: Clip, patch: ClipPatch): Clip {
     next.animations = {
       ...baseAnimations,
       ...patch.animations,
-      in: {
-        ...(baseAnimations.in ?? {}),
-        ...(patch.animations.in ?? {}),
-      },
-      out: {
-        ...(baseAnimations.out ?? {}),
-        ...(patch.animations.out ?? {}),
-      },
+      in: mergeAnimationConfig(baseAnimations.in, patch.animations.in),
+      out: mergeAnimationConfig(baseAnimations.out, patch.animations.out),
     };
   }
   if (patch.keyframes !== undefined) {

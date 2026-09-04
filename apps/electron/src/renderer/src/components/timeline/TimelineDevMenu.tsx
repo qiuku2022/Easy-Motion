@@ -26,7 +26,7 @@ export function TimelineDevMenu({ disabled }: TimelineDevMenuProps) {
 
   const busy = disabled || isLoading || isGenerating || isSaving;
 
-  const run = (fn: () => void | Promise<void>) => {
+  const run = (fn: () => unknown | Promise<unknown>) => {
     clearError();
     void fn();
     close();

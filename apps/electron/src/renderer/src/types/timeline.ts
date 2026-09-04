@@ -127,6 +127,18 @@ export interface AnimationConfig {
   durationInFrames: number;
 }
 
+export interface ClipTransform {
+  position?: {
+    x?: number;
+    y?: number;
+    [key: string]: unknown;
+  };
+  scale?: number;
+  rotation?: number;
+  opacity?: number;
+  [key: string]: unknown;
+}
+
 export interface Clip {
   id: string;
   type: string;
@@ -136,7 +148,7 @@ export interface Clip {
   lastModifiedBy?: LastModifiedBy;
   lastModifiedAt?: number;
   source?: Record<string, unknown>;
-  transform?: Record<string, unknown>;
+  transform?: ClipTransform;
   style?: Record<string, unknown>;
   keyframes?: Keyframe[];
   animations?: {

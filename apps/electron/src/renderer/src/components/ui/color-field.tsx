@@ -6,6 +6,7 @@ import {
   useLayoutEffect,
   useRef,
   useState,
+  type MutableRefObject,
 } from "react";
 import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
@@ -334,9 +335,9 @@ export const ColorField = forwardRef<HTMLDivElement, ColorFieldProps>(
     return (
       <div
         ref={(node) => {
-          anchorRef.current = node;
+          (anchorRef as MutableRefObject<HTMLDivElement | null>).current = node;
           if (typeof ref === "function") ref(node);
-          else if (ref) ref.current = node;
+          else if (ref) (ref as MutableRefObject<HTMLDivElement | null>).current = node;
         }}
         className={cn("flex items-center gap-1.5", className)}
       >

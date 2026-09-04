@@ -57,7 +57,7 @@ export const TimelineRuler = memo(function TimelineRuler({
       aria-valuemin={0}
       aria-valuemax={Math.max(0, durationInFrames - 1)}
       className={cn(
-        "relative shrink-0 cursor-pointer select-none border-b border-em-border bg-em-surface/50",
+        "relative shrink-0 cursor-pointer select-none border-b border-border bg-card/75",
         className
       )}
       style={{ width: contentWidth, height: RULER_HEIGHT }}
@@ -85,12 +85,12 @@ export const TimelineRuler = memo(function TimelineRuler({
         >
           <div
             className={cn(
-              "absolute bottom-0 w-px bg-em-border",
+              "absolute bottom-0 w-px bg-border",
               kind === "labeled" ? "h-full" : "h-2"
             )}
           />
           {kind === "labeled" ? (
-            <span className="absolute left-0.5 top-0.5 whitespace-nowrap font-mono text-[10px] tabular-nums text-em-muted">
+            <span className="absolute left-0.5 top-0.5 whitespace-nowrap font-mono text-[10px] tabular-nums text-muted-foreground">
               {formatRulerLabel(frame, fps, timelineTimeDisplay)}
             </span>
           ) : null}

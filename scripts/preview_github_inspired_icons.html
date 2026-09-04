@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #05070a;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #e6edf3;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+    h1 { font-size: 24px; font-weight: 600; }
+    p.subtitle { color: #8b949e; font-size: 14px; margin-bottom: 16px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      max-width: 1100px;
+      width: 100%;
+    }
+    .card {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #f0f6fc;
+      text-align: center;
+    }
+    .card-tag {
+      font-size: 11px;
+      padding: 2px 10px;
+      border-radius: 9999px;
+      background: #161b22;
+      border: 1px solid #30363d;
+      color: #58a6ff;
+    }
+    .icon-container {
+      width: 200px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 8px 0;
+    }
+    .icon-container svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 8px 24px rgba(0,0,0,0.6));
+    }
+    .card-desc {
+      font-size: 13px;
+      color: #8b949e;
+      text-align: center;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <h1>EasyMotion ✕ GitHub 灵感图标重构方案</h1>
+  <p class="subtitle">汲取 GitHub Invertocat 正统剪影、极简微倒角徽章与 Git 分支图谱的纯正极客工程美学</p>
+
+  <div class="grid">
+    <!-- 方案 1: 正统 Invertocat 动效播放剪影 (Play-Invertocat) -->
+    <div class="card">
+      <div class="card-title">方案 1：Invertocat 动效播放剪影</div>
+      <div class="card-tag">GitHub 官方剪影 ✕ 视频播放</div>
+      <div class="icon-container">
+        <!-- SVG 1: Official GitHub Invertocat mark with Play cut and Keyframe -->
+        <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="badgeGrad1" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#1c2128" />
+              <stop offset="100%" stop-color="#0d1117" />
+            </linearGradient>
+            <linearGradient id="catGrad1" x1="100" y1="80" x2="400" y2="400" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ffffff" />
+              <stop offset="100%" stop-color="#e6edf3" />
+            </linearGradient>
+          </defs>
+          <rect x="24" y="24" width="464" height="464" rx="112" fill="url(#badgeGrad1)" stroke="#30363d" stroke-width="4" />
+          <rect x="28" y="28" width="456" height="456" rx="108" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2" />
+
+          <!-- GitHub Official Mark scaled (scale=22, translate=(80, 80)) -->
+          <g transform="translate(80, 80) scale(22)">
+            <path fill-rule="evenodd" clip-rule="evenodd" 
+                  d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z" 
+                  fill="url(#catGrad1)" />
+          </g>
+
+          <!-- Precision Play Cutout in the center of the badge (cutting through the cat body) -->
+          <path d="M 232 205 C 232 196 242 190 250 195 L 312 231 C 320 236 320 246 312 251 L 250 287 C 242 292 232 286 232 277 Z" fill="#0d1117" stroke="#1c2128" stroke-width="3" />
+          
+          <!-- Green Keyframe Accent Accent at the play apex -->
+          <polygon points="325,236 335,241 325,246 315,241" fill="#238636" />
+        </svg>
+      </div>
+      <p class="card-desc">以 GitHub 官方正统 Invertocat 为主体，中心嵌入极简纯黑播放按键负空间，尾端点缀 GitHub Green 关键帧，血统纯正。</p>
+    </div>
+
+    <!-- 方案 2: Git 分支动效图谱 (The Git-Motion Branch) -->
+    <div class="card">
+      <div class="card-title">方案 2：Git 分支动效图谱</div>
+      <div class="card-tag">Git 提交树 ✕ 时间线关键帧</div>
+      <div class="icon-container">
+        <!-- SVG 2: Git branch graph with Keyframe nodes and Playhead -->
+        <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="badgeGrad2" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#161b22" />
+              <stop offset="100%" stop-color="#0a0e14" />
+            </linearGradient>
+            <linearGradient id="branchGrad2" x1="160" y1="340" x2="350" y2="180" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#2ea043" />
+              <stop offset="100%" stop-color="#388bfd" />
+            </linearGradient>
+          </defs>
+          <rect x="24" y="24" width="464" height="464" rx="112" fill="url(#badgeGrad2)" stroke="#30363d" stroke-width="4" />
+          <rect x="28" y="28" width="456" height="456" rx="108" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2" />
+
+          <!-- Main Track Line (Git Main Branch / Base Track) -->
+          <line x1="110" y1="340" x2="400" y2="340" stroke="#21262d" stroke-width="16" stroke-linecap="round" />
+          
+          <!-- Curved Motion Branch (Git Feature Branch curving up into a Keyframe track) -->
+          <path d="M 160 340 C 200 340 210 180 260 180 L 380 180" 
+                stroke="url(#branchGrad2)" stroke-width="16" stroke-linecap="round" fill="none" />
+
+          <!-- Git Commit Nodes (Main Track) -->
+          <circle cx="160" cy="340" r="24" fill="#0d1117" stroke="#2ea043" stroke-width="10" />
+          <circle cx="340" cy="340" r="24" fill="#0d1117" stroke="#30363d" stroke-width="10" />
+
+          <!-- Motion Branch Diamond Keyframes (Replacing commit dots with Keyframe diamonds) -->
+          <polygon points="260,152 288,180 260,208 232,180" fill="#ffffff" stroke="#388bfd" stroke-width="8" />
+          <polygon points="360,152 388,180 360,208 332,180" fill="#2f81f7" stroke="#ffffff" stroke-width="6" />
+
+          <!-- Primer Playhead Needle Cutting through the graph vertically -->
+          <line x1="260" y1="100" x2="260" y2="400" stroke="#58a6ff" stroke-width="3" stroke-dasharray="6 6" />
+          <path d="M 244 94 L 276 94 L 276 114 L 260 126 L 244 114 Z" fill="#2f81f7" stroke="#ffffff" stroke-width="2" />
+        </svg>
+      </div>
+      <p class="card-desc">GitHub 标志性的 Git 分支提交图谱（Commit Graph），将提交圆点升华为动效关键帧钻石，由 Primer 播放头纵贯串联，极客血统纯正。</p>
+    </div>
+
+    <!-- 方案 3: GitHub 极客八爪动效徽章 (The Octo-Play Prism) -->
+    <div class="card">
+      <div class="card-title">方案 3：GitHub 动效微倒角棱镜</div>
+      <div class="card-tag">GitHub 品牌徽章 ✕ 动效棱镜</div>
+      <div class="icon-container">
+        <!-- SVG 3: GitHub style Monomark silhouette with geometric motion prism -->
+        <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="badgeGrad3" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#161b22" />
+              <stop offset="100%" stop-color="#0a0e14" />
+            </linearGradient>
+            <linearGradient id="catHead" x1="160" y1="120" x2="350" y2="300" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#ffffff" />
+              <stop offset="100%" stop-color="#c9d1d9" />
+            </linearGradient>
+          </defs>
+          <rect x="24" y="24" width="464" height="464" rx="112" fill="url(#badgeGrad3)" stroke="#30363d" stroke-width="4" />
+          <rect x="28" y="28" width="456" height="456" rx="108" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2" />
+
+          <!-- Minimalist Geometric Cat Ears + Play Prism Silhouette -->
+          <!-- Cat Ears & Head Top -->
+          <path d="M 175 220 
+                   L 155 145 
+                   L 220 175 
+                   C 235 170, 275 170, 290 175 
+                   L 355 145 
+                   L 335 220 
+                   C 365 255, 365 315, 335 350 
+                   C 295 385, 215 385, 175 350 
+                   C 145 315, 145 255, 175 220 Z" 
+                fill="url(#catHead)" />
+
+          <!-- Center Forward Motion Play Chevron Cutout -->
+          <path d="M 236 210 C 236 202 245 197 252 201 L 298 231 C 304 235 304 245 298 249 L 252 279 C 245 283 236 278 236 270 Z" fill="#0d1117" />
+          
+          <!-- GitHub Green Bottom Status Pill (like GitHub online status dot / track indicator) -->
+          <circle cx="256" cy="326" r="14" fill="#238636" stroke="#ffffff" stroke-width="3" />
+        </svg>
+      </div>
+      <p class="card-desc">将 GitHub 标志性猫耳几何硬朗化，中央内嵌播放切角，下方以 GitHub 经典的绿点状态标识（Commit/Online）作为动效原点。</p>
+    </div>
+  </div>
+</body>
+</html>

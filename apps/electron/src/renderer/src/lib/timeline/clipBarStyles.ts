@@ -6,51 +6,55 @@ type ClipBarVariant = {
   disabled: string;
 };
 
-/** 时间线图层条：按类型区分、偏柔和的实心填充 */
+/** 时间线图层条：按类型区分、遵循 Primer 15%~25% 明度深色底 + 1px 亮边 */
 const CLIP_BAR_VARIANTS: Record<string, ClipBarVariant> = {
   text: {
-    idle: "border-violet-900/70 bg-violet-950/75 text-violet-200/90",
+    idle: "border-track-text-border/70 bg-track-text/85 text-[#e3b341]",
     selected:
-      "border-violet-600/80 bg-violet-900/85 text-violet-100 ring-2 ring-violet-500/35",
-    disabled: "border-violet-950/50 bg-violet-950/40 text-violet-300/40",
+      "border-white bg-track-text text-white ring-2 ring-blue-500/50 shadow-md",
+    disabled: "border-track-text-border/30 bg-track-text/30 text-white/30",
   },
   video: {
-    idle: "border-blue-900/70 bg-blue-950/75 text-blue-200/90",
-    selected: "border-blue-600/80 bg-blue-900/85 text-blue-100 ring-2 ring-blue-500/35",
-    disabled: "border-blue-950/50 bg-blue-950/40 text-blue-300/40",
+    idle: "border-track-video-border/70 bg-track-video/85 text-[#aff5b4]",
+    selected:
+      "border-white bg-track-video text-white ring-2 ring-blue-500/50 shadow-md",
+    disabled: "border-track-video-border/30 bg-track-video/30 text-white/30",
   },
   audio: {
-    idle: "border-emerald-900/70 bg-emerald-950/75 text-emerald-200/90",
+    idle: "border-track-audio-border/70 bg-track-audio/85 text-[#79c0ff]",
     selected:
-      "border-emerald-600/80 bg-emerald-900/85 text-emerald-100 ring-2 ring-emerald-500/35",
-    disabled: "border-emerald-950/50 bg-emerald-950/40 text-emerald-300/40",
+      "border-white bg-track-audio text-white ring-2 ring-blue-500/50 shadow-md",
+    disabled: "border-track-audio-border/30 bg-track-audio/30 text-white/30",
   },
   image: {
-    idle: "border-teal-900/70 bg-teal-950/75 text-teal-200/90",
-    selected: "border-teal-600/80 bg-teal-900/85 text-teal-100 ring-2 ring-teal-500/35",
-    disabled: "border-teal-950/50 bg-teal-950/40 text-teal-300/40",
+    idle: "border-track-image-border/70 bg-track-image/85 text-[#7ee787]",
+    selected:
+      "border-white bg-track-image text-white ring-2 ring-blue-500/50 shadow-md",
+    disabled: "border-track-image-border/30 bg-track-image/30 text-white/30",
   },
   shape: {
-    idle: "border-amber-900/70 bg-amber-950/75 text-amber-200/90",
+    idle: "border-track-shape-border/70 bg-track-shape/85 text-[#ffa657]",
     selected:
-      "border-amber-600/80 bg-amber-900/85 text-amber-100 ring-2 ring-amber-500/35",
-    disabled: "border-amber-950/50 bg-amber-950/40 text-amber-300/40",
+      "border-white bg-track-shape text-white ring-2 ring-blue-500/50 shadow-md",
+    disabled: "border-track-shape-border/30 bg-track-shape/30 text-white/30",
   },
   chart: {
-    idle: "border-rose-900/70 bg-rose-950/75 text-rose-200/90",
-    selected: "border-rose-600/80 bg-rose-900/85 text-rose-100 ring-2 ring-rose-500/35",
-    disabled: "border-rose-950/50 bg-rose-950/40 text-rose-300/40",
+    idle: "border-track-chart-border/70 bg-track-chart/85 text-[#ff7b72]",
+    selected:
+      "border-white bg-track-chart text-white ring-2 ring-blue-500/50 shadow-md",
+    disabled: "border-track-chart-border/30 bg-track-chart/30 text-white/30",
   },
   animation: {
-    idle: "border-indigo-900/70 bg-indigo-950/75 text-indigo-200/90",
+    idle: "border-track-fx-border/70 bg-track-fx/85 text-[#d2a8ff]",
     selected:
-      "border-indigo-600/80 bg-indigo-900/85 text-indigo-100 ring-2 ring-indigo-500/35",
-    disabled: "border-indigo-950/50 bg-indigo-950/40 text-indigo-300/40",
+      "border-white bg-track-fx text-white ring-2 ring-purple-500/50 shadow-md",
+    disabled: "border-track-fx-border/30 bg-track-fx/30 text-white/30",
   },
   default: {
-    idle: "border-zinc-700/80 bg-zinc-800/85 text-zinc-200/90",
-    selected: "border-zinc-500/80 bg-zinc-700/90 text-zinc-100 ring-2 ring-zinc-400/30",
-    disabled: "border-zinc-800/50 bg-zinc-900/45 text-zinc-400/40",
+    idle: "border-track-default-border/70 bg-track-default/85 text-[#c9d1d9]",
+    selected:
+      "border-white bg-track-default text-white ring-2 ring-blue-500/50 shadow-md",
+    disabled: "border-track-default-border/30 bg-track-default/30 text-white/30",
   },
 };
 
@@ -61,20 +65,20 @@ export function clipBarClassName(
   const variant = CLIP_BAR_VARIANTS[contentType] ?? CLIP_BAR_VARIANTS.default;
 
   return cn(
-    "h-full w-full truncate rounded-[3px] border px-1.5 text-left text-[11px] font-medium",
+    "h-full w-full truncate rounded-[4px] border px-1.5 text-left text-[11px] font-medium",
     "transition-[filter,box-shadow,border-color,ring] duration-100 ease-out",
     state.disabled
       ? cn(variant.disabled, "cursor-not-allowed")
       : state.selected
         ? cn(variant.selected, "cursor-grab shadow-sm active:cursor-grabbing")
-        : cn(variant.idle, "cursor-grab hover:brightness-105 active:cursor-grabbing"),
-    state.dragging && !state.disabled && "opacity-95 ring-2 ring-white/20"
+        : cn(variant.idle, "cursor-grab hover:brightness-110 active:cursor-grabbing"),
+    state.dragging && !state.disabled && "opacity-95 ring-2 ring-white/30"
   );
 }
 
 export function clipBarHandleClassName(selected: boolean): string {
   return cn(
     "absolute bottom-0 top-0 z-10 w-1.5 cursor-ew-resize",
-    selected ? "bg-white/55 hover:bg-white/75" : "bg-black/20 hover:bg-black/30"
+    selected ? "bg-white/60 hover:bg-white/80" : "bg-black/20 hover:bg-black/30"
   );
 }

@@ -35,7 +35,7 @@ export function CompactSegmentedTabs<T extends string>({
           )}
         >
           <span
-            className="pointer-events-none absolute inset-y-0.5 rounded-sm bg-primary transition-[left,width] duration-200 ease-out motion-reduce:transition-none"
+            className="pointer-events-none absolute inset-y-0.5 rounded-sm border border-border/80 bg-card shadow-sm transition-[left,width] duration-200 ease-out motion-reduce:transition-none"
             style={{ left: indicator.left, width: indicator.width }}
             aria-hidden
           />
@@ -48,7 +48,7 @@ export function CompactSegmentedTabs<T extends string>({
                 "text-muted-foreground transition-colors duration-150 ease-out",
                 "hover:text-foreground dark:text-muted-foreground dark:hover:text-foreground",
                 "data-active:!bg-transparent dark:data-active:!bg-transparent",
-                "data-active:!text-primary-foreground dark:data-active:!text-primary-foreground",
+                "data-active:!text-foreground dark:data-active:!text-foreground",
                 "data-active:font-medium data-active:shadow-none dark:data-active:shadow-none",
                 "after:hidden"
               )}

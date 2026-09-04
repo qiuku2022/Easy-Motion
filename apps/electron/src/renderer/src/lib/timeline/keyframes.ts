@@ -59,6 +59,10 @@ function resolveBaseValue(property: string, baseValue: unknown): unknown {
   return baseValue;
 }
 
+function clipAsRecord(clip: Clip): Record<string, unknown> {
+  return { ...clip };
+}
+
 export function interpolateKeyframeProperty(
   keyframes: Keyframe[],
   property: string,
@@ -111,7 +115,7 @@ export function applyKeyframesToClip(clip: Clip, relativeFrame: number, fps = 30
   for (const property of properties) {
     const baseValue = resolveBaseValue(
       property,
-      getValueByPath(clip as Record<string, unknown>, property)
+      getValueByPath(clipAsRecord(clip), property)
     );
     const value = interpolateKeyframeProperty(
       keyframes,
@@ -150,10 +154,7 @@ export function getPropertyValueAtFrame(
   relativeFrame: number,
   fps = 30
 ): unknown {
-  const base = resolveBaseValue(
-    property,
-    getValueByPath(clip as Record<string, unknown>, property)
-  );
+  const base = resolveBaseValue(property, getValueByPath(clipAsRecord(clip), property));
   return interpolateKeyframeProperty(
     clip.keyframes ?? [],
     property,
@@ -181,7 +182,7 @@ export function addClipKeyframe(
   const rawValue =
     input.value !== undefined
       ? input.value
-      : getValueByPath(clip as Record<string, unknown>, input.property);
+      : getValueByPath(clipAsRecord(clip), input.property);
   const value = normalizeKeyframePropertyValue(input.property, rawValue);
 
   const keyframe: Keyframe = {

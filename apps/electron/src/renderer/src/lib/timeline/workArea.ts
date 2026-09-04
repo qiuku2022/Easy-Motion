@@ -157,10 +157,11 @@ export function resolveExportFrameRange(
 
   const maxFrame = Math.max(0, Number(timeline.durationInFrames) - 1);
   const contentEndInclusive = getContentEndInclusive(timeline);
-  const custom = isObject(timeline.workArea);
+  const workArea = timeline.workArea;
+  const custom = isObject(workArea);
 
-  let inFrame = custom ? Number(timeline.workArea.inFrame) : 0;
-  let outFrame = custom ? Number(timeline.workArea.outFrame) : contentEndInclusive;
+  let inFrame = custom ? Number(workArea.inFrame) : 0;
+  let outFrame = custom ? Number(workArea.outFrame) : contentEndInclusive;
 
   if (!Number.isFinite(inFrame)) inFrame = 0;
   if (!Number.isFinite(outFrame)) outFrame = contentEndInclusive;
@@ -204,7 +205,8 @@ export function resolveWorkAreaDisplayRange(
 
   const maxFrame = Math.max(0, Number(timeline.durationInFrames) - 1);
   const contentEndInclusive = getContentEndInclusive(timeline);
-  const custom = isObject(timeline.workArea);
+  const workArea = timeline.workArea;
+  const custom = isObject(workArea);
 
   if (!custom) {
     return {
@@ -215,8 +217,8 @@ export function resolveWorkAreaDisplayRange(
     };
   }
 
-  let inFrame = Number(timeline.workArea.inFrame);
-  let outFrame = Number(timeline.workArea.outFrame);
+  let inFrame = Number(workArea.inFrame);
+  let outFrame = Number(workArea.outFrame);
   if (!Number.isFinite(inFrame)) inFrame = 0;
   if (!Number.isFinite(outFrame)) outFrame = maxFrame;
 

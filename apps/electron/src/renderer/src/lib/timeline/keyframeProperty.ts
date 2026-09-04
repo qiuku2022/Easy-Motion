@@ -1,7 +1,7 @@
 import type { Clip, Keyframe } from "@/types/timeline";
 import { KEYFRAME_ANIMATABLE_PROPERTIES } from "@/lib/timeline/keyframes";
 
-const ANIMATABLE_PATHS = new Set(
+const ANIMATABLE_PATHS: ReadonlySet<string> = new Set(
   KEYFRAME_ANIMATABLE_PROPERTIES.map((item) => item.path)
 );
 

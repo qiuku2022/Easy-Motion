@@ -12,7 +12,7 @@
     "dev:python": "pnpm --filter @easymotion/python dev",
     "build:python": "pnpm --filter @easymotion/python build:bundle",
     "build:win": "pnpm --filter @easymotion/electron build",
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"apps/**/*.{js,ts,tsx,mts,cjs,json,yml,yaml}\" \"packages/**/*.{js,json}\" \"eslint.config.mjs\" \".prettierrc.json\" \"package.json\" \"pnpm-workspace.yaml\" \".vscode/*.json\"",
     "format:check": "prettier --check \"apps/**/*.{js,ts,tsx,mts,cjs,json,yml,yaml}\" \"packages/**/*.{js,json}\" \"eslint.config.mjs\" \".prettierrc.json\" \"package.json\" \"pnpm-workspace.yaml\" \".vscode/*.json\"",
@@ -23,8 +23,11 @@
     "test:m11:real-render": "pnpm --filter @easymotion/electron test:m11:real-render",
     "test:m12": "pnpm --filter @easymotion/electron test:m12",
     "test": "pnpm --filter @easymotion/electron test",
-    "skills:sync": "node scripts/sync-cursor-skills.cjs",
-    "skills:update": "npx skills update -p -y && node scripts/sync-cursor-skills.cjs"
+    "test:release": "pnpm --filter @easymotion/electron test:release",
+    "test:live": "pnpm --filter @easymotion/electron test:live",
+    "test:all": "pnpm --filter @easymotion/electron test:all",
+    "typecheck": "tsc -p apps/electron/tsconfig.renderer.json --noEmit && tsc -p apps/electron/tsconfig.tests.json --noEmit",
+    "check": "pnpm lint && pnpm typecheck && pnpm test"
   },
   "devDependencies": {
     "@eslint/js": "^9.28.0",

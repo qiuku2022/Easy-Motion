@@ -1,10 +1,15 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type CSSProperties } from "react";
 import { WindowControls } from "@/components/shell/WindowControls";
 import { cn } from "@/lib/utils";
 import { useProjectStore } from "@/stores/projectStore";
 import { getEasyMotion, type WindowState } from "@/types/easyMotion";
 
-const DRAG_REGION = { WebkitAppRegion: "drag" } as React.CSSProperties;
+type WindowDragStyle = CSSProperties & {
+  WebkitAppRegion: "drag" | "no-drag";
+};
+
+const DRAG_REGION: WindowDragStyle = { WebkitAppRegion: "drag" };
+const NO_DRAG_REGION: WindowDragStyle = { WebkitAppRegion: "no-drag" };
 const APP_ICON_SRC = `${import.meta.env.BASE_URL}app-icon.png`;
 
 export function TitleBar() {
@@ -56,10 +61,7 @@ export function TitleBar() {
         style={DRAG_REGION}
         onDoubleClick={onDoubleClickDrag}
       >
-        <div
-          className="flex shrink-0 items-center gap-2 pl-3"
-          style={{ WebkitAppRegion: "no-drag" }}
-        >
+        <div className="flex shrink-0 items-center gap-2 pl-3" style={NO_DRAG_REGION}>
           <img
             src={APP_ICON_SRC}
             alt=""

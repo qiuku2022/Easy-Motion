@@ -10,49 +10,106 @@
    * shadcn Neutral Dark（方案 A）
    * v1.0 仅 dark；:root 与 .dark 同步，html 恒为 class="dark"
    */
+  /*
+   * GitHub Primer Design System (Dark Default)
+   * 桌面动画应用三层 Token 体系
+   */
   :root,
   .dark {
-    /* Win 11：控件 4px（ControlCornerRadius）、浮层/窗口 8px（OverlayCornerRadius） */
-    --radius-control: 4px;
-    --radius-overlay: 8px;
-    --radius: var(--radius-overlay);
+    /* =========================================================================
+     * 1. 基础原始值 (Layer 1: Primitive Tokens)
+     * ========================================================================= */
+    --pr-color-gray-0: #f0f6fc;
+    --pr-color-gray-1: #e6edf3;
+    --pr-color-gray-2: #c9d1d9;
+    --pr-color-gray-3: #8b949e;
+    --pr-color-gray-4: #7d8590;
+    --pr-color-gray-5: #6e7681;
+    --pr-color-gray-6: #30363d;
+    --pr-color-gray-7: #21262d;
+    --pr-color-gray-8: #161b22;
+    --pr-color-gray-9: #0d1117;
+    --pr-color-gray-10: #010409;
 
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --destructive-foreground: oklch(0.985 0 0);
-    --warning: oklch(0.75 0.15 55);
-    --warning-foreground: oklch(0.2 0.05 55);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.488 0.243 264.376);
-    --chart-2: oklch(0.696 0.17 162.48);
-    --chart-3: oklch(0.769 0.188 70.08);
-    --chart-4: oklch(0.627 0.265 303.9);
-    --chart-5: oklch(0.645 0.246 16.439);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
-    /* 预览区「舞台」：比壳层更深的中性灰，无紫调（≈ #121212） */
-    --preview-canvas: oklch(0.085 0 0);
+    /* 品牌绿核心 */
+    --pr-color-green-brand: #0FBF3E;
+    --pr-color-green-0: #aff5b4;
+    --pr-color-green-1: #7ee787;
+    --pr-color-green-2: #3fb950;
+    --pr-color-green-3: #2ea043;
+    --pr-color-green-4: #238636;
+    --pr-color-green-5: #196c2e;
+
+    /* 功能基色 */
+    --pr-color-blue: #2f81f7;
+    --pr-color-blue-dark: #1f6feb;
+    --pr-color-yellow: #d29922;
+    --pr-color-red: #f85149;
+    --pr-color-red-dark: #da3633;
+    --pr-color-purple: #a371f7;
+    --pr-color-purple-dark: #8250df;
+
+    /* 圆角基元 (Win 11 / Primer Radii: 控件 6px、浮层 8px) */
+    --radius-control: 6px;
+    --radius-overlay: 8px;
+    --radius: var(--radius-control);
+
+    /* =========================================================================
+     * 2. 语义功能层 (Layer 2: Semantic / Functional Tokens)
+     * ========================================================================= */
+    --background: var(--pr-color-gray-9);         /* #0d1117 主工作台底色 */
+    --foreground: var(--pr-color-gray-1);         /* #e6edf3 主文本 */
+    --card: var(--pr-color-gray-8);               /* #161b22 面板卡片容器 */
+    --card-foreground: var(--pr-color-gray-1);
+    --popover: var(--pr-color-gray-8);            /* #161b22 下拉浮层与 Dialog */
+    --popover-foreground: var(--pr-color-gray-1);
+
+    /* 主行动色：全面对齐 GitHub Green */
+    --primary: var(--pr-color-green-4);           /* #238636 */
+    --primary-foreground: #ffffff;
+    --primary-hover: var(--pr-color-green-3);     /* #2ea043 */
+    --primary-active: var(--pr-color-green-5);    /* #196c2e */
+
+    /* 次级交互与幽灵色 */
+    --secondary: var(--pr-color-gray-7);          /* #21262d */
+    --secondary-foreground: var(--pr-color-gray-1);
+    --muted: var(--pr-color-gray-7);              /* #21262d */
+    --muted-foreground: var(--pr-color-gray-4);   /* #7d8590 */
+    --accent: var(--pr-color-gray-7);
+    --accent-foreground: var(--pr-color-gray-0);
+
+    /* 功能状态色 */
+    --destructive: var(--pr-color-red-dark);       /* #da3633 */
+    --destructive-foreground: #ffffff;
+    --warning: var(--pr-color-yellow);            /* #d29922 */
+    --warning-foreground: #010409;
+    --copilot: var(--pr-color-purple);            /* #a371f7 */
+    --accent-blue: var(--pr-color-blue);          /* #2f81f7 播放头与高亮交互 */
+
+    /* 边框与焦点环 */
+    --border: var(--pr-color-gray-6);             /* #30363d */
+    --input: var(--pr-color-gray-6);              /* #30363d */
+    --ring: var(--pr-color-blue-dark);            /* #1f6feb 聚焦外环 */
+
+    /* 图表与侧边栏兼容性变量 */
+    --chart-1: #2f81f7;
+    --chart-2: #3fb950;
+    --chart-3: #d29922;
+    --chart-4: #a371f7;
+    --chart-5: #f85149;
+    --sidebar: var(--pr-color-gray-8);
+    --sidebar-foreground: var(--pr-color-gray-1);
+    --sidebar-primary: var(--pr-color-green-4);
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: var(--pr-color-gray-7);
+    --sidebar-accent-foreground: var(--pr-color-gray-0);
+    --sidebar-border: var(--pr-color-gray-6);
+    --sidebar-ring: var(--pr-color-blue-dark);
+
+    /* 专属区域 */
+    --preview-canvas: #05070a;                    /* 播放舞台深渊黑 */
+    --timeline-track-bg: var(--pr-color-gray-10); /* #010409 轨道容器底色 */
+
     /* 窗口壳层（TitleBar + Frame） */
     --shell-chrome-height: 32px;
     --shell-toolbar-height: 44px;

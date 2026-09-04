@@ -115,7 +115,7 @@ export function ClipBlock({
                 className={cn(
                   "absolute bottom-0.5 z-30 h-2 w-2 -translate-x-1/2 rotate-45 border shadow hover:scale-125",
                   selectedKeyframeId === kf.id
-                    ? "border-primary bg-primary"
+                    ? "border-white bg-accent-blue ring-1 ring-accent-blue shadow-[0_0_6px_rgba(47,129,247,0.7)]"
                     : "border-amber-200 bg-amber-400"
                 )}
                 style={{ left: kfLeft }}

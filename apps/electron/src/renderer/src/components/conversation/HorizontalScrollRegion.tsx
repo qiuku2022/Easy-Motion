@@ -2,14 +2,15 @@ import {
   forwardRef,
   useEffect,
   useRef,
-  type ComponentPropsWithoutRef,
+  type HTMLAttributes,
+  type MutableRefObject,
   type MouseEvent,
 } from "react";
 import { cn } from "@/lib/utils";
 
 export const HSCROLL_HOVER_EVENT = "em:hscroll-hover";
 
-type HorizontalScrollRegionProps = ComponentPropsWithoutRef<"div"> & {
+type HorizontalScrollRegionProps = HTMLAttributes<HTMLElement> & {
   as?: "div" | "pre";
 };
 
@@ -30,7 +31,8 @@ export const HorizontalScrollRegion = forwardRef<
     const el = localRef.current;
     if (!el) return;
 
-    const onWheel = (event: WheelEvent) => {
+    const onWheel = (event: Event) => {
+      if (!(event instanceof WheelEvent)) return;
       if (el.scrollWidth <= el.clientWidth + 1) return;
 
       const delta =
@@ -49,20 +51,23 @@ export const HorizontalScrollRegion = forwardRef<
   }, []);
 
   const setRef = (node: HTMLDivElement | HTMLPreElement | null) => {
-    localRef.current = node;
+    (localRef as MutableRefObject<HTMLDivElement | HTMLPreElement | null>).current =
+      node;
     if (typeof forwardedRef === "function") {
       forwardedRef(node);
     } else if (forwardedRef) {
-      forwardedRef.current = node;
+      (
+        forwardedRef as MutableRefObject<HTMLDivElement | HTMLPreElement | null>
+      ).current = node;
     }
   };
 
-  const handleMouseEnter = (event: MouseEvent<HTMLDivElement | HTMLPreElement>) => {
+  const handleMouseEnter = (event: MouseEvent<HTMLElement>) => {
     setHScrollHover(true);
     onMouseEnter?.(event);
   };
 
-  const handleMouseLeave = (event: MouseEvent<HTMLDivElement | HTMLPreElement>) => {
+  const handleMouseLeave = (event: MouseEvent<HTMLElement>) => {
     setHScrollHover(false);
     onMouseLeave?.(event);
   };
